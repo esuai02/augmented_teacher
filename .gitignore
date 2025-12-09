@@ -1,0 +1,10 @@
+*.json
+.env
+credentials/
+service-account.json
+alt42_android/
+alt42_android/
+*.json
+credentials/
+service-account.json
+.env
