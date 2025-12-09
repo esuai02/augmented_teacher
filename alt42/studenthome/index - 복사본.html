@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Learning Platform - 수학 학습 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        /* 헤더 */
+        .header {
+            background: white;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        /* 메인 컨테이너 */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+
+        /* 메인 메뉴 카드들 */
+        .main-menu {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            border-color: transparent;
+        }
+        
+        .menu-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--card-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+        
+        .menu-card:hover::after {
+            opacity: 0.05;
+        }
+
+        .menu-card.concept {
+            --card-gradient: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+        
+        .menu-card.concept .icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-card.advanced {
+            --card-gradient: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        }
+        
+        .menu-card.advanced .icon {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-card.exam {
+            --card-gradient: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .menu-card.exam .icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-card.suneung {
+            --card-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .menu-card.suneung .icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .menu-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .menu-card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-card p {
+            color: #6c757d;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* 학년별 선택 섹션 */
+        .grade-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e9ecef;
+        }
+        
+        .grade-section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .grade-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .grade-tab {
+            padding: 0.75rem 2rem;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        .grade-tab:hover {
+            background: #e9ecef;
+            color: #2c3e50;
+        }
+
+        .grade-tab.active {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        /* 타일 그리드 */
+        .tiles-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tiles-container.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .tiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .tile {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #495057;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .tile:hover {
+            background: white;
+            border-color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .tile.selected {
+            background: #2c3e50;
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .tile.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        /* 선택 완료 버튼 */
+        .action-buttons {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+
+        .start-button {
+            padding: 0.875rem 2.5rem;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .start-button:hover {
+            background: #34495e;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        .start-button:active {
+            transform: translateY(0);
+        }
+
+        .start-button:disabled {
+            background: #ced4da;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 선택된 항목 표시 */
+        .selected-items {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        /* 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-card {
+            animation: fadeIn 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .menu-card:nth-child(1) { animation-delay: 0.05s; }
+        .menu-card:nth-child(2) { animation-delay: 0.1s; }
+        .menu-card:nth-child(3) { animation-delay: 0.15s; }
+        .menu-card:nth-child(4) { animation-delay: 0.2s; }
+
+        /* 포커스 스타일 */
+        button:focus,
+        .tile:focus,
+        .menu-card:focus {
+            outline: 2px solid #2c3e50;
+            outline-offset: 2px;
+        }
+
+        /* 선생님 모드 전환 버튼 */
+        .teacher-mode-container {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+        }
+
+        .teacher-mode-button {
+            padding: 0.5rem 1rem;
+            background: #059669;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+            text-decoration: none;
+        }
+
+        .teacher-mode-button:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        /* 미니맵 스타일 */
+        .minimap-container {
+            position: absolute;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+        }
+
+        .minimap-button {
+            padding: 0.5rem 1rem;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .minimap-button:hover {
+            background: #34495e;
+            transform: translateY(-2px);
+        }
+
+        .minimap-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            min-width: 250px;
+            display: none;
+            z-index: 200;
+        }
+
+        .minimap-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .minimap-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .minimap-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .minimap-item:hover {
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .minimap-item.current {
+            background: #2c3e50;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .main-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .menu-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .grade-tabs {
+                gap: 0.75rem;
+            }
+            
+            .grade-tab {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.875rem;
+            }
+            
+            .grade-section {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-menu {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .header p {
+                font-size: 0.875rem;
+            }
+            
+            .menu-card h2 {
+                font-size: 1.125rem;
+            }
+            
+            .tiles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .minimap-container {
+                right: 1rem;
+            }
+            
+            .minimap-button {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .minimap-dropdown {
+                right: -1rem;
+                min-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-content">
+            <h1>Math Learning Platform</h1>
+            <p>체계적인 수학 학습의 시작</p>
+            
+            <!-- 선생님 모드 전환 버튼 (role이 student가 아닌 경우에만 표시) -->
+            <div class="teacher-mode-container" id="teacherModeContainer" style="display: none;">
+                <a href="#" class="teacher-mode-button" id="teacherModeButton">
+                    👨‍🏫 선생님 모드
+                </a>
+            </div>
+            
+            <!-- 미니맵 버튼 -->
+            <div class="minimap-container">
+                <button class="minimap-button" onclick="toggleMinimap()">
+                    🗺️ 미니맵
+                </button>
+                <div class="minimap-dropdown" id="minimapDropdown">
+                    <h3 class="minimap-title">
+                        <span>🗺️</span>
+                        <span>학습 목차</span>
+                    </h3>
+                    <a href="index.php" class="minimap-item current">
+                        <span>🏠</span>
+                        <span>메인 홈</span>
+                    </a>
+                    <a href="index1.html" class="minimap-item">
+                        <span>📚</span>
+                        <span>개념학습</span>
+                    </a>
+                    <a href="index2.html" class="minimap-item">
+                        <span>🚀</span>
+                        <span>심화학습</span>
+                    </a>
+                    <a href="index3.html" class="minimap-item">
+                        <span>📝</span>
+                        <span>내신준비</span>
+                    </a>
+                    <a href="index4.html" class="minimap-item">
+                        <span>🎯</span>
+                        <span>수능대비</span>
+                    </a>
+                    <a href="indexm.html" class="minimap-item">
+                        <span>🧠</span>
+                        <span>메타인지</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 메인 컨테이너 -->
+    <div class="main-container">
+        
+        <!-- 메인 메뉴 카드들 -->
+        <div class="main-menu">
+            <div class="menu-card concept" onclick="navigateTo('index1.html')">
+                <div class="icon">📚</div>
+                <h2>개념학습</h2>
+                <p>기초부터 차근차근</p>
+            </div>
+            
+            <div class="menu-card advanced" onclick="navigateTo('index2.html')">
+                <div class="icon">🚀</div>
+                <h2>심화학습</h2>
+                <p>실력 향상을 위한 도전</p>
+            </div>
+            
+            <div class="menu-card exam" onclick="navigateTo('index3.html')">
+                <div class="icon">📝</div>
+                <h2>내신준비</h2>
+                <p>학교 시험 완벽 대비</p>
+            </div>
+            
+            <div class="menu-card suneung" onclick="navigateTo('index4.html')">
+                <div class="icon">🎯</div>
+                <h2>수능대비</h2>
+                <p>수능 만점을 향해</p>
+            </div>
+        </div>
+
+        <!-- 학년별 선택 섹션 -->
+        <div class="grade-section">
+            <h2 class="grade-section-title">학년별 커리큘럼 선택</h2>
+            <div class="grade-tabs">
+                <div class="grade-tab active" onclick="showGrade('elementary')">
+                    초등수학
+                </div>
+                <div class="grade-tab" onclick="showGrade('middle')">
+                    중등수학
+                </div>
+                <div class="grade-tab" onclick="showGrade('high')">
+                    고등수학
+                </div>
+            </div>
+
+            <!-- 초등수학 타일 -->
+            <div id="elementary" class="tiles-container active">
+                <div class="tiles-grid">
+                    <div class="tile" onclick="toggleTile(this)">초등수학 4-1</div>
+                    <div class="tile" onclick="toggleTile(this)">초등수학 4-2</div>
+                    <div class="tile" onclick="toggleTile(this)">초등수학 5-1</div>
+                    <div class="tile" onclick="toggleTile(this)">초등수학 5-2</div>
+                    <div class="tile" onclick="toggleTile(this)">초등수학 6-1</div>
+                    <div class="tile" onclick="toggleTile(this)">초등수학 6-2</div>
+                </div>
+            </div>
+
+            <!-- 중등수학 타일 -->
+            <div id="middle" class="tiles-container">
+                <div class="tiles-grid">
+                    <div class="tile" onclick="toggleTile(this)">중등수학 1-1</div>
+                    <div class="tile" onclick="toggleTile(this)">중등수학 1-2</div>
+                    <div class="tile" onclick="toggleTile(this)">중등수학 2-1</div>
+                    <div class="tile" onclick="toggleTile(this)">중등수학 2-2</div>
+                    <div class="tile" onclick="toggleTile(this)">중등수학 3-1</div>
+                    <div class="tile" onclick="toggleTile(this)">중등수학 3-2</div>
+                </div>
+            </div>
+
+            <!-- 고등수학 타일 -->
+            <div id="high" class="tiles-container">
+                <div class="tiles-grid">
+                    <div class="tile" onclick="toggleTile(this)">공통수학1</div>
+                    <div class="tile" onclick="toggleTile(this)">공통수학2</div>
+                    <div class="tile" onclick="toggleTile(this)">대수</div>
+                    <div class="tile" onclick="toggleTile(this)">미적분 I</div>
+                    <div class="tile" onclick="toggleTile(this)">확률과 통계</div>
+                    <div class="tile" onclick="toggleTile(this)">미적분 II</div>
+                    <div class="tile" onclick="toggleTile(this)">기하</div>
+                </div>
+            </div>
+
+            <!-- 선택된 항목 표시 -->
+            <div class="selected-items" id="selected-display">
+                아직 선택된 과목이 없습니다.
+            </div>
+
+            <!-- 시작 버튼 -->
+            <div class="action-buttons">
+                <button class="start-button" id="start-button" onclick="startLearning()" disabled>
+                    <span>🚀</span>
+                    <span>학습 시작하기</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수
+        let selectedGrade = 'elementary';
+        let selectedTiles = [];
+
+        // 페이지 이동
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // 학년 탭 전환
+        function showGrade(grade) {
+            // 탭 활성화 상태 변경
+            document.querySelectorAll('.grade-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // 타일 컨테이너 전환
+            document.querySelectorAll('.tiles-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.getElementById(grade).classList.add('active');
+
+            selectedGrade = grade;
+        }
+
+        // 타일 선택/해제
+        function toggleTile(tile) {
+            tile.classList.toggle('selected');
+            
+            // 선택된 타일 목록 업데이트
+            updateSelectedTiles();
+        }
+
+        // 선택된 타일 목록 업데이트
+        function updateSelectedTiles() {
+            selectedTiles = [];
+            document.querySelectorAll('.tile.selected').forEach(tile => {
+                selectedTiles.push(tile.textContent);
+            });
+
+            // 선택된 항목 표시
+            const displayElement = document.getElementById('selected-display');
+            if (selectedTiles.length > 0) {
+                displayElement.textContent = '선택된 과목: ' + selectedTiles.join(', ');
+                document.getElementById('start-button').disabled = false;
+            } else {
+                displayElement.textContent = '아직 선택된 과목이 없습니다.';
+                document.getElementById('start-button').disabled = true;
+            }
+        }
+
+        // 학습 시작
+        function startLearning() {
+            if (selectedTiles.length === 0) {
+                alert('학습할 과목을 선택해주세요.');
+                return;
+            }
+
+            // 선택된 과목 정보를 로컬 스토리지에 저장
+            localStorage.setItem('selectedCourses', JSON.stringify({
+                grade: selectedGrade,
+                courses: selectedTiles
+            }));
+
+            alert(`선택하신 과목으로 학습을 시작합니다.\n\n${selectedTiles.join('\n')}`);
+            
+            // 적절한 페이지로 이동 (예: 개념학습 페이지)
+            // window.location.href = 'index1.html';
+        }
+
+        // 미니맵 토글
+        function toggleMinimap() {
+            const dropdown = document.getElementById('minimapDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // 미니맵 외부 클릭 시 닫기
+        document.addEventListener('click', function(event) {
+            const minimap = document.getElementById('minimapDropdown');
+            const button = event.target.closest('[onclick="toggleMinimap()"]');
+            
+            if (!button && !minimap.contains(event.target)) {
+                minimap.classList.remove('active');
+            }
+        });
+        
+        // 페이지 로드 시 애니메이션
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.menu-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

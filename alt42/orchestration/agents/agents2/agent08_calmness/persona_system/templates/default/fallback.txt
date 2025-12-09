@@ -1,0 +1,45 @@
+# Default Fallback Templates
+# 기본 폴백 템플릿 (레벨 미식별 시)
+# Variables: {{student_name}}
+
+---
+
+## generic_greeting
+안녕하세요, {{student_name}}님.
+무엇을 도와드릴까요?
+
+---
+
+## generic_support
+네, 말씀해주세요.
+듣고 있어요.
+
+---
+
+## generic_breathing
+같이 호흡을 해볼까요?
+천천히 숨을 들이쉬고...
+내쉬고...
+
+---
+
+## generic_check_in
+지금 기분이 어떠세요?
+
+---
+
+## generic_closing
+이야기 나눠주셔서 감사해요.
+언제든 다시 이야기해요.
+
+---
+
+## error_recovery
+잠시 연결에 문제가 있었어요.
+다시 시작해볼까요?
+
+---
+
+## confusion_handling
+제가 잘 이해하지 못한 것 같아요.
+다시 한 번 말씀해주시겠어요?

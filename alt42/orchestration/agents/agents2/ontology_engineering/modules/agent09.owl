@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent09">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 09 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 09 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 09: Learning Management 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningManagementWeakness">
+    <rdfs:label xml:lang="ko">LearningManagementWeakness</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습관리 취약점을 온톨로지로 표현 (Agent 09 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackLoopRedesign">
+    <rdfs:label xml:lang="ko">FeedbackLoopRedesign</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 루프 재설계를 온톨로지로 표현 (Agent 09 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ManagementStability">
+    <rdfs:label xml:lang="ko">ManagementStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습관리 안정성을 온톨로지로 표현 (Agent 09 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DataGenerationFrequency">
+    <rdfs:label xml:lang="ko">DataGenerationFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 생성 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceRate">
+    <rdfs:label xml:lang="ko">RoutineMaintenanceRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 유지율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PomodoroMissingRate">
+    <rdfs:label xml:lang="ko">PomodoroMissingRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">포모도르 누락률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionFluctuation">
+    <rdfs:label xml:lang="ko">EmotionFluctuation</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정기복</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SystemReliability">
+    <rdfs:label xml:lang="ko">SystemReliability</rdfs:label>
+    <rdfs:comment xml:lang="ko">시스템 신뢰도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ManagementDeclinePattern">
+    <rdfs:label xml:lang="ko">ManagementDeclinePattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 관리력 저하 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RootCauseAnalysis">
+    <rdfs:label xml:lang="ko">RootCauseAnalysis</rdfs:label>
+    <rdfs:comment xml:lang="ko">근본 원인 분석</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RiskSummary">
+    <rdfs:label xml:lang="ko">RiskSummary</rdfs:label>
+    <rdfs:comment xml:lang="ko">리스크 요약</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DataImbalance">
+    <rdfs:label xml:lang="ko">DataImbalance</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 불균형 (개념/문제/복습 간)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineCollapseCycle">
+    <rdfs:label xml:lang="ko">RoutineCollapseCycle</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 붕괴 주기</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AutomationResistance">
+    <rdfs:label xml:lang="ko">AutomationResistance</rdfs:label>
+    <rdfs:comment xml:lang="ko">자동화 저항 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PlanningFeedback">
+    <rdfs:label xml:lang="ko">PlanningFeedback</rdfs:label>
+    <rdfs:comment xml:lang="ko">계획 단계 피드백</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExecutionFeedback">
+    <rdfs:label xml:lang="ko">ExecutionFeedback</rdfs:label>
+    <rdfs:comment xml:lang="ko">실행 단계 피드백</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VerificationFeedback">
+    <rdfs:label xml:lang="ko">VerificationFeedback</rdfs:label>
+    <rdfs:comment xml:lang="ko">검증 단계 피드백</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#BehaviorStrategy">
+    <rdfs:label xml:lang="ko">BehaviorStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">행동전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NotificationMethod">
+    <rdfs:label xml:lang="ko">NotificationMethod</rdfs:label>
+    <rdfs:comment xml:lang="ko">알림 방식</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackPriority">
+    <rdfs:label xml:lang="ko">FeedbackPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 우선순위</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DataConsistency">
+    <rdfs:label xml:lang="ko">DataConsistency</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 일관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineSuccessRate">
+    <rdfs:label xml:lang="ko">RoutineSuccessRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 유지 성공률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackReflectionRate">
+    <rdfs:label xml:lang="ko">FeedbackReflectionRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 반영률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SystemDependency">
+    <rdfs:label xml:lang="ko">SystemDependency</rdfs:label>
+    <rdfs:comment xml:lang="ko">시스템 의존도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#HabitualRoutine">
+    <rdfs:label xml:lang="ko">HabitualRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">습관화 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AutomationInterventionPoints">
+    <rdfs:label xml:lang="ko">AutomationInterventionPoints</rdfs:label>
+    <rdfs:comment xml:lang="ko">자동화 개입 포인트</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StabilityImprovementScenario">
+    <rdfs:label xml:lang="ko">StabilityImprovementScenario</rdfs:label>
+    <rdfs:comment xml:lang="ko">안정성 향상 시나리오</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 09: Learning Management 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningManagementWeakness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DataGenerationFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PomodoroMissingRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionFluctuation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SystemReliability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ManagementDeclinePattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RootCauseAnalysis"/>
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#RiskLevel"/>
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#RiskSummary"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackLoopRedesign">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DataImbalance"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineCollapseCycle"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutomationResistance"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PlanningFeedback"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ExecutionFeedback"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#VerificationFeedback"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BehaviorStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NotificationMethod"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackPriority"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ManagementStability">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DataConsistency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineSuccessRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackReflectionRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SystemDependency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoverySpeed"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HabitualRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutomationInterventionPoints"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StabilityImprovementScenario"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImprovementStages"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

@@ -1,0 +1,620 @@
+# Auto-generated rules.yaml for agent22_module_improvement
+# Generated at: 2025-11-05
+# Updated at: 2025-01-27 (Ontology 매핑 추가)
+# Source: agent22_module_improvement_questions.md → natural request extension
+# Ontology: alphatutor_ontology.owl (Agent 22 관련 클래스 및 Triples 참조)
+# Metadata: metadata.md (데이터 소스 및 Ontology 매핑 상세 정보)
+
+version: "2.0"
+scenario: "module_improvement"
+description: "모듈 개선 에이전트: 개입 실패 분석, 룰 충돌 감지, 성능 최적화, 모니터링 체계 구축"
+last_updated: "2025-01-27"
+improvement: "Ontology 매핑 정보 추가, 데이터 기반 질문 세트와 온톨로지 연계"
+
+# Ontology 매핑 정보
+ontology_mapping:
+  core_ontology: "ModuleImprovement"
+  related_ontologies:
+    - "SystemInefficiencyInstability"
+    - "RuleNetworkOptimization"
+    - "AutoEvolutionStructure"
+    - "VulnerabilityAnalysis"
+    - "SelfUpgradeIdea"
+    - "ThreeFileSystemDocument"
+  data_sources:
+    agent_execution_log: "AgentExecutionLog"
+    rule_activation_frequency: "RuleActivationFrequency"
+    resource_usage: "ResourceUsage"
+    failure_pattern: "FailurePattern"
+    rule_condition_duplication: "RuleConditionDuplication"
+    rule_conflict_possibility: "RuleConflictPossibility"
+    edge_case_missing: "EdgeCaseMissing"
+    data_collection: "DataCollection"
+    vulnerability_diagnosis: "VulnerabilityAnalysis"
+    file_generation: "ThreeFileSystemDocument"
+    ai_review: "AIReview"
+    verification: "Verification"
+    deployment: "Deployment"
+    priority_check_modules: "PriorityCheckModules"
+    response_procedures: "ResponseProcedures"
+    all_agent_execution_data: "AllAgentExecutionData"
+    system_inefficiency: "SystemInefficiencyInstability"
+    system_instability: "SystemInefficiencyInstability"
+    impact_effort_matrix: "ImpactEffortMatrix"
+    improvement_priority_map: "ImprovementPriorityMap"
+    rule_structure_comparison: "RuleStructureComparison"
+    analysis_pattern_comparison: "AnalysisPatternComparison"
+    optimal_improvement_direction: "OptimalImprovementDirection"
+    continuous_performance_improvement: "ContinuousPerformanceImprovement"
+    error_self_recovery: "ErrorSelfRecovery"
+    automated_verification_pipeline: "AutomatedVerificationPipeline"
+    upgrade_loop: "UpgradeLoop"
+    verification_system: "VerificationSystem"
+    long_term_stability: "LongTermStability"
+
+rules:
+  # ========== S1: 개입 실패/오개입 발생 시점 분석 ==========
+  
+  - rule_id: "R1a_intervention_failure_analysis"
+    priority: 95
+    description: "개입 실패 시 모든 로그 분석 및 룰 추적"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "failed"
+      - field: "intervention_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'intervention_logs_comprehensive'"
+      - "generate_description: 'intervention_failure_diagnosis'"
+      - "display_message: '개입 실패 발생. 모든 로그(입력 payload, 실행된 에이전트 ID, 중간 계산값, 출력 결과)를 시간순으로 분석하고, 이전 출력과의 차이를 비교합니다.'"
+      - "trace_rules: true"
+    confidence: 0.92
+    rationale: "개입 실패는 즉시 분석 필요, 룰 추적 필수"
+
+  - rule_id: "R1b_failure_pattern_extraction"
+    priority: 90
+    description: "개입 실패 패턴 공통점 추출 및 룰 수정 제안"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "failed"
+      - field: "failure_count"
+        operator: ">="
+        value: 3
+    action:
+      - "analyze: 'failure_pattern_commonality'"
+      - "extract_patterns: ['input_combination', 'action_length', 'error_state_tags']"
+      - "generate_description: 'failure_pattern_analysis'"
+      - "recommend: 'rule_modification_suggestions'"
+      - "display_message: '실패 패턴의 공통점(입력 조합, 액션 길이, 발생 상태 태그)을 추출하고, 해당 패턴을 만족하는 경우 적용되는 룰을 보수적으로 변경하거나 fallback 규칙 초안 3가지를 제안합니다.'"
+    confidence: 0.89
+    rationale: "반복 실패는 패턴 분석 후 룰 수정 필요"
+
+  - rule_id: "R1c_confidence_anomaly_detection"
+    priority: 88
+    description: "실패 케이스에서 confidence_score 및 intermediate_values 이상 감지"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "failed"
+      - field: "confidence_score"
+        operator: "<"
+        value: 0.6
+    action:
+      - "analyze: 'confidence_anomaly'"
+      - "detect_outliers: ['confidence_score', 'intermediate_values']"
+      - "generate_description: 'confidence_anomaly_report'"
+      - "alert: 'confidence_below_threshold'"
+      - "recommend: 'recommended_confidence_threshold'"
+      - "display_message: '실패 케이스에서 Agent가 요청한 confidence_score와 intermediate_values 중 어떤 값이 이상 범위를 벗어나는지 자동으로 분석하고, 경보 기준(confidence < X)과 권장값을 제안합니다.'"
+    confidence: 0.87
+    rationale: "낮은 confidence는 실패 원인 추적에 중요"
+
+  - rule_id: "R1d_reproduction_test_suite"
+    priority: 85
+    description: "실패 케이스 재현을 위한 최소 입력 세트 및 테스트 스크립트 생성"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "failed"
+      - field: "reproduction_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate: 'minimal_input_set'"
+      - "create: 'test_script_draft'"
+      - "generate_description: 'reproduction_test_plan'"
+      - "display_message: '실패 케이스 재현을 위한 최소 입력 세트(핵심 필드)와 단위 테스트 스크립트 초안을 만들어주세요. 재현 불가능 시 어떤 추가 로그를 남겨야 하는지도 포함해주세요.'"
+    confidence: 0.86
+    rationale: "재현 가능한 테스트는 디버깅 핵심"
+
+  # ========== S2: 룰 충돌/중복 징후 감지 ==========
+  
+  - rule_id: "R2a_rule_conflict_scan"
+    priority: 93
+    description: "전체 rules.yaml 스캔하여 동일 조건 충돌 감지"
+    conditions:
+      - field: "conflict_check_requested"
+        operator: "=="
+        value: true
+      - field: "all_rules_loaded"
+        operator: "=="
+        value: true
+    action:
+      - "scan: 'all_rules_yaml'"
+      - "analyze: 'duplicate_conditions'"
+      - "cluster: 'conflicting_rules'"
+      - "generate_description: 'rule_conflict_report'"
+      - "display_message: '전체 rules.yaml(Agent 01~22)을 스캔하여 동일 조건(또는 매우 유사한 조건)을 사용하는 룰들을 군집화하고, 중복/충돌 위험도를 매겨 상위 10개를 리포팅합니다.'"
+    confidence: 0.91
+    rationale: "룰 충돌은 시스템 안정성에 치명적"
+
+  - rule_id: "R2b_conflict_resolution_strategy"
+    priority: 90
+    description: "충돌 룰 그룹별 출력 비교 및 해결 전략 제안"
+    conditions:
+      - field: "conflicting_rule_groups"
+        operator: "!="
+        value: null
+      - field: "conflict_count"
+        operator: ">"
+        value: 0
+    action:
+      - "compare_outputs: 'conflicting_groups'"
+      - "analyze: 'action_differences'"
+      - "generate_description: 'conflict_resolution_strategy'"
+      - "recommend: 'priority_adjustment'"
+      - "display_message: '군집화된 각 그룹별로 입력 시나리오에 따른 상충 출력(예: 개입 권장 vs 미권장)을 비교 표로 시각화하고, 우선 합리적이며 일관된 전략 2가지를 제시해주세요.'"
+    confidence: 0.88
+    rationale: "충돌 해결은 우선순위 조정 또는 통합 필요"
+
+  - rule_id: "R2c_rule_refactoring_suggestion"
+    priority: 87
+    description: "중복 룰 모듈화 및 공통 라이브러리화 제안"
+    conditions:
+      - field: "duplicate_rules_detected"
+        operator: "=="
+        value: true
+      - field: "duplicate_count"
+        operator: ">="
+        value: 3
+    action:
+      - "analyze: 'rule_commonality'"
+      - "suggest: 'modularization_plan'"
+      - "estimate: 'refactoring_effort'"
+      - "generate_description: 'refactoring_proposal'"
+      - "display_message: '중복으로 추정되는 룰들을 모듈화하여 공통 라이브러리화하는 방안(의존성 지도, 기존 코드 영향, 예상 리팩토링 작업량 추정)을 제시해주세요.'"
+    confidence: 0.85
+    rationale: "중복 제거는 유지보수성 향상 필수"
+
+  # ========== S3: 분석 결과 일관성/재현성 문제 ==========
+  
+  - rule_id: "R3a_output_variance_analysis"
+    priority: 91
+    description: "최근 실행 케이스에서 출력 분산 및 변동성 분석"
+    conditions:
+      - field: "recent_executions"
+        operator: ">="
+        value: 100
+      - field: "output_inconsistency_detected"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'output_variance'"
+      - "calculate: 'variance_by_component'"
+      - "identify: 'variance_source'"
+      - "generate_description: 'variance_analysis_report'"
+      - "display_message: '최근 100건의 동일/유사 입력 케이스에서 출력 분산도를 계산하고, 분산이 큰 부분(우선순위, 조건, 액션)을 찾아보세요.'"
+    confidence: 0.89
+    rationale: "출력 분산은 신뢰성 문제 지표"
+
+  - rule_id: "R3b_explainability_enhancement"
+    priority: 88
+    description: "분석 결과에 explainability 필드 추가 및 마이그레이션 체크리스트 생성"
+    conditions:
+      - field: "analysis_result"
+        operator: "!="
+        value: null
+      - field: "explainability_missing"
+        operator: "=="
+        value: true
+    action:
+      - "add_fields: ['used_rule_ids', 'confidence', 'intermediate_values', 'timestamp']"
+      - "create: 'migration_checklist'"
+      - "generate_description: 'explainability_schema'"
+      - "display_message: '각 분석 결과에 `explainability` 필드를 추가하는 스키마(used_rule_ids, confidence, intermediate_values, timestamp)를 제안하고, 마이그레이션 전략 체크리스트를 생성해주세요.'"
+    confidence: 0.87
+    rationale: "설명 가능성은 디버깅과 신뢰성 향상 필수"
+
+  - rule_id: "R3c_automated_output_comparison"
+    priority: 85
+    description: "출력 불일치 발생 시 자동 비교·검증 시스템 설계"
+    conditions:
+      - field: "output_mismatch_detected"
+        operator: "=="
+        value: true
+      - field: "automation_requested"
+        operator: "=="
+        value: true
+    action:
+      - "design: 'comparison_system'"
+      - "specify: 'comparison_conditions'"
+      - "define: 'logging_range'"
+      - "generate_description: 'automated_comparison_design'"
+      - "display_message: '출력 불일치가 발생할 때 자동으로 비교·검증하는 시스템(조건, 최대 비교 수, 비교 데이터 보존 로그 범위)을 설계해주세요.'"
+    confidence: 0.84
+    rationale: "자동화된 비교는 일관성 검증 핵심"
+
+  # ========== S4: 엣지 커버리지(미처리 케이스) 부족 ==========
+  
+  - rule_id: "R4a_unhandled_cases_aggregation"
+    priority: 92
+    description: "실행 로그에서 예외 케이스 집계 및 미처리 입력 조합 분석"
+    conditions:
+      - field: "execution_logs_available"
+        operator: "=="
+        value: true
+      - field: "unhandled_cases_exist"
+        operator: "=="
+        value: true
+    action:
+      - "aggregate: 'exception_cases'"
+      - "categorize: ['handled', 'unhandled']"
+      - "rank: 'by_frequency_and_severity'"
+      - "generate_description: 'unhandled_cases_report'"
+      - "display_message: '실행 로그에서 예외(handled/unhandled) 케이스를 집계하고, 미처리된 입력 조합을 빈도순·심각도순으로 정렬하여 상위 20개를 보여주세요.'"
+    confidence: 0.90
+    rationale: "미처리 케이스는 시스템 취약점"
+
+  - rule_id: "R4b_fallback_policy_design"
+    priority: 89
+    description: "미처리 케이스에 대한 기본 동작(fallback policy) 3종 제안"
+    conditions:
+      - field: "unhandled_cases"
+        operator: "!="
+        value: null
+      - field: "fallback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "design: 'fallback_policies'"
+      - "evaluate: 'policy_impact'"
+      - "recommend: 'best_fallback_strategy'"
+      - "generate_description: 'fallback_policy_options'"
+      - "display_message: '각 미처리 케이스에 대한 기본 동작(fallback policy) 3종을 제안하고, 각각의 예상 영향(발생 가능성, 개입 차단 리스크)을 분석해주세요.'"
+    confidence: 0.87
+    rationale: "Fallback 정책은 시스템 안정성 보장"
+
+  - rule_id: "R4c_edge_case_testing_framework"
+    priority: 86
+    description: "엣지 케이스를 자동 생성하는 테스트 시나리오 및 CI 통합 방법"
+    conditions:
+      - field: "edge_cases_identified"
+        operator: "=="
+        value: true
+      - field: "test_framework_needed"
+        operator: "=="
+        value: true
+    action:
+      - "create: 'test_scenarios'"
+      - "define: 'input_variations'"
+      - "integrate: 'ci_pipeline'"
+      - "generate_description: 'edge_case_testing_plan'"
+      - "display_message: '엣지 케이스를 자동 생성하는 테스트 시나리오(입력 변수, 규칙 포함)와 단위 CI에 통합하는 방법을 단계별로 생성해주세요.'"
+    confidence: 0.85
+    rationale: "자동화된 엣지 케이스 테스트는 품질 보장"
+
+  # ========== S5: 에이전트 키 불일치로 인한 오류 ==========
+  
+  - rule_id: "R5a_field_name_comparison"
+    priority: 94
+    description: "현재 에이전트들이 사용하는 주요 필드 목록 자동 수집 및 비교"
+    conditions:
+      - field: "field_mismatch_detected"
+        operator: "=="
+        value: true
+      - field: "all_agents_loaded"
+        operator: "=="
+        value: true
+    action:
+      - "collect: 'field_definitions'"
+      - "compare: 'field_names_across_agents'"
+      - "create: 'comparison_table'"
+      - "generate_description: 'field_mismatch_report'"
+      - "display_message: '현재 에이전트들이 사용하는 주요 필드 목록(필드명·타입·nullable 여부)을 자동으로 수집하여 비교 테이블을 만들어주세요. 불일치 필드와 발생 빈도를 표시해주세요.'"
+    confidence: 0.92
+    rationale: "필드 불일치는 시스템 오류의 주요 원인"
+
+  - rule_id: "R5b_field_schema_versioning"
+    priority: 91
+    description: "권장 필드 스키마(v1) 및 버전 관리 전략 제안"
+    conditions:
+      - field: "schema_versioning_needed"
+        operator: "=="
+        value: true
+      - field: "field_conflicts"
+        operator: ">"
+        value: 0
+    action:
+      - "design: 'field_schema_v1'"
+      - "define: 'version_migration_rules'"
+      - "create: 'migration_utility_code'"
+      - "generate_description: 'schema_versioning_strategy'"
+      - "display_message: '권장 표준 필드 스키마(v1)와 버전 관리 전략(버전별 마이그레이션 규칙, 변경 시 이전 호환성)을 제안하고, 변환 유틸 코드(pseudocode로 제공)를 공유해주세요.'"
+    confidence: 0.89
+    rationale: "표준 스키마는 장기 유지보수 필수"
+
+  - rule_id: "R5c_field_mismatch_alert_system"
+    priority: 88
+    description: "필드 불일치 발생 시 자동 알림/대응 체계 설계"
+    conditions:
+      - field: "field_mismatch_detected"
+        operator: "=="
+        value: true
+      - field: "alert_system_needed"
+        operator: "=="
+        value: true
+    action:
+      - "design: 'alert_system'"
+      - "define: 'alert_channels'"
+      - "specify: 'alert_format'"
+      - "generate_description: 'field_mismatch_alert_design'"
+      - "display_message: '필드 불일치 발생 시 자동 알림/대응 체계(누가, 어떤 채널로, 어떤 포맷으로 알림)를 설계해주세요.'"
+    confidence: 0.86
+    rationale: "자동 알림은 문제 조기 발견 필수"
+
+  # ========== S6: 성능(지연/리소스) 문제 ==========
+  
+  - rule_id: "R6a_performance_metrics_analysis"
+    priority: 93
+    description: "에이전트별 평균 실행시간·체크 실행시간·메모리 사용량 분석"
+    conditions:
+      - field: "performance_metrics_available"
+        operator: "=="
+        value: true
+      - field: "recent_7days_data"
+        operator: "=="
+        value: true
+    action:
+      - "calculate: 'average_execution_time'"
+      - "calculate: 'check_execution_time'"
+      - "calculate: 'memory_usage'"
+      - "rank: 'top_10_slow_agents'"
+      - "identify: 'bottleneck_segments'"
+      - "generate_description: 'performance_analysis_report'"
+      - "display_message: '에이전트별 평균 실행시간·체크 실행시간·메모리 사용량을 최근 7일간 기준으로 계산하고, 상위 10개의 느린 에이전트 로그를 제공하고, 병목 구간(시간대·에이전트)을 구별해주세요.'"
+    confidence: 0.91
+    rationale: "성능 분석은 최적화 기반"
+
+  - rule_id: "R6b_optimization_recommendations"
+    priority: 90
+    description: "병렬화·캐싱·룰 실행 순서 최적화 제안"
+    conditions:
+      - field: "optimization_possible"
+        operator: "=="
+        value: true
+      - field: "bottlenecks_identified"
+        operator: "=="
+        value: true
+    action:
+      - "evaluate: 'parallelization_impact'"
+      - "evaluate: 'caching_impact'"
+      - "evaluate: 'rule_order_optimization'"
+      - "recommend: 'top_3_optimizations'"
+      - "generate_description: 'optimization_proposal'"
+      - "display_message: '병렬화·캐싱·룰 실행 순서 최적화를 적용한 경우 예상 성능 향상(처리량, 추정)을 시나리오별로 제시하고, 우선 적용할 최적화 3가지를 권고해주세요.'"
+    confidence: 0.88
+    rationale: "최적화는 사용자 경험 향상"
+
+  - rule_id: "R6c_resource_overflow_mitigation"
+    priority: 87
+    description: "리소스 초과 시 즉시 경감(자동 대응책) 및 긴급모드 전환 계획"
+    conditions:
+      - field: "resource_usage"
+        operator: ">"
+        value: 0.9
+      - field: "overflow_detected"
+        operator: "=="
+        value: true
+    action:
+      - "activate: 'emergency_mode'"
+      - "deactivate: 'non_critical_features'"
+      - "generate_description: 'resource_overflow_response_plan'"
+      - "display_message: '리소스 초과 시 즉시 경감(자동 대응책) 및 긴급모드(예: 비핵심 기능 비활성화) 전환 계획을 생성해주세요.'"
+    confidence: 0.85
+    rationale: "리소스 초과는 시스템 안정성 위협"
+
+  # ========== S7: 모니터링/알림 체계 부족 ==========
+  
+  - rule_id: "R7a_alert_system_gap_analysis"
+    priority: 92
+    description: "현재 존재하는 알림 분석 및 빈틈 찾기"
+    conditions:
+      - field: "current_alerts_analyzed"
+        operator: "=="
+        value: true
+      - field: "gaps_identified"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'current_alert_system'"
+      - "identify: 'alert_gaps'"
+      - "recommend: 'improved_alert_set'"
+      - "generate_description: 'alert_gap_analysis'"
+      - "display_message: '현재 존재하는 알림(조건·알림신호·우선순위)을 분석하여 빈틈(예: 룰 충돌, confidence 급락 미포함)을 찾아 리포팅하고, 개선된 알림 세트를 제안해주세요.'"
+    confidence: 0.90
+    rationale: "완전한 알림 체계는 안정성 보장"
+
+  - rule_id: "R7b_alert_response_playbook"
+    priority: 89
+    description: "알림 우선순위에 따른 대응 플레이북 생성"
+    conditions:
+      - field: "alert_playbook_needed"
+        operator: "=="
+        value: true
+      - field: "alert_categories"
+        operator: "!="
+        value: null
+    action:
+      - "create: 'alert_response_playbook'"
+      - "categorize: ['urgent', 'medium', 'low']"
+      - "define: 'initial_response_actions'"
+      - "generate_description: 'alert_playbook'"
+      - "display_message: '알림 우선순위에 따른 대응 플레이북(긴급·중간·낮은 우선순위 각각에 해당하는 권장 초기조치)을 만들어주세요.'"
+    confidence: 0.87
+    rationale: "플레이북은 일관된 대응 보장"
+
+  - rule_id: "R7c_alert_deduplication_system"
+    priority: 86
+    description: "알림 과다 발생을 줄이기 위한 집계·중복 제거 로직 설계"
+    conditions:
+      - field: "alert_spam_detected"
+        operator: "=="
+        value: true
+      - field: "deduplication_needed"
+        operator: "=="
+        value: true
+    action:
+      - "design: 'alert_deduplication_logic'"
+      - "group: 'similar_alerts'"
+      - "suppress: 'repeated_alerts'"
+      - "generate_description: 'alert_deduplication_design'"
+      - "display_message: '알림 과다 발생을 줄이기 위한 집계·중복 제거 로직(예: 같은 문제군의 반복 알림 억제/약화)을 설계해주세요.'"
+    confidence: 0.84
+    rationale: "중복 알림 제거는 노이즈 감소"
+
+  # ========== S8: 자동 개선이 3-File 문서로 코드 변경 검증 필요 ==========
+  
+  - rule_id: "R8a_three_file_template_generation"
+    priority: 95
+    description: "3-File 템플릿(Problem Definition, Improvement Design, Execution Plan) 자동 생성"
+    conditions:
+      - field: "code_change_proposed"
+        operator: "=="
+        value: true
+      - field: "three_file_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate: 'problem_definition'"
+      - "generate: 'improvement_design'"
+      - "generate: 'execution_plan'"
+      - "create: 'checklist_template'"
+      - "include: ['diff_review', 'test_cases']"
+      - "generate_description: 'three_file_document'"
+      - "display_message: '3-File 템플릿(Problem Definition, Improvement Design, Execution Plan) 초안을 자동으로 생성해주세요. 최소 포함해야 할 체크리스트를 제공하고, 각 섹션에 코드 변경(diff), 테스트 케이스를 채워주세요.'"
+    confidence: 0.93
+    rationale: "3-File 문서는 코드 변경 검증 필수"
+
+  - rule_id: "R8b_change_verification_checklist"
+    priority: 92
+    description: "자동 개선 시나리오별 검증 규칙 및 롤백·검증 체크리스트 생성"
+    conditions:
+      - field: "automated_improvement_active"
+        operator: "=="
+        value: true
+      - field: "verification_needed"
+        operator: "=="
+        value: true
+    action:
+      - "create: 'verification_checklist'"
+      - "define: 'rollback_procedures'"
+      - "specify: 'test_criteria'"
+      - "generate_description: 'verification_procedures'"
+      - "display_message: '자동 개선 시나리오별 검증 규칙(스키마 변경 vs 키 처리 변경 테스트·롤백 차원·검증 체크리스트)을 구로 구분해주세요.'"
+    confidence: 0.90
+    rationale: "검증 체크리스트는 안전한 배포 필수"
+
+  - rule_id: "R8c_quick_review_template"
+    priority: 88
+    description: "개발자의 빠른 검토를 위한 간략 섹션 및 자동 생성 스크립트 제시"
+    conditions:
+      - field: "quick_review_needed"
+        operator: "=="
+        value: true
+      - field: "change_summary"
+        operator: "!="
+        value: null
+    action:
+      - "create: 'quick_review_template'"
+      - "highlight: 'core_changes'"
+      - "estimate: 'impact_scope'"
+      - "include: 'test_conditions'"
+      - "generate: 'auto_generation_script'"
+      - "generate_description: 'quick_review_guide'"
+      - "display_message: '개발자의 빠른 검토를 위한 간략 섹션(핵심 변경점, 예상 영향, 테스트 케이스 및 결과 조건)을 생성하는 템플릿과 자동 생성 스크립트 예시를 만들어주세요.'"
+    confidence: 0.86
+    rationale: "빠른 검토 템플릿은 개발 효율성 향상"
+
+  # ========== 복합 시나리오 룰 ==========
+  
+  - rule_id: "R9a_critical_failure_response"
+    priority: 96
+    description: "치명적 실패 발생 시 종합 대응 (로그 분석 + 알림 + 롤백)"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "critical_failure"
+      - field: "impact_level"
+        operator: "=="
+        value: "high"
+    action:
+      - "analyze: 'comprehensive_logs'"
+      - "trace_rules: true"
+      - "alert: 'critical_failure'"
+      - "activate: 'emergency_mode'"
+      - "prepare: 'rollback_plan'"
+      - "generate_description: 'critical_failure_response'"
+      - "display_message: '치명적 실패 발생. 즉시 모든 로그 분석, 룰 추적, 긴급 알림, 롤백 계획 수립을 실행합니다.'"
+    confidence: 0.95
+    rationale: "치명적 실패는 즉시 종합 대응 필요"
+
+  - rule_id: "R9b_performance_degradation_detection"
+    priority: 91
+    description: "성능 저하 감지 시 자동 분석 및 최적화 제안"
+    conditions:
+      - field: "performance_degradation_detected"
+        operator: "=="
+        value: true
+      - field: "degradation_percentage"
+        operator: ">"
+        value: 20
+    action:
+      - "analyze: 'performance_metrics'"
+      - "identify: 'bottlenecks'"
+      - "recommend: 'optimizations'"
+      - "alert: 'performance_degradation'"
+      - "generate_description: 'performance_degradation_report'"
+      - "display_message: '성능 저하 감지. 자동으로 메트릭 분석, 병목 지점 식별, 최적화 제안, 알림을 수행합니다.'"
+    confidence: 0.89
+    rationale: "성능 저하는 사용자 경험에 직접 영향"
+
+  - rule_id: "R9c_rule_health_monitoring"
+    priority: 87
+    description: "룰 건강도 모니터링 및 자동 개선 제안"
+    conditions:
+      - field: "rule_health_check"
+        operator: "=="
+        value: true
+      - field: "monitoring_period"
+        operator: ">="
+        value: 7
+    action:
+      - "monitor: 'rule_execution_stats'"
+      - "analyze: 'rule_effectiveness'"
+      - "detect: 'unused_rules'"
+      - "suggest: 'rule_improvements'"
+      - "generate_description: 'rule_health_report'"
+      - "display_message: '룰 건강도 모니터링. 실행 통계 분석, 효과성 평가, 미사용 룰 감지, 개선 제안을 자동 수행합니다.'"
+    confidence: 0.85
+    rationale: "정기적인 룰 건강도 체크는 시스템 품질 유지"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '모듈 개선 분석을 진행 중입니다. 구체적인 요청을 제공해주시면 더 정확한 분석을 수행할 수 있습니다.'"
+  confidence: 0.5
+  rationale: "기본 분석 루틴 적용"

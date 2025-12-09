@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/confidence_booster/db" VERSION="20240115" COMMENT="Confidence Booster plugin for personalized learning support">
+  <TABLES>
+    <!-- 개념 요약 저장 테이블 -->
+    <TABLE NAME="confidence_notes" COMMENT="Stores student concept summaries">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="User ID from mdl_user"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Course ID if applicable"/>
+        <FIELD NAME="chapter" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Chapter or section name"/>
+        <FIELD NAME="concept_title" TYPE="char" LENGTH="500" NOTNULL="true" SEQUENCE="false" COMMENT="Title of the concept"/>
+        <FIELD NAME="summary_text" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Student's summary text"/>
+        <FIELD NAME="ai_feedback" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="AI-generated feedback"/>
+        <FIELD NAME="quality_score" TYPE="number" LENGTH="3" DECIMALS="2" NOTNULL="false" SEQUENCE="false" COMMENT="Quality score 0-5"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_timecreated" UNIQUE="false" FIELDS="userid,timecreated"/>
+        <INDEX NAME="chapter_idx" UNIQUE="false" FIELDS="chapter"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- 오답 분류 로그 테이블 -->
+    <TABLE NAME="confidence_errors" COMMENT="Error classification and tracking">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Question or problem ID"/>
+        <FIELD NAME="error_type" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="concept/calculation/mistake/application"/>
+        <FIELD NAME="error_memo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Student's notes about the error"/>
+        <FIELD NAME="difficulty_level" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="easy/medium/hard"/>
+        <FIELD NAME="resolved" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether error has been resolved"/>
+        <FIELD NAME="retry_count" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of retry attempts"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_errortype" UNIQUE="false" FIELDS="userid,error_type"/>
+        <INDEX NAME="resolved_idx" UNIQUE="false" FIELDS="resolved"/>
+        <INDEX NAME="questionid_idx" UNIQUE="false" FIELDS="questionid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- 도전 퀘스트 테이블 -->
+    <TABLE NAME="confidence_challenges" COMMENT="Weekly challenge quests">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="week_number" TYPE="int" LENGTH="3" NOTNULL="true" SEQUENCE="false" COMMENT="Week number of the year"/>
+        <FIELD NAME="year" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="Year"/>
+        <FIELD NAME="challenge_level" TYPE="char" LENGTH="20" NOTNULL="false" DEFAULT="medium" SEQUENCE="false" COMMENT="medium/hard/extreme"/>
+        <FIELD NAME="questions_json" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON array of question IDs"/>
+        <FIELD NAME="attempted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="success_rate" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="false" SEQUENCE="false" COMMENT="Percentage success rate"/>
+        <FIELD NAME="completion_time" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time taken in seconds"/>
+        <FIELD NAME="badge_earned" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="Badge identifier if earned"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_week_year" UNIQUE="true" FIELDS="userid,week_number,year"/>
+        <INDEX NAME="attempted_idx" UNIQUE="false" FIELDS="attempted"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- 자신감 지수 메트릭 테이블 -->
+    <TABLE NAME="confidence_metrics" COMMENT="Daily confidence and performance metrics">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="metric_date" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Date in YYYY-MM-DD format"/>
+        <FIELD NAME="self_confidence" TYPE="int" LENGTH="3" NOTNULL="false" SEQUENCE="false" COMMENT="Self-rated confidence 0-100"/>
+        <FIELD NAME="actual_performance" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="false" SEQUENCE="false" COMMENT="Actual performance percentage"/>
+        <FIELD NAME="summary_count" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of summaries created"/>
+        <FIELD NAME="error_classified_count" TYPE="int" LENGTH="5" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of errors classified"/>
+        <FIELD NAME="challenge_attempted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_date" UNIQUE="true" FIELDS="userid,metric_date"/>
+        <INDEX NAME="metric_date_idx" UNIQUE="false" FIELDS="metric_date"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- 교사 피드백 테이블 -->
+    <TABLE NAME="confidence_feedback" COMMENT="Teacher feedback on student summaries and progress">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Student user ID"/>
+        <FIELD NAME="teacherid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Teacher user ID"/>
+        <FIELD NAME="target_type" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="summary/error/challenge"/>
+        <FIELD NAME="target_id" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the target item"/>
+        <FIELD NAME="feedback_text" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Teacher's feedback"/>
+        <FIELD NAME="resources_json" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON array of additional resource URLs"/>
+        <FIELD NAME="is_read" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether student has read the feedback"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="studentid" TYPE="foreign" FIELDS="studentid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="teacherid" TYPE="foreign" FIELDS="teacherid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="studentid_isread" UNIQUE="false" FIELDS="studentid,is_read"/>
+        <INDEX NAME="target_type_id" UNIQUE="false" FIELDS="target_type,target_id"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

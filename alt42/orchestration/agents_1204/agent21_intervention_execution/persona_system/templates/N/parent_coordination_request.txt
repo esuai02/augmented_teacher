@@ -1,0 +1,22 @@
+[CONTEXT_INTRO]
+
+{{student_name}} 학생의 학습 참여에 대해 말씀드리고 싶습니다.
+
+[SITUATION_SUMMARY]
+
+최근 {{days_inactive}}일 동안 학습 활동에 참여가 없었습니다.
+마지막 활동: {{last_activity_date}}
+
+[CONCERN_EXPRESSION]
+
+학생이 어려움을 겪고 있거나 특별한 상황이 있는지 걱정이 됩니다.
+
+[COLLABORATION_REQUEST]
+
+혹시 가정에서 특이사항이 있으시거나,
+학생에게 어떤 변화가 있었는지 알 수 있을까요?
+
+[SUPPORT_OFFER]
+
+함께 {{student_name}} 학생을 도울 방법을 찾고 싶습니다.
+편하신 시간에 연락 주시면 감사하겠습니다.

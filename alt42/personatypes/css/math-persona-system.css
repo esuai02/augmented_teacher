@@ -1,0 +1,759 @@
+/**
+ * 수학 페르소나 시스템 스타일
+ * 인지관성 카드 팝업 및 연습 모달
+ */
+
+/* 수학 인지관성 도감 오버레이 */
+.math-persona-library-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 14, 39, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.math-persona-library-overlay.show {
+    opacity: 1;
+}
+
+/* 도감 컨테이너 */
+.math-persona-library-container {
+    width: 95%;
+    max-width: 1400px;
+    height: 90vh;
+    background: linear-gradient(135deg, #1a1e3a 0%, #0a0e27 100%);
+    border-radius: 20px;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.5s ease-out;
+}
+
+/* 도감 헤더 */
+.math-persona-library-container .library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    background: rgba(102, 126, 234, 0.1);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+    position: relative;
+}
+
+.math-persona-library-container .library-header h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.8rem;
+}
+
+.library-subtitle {
+    color: #9ca3af;
+    font-size: 0.95rem;
+    margin: 5px 0 0 0;
+}
+
+.close-library-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-library-btn:hover {
+    background: rgba(239, 68, 68, 0.4);
+    transform: rotate(90deg);
+}
+
+/* 도감 탭 */
+.library-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 15px 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+    overflow-x: auto;
+}
+
+.library-tabs .tab-btn {
+    padding: 10px 20px;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #9ca3af;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.library-tabs .tab-btn:hover {
+    background: rgba(102, 126, 234, 0.2);
+    color: #fff;
+}
+
+.library-tabs .tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: transparent;
+}
+
+/* 도감 콘텐츠 */
+.library-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 30px;
+}
+
+/* 카드 그리드 */
+.math-persona-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* 개별 카드 */
+.math-persona-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--group-color, #667eea);
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.math-persona-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.math-persona-card.locked {
+    opacity: 0.6;
+    border-color: #4b5563;
+}
+
+.math-persona-card.locked:hover {
+    transform: none;
+    box-shadow: none;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.math-persona-card .card-number {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: #6b7280;
+    font-size: 0.75rem;
+}
+
+.math-persona-card .card-content {
+    flex: 1;
+}
+
+.math-persona-card .card-name {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.math-persona-card .card-english {
+    color: #9ca3af;
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+}
+
+.math-persona-card .card-group {
+    color: #64b5f6;
+    font-size: 0.8rem;
+}
+
+.math-persona-card .card-math-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    opacity: 0.3;
+}
+
+.math-persona-card .lock-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+/* 도감 푸터 */
+.library-footer {
+    padding: 20px 30px;
+    background: rgba(102, 126, 234, 0.1);
+    border-top: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.collection-progress {
+    text-align: center;
+    color: #fff;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 5px;
+    transition: width 0.5s ease;
+}
+
+/* 스크롤바 */
+.library-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.library-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.library-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+}
+
+.library-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}
+
+/* 카드 상세 팝업 */
+.math-persona-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10002;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.math-persona-popup.show {
+    opacity: 1;
+}
+
+/* 우선순위 배지 */
+.priority-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* 진행 상황 섹션 */
+.progress-section {
+    padding: 15px 30px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.progress-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #9ca3af;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* 숙달도 표시 */
+.mastery-indicator {
+    font-size: 0.75rem;
+    color: #fbbf24;
+    margin-top: 5px;
+}
+
+/* 오디오 플레이어 커스텀 */
+.audio-player {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.audio-player audio {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* 연습 횟수 표시 */
+.practice-count {
+    color: #10b981;
+    font-size: 0.9rem;
+}
+
+.popup-container {
+    background: linear-gradient(135deg, #1a1e3a 0%, #0a0e27 100%);
+    border-radius: 20px;
+    max-width: 700px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    animation: popupSlideIn 0.3s ease-out;
+}
+
+@keyframes popupSlideIn {
+    from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.close-popup {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.close-popup:hover {
+    background: rgba(239, 68, 68, 0.4);
+    transform: rotate(90deg);
+}
+
+/* 팝업 헤더 */
+.popup-header {
+    padding: 30px;
+    border-radius: 20px 20px 0 0;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.popup-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.popup-number {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.popup-group {
+    font-size: 1.1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 팝업 콘텐츠 */
+.popup-content {
+    padding: 30px;
+    color: #e5e7eb;
+}
+
+.popup-title {
+    font-size: 2rem;
+    color: #fff;
+    margin: 0 0 10px 0;
+    font-weight: bold;
+}
+
+.popup-english {
+    font-size: 1rem;
+    color: #9ca3af;
+    font-style: italic;
+    margin-bottom: 30px;
+}
+
+.popup-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-section h3 {
+    color: #64b5f6;
+    margin: 0 0 15px 0;
+    font-size: 1.2rem;
+}
+
+.popup-section p {
+    line-height: 1.6;
+    margin: 0;
+}
+
+.math-example {
+    background: rgba(102, 126, 234, 0.1);
+    padding: 15px;
+    border-left: 3px solid #667eea;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.overcome-tip {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 15px;
+    border-left: 3px solid #10b981;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+/* 음성 섹션 */
+.audio-section {
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.play-audio-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.play-audio-btn:hover {
+    background: #5a67d8;
+}
+
+.play-audio-btn:active {
+    background: #4c51bf;
+}
+
+.audio-status {
+    font-size: 0.9rem;
+}
+
+.audio-loading {
+    color: #fbbf24;
+}
+
+.audio-playing {
+    color: #10b981;
+    font-weight: 500;
+}
+
+/* 연습 섹션 */
+.practice-section {
+    background: rgba(245, 158, 11, 0.05);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.practice-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.practice-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* 팝업 푸터 */
+.popup-footer {
+    padding: 20px 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.collection-status {
+    font-size: 1rem;
+}
+
+.collected {
+    color: #10b981;
+}
+
+.not-collected {
+    color: #6b7280;
+}
+
+.mastery-level {
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+/* 연습 모달 */
+.practice-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10003;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.practice-modal.show {
+    opacity: 1;
+}
+
+.practice-container {
+    background: linear-gradient(135deg, #1a1e3a 0%, #0a0e27 100%);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.close-practice {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-practice:hover {
+    background: rgba(239, 68, 68, 0.4);
+    transform: rotate(90deg);
+}
+
+.practice-container h2 {
+    color: #fff;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+.practice-problem {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.practice-problem h3 {
+    color: #64b5f6;
+    margin-bottom: 15px;
+}
+
+.problem-text {
+    color: #e5e7eb;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.practice-hint {
+    background: rgba(16, 185, 129, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.practice-hint h3 {
+    color: #10b981;
+    margin-bottom: 10px;
+}
+
+.practice-input {
+    margin-top: 20px;
+}
+
+.practice-input textarea {
+    width: 100%;
+    min-height: 150px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    color: #fff;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.practice-input textarea::placeholder {
+    color: #6b7280;
+}
+
+.practice-input button {
+    margin-top: 15px;
+    width: 100%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.practice-input button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* 스크롤바 스타일 */
+.popup-container::-webkit-scrollbar,
+.practice-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popup-container::-webkit-scrollbar-track,
+.practice-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.popup-container::-webkit-scrollbar-thumb,
+.practice-container::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+}
+
+.popup-container::-webkit-scrollbar-thumb:hover,
+.practice-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .popup-container,
+    .practice-container {
+        width: 95%;
+        max-height: 90vh;
+        padding: 20px;
+    }
+    
+    .popup-title {
+        font-size: 1.5rem;
+    }
+    
+    .popup-section {
+        padding: 15px;
+    }
+    
+    .audio-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .play-audio-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

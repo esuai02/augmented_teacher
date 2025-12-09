@@ -1,0 +1,1021 @@
+# Persona-based Rules for Agent 09 - Learning Management
+# Version: 1.0
+# Purpose: 학습관리 5지표 기반 페르소나 식별 및 맞춤형 개입 전략
+# Reference: personas.md, Agent09PersonaEngine.php, Agent09DataContext.php
+
+version: "1.0"
+scenario: "learning_management_persona"
+description: "학습 데이터 패턴 기반 페르소나 자동 식별 및 맞춤형 응답 생성"
+
+# ============================================================
+# SECTION 1: 데이터 기반 페르소나 자동 식별 룰
+# ============================================================
+
+persona_identification_rules:
+
+  # === P-Series: 패턴 유형 기반 식별 ===
+
+  - rule_id: "PI_P001_data_sparse"
+    priority: 98
+    description: "활동데이터 희박형(P-SPARSE) 식별"
+    conditions:
+      - field: "data_density_score"
+        operator: "<"
+        value: 0.3
+      - OR:
+        - field: "attendance_rate_30d"
+          operator: "<"
+          value: 0.5
+        - field: "pomodoro_count_30d"
+          operator: "<"
+          value: 5
+        - field: "goal_count_active"
+          operator: "<"
+          value: 1
+    action:
+      - "identify_persona: 'P-SPARSE'"
+      - "set_intervention_priority: 'high'"
+      - "set_strategy: 'data_collection_first'"
+      - "recommend: 'survey_based_assessment'"
+    confidence: 0.92
+    rationale: "데이터 희박은 시스템 미사용 또는 이탈 위험 신호"
+
+  - rule_id: "PI_P002_data_imbalanced"
+    priority: 96
+    description: "데이터 불균형형(P-IMBALANCED) 식별"
+    conditions:
+      - AND:
+        - field: "data_density_score"
+          operator: ">="
+          value: 0.3
+        - field: "data_balance_score"
+          operator: "<"
+          value: 0.5
+      - OR:
+        - field: "attendance_ratio"
+          operator: ">"
+          value: 0.7
+          note: "출결만 높음"
+        - field: "pomodoro_only_ratio"
+          operator: ">"
+          value: 0.7
+          note: "포모도로만 활성"
+    action:
+      - "identify_persona: 'P-IMBALANCED'"
+      - "set_strategy: 'balanced_engagement'"
+      - "recommend: 'underused_feature_activation'"
+    confidence: 0.88
+    rationale: "불균형 데이터는 학습 패턴의 편향을 의미"
+
+  - rule_id: "PI_P003_pattern_unstable"
+    priority: 94
+    description: "패턴불안정형(P-UNSTABLE) 식별"
+    conditions:
+      - field: "pattern_stability_score"
+        operator: "<"
+        value: 0.5
+      - OR:
+        - field: "attendance_variance"
+          operator: ">"
+          value: 0.4
+        - field: "study_time_variance"
+          operator: ">"
+          value: 0.5
+        - field: "goal_completion_variance"
+          operator: ">"
+          value: 0.4
+    action:
+      - "identify_persona: 'P-UNSTABLE'"
+      - "set_strategy: 'routine_stabilization'"
+      - "recommend: 'gradual_habit_formation'"
+    confidence: 0.85
+    rationale: "패턴 불안정은 습관 미형성 또는 외부 요인 영향"
+
+  - rule_id: "PI_P004_automation_resistant"
+    priority: 92
+    description: "자동화 저항형(P-RESISTANT) 식별"
+    conditions:
+      - field: "automation_acceptance_score"
+        operator: "<"
+        value: 0.4
+      - OR:
+        - field: "ignores_recommendations"
+          operator: ">="
+          value: 3
+        - field: "manual_override_count"
+          operator: ">="
+          value: 5
+        - field: "notification_dismiss_rate"
+          operator: ">"
+          value: 0.7
+    action:
+      - "identify_persona: 'P-RESISTANT'"
+      - "set_strategy: 'minimal_intervention'"
+      - "set_communication_style: 'passive'"
+      - "recommend: 'respect_autonomy'"
+    confidence: 0.82
+    rationale: "자동화 저항은 자율성 선호 또는 시스템 불신 신호"
+
+  - rule_id: "PI_P005_dropout_risk"
+    priority: 99
+    description: "퇴원위험형(P-DROPOUT) 식별 - 최우선 감지"
+    conditions:
+      - field: "dropout_risk_score"
+        operator: ">="
+        value: 0.6
+      - OR:
+        - field: "consecutive_absent_days"
+          operator: ">="
+          value: 7
+        - field: "activity_decline_rate"
+          operator: ">"
+          value: 0.5
+        - field: "last_activity_days_ago"
+          operator: ">="
+          value: 14
+    action:
+      - "identify_persona: 'P-DROPOUT'"
+      - "set_intervention_priority: 'critical'"
+      - "trigger: 'dropout_warning_protocol'"
+      - "notify: 'teacher'"
+    confidence: 0.95
+    rationale: "이탈 위험은 즉각적 개입이 필요한 위기 상황"
+
+  - rule_id: "PI_P006_high_achiever"
+    priority: 88
+    description: "고성취 지속형(P-ACHIEVER) 식별"
+    conditions:
+      - AND:
+        - field: "data_density_score"
+          operator: ">="
+          value: 0.7
+        - field: "pattern_stability_score"
+          operator: ">="
+          value: 0.7
+        - field: "goal_achievement_rate"
+          operator: ">="
+          value: 0.8
+      - OR:
+        - field: "test_score_trend"
+          operator: "=="
+          value: "improving"
+        - field: "consistency_score"
+          operator: ">="
+          value: 0.8
+    action:
+      - "identify_persona: 'P-ACHIEVER'"
+      - "set_strategy: 'challenge_enhancement'"
+      - "recommend: 'advanced_goal_setting'"
+    confidence: 0.90
+    rationale: "고성취 패턴은 도전적 목표 설정으로 성장 유도"
+
+  # === D-Series: 이탈 위험도별 식별 ===
+
+  - rule_id: "PI_D001_warning_level"
+    priority: 97
+    description: "이탈위험-주의(D-WARNING) 식별"
+    conditions:
+      - field: "dropout_risk_score"
+        operator: "between"
+        value: [0.3, 0.5]
+      - OR:
+        - field: "attendance_decline_2weeks"
+          operator: ">"
+          value: 0.2
+        - field: "pomodoro_decline_2weeks"
+          operator: ">"
+          value: 0.3
+        - field: "missed_goal_deadlines"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'D-WARNING'"
+      - "set_warning_level: 1"
+      - "send_message: 'encouragement'"
+      - "recommend: 'light_intervention'"
+    confidence: 0.85
+    rationale: "주의 단계는 격려 메시지로 예방적 개입"
+
+  - rule_id: "PI_D002_alert_level"
+    priority: 98
+    description: "이탈위험-경고(D-ALERT) 식별"
+    conditions:
+      - field: "dropout_risk_score"
+        operator: "between"
+        value: [0.5, 0.7]
+      - OR:
+        - field: "consecutive_absent_days"
+          operator: ">="
+          value: 5
+        - field: "no_pomodoro_days"
+          operator: ">="
+          value: 7
+        - field: "all_goals_inactive"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'D-ALERT'"
+      - "set_warning_level: 2"
+      - "recommend: 'individual_consultation'"
+      - "notify: 'teacher'"
+    confidence: 0.90
+    rationale: "경고 단계는 개별 상담 권장"
+
+  - rule_id: "PI_D003_critical_level"
+    priority: 100
+    description: "이탈위험-긴급(D-CRITICAL) 식별 - 최고 우선순위"
+    conditions:
+      - field: "dropout_risk_score"
+        operator: ">="
+        value: 0.7
+      - OR:
+        - field: "consecutive_absent_days"
+          operator: ">="
+          value: 10
+        - field: "no_activity_days"
+          operator: ">="
+          value: 14
+        - field: "explicit_quit_signal"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'D-CRITICAL'"
+      - "set_warning_level: 3"
+      - "trigger: 'urgent_intervention'"
+      - "notify: 'teacher'"
+      - "escalate: 'management'"
+      - "design: 'reentry_path'"
+    confidence: 0.98
+    rationale: "긴급 단계는 즉각적 개입과 재진입 경로 설계 필요"
+
+  # === A-Series: 출결 패턴 기반 식별 ===
+
+  - rule_id: "PI_A001_attendance_declining"
+    priority: 90
+    description: "출결 하락형(A-DECLINING) 식별"
+    conditions:
+      - field: "attendance_trend"
+        operator: "=="
+        value: "declining"
+      - field: "attendance_decline_rate"
+        operator: ">"
+        value: 0.15
+    action:
+      - "identify_persona: 'A-DECLINING'"
+      - "analyze: 'decline_cause'"
+      - "recommend: 'attendance_recovery_plan'"
+    confidence: 0.85
+    rationale: "출결 하락은 동기 저하 또는 환경 변화의 신호"
+
+  - rule_id: "PI_A002_attendance_irregular"
+    priority: 88
+    description: "출결 불규칙형(A-IRREGULAR) 식별"
+    conditions:
+      - field: "attendance_pattern"
+        operator: "=="
+        value: "irregular"
+      - field: "attendance_variance"
+        operator: ">"
+        value: 0.3
+    action:
+      - "identify_persona: 'A-IRREGULAR'"
+      - "analyze: 'irregular_pattern'"
+      - "recommend: 'schedule_optimization'"
+    confidence: 0.82
+    rationale: "불규칙 출결은 일정 관리 어려움 또는 우선순위 문제"
+
+  # === G-Series: 목표 패턴 기반 식별 ===
+
+  - rule_id: "PI_G001_goal_avoidant"
+    priority: 89
+    description: "목표 회피형(G-AVOIDANT) 식별"
+    conditions:
+      - OR:
+        - field: "active_goal_count"
+          operator: "=="
+          value: 0
+        - field: "goal_creation_last_30d"
+          operator: "=="
+          value: 0
+        - field: "goal_abandonment_rate"
+          operator: ">"
+          value: 0.6
+    action:
+      - "identify_persona: 'G-AVOIDANT'"
+      - "set_strategy: 'micro_goal_introduction'"
+      - "recommend: 'easy_first_goal'"
+    confidence: 0.85
+    rationale: "목표 회피는 자신감 부족 또는 실패 두려움"
+
+  - rule_id: "PI_G002_goal_overreaching"
+    priority: 87
+    description: "목표 과다형(G-OVERREACHING) 식별"
+    conditions:
+      - field: "active_goal_count"
+        operator: ">="
+        value: 5
+      - field: "goal_completion_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "identify_persona: 'G-OVERREACHING'"
+      - "set_strategy: 'goal_prioritization'"
+      - "recommend: 'focus_on_top_3'"
+    confidence: 0.83
+    rationale: "과다 목표는 분산과 번아웃 위험"
+
+  # === F-Series: 포모도로 패턴 기반 식별 ===
+
+  - rule_id: "PI_F001_pomodoro_sporadic"
+    priority: 86
+    description: "포모도로 산발형(F-SPORADIC) 식별"
+    conditions:
+      - field: "pomodoro_consistency_score"
+        operator: "<"
+        value: 0.3
+      - field: "pomodoro_variance"
+        operator: ">"
+        value: 0.5
+    action:
+      - "identify_persona: 'F-SPORADIC'"
+      - "set_strategy: 'routine_building'"
+      - "recommend: 'fixed_study_time'"
+    confidence: 0.80
+    rationale: "산발적 포모도로는 학습 루틴 미형성"
+
+  - rule_id: "PI_F002_pomodoro_incomplete"
+    priority: 85
+    description: "포모도로 미완료형(F-INCOMPLETE) 식별"
+    conditions:
+      - field: "pomodoro_completion_rate"
+        operator: "<"
+        value: 0.5
+      - field: "average_session_duration"
+        operator: "<"
+        value: 15
+    action:
+      - "identify_persona: 'F-INCOMPLETE'"
+      - "set_strategy: 'duration_adaptation'"
+      - "recommend: 'shorter_sessions'"
+    confidence: 0.78
+    rationale: "미완료 포모도로는 집중 시간 부족 또는 환경 문제"
+
+  # === R-Series: 오답노트 패턴 기반 식별 ===
+
+  - rule_id: "PI_R001_review_avoidant"
+    priority: 84
+    description: "오답노트 회피형(R-AVOIDANT) 식별"
+    conditions:
+      - OR:
+        - field: "wrong_note_count_30d"
+          operator: "=="
+          value: 0
+        - field: "review_rate"
+          operator: "<"
+          value: 0.1
+    action:
+      - "identify_persona: 'R-AVOIDANT'"
+      - "set_strategy: 'review_habit_building'"
+      - "recommend: 'automatic_wrong_note_generation'"
+    confidence: 0.80
+    rationale: "오답노트 회피는 오류 인정 회피 또는 귀찮음"
+
+  - rule_id: "PI_R002_review_superficial"
+    priority: 83
+    description: "오답노트 표면형(R-SUPERFICIAL) 식별"
+    conditions:
+      - field: "wrong_note_count_30d"
+        operator: ">="
+        value: 5
+      - field: "mastery_level_avg"
+        operator: "<"
+        value: 0.3
+      - field: "repeated_wrong_count"
+        operator: ">="
+        value: 3
+    action:
+      - "identify_persona: 'R-SUPERFICIAL'"
+      - "set_strategy: 'deep_review_guidance'"
+      - "recommend: 'spaced_repetition'"
+    confidence: 0.78
+    rationale: "표면적 복습은 같은 오류 반복으로 이어짐"
+
+  # === T-Series: 시험 패턴 기반 식별 ===
+
+  - rule_id: "PI_T001_test_anxious"
+    priority: 88
+    description: "시험 불안형(T-ANXIOUS) 식별"
+    conditions:
+      - OR:
+        - field: "test_avoidance_pattern"
+          operator: "=="
+          value: true
+        - field: "practice_vs_actual_gap"
+          operator: ">"
+          value: 20
+        - field: "test_score_decline_under_pressure"
+          operator: ">"
+          value: 0.15
+    action:
+      - "identify_persona: 'T-ANXIOUS'"
+      - "set_strategy: 'test_anxiety_reduction'"
+      - "recommend: 'mock_test_practice'"
+    confidence: 0.82
+    rationale: "시험 불안은 실력 발휘 저해"
+
+  - rule_id: "PI_T002_test_overconfident"
+    priority: 86
+    description: "시험 과신형(T-OVERCONFIDENT) 식별"
+    conditions:
+      - field: "self_predicted_score"
+        operator: ">"
+        value: "actual_score + 15"
+      - field: "preparation_hours"
+        operator: "<"
+        value: "recommended_hours * 0.5"
+    action:
+      - "identify_persona: 'T-OVERCONFIDENT'"
+      - "set_strategy: 'realistic_assessment'"
+      - "recommend: 'gap_awareness_feedback'"
+    confidence: 0.80
+    rationale: "과신은 준비 부족으로 이어짐"
+
+  # === E-Series: 정서적 학습 상태 식별 ===
+
+  - rule_id: "PI_E001_emotional_frustrated"
+    priority: 95
+    description: "좌절 상태(E-FRUSTRATED) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["포기", "못해요", "소용없어요", "안 돼요", "그만"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "frustrated"
+        - field: "consecutive_failures"
+          operator: ">="
+          value: 5
+    action:
+      - "identify_persona: 'E-FRUSTRATED'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "provide: 'guaranteed_success_experience'"
+    confidence: 0.92
+    rationale: "좌절 상태는 즉각적 정서 지원 필요"
+
+  - rule_id: "PI_E002_emotional_anxious"
+    priority: 93
+    description: "불안 상태(E-ANXIOUS) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["걱정", "불안", "어떡해", "잘 될까", "자신없어"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "anxious"
+        - field: "check_behavior_frequency"
+          operator: ">="
+          value: "high"
+    action:
+      - "identify_persona: 'E-ANXIOUS'"
+      - "set_tone: 'Gentle'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'Reassurance'"
+      - "provide: 'concrete_action_plan'"
+    confidence: 0.88
+    rationale: "불안 상태는 안심과 구체적 계획 필요"
+
+  - rule_id: "PI_E003_emotional_motivated"
+    priority: 85
+    description: "동기 충만 상태(E-MOTIVATED) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["열심히", "할 수 있어요", "기대돼요", "해볼게요", "더 하고 싶어요"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "motivated"
+        - field: "voluntary_extra_work"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'E-MOTIVATED'"
+      - "set_tone: 'Encouraging'"
+      - "set_pace: 'normal'"
+      - "provide: 'challenging_goals'"
+      - "acknowledge: 'positive_attitude'"
+    confidence: 0.85
+    rationale: "동기 충만은 도전적 목표로 성장 유도"
+
+# ============================================================
+# SECTION 2: 5지표별 응답 생성 룰
+# ============================================================
+
+response_generation_rules:
+
+  # === 출결(Attendance) 관련 응답 ===
+
+  - rule_id: "RG_ATT_001_low_attendance"
+    priority: 90
+    description: "낮은 출결률 대응 - 페르소나별 응답"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "attendance"
+      - field: "attendance_rate_30d"
+        operator: "<"
+        value: 0.7
+    response_templates:
+      P-SPARSE:
+        opening: "최근 학습 활동이 줄어든 것 같아요."
+        body: "혹시 어려운 점이 있나요? 편하게 얘기해주세요."
+        closing: "함께 해결 방법을 찾아봐요."
+      D-WARNING:
+        opening: "요즘 출석이 조금 불규칙해졌네요."
+        body: "괜찮아요, 다시 페이스를 잡으면 돼요. 오늘부터 하나씩 해볼까요?"
+        closing: "작은 시작이 큰 변화를 만들어요."
+      D-CRITICAL:
+        opening: "많이 힘드셨나 봐요."
+        body: "괜찮아요. 지금 상황을 이해해요. 천천히 돌아와도 돼요."
+        closing: "언제든 준비되면 함께해요. 기다리고 있을게요."
+
+  - rule_id: "RG_ATT_002_improving_attendance"
+    priority: 85
+    description: "출결 개선 중 격려 응답"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "attendance"
+      - field: "attendance_trend"
+        operator: "=="
+        value: "improving"
+    response_templates:
+      default:
+        opening: "출석률이 좋아지고 있어요! 대단해요."
+        body: "이 페이스를 유지하면 {projected_improvement}만큼 더 성장할 수 있어요."
+        closing: "계속 응원할게요!"
+
+  # === 목표(Goal) 관련 응답 ===
+
+  - rule_id: "RG_GOAL_001_no_active_goals"
+    priority: 88
+    description: "활성 목표 없음 대응"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "goal"
+      - field: "active_goal_count"
+        operator: "=="
+        value: 0
+    response_templates:
+      G-AVOIDANT:
+        opening: "목표 설정이 어렵게 느껴질 수 있어요."
+        body: "아주 작은 목표부터 시작해볼까요? 예를 들어 '오늘 문제 1개 풀기' 같은."
+        closing: "작은 성공이 모여 큰 성취가 돼요."
+      P-UNSTABLE:
+        opening: "목표가 자주 바뀌어서 혼란스러울 수 있어요."
+        body: "이번에는 확실히 달성할 수 있는 목표 하나만 정해볼까요?"
+        closing: "집중하면 분명 해낼 수 있어요."
+
+  - rule_id: "RG_GOAL_002_deadline_approaching"
+    priority: 92
+    description: "목표 마감 임박 알림"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "goal"
+      - field: "days_until_deadline"
+        operator: "<="
+        value: 3
+    response_templates:
+      default:
+        opening: "'{goal_name}' 목표 마감이 {days_until_deadline}일 남았어요."
+        body: "현재 진행률 {progress_rate}%예요. {remaining_tasks}를 완료하면 달성할 수 있어요."
+        closing: "마지막까지 화이팅!"
+
+  # === 포모도로(Pomodoro) 관련 응답 ===
+
+  - rule_id: "RG_POMO_001_low_consistency"
+    priority: 86
+    description: "포모도로 일관성 부족 대응"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "pomodoro"
+      - field: "consistency_score"
+        operator: "<"
+        value: 0.5
+    response_templates:
+      F-SPORADIC:
+        opening: "학습 시간이 불규칙한 것 같아요."
+        body: "매일 같은 시간에 짧게라도 공부하면 습관이 생겨요. {optimal_time}이 적합해 보여요."
+        closing: "루틴이 만들어지면 훨씬 수월해질 거예요."
+      F-INCOMPLETE:
+        opening: "포모도로를 완료하기 어려운 것 같아요."
+        body: "25분이 길다면 15분부터 시작해볼까요? 짧아도 괜찮아요."
+        closing: "중요한 건 완료하는 경험이에요."
+
+  - rule_id: "RG_POMO_002_good_streak"
+    priority: 84
+    description: "연속 포모도로 달성 격려"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "pomodoro"
+      - field: "current_streak"
+        operator: ">="
+        value: 5
+    response_templates:
+      default:
+        opening: "{current_streak}일 연속 포모도로 달성! 정말 대단해요!"
+        body: "이 꾸준함이 실력 향상의 비결이에요. 최고 기록 {best_streak}일까지 도전해볼까요?"
+        closing: "포기하지 않는 모습이 멋져요."
+
+  # === 오답노트(Wrong Note) 관련 응답 ===
+
+  - rule_id: "RG_WRONG_001_low_mastery"
+    priority: 87
+    description: "마스터리 낮은 오답 존재 시"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "wrong_note"
+      - field: "unmastered_count"
+        operator: ">="
+        value: 5
+    response_templates:
+      R-SUPERFICIAL:
+        opening: "복습이 필요한 오답이 {unmastered_count}개 있어요."
+        body: "같은 유형이 반복되는 것 같아요. 한 번 더 깊이 분석해볼까요?"
+        closing: "제대로 복습하면 다음엔 안 틀려요."
+      R-AVOIDANT:
+        opening: "오답 복습을 미루고 있나요?"
+        body: "틀린 건 부끄러운 게 아니에요. 오히려 성장의 기회예요."
+        closing: "오늘 하나만 복습해볼까요?"
+
+  # === 시험(Test) 관련 응답 ===
+
+  - rule_id: "RG_TEST_001_score_declining"
+    priority: 89
+    description: "시험 점수 하락 대응"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "test"
+      - field: "score_trend"
+        operator: "=="
+        value: "declining"
+    response_templates:
+      T-ANXIOUS:
+        opening: "점수가 떨어진 게 속상할 수 있어요."
+        body: "시험 때 긴장했나요? 실력과 시험 점수는 다를 수 있어요. 차분하게 준비하면 괜찮아요."
+        closing: "다음 시험에서 잘 할 수 있도록 함께 준비해요."
+      T-OVERCONFIDENT:
+        opening: "예상보다 점수가 낮았네요."
+        body: "준비 시간이 충분했는지 돌아볼 필요가 있어요. {recommended_hours}시간 이상 준비하면 더 좋은 결과가 나올 거예요."
+        closing: "다음엔 더 철저하게 준비해봐요."
+
+  - rule_id: "RG_TEST_002_score_improving"
+    priority: 85
+    description: "시험 점수 향상 격려"
+    conditions:
+      - field: "indicator_type"
+        operator: "=="
+        value: "test"
+      - field: "score_trend"
+        operator: "=="
+        value: "improving"
+    response_templates:
+      default:
+        opening: "점수가 {improvement_points}점 올랐어요! 축하해요!"
+        body: "꾸준한 노력의 결과예요. 이 방법이 효과가 있는 것 같아요."
+        closing: "다음 목표는 {next_target_score}점이에요. 충분히 가능해요!"
+
+# ============================================================
+# SECTION 3: 개입 전략 룰
+# ============================================================
+
+intervention_strategy_rules:
+
+  - rule_id: "IS_001_dropout_prevention"
+    priority: 100
+    description: "이탈 예방 3단계 개입 전략"
+    conditions:
+      - field: "dropout_risk_level"
+        operator: "!="
+        value: "low"
+    action:
+      - if_level: "주의"
+        then:
+          - "send_message: 'encouragement'"
+          - "recommend: 'easy_quick_win_goal'"
+          - "adjust: 'reduce_workload_10%'"
+      - if_level: "경고"
+        then:
+          - "send_alert: 'individual_consultation'"
+          - "recommend: 'routine_redesign'"
+          - "notify: 'teacher'"
+          - "schedule: 'check_in_call'"
+      - if_level: "긴급"
+        then:
+          - "trigger: 'urgent_intervention'"
+          - "design: 'reentry_path'"
+          - "notify: 'teacher'"
+          - "escalate: 'management'"
+          - "pause: 'all_automated_messages'"
+    rationale: "단계별 개입으로 이탈 예방"
+
+  - rule_id: "IS_002_motivation_boost"
+    priority: 88
+    description: "동기 부여 개입 전략"
+    conditions:
+      - OR:
+        - field: "persona_type"
+          operator: "in"
+          value: ["P-SPARSE", "G-AVOIDANT", "F-SPORADIC"]
+        - field: "motivation_score"
+          operator: "<"
+          value: 0.4
+    action:
+      - "provide: 'small_achievable_goal'"
+      - "highlight: 'past_successes'"
+      - "connect: 'personal_interest_to_learning'"
+      - "celebrate: 'any_progress'"
+    rationale: "작은 성공 경험이 동기 회복의 시작"
+
+  - rule_id: "IS_003_routine_stabilization"
+    priority: 86
+    description: "루틴 안정화 개입 전략"
+    conditions:
+      - OR:
+        - field: "persona_type"
+          operator: "in"
+          value: ["P-UNSTABLE", "A-IRREGULAR", "F-SPORADIC"]
+        - field: "pattern_stability_score"
+          operator: "<"
+          value: 0.5
+    action:
+      - "design: 'minimal_daily_routine'"
+      - "set: 'fixed_study_time'"
+      - "enable: 'reminder_notifications'"
+      - "track: 'streak_progress'"
+      - "reward: 'consistency_badges'"
+    rationale: "안정적 루틴이 학습 효과의 기반"
+
+  - rule_id: "IS_004_emotional_support"
+    priority: 95
+    description: "정서적 지원 개입 전략"
+    conditions:
+      - OR:
+        - field: "persona_type"
+          operator: "in"
+          value: ["E-FRUSTRATED", "E-ANXIOUS", "D-CRITICAL"]
+        - field: "emotional_priority"
+          operator: ">="
+          value: 80
+    action:
+      - "pause: 'academic_pressure'"
+      - "provide: 'unconditional_support'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "offer: 'guaranteed_success_task'"
+      - "celebrate: 'effort_not_result'"
+    rationale: "정서적 안정이 학습의 전제 조건"
+
+# ============================================================
+# SECTION 4: 톤 및 페이스 조절 룰
+# ============================================================
+
+tone_pace_rules:
+
+  - rule_id: "TP_001_high_risk"
+    priority: 100
+    description: "고위험 학생 - 따뜻하고 느린 페이스"
+    conditions:
+      - OR:
+        - field: "dropout_risk_level"
+          operator: "=="
+          value: "긴급"
+        - field: "emotional_state"
+          operator: "in"
+          value: ["frustrated", "anxious", "desperate"]
+    action:
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "reduce_information_density"
+      - "add_emotional_checkpoints"
+      - "use_short_sentences"
+    message_modifications:
+      opening: "괜찮아요. 천천히 해도 돼요."
+      transitions: "하나씩만 봐볼까요?"
+      closing: "오늘은 여기까지예요. 잘했어요."
+
+  - rule_id: "TP_002_medium_risk"
+    priority: 85
+    description: "중위험 학생 - 격려적 톤"
+    conditions:
+      - field: "dropout_risk_level"
+        operator: "=="
+        value: "경고"
+    action:
+      - "set_tone: 'Encouraging'"
+      - "set_pace: 'slow'"
+      - "emphasize_progress"
+      - "provide_concrete_next_steps"
+    message_modifications:
+      opening: "조금 힘들었던 것 같아요. 하지만 다시 시작할 수 있어요."
+      transitions: "이렇게 해볼까요?"
+      closing: "함께 하면 할 수 있어요."
+
+  - rule_id: "TP_003_stable_achiever"
+    priority: 80
+    description: "안정적 고성취자 - 전문적 톤"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "P-ACHIEVER"
+    action:
+      - "set_tone: 'Professional'"
+      - "set_pace: 'normal'"
+      - "provide_detailed_analysis"
+      - "offer_challenging_goals"
+    message_modifications:
+      opening: "분석 결과를 공유할게요."
+      transitions: "더 도전적인 목표를 설정해볼까요?"
+      closing: "이 페이스면 목표 달성 충분히 가능해요."
+
+  - rule_id: "TP_004_autonomous_preference"
+    priority: 82
+    description: "자율성 선호 학생 - 최소 개입"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "P-RESISTANT"
+    action:
+      - "set_tone: 'Professional'"
+      - "set_intervention_level: 'minimal'"
+      - "provide_options_not_directives"
+      - "respect_autonomy"
+    message_modifications:
+      opening: "정보 공유할게요. 참고만 하셔도 돼요."
+      transitions: "선택은 학생 몫이에요."
+      closing: "필요하면 언제든 말씀해주세요."
+
+# ============================================================
+# SECTION 5: 페르소나 전환 감지 룰
+# ============================================================
+
+persona_transition_rules:
+
+  - rule_id: "PT_001_risk_escalation"
+    priority: 100
+    description: "위험도 상승 감지 - 즉시 페르소나 전환"
+    conditions:
+      - field: "dropout_risk_change"
+        operator: "=="
+        value: "increasing"
+      - field: "risk_increase_rate"
+        operator: ">"
+        value: 0.2
+    action:
+      - "reassess_persona_immediately"
+      - "upgrade_intervention_level"
+      - "log_transition: 'risk_escalation'"
+      - "notify: 'teacher'"
+
+  - rule_id: "PT_002_positive_recovery"
+    priority: 85
+    description: "긍정적 회복 감지 - 페르소나 업그레이드"
+    conditions:
+      - field: "dropout_risk_change"
+        operator: "=="
+        value: "decreasing"
+      - field: "activity_increase_rate"
+        operator: ">"
+        value: 0.3
+    action:
+      - "reassess_persona"
+      - "reduce_intervention_intensity"
+      - "acknowledge_recovery"
+      - "log_transition: 'positive_recovery'"
+
+  - rule_id: "PT_003_emotional_shift"
+    priority: 95
+    description: "정서 상태 변화 감지"
+    conditions:
+      - field: "emotional_state_change"
+        operator: "=="
+        value: true
+    action:
+      - "reassess_emotional_persona"
+      - "adjust_tone_pace"
+      - "log_transition: 'emotional_shift'"
+      - if_negative:
+        - "prioritize_emotional_support"
+      - if_positive:
+        - "leverage_positive_momentum"
+
+  - rule_id: "PT_004_pattern_stabilization"
+    priority: 80
+    description: "패턴 안정화 감지"
+    conditions:
+      - field: "pattern_stability_trend"
+        operator: "=="
+        value: "stabilizing"
+      - field: "stability_duration_days"
+        operator: ">="
+        value: 14
+    action:
+      - "transition_from: 'P-UNSTABLE'"
+      - "reduce_routine_reminders"
+      - "increase_autonomy"
+      - "log_transition: 'pattern_stabilization'"
+
+# ============================================================
+# SECTION 6: 학습 효과성 평가 룰
+# ============================================================
+
+effectiveness_evaluation_rules:
+
+  - rule_id: "EE_001_intervention_effectiveness"
+    priority: 85
+    description: "개입 전략 효과성 평가"
+    conditions:
+      - field: "intervention_applied_days"
+        operator: ">="
+        value: 7
+    action:
+      - "calculate: 'pre_post_comparison'"
+      - "evaluate: 'intervention_effectiveness_score'"
+      - if_effective:
+        - "continue_strategy"
+        - "log: 'effective_intervention'"
+      - if_ineffective:
+        - "adjust_strategy"
+        - "try: 'alternative_approach'"
+        - "log: 'strategy_adjustment'"
+
+  - rule_id: "EE_002_persona_accuracy"
+    priority: 80
+    description: "페르소나 식별 정확도 평가"
+    conditions:
+      - field: "persona_assigned_days"
+        operator: ">="
+        value: 14
+    action:
+      - "compare: 'predicted_vs_actual_behavior'"
+      - "calculate: 'persona_accuracy_score'"
+      - if_accurate:
+        - "reinforce_persona"
+      - if_inaccurate:
+        - "reassess_persona"
+        - "update: 'identification_weights'"
+
+# ============================================================
+# DEFAULT FALLBACK
+# ============================================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "use_balanced_tone"
+    - "maintain_supportive_environment"
+    - "continue_data_collection"
+    - "observe_patterns"
+  message: "학습 패턴을 분석하면서 맞춤형 지원을 준비하고 있어요."
+  confidence: 0.5
+  rationale: "기본 룰: 데이터 수집 및 관찰 우선"
+
+# ============================================================
+# METADATA
+# ============================================================
+
+metadata:
+  total_rules: 55
+  categories:
+    - persona_identification: 23
+    - response_generation: 11
+    - intervention_strategy: 4
+    - tone_pace: 4
+    - persona_transition: 4
+    - effectiveness_evaluation: 2
+  related_files:
+    - personas.md: "페르소나 정의"
+    - Agent09PersonaEngine.php: "엔진 구현"
+    - Agent09DataContext.php: "데이터 컨텍스트"
+  indicators:
+    - attendance: "출결"
+    - goal: "목표"
+    - pomodoro: "포모도로"
+    - wrong_note: "오답노트"
+    - test: "시험"
+  db_tables:
+    - mdl_at_attendance_log
+    - mdl_at_student_goals
+    - mdl_at_pomodoro_sessions
+    - mdl_at_wrong_notes
+    - mdl_at_test_results

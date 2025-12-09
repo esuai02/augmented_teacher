@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tangent Quest</title>
+  </head>
+  <body>
+    <h1>Welcome to Tangent Quest!</h1>
+    <p>Can you find the equation of the tangent line?</p>
+    
+    <script>
+      // Paste the code for the TangentQuest object here
+      const TangentQuest = {
+        <script>
+    // Define the game object
+const TangentQuest = {
+  currentStep: 0,
+  steps: [
+    {
+      name: "Introduction",
+      description: "You are a detective trying to solve mathematical mysteries related to finding the tangent line to a curve. Can you collect all the clues and solve the puzzles to complete the game?"
+    },
+    {
+      name: "Derivative Station",
+      description: "To find the equation of the tangent line, you first need to find the derivative of the function at the given point. Use the limit definition of the derivative or differentiation rules to solve the puzzle and collect the clue for the next step.",
+      puzzle: "Solve the following limit: lim(h -> 0) [(x + h)^2 - x^2] / h",
+      answer: "2x"
+    },
+    {
+      name: "Slope Station",
+      description: "Now that you have the derivative, you can find the slope of the tangent line at the given point. Plug in the x-value of the given point into the derivative to solve the puzzle and collect the clue for the next step.",
+      puzzle: "What is the slope of the tangent line to the function f(x) = x^2 at the point (2, 4)?",
+      answer: "4"
+    },
+    {
+      name: "Equation Station",
+      description: "You now have the slope of the tangent line and the coordinates of a point on the line. Use the point-slope form of the line to write the equation of the tangent line and complete the game!",
+      puzzle: "Write the equation of the tangent line to the function f(x) = x^2 at the point (2, 4)",
+      answer: "y - 4 = 4(x - 2)"
+    }
+  ],
+
+  // Define methods for the game object
+  start: function() {
+    console.log("Welcome to Tangent Quest!");
+    console.log("Can you find the equation of the tangent line?");
+    this.displayStep();
+  },
+
+  displayStep: function() {
+    console.log(this.steps[this.currentStep].name);
+    console.log(this.steps[this.currentStep].description);
+    if (this.steps[this.currentStep].puzzle) {
+      console.log("Puzzle: " + this.steps[this.currentStep].puzzle);
+    }
+  },
+
+  checkAnswer: function(guess) {
+    if (guess.toLowerCase() === this.steps[this.currentStep].answer.toLowerCase()) {
+      console.log("Correct!");
+      this.currentStep++;
+      if (this.currentStep < this.steps.length) {
+        this.displayStep();
+      } else {
+        console.log("Congratulations! You solved the mystery and completed Tangent Quest!");
+      }
+    } else {
+      console.log("Sorry, that's incorrect. Try again!");
+    }
+  }
+};
+
+// Start the game
+TangentQuest.start();
+TangentQuest.checkAnsw;
+</script> 
+
+<script>
+/*
+   본 소스코드는 GPT API를 활용하여 두 AI끼리 대화를 하게 해보는 코드입니다.
+   소스코드 상에서 'API-KEY' 부분에 API를 발급받아서 넣어서 GPT API에 요청할 수 있습니다
+   API의 발급은 다음 웹페이지에서 가능합니다
+   https://platform.openai.com/account/api-keys
+   API에 요청에 따른 비용이 과금될 수 있는점과 API키가 노출되지 않도록 유의해주세요.
+   특히 gpt-4의 가격차이는 gpt-3.5-turbo와 상당히 크다는 점도 참고바랍니다.
+   자세한 가격정보는 https://openai.com/pricing 참고해주세요.
+   프론트엔드 코드는 노출될 수 있으므로 API키를 프론트엔드 코드에 넣지 않도록 유의해주세요.
+   본 소스코드는 학습을 위한 예시이므로 실제 서비스 개발시에는 이 예시에서처럼 프론트엔드 코드에 API키를 포함하지 않는것이 좋습니다.
+   본 코드는 AI 코딩 어시스턴트 익스텐션인 https://aicodehelper.dev/ 의 도움을 받아 제작되었습니다.
+*/
+//-----------------------------------
+const apikey = 'API-KEY'; // API-KEY
+const answerShort = false; // 짧게 대답할지
+const count = 6; // 대화의 횟수 
+const currentAnswer = '나 너 좋아해! 사귀자!'; // 첫 마디
+const roleName = role => role ? '남자' : '여자'; // 역할의 이름
+const instruction = role => `
+INSTRUCTIONS:
+- ${role ? '당신은 남자다.' : '당신은 여자다.'}
+- 친구와 대화해.
+- 반말로 해.
+- ${role ? '당신은 용기내어 고백한다.' : '당신은 고백에 놀랐고 고백받아서 부끄럽지만 기쁘다.'}
+- ${role ? '당신은 고백하고싶었으나 평소에 용기가 없었다.' : '당신은 평소에 호감이 있었다.'}
+`;
+//-----------------------------------
+const chatgpt = async (messages, streamListener) => {
+   const fetchoption = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apikey}` },
+      body: JSON.stringify({
+         stream: true,
+         model: 'gpt-3.5-turbo',
+         messages,
+         temperature: 1,
+      }),
+   };
+   let resolver;
+   const awaiter = new Promise(resolve => resolver = resolve)
+   fetch('https://api.openai.com/v1/chat/completions', fetchoption).then(response => {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let role;
+      const message = [];
+      reader.read().then(function processResult(result) {
+         let data = decoder.decode(result.value, { stream: true });
+         let errMsg;
+         try { errMsg = JSON.parse(data).error.message } catch { }
+         if (errMsg) throw new Error(errMsg)
+         let dataList = data.trim().split('\n');
+         for (let line of dataList) {
+            line = line.trim()
+            if (!line) continue;
+            if (line.startsWith("data: ")) line = line.slice(6);
+            if ('[DONE]' === line) continue;
+            const { delta, finish_reason } = JSON.parse(line).choices[0];
+            if (!role && delta.role) { role = delta.role; continue }
+            if (!delta.hasOwnProperty('content')) continue;
+            const token = ({ ...delta, role }).content
+            streamListener(token)
+            message.push(token)
+         }
+         if (result.done) { resolver(message.join('')); return }
+         else reader.read().then(processResult);
+      });
+   });
+   return await awaiter
+}
+class AIRobot {
+   constructor(position) {
+      this.memory = [position];
+   }
+
+   async listenAndAnswer(answer, streamListener) {
+      const message = {
+         role: 'user',
+         content: answer
+      };
+      this.memory.push(message);
+      const response = await chatgpt(this.memory, streamListener);
+      const aiMessage = {
+         role: 'assistant',
+         content: response
+      };
+      this.memory.push(aiMessage);
+      return response;
+   }
+}
+const makeLine = (currentParticipant, currentParticipantIndex) => {
+   const conversationLine = document.createElement('div');
+   conversationLine.style.display = 'flex';
+   conversationLine.style.padding = '0px';
+   const nameTag = document.createElement('div');
+   nameTag.style.minWidth = '120px';
+   nameTag.style.maxWidth = '120px';
+   // nameTag.style.fontSize = '9px';
+   nameTag.style.overflow = 'hidden';
+   nameTag.innerText = currentParticipant.name;
+   conversationLine.appendChild(nameTag);
+   const opinionBox = document.createElement('div');
+   opinionBox.style.border = 'none';
+   conversationLine.appendChild(opinionBox);
+   const body = document.querySelector('body');
+   body.appendChild(conversationLine);
+   if (currentParticipantIndex === 0) {
+      conversationLine.style.backgroundColor = '#333';
+      nameTag.style.backgroundColor = '#444'; // Modified line
+   } else {
+      conversationLine.style.backgroundColor = '#222';
+      nameTag.style.backgroundColor = '#333'; // Modified line
+   }
+   return { nameTag, conversationLine, opinionBox }
+}
+window.addEventListener('load', e => {
+
+   document.querySelector('#summary').innerText = `${roleName(true)}:${(instruction(true))}\n${roleName(false)}:${(instruction(false))}`
+   document.querySelector('#startTalk').addEventListener('click', async e => {
+      let _currentAnswer = currentAnswer;
+      const participations = [];
+      [true, false].forEach(role => {
+         const position = {
+            role: 'system',
+            content: instruction(role),
+         };
+         const discussionAIRobot = new AIRobot(position);
+         discussionAIRobot.name = roleName(role);
+         participations.push(discussionAIRobot);
+      })
+      let isPlayerTurn = false;
+      let systemStarts = false;
+      if (!systemStarts) {
+         participations[Number(!!isPlayerTurn)].memory.push({
+            role: 'user',
+            content: _currentAnswer
+         });
+         const { opinionBox } = makeLine(participations[Number(!!isPlayerTurn)], Number(!!isPlayerTurn));
+         opinionBox.innerText = _currentAnswer;
+      }
+      let _count = count - 1;
+      while (_count > 0) {
+         let currentParticipantIndex = Number(!isPlayerTurn);
+         const currentParticipant = participations[currentParticipantIndex];
+         const { opinionBox, nameTag, conversationLine } = makeLine(currentParticipant, currentParticipantIndex);
+         const streamListener = token => {
+            const body = document.querySelector('body');
+            const opNode = document.createTextNode(token);
+            opinionBox.appendChild(opNode);
+            window.scrollTo(0, body.scrollHeight)
+            document.body.style.marginBottom = '0px';
+         }
+         let req = answerShort ? '. 짧게 대답하세요.' : '';
+         _currentAnswer = await currentParticipant.listenAndAnswer(_currentAnswer + req, streamListener);
+         isPlayerTurn = !isPlayerTurn;
+         _count--;
+         if (_count === 0) break;
+      }
+   });
+});
+</script>
+  </body>
+</html>

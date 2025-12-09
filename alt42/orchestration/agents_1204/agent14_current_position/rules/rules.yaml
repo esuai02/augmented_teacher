@@ -1,0 +1,370 @@
+# Rules for Agent 14 - Current Position
+# Generated at: 2025-01-21
+# Purpose: 현직 수학선생님 수준의 학생 현재 위치 평가를 위한 정교한 룰셋
+# Target: 90점 (현직 선생님 수준의 90%)
+
+version: "2.0"
+scenario: "current_position"
+description: "수학일기 데이터 기반 현재 학습 위치/진도 평가 및 수학 교과 특화 분석 - 현직 수학선생님 수준 90% 달성"
+
+#
+# 포괄형 질문 1: "수학일기 기록, 진도율, 지연 패턴, 감정곡선, 포모도르 리듬을 종합 분석한 현재 학습 위치는?"
+#   - 연계 룰: S0_R1~S0_R3 (기본 진행 상태 분석, 리듬 패턴 분석, 감정 곡선 분석)
+#   - 데이터 소스: math_diary_record, progress_rate, delay_pattern, emotion_curve, pomodoro_rhythm, current_position, break_point, speed_interruption, understanding_interruption, comprehensive_diagnosis, current_status
+#   - 온톨로지: CurrentLearningPosition
+#   - 연계 에이전트: Agent 05 (감정 곡선), Agent 07 (포모도르 리듬), Agent 12 (리듬 점수)
+#
+# 포괄형 질문 2: "단원별/난이도별/단계별(개념–유형–심화–기출) 데이터를 토대로 각 단계에서의 이해도·진도율·소요시간·오류유형 분석은?"
+#   - 연계 룰: S1_R1~S1_R3 (단원별 진도 분석), S2_R1~S2_R3 (난이도별 진도 분석), S3_R1~S3_R3 (학습 단계별 진도 분석)
+#   - 데이터 소스: unit_by_unit_data, difficulty_level_data, stage_by_stage_data, understanding_rate, progress_rate, time_spent, error_type, bottleneck_identification, smooth_section_identification, strength_weakness_analysis, structural_summary
+#   - 온톨로지: LearningStageStrengthWeakness
+#   - 연계 에이전트: Agent 04 (취약점 분석), Agent 10 (개념 이해도), Agent 11 (오류 유형)
+#
+# 포괄형 질문 3: "진행률, 감정 곡선, 리듬 점수, 위험도 지수를 종합한 현재 시점에서의 의사결정(심화로 갈지, 복습으로 돌아갈지, 휴식 리듬을 조정할지)은?"
+#   - 연계 룰: S4_R1~S4_R3 (종합 의사결정), S5_R1~S5_R3 (다음 수업 방향 설계)
+#   - 데이터 소스: progress_rate, emotion_curve, rhythm_score, risk_index, decision_logic, next_class_direction, current_position_based_design, intervention_direction
+#   - 온톨로지: NextClassInterventionDesign
+#   - 연계 에이전트: Agent 05 (감정 곡선), Agent 12 (리듬 점수), Agent 13 (위험도 지수)
+#
+# 자세한 데이터 기반 질문 정의는 data_based_questions.js의 agent14 섹션을 참조하세요.
+#
+
+rules:
+  # ========== S0: 기본 진행 상태 분석 룰 ==========
+  
+  - rule_id: "S0_R1_basic_progress_calculation"
+    priority: 99
+    description: "기본 진행 상태 계산 (완료율, 지연/적절/원활 판정)"
+    conditions:
+      - field: "diary_record"
+        operator: "!="
+        value: null
+      - field: "tbegin"
+        operator: ">"
+        value: 0
+    action:
+      - "calculate_completion_rate: 'total_completed / total_planned * 100'"
+      - "calculate_delay: '(tend - expected_end) / 60'"
+      - "assess_progress_status: 'delay > 30분 → 지연, -30분 ≤ delay ≤ 30분 → 적절, delay < -30분 → 원활'"
+      - "generate_insight: '현재 N개 항목이 지연되고 있습니다.' (if delayed > on_time + early)"
+    confidence: 0.95
+    rationale: "S0: 기본 진행 상태 분석은 모든 분석의 기초"
+  
+  - rule_id: "S0_R2_rhythm_pattern_analysis"
+    priority: 98
+    description: "포모도르 단위 학습 리듬 분석"
+    conditions:
+      - field: "pomodoro_blocks"
+        operator: ">="
+        value: 3
+    action:
+      - "calculate_rhythm_score: '연속 학습 유지율 계산 (0~100)'"
+      - "detect_idle_gaps: '포모도르 간 공백시간 평균 계산'"
+      - "assess_rhythm_break: '평균 간격 대비 이탈 시간↑ 감지'"
+      - "send_to_agent12: '리듬 점수, 집중도 밀도'"
+    confidence: 0.93
+    rationale: "S0: 학습 리듬 분석은 피로도 및 휴식 타이밍 결정에 필수"
+  
+  - rule_id: "S0_R3_emotion_curve_analysis"
+    priority: 97
+    description: "정서·만족도 기반 흐름 해석"
+    conditions:
+      - field: "completed_blocks"
+        operator: ">="
+        value: 3
+      - field: "status_distribution"
+        operator: "!="
+        value: null
+    action:
+      - "create_emotion_curve: 'status 만족도 로그 기반 시계열 감정곡선 생성'"
+      - "classify_emotion_state: '긍정(+1), 중립(0), 부정(-1) 벡터 계산'"
+      - "detect_emotional_fatigue: '연속 3회 부정 구간 감지'"
+      - "cross_analyze_delay_emotion: '부정 감정 구간과 학습 지연 교차분석'"
+      - "send_to_agent13: '감정 상태, 위험도 등급'"
+    confidence: 0.94
+    rationale: "S0: 감정 곡선 분석은 정서적 피로 및 이탈 위험 예측에 핵심"
+  
+  - rule_id: "S0_R4_risk_index_calculation"
+    priority: 96
+    description: "이탈 가능성 예측 지표 생성"
+    conditions:
+      - field: "completion_rate"
+        operator: "!="
+        value: null
+      - field: "delay_index"
+        operator: "!="
+        value: null
+    action:
+      - "calculate_risk_index: '(1 - 완료율) * 0.4 + (지연도지수 / 100) * 0.3 + (부정정서비율 / 100) * 0.2 + (무활동시간 / 60분 단위) * 0.1'"
+      - "classify_risk_level: 'Low / Medium / High / Critical 등급 매김'"
+      - "send_to_agent13: '위험도 등급, 위험 요인 라벨링'"
+    confidence: 0.92
+    rationale: "S0: 위험도 점수는 조기 개입의 기준으로 활용됨"
+  
+  # ========== S1: 수학 교과 특화 분석 룰 ==========
+  
+  - rule_id: "S1_R1_unit_based_progress_analysis"
+    priority: 95
+    description: "단원별 진행 분석 (단원명 추출 및 단원별 진행률 분석)"
+    conditions:
+      - OR:
+        - field: "unit_info"
+          operator: "!="
+          value: null
+        - field: "plan_text"
+          operator: "contains"
+          value: ["함수", "도형", "통계", "확률", "방정식", "부등식", "집합", "명제"]
+    action:
+      - "extract_unit_name: 'plan1~plan16에서 단원명 추출'"
+      - "calculate_unit_completion_rate: '단원별 완료율 계산'"
+      - "analyze_unit_delay_pattern: '단원별 지연 빈도 및 평균 소요 시간 분석'"
+      - "identify_problematic_units: '지연 빈번 단원 식별'"
+      - "generate_unit_insight: '함수 단원에서 지연, 통계 단원에서 원활'"
+      - "suggest_unit_strategy: '지연 단원 → 병목 해소용 마이크로 목표 추가'"
+    confidence: 0.90
+    rationale: "S1: 단원별 분석은 수학 학습의 핵심 - 현직 선생님 필수 요소"
+    data_collection:
+      student_survey: "현재 학습 중인 수학 단원은 무엇인가요?"
+      teacher_checklist: "단원별 진행 패턴: [단원명] → [진행 상태]"
+  
+  - rule_id: "S1_R2_difficulty_based_progress_analysis"
+    priority: 94
+    description: "난이도별 진행 분석 (기본/유형/심화별 평균 소요 시간 및 지연 패턴)"
+    conditions:
+      - OR:
+        - field: "difficulty_level"
+          operator: "!="
+          value: null
+        - field: "plan_text"
+          operator: "contains"
+          value: ["기본", "유형", "심화", "기출"]
+    action:
+      - "classify_difficulty: '기본형/유형/심화 분류'"
+      - "calculate_difficulty_completion_time: '난이도별 평균 소요 시간 계산'"
+      - "analyze_difficulty_delay_pattern: '난이도별 지연 패턴 분석'"
+      - "identify_problematic_difficulty: '지연 빈번 난이도 식별'"
+      - "generate_difficulty_insight: '기본형은 빠르게, 심화형은 느리게 진행'"
+      - "suggest_difficulty_strategy: '심화형 지연 → 쉬운 문제부터 해결하여 자신감 회복'"
+    confidence: 0.88
+    rationale: "S1: 난이도별 분석은 학생 수준별 맞춤 전략 수립에 필수"
+    data_collection:
+      student_survey: "현재 풀고 있는 문제 난이도는? (A) 기본형 (B) 유형 (C) 심화"
+      teacher_checklist: "난이도별 진행 패턴: [난이도] → [평균 소요 시간]"
+  
+  - rule_id: "S1_R3_learning_stage_analysis"
+    priority: 93
+    description: "학습 단계별 분석 (개념/유형/심화/기출 단계별 진행 패턴)"
+    conditions:
+      - OR:
+        - field: "learning_stage"
+          operator: "!="
+          value: null
+        - field: "plan_text"
+          operator: "contains"
+          value: ["개념", "유형", "심화", "기출"]
+    action:
+      - "classify_learning_stage: '개념 학습 / 유형 연습 / 심화 문제 / 기출 문제 단계 구분'"
+      - "calculate_stage_completion_time: '단계별 평균 소요 시간 계산'"
+      - "analyze_stage_delay_pattern: '단계별 지연 패턴 분석'"
+      - "identify_problematic_stage: '지연 빈번 단계 식별'"
+      - "generate_stage_insight: '개념 학습 단계에서 지연, 문제풀이 단계에서 원활'"
+      - "suggest_stage_strategy: '개념 단계 지연 → 개념 재학습 필요'"
+    confidence: 0.87
+    rationale: "S1: 학습 단계별 분석은 수학 학습 전략 조정에 핵심"
+    data_collection:
+      student_survey: "현재 어떤 학습 단계인가요? (A) 개념 학습 (B) 유형 연습 (C) 심화 문제 (D) 기출 문제"
+  
+  - rule_id: "S1_R4_problem_type_analysis"
+    priority: 92
+    description: "문제 유형별 진행 분석 (단원별 문제 유형 분류 및 유형별 진행률)"
+    conditions:
+      - field: "unit_name"
+        operator: "!="
+        value: null
+      - field: "problem_types"
+        operator: "!="
+        value: null
+    action:
+      - "extract_problem_types: '단원별 문제 유형 분류 (예: 함수 → 일차함수 그래프, 함수식 구하기, 함수의 활용)'"
+      - "calculate_type_completion_rate: '유형별 완료율 계산'"
+      - "analyze_type_delay_pattern: '유형별 지연 패턴 분석'"
+      - "identify_problematic_types: '지연 빈번 유형 식별'"
+      - "generate_type_insight: '일차함수 그래프 문제에서 지연, 함수식 구하기는 원활'"
+      - "suggest_type_strategy: '지연 유형 → 해당 유형 집중 연습'"
+    confidence: 0.85
+    rationale: "S1: 문제 유형별 분석은 취약 유형 파악 및 집중 보완에 필수"
+    data_collection:
+      teacher_text_input: "함수 단원 유형: 일차함수 그래프, 함수식 구하기, 함수의 활용"
+  
+  - rule_id: "S1_R5_error_type_classification"
+    priority: 91
+    description: "계산 실수 vs 개념 오류 구분 및 지연 원인 분석"
+    conditions:
+      - field: "error_cause"
+        operator: "!="
+        value: null
+      - field: "delay_minutes"
+        operator: ">"
+        value: 30
+    action:
+      - "classify_error_type: '계산 실수 vs 개념 오류 vs 문제 오독 vs 시간 부족'"
+      - "analyze_error_delay_correlation: '오류 유형별 지연 패턴 분석'"
+      - "identify_primary_error_cause: '주된 오류 원인 식별'"
+      - "generate_error_insight: '계산 실수로 지연 → 반복 연습, 개념 오류로 지연 → 개념 재학습'"
+      - "suggest_error_strategy: '계산 실수 → 반복 연습 강화, 개념 오류 → 개념 재학습'"
+    confidence: 0.86
+    rationale: "S1: 오류 유형 구분은 수학 학습 대응 전략 수립에 핵심"
+    data_collection:
+      student_survey: "문제를 틀렸을 때 주된 원인은 무엇인가요? (A) 계산 실수 (B) 개념을 잘못 이해함 (C) 문제를 잘못 읽음 (D) 시간 부족"
+  
+  # ========== S2: 학원 맥락 통합 룰 ==========
+  
+  - rule_id: "S2_R1_academy_class_comprehension_correlation"
+    priority: 90
+    description: "학원 수업 이해도와 학습 진행 상태 상관 분석"
+    conditions:
+      - field: "academy_class_comprehension"
+        operator: "!="
+        value: null
+      - field: "progress_status"
+        operator: "=="
+        value: "지연"
+    action:
+      - "analyze_comprehension_delay_correlation: '학원 수업 이해도와 학습 지연 상관 분석'"
+      - "identify_comprehension_pattern: '이해 못함 → 학습 지연 패턴 확인'"
+      - "generate_comprehension_insight: '학원 수업을 이해 못하면 집에서 학습 지연'"
+      - "suggest_comprehension_strategy: '이해 못함 → 예습/복습 강화, 선행 학습 필요'"
+      - "send_to_agent09: '학원 수업 이해도 기반 목표 조정 제안'"
+    confidence: 0.88
+    rationale: "S2: 학원 수업 이해도는 학습 진행에 직접적 영향 - 현직 선생님 필수 고려사항"
+    data_collection:
+      student_survey: "오늘 학원 수업을 이해하셨나요? (A) 완전히 이해 (B) 대부분 이해 (C) 반만 이해 (D) 거의 이해 못함"
+  
+  - rule_id: "S2_R2_academy_homework_burden_correlation"
+    priority: 89
+    description: "학원 과제 부담과 학습 진행 상태 상관 분석"
+    conditions:
+      - field: "academy_homework_burden"
+        operator: "!="
+        value: null
+      - field: "progress_status"
+        operator: "=="
+        value: "지연"
+    action:
+      - "analyze_homework_delay_correlation: '학원 과제 양과 학습 지연 상관 분석'"
+      - "identify_homework_pattern: '과제 과다 → 학습 지연 패턴 확인'"
+      - "generate_homework_insight: '학원 과제가 많으면 학교 학습 지연'"
+      - "suggest_homework_strategy: '과제 과다 → 과제 우선순위 조정, 학교 학습과 병행 전략'"
+      - "send_to_agent09: '학원 과제 부담 기반 계획 조정 제안'"
+    confidence: 0.87
+    rationale: "S2: 학원 과제 부담은 실제 학습 시간 배분에 직접적 영향"
+    data_collection:
+      student_survey: "오늘 학원 과제 양이 적절하신가요? (A) 적절함 (B) 조금 많음 (C) 너무 많음"
+  
+  - rule_id: "S2_R3_academy_school_progress_comparison"
+    priority: 88
+    description: "학원 진도와 학교 진도 비교 분석"
+    conditions:
+      - field: "academy_progress"
+        operator: "!="
+        value: null
+      - field: "school_progress"
+        operator: "!="
+        value: null
+    action:
+      - "calculate_progress_gap: '학원 진도와 학교 진도 차이 계산'"
+      - "analyze_progress_alignment: '진도 정렬도 분석'"
+      - "identify_progress_mismatch: '진도 불일치 구간 식별'"
+      - "generate_progress_insight: '학원 진도와 학교 진도 비교하여 현재 위치 파악'"
+      - "suggest_progress_strategy: '진도 불일치 → 연계 학습 전략 수립'"
+      - "send_to_agent09: '학원-학교 진도 연계 기반 목표 조정 제안'"
+    confidence: 0.85
+    rationale: "S2: 학원-학교 진도 비교는 현실적 학습 계획 수립에 필수"
+    data_collection:
+      student_survey: "학원 진도와 학교 진도가 얼마나 차이나나요?"
+      teacher_text_input: "학원 진도: 함수 단원 60%, 학교 진도: 함수 단원 40%"
+  
+  # ========== S3: 학생 수준별 차별화 룰 ==========
+  
+  - rule_id: "S3_R1_math_level_based_analysis"
+    priority: 87
+    description: "수학 성적 수준별 진행 패턴 분석 (하위권/중위권/상위권)"
+    conditions:
+      - field: "math_level"
+        operator: "!="
+        value: null
+    action:
+      - "classify_math_level: '하위권/중위권/상위권 분류'"
+      - "analyze_level_progress_pattern: '수준별 진행 패턴 분석'"
+      - "identify_level_characteristics: '하위권은 지연 빈번, 상위권은 원활 진행 패턴 확인'"
+      - "adjust_expectation_by_level: '수준별 기대치 조정 (하위권: 완료율 50% 적정, 상위권: 완료율 80% 적정)'"
+      - "generate_level_insight: '하위권 학생은 지연 허용 범위 확대, 상위권 학생은 심화 학습 제안'"
+      - "suggest_level_strategy: '하위권 → 쉬운 문제부터, 상위권 → 심화 문제 제안'"
+    confidence: 0.89
+    rationale: "S3: 학생 수준별 차별화는 맞춤형 학습 전략의 핵심"
+    data_collection:
+      student_survey: "현재 수학 성적 수준은? (A) 하위권 (B) 중위권 (C) 상위권"
+  
+  - rule_id: "S3_R2_math_learning_style_analysis"
+    priority: 86
+    description: "수학 학습 스타일별 진행 패턴 분석 (계산형/개념형/응용형)"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+    action:
+      - "classify_learning_style: '계산형/개념형/응용형 분류'"
+      - "analyze_style_progress_pattern: '학습 스타일별 진행 패턴 분석'"
+      - "identify_style_characteristics: '계산형은 반복 연습에서 원활, 개념형은 개념 학습에서 원활'"
+      - "generate_style_insight: '계산형 학생은 반복 연습 강화, 개념형 학생은 개념 정리 강조'"
+      - "suggest_style_strategy: '계산형 → 반복 연습 제안, 개념형 → 개념 정리 제안'"
+    confidence: 0.87
+    rationale: "S3: 학습 스타일별 차별화는 개인화된 학습 전략 수립에 필수"
+    data_collection:
+      student_survey: "수학 문제를 풀 때 어떤 방식이 편하신가요? (A) 계산을 정확하게 하는 것이 중요해요 (B) 개념을 이해하고 연결하는 것이 중요해요 (C) 다양한 문제 유형을 풀어보는 것이 중요해요"
+  
+  # ========== S4: 종합 분석 및 리포트 생성 룰 ==========
+  
+  - rule_id: "S4_R1_comprehensive_position_report"
+    priority: 85
+    description: "현재 위치 종합 리포트 생성 (모든 분석 축 통합)"
+    conditions:
+      - field: "all_analyses_complete"
+        operator: "=="
+        value: true
+    action:
+      - "generate_comprehensive_report: '기본 진행 + 수학 특화 + 학원 맥락 + 학생 수준 통합 리포트'"
+      - "create_agent_summary: '[Agent14 분석] 완료율 XX% | 진행상태: [지연|적절|원활] | 단원별: [분석] | 난이도별: [분석] | 학원 맥락: [분석] | 권장: [조치사항]'"
+      - "send_to_agent09: '오늘 목표 달성률, 포모도르 진행 데이터'"
+      - "send_to_agent12: '리듬 점수, 집중도 밀도'"
+      - "send_to_agent13: '위험도 등급, 감정 상태, 활동 부재 시간'"
+    confidence: 0.92
+    rationale: "S4: 종합 리포트는 다른 에이전트 의사결정의 기준점"
+  
+  - rule_id: "S4_R2_long_term_pattern_analysis"
+    priority: 84
+    description: "장기 패턴 분석 (최근 7일간 패턴 기반 예측)"
+    conditions:
+      - field: "historical_data_available"
+        operator: "=="
+        value: true
+      - field: "days_of_data"
+        operator: ">="
+        value: 7
+    action:
+      - "aggregate_weekly_patterns: '최근 7일간 진행 패턴 통합'"
+      - "calculate_pattern_correlation: '지연도, 감정곡선, 리듬점수의 시간 상관계수 계산'"
+      - "predict_future_risk: '다음 3일간 예상 이탈 위험도 추세 예측'"
+      - "generate_pattern_insight: '주간 트렌드 모델 + 예측 위험 지수 + 권장 루틴 변경안'"
+      - "send_to_agent13: '장기 패턴 기반 예측 위험도'"
+      - "send_to_agent09: '주간 학습 리듬 또는 이탈 예방 시뮬레이션'"
+    confidence: 0.88
+    rationale: "S4: 장기 패턴 분석은 예방적 개입 전략 수립에 핵심"
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "perform_basic_analysis: '기본 진행 상태 분석 수행'"
+    - "generate_basic_report: '기본 리포트 생성'"
+  confidence: 0.5
+  rationale: "기본 분석 수행 - 상세 룰 조건 미충족 시"

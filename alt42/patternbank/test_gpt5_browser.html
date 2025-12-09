@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5 Responses API 브라우저 테스트</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .api-key-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="password"] {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .test-section {
+            margin: 25px 0;
+            padding: 25px;
+            border: 2px solid #f5f5f5;
+            border-radius: 15px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+            font-weight: 600;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+        .status.pending { background: #e0e0e0; color: #666; }
+        .status.testing { background: #fff3cd; color: #856404; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.fallback { background: #cce5ff; color: #004085; }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+        }
+        .model-selector {
+            margin-bottom: 20px;
+        }
+        select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'Fira Code', monospace;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+        .feature-card h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 14px;
+        }
+        .feature-card p {
+            margin: 0;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 GPT-5 Responses API 테스트 <span class="badge">NEW</span></h1>
+        <p class="subtitle">최신 GPT-5 모델과 Responses API 엔드포인트 테스트</p>
+        
+        <div class="info">
+            <strong>✨ GPT-5 새로운 기능:</strong>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>추론 제어</h4>
+                    <p>minimal, low, medium, high 추론 노력 설정</p>
+                </div>
+                <div class="feature-card">
+                    <h4>텍스트 상세도</h4>
+                    <p>low, medium, high 출력 상세도 조절</p>
+                </div>
+                <div class="feature-card">
+                    <h4>구조화된 출력</h4>
+                    <p>JSON Schema로 강제 구조화</p>
+                </div>
+                <div class="feature-card">
+                    <h4>커스텀 도구</h4>
+                    <p>자유 형식 텍스트 도구 호출</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="warning">
+            ⚠️ <strong>자동 폴백:</strong> GPT-5가 사용 불가능한 경우 자동으로 GPT-4o로 전환됩니다.
+        </div>
+        
+        <div class="model-selector">
+            <label>모델 선택:
+                <select id="modelSelect">
+                    <option value="gpt-5-mini" selected>GPT-5-mini (빠름, 저비용)</option>
+                    <option value="gpt-5">GPT-5 (고급 추론)</option>
+                    <option value="gpt-5-nano">GPT-5-nano (초고속)</option>
+                </select>
+            </label>
+        </div>
+        
+        <div class="api-key-input">
+            <input type="password" id="apiKey" 
+                   placeholder="OpenAI API 키를 입력하세요 (sk-proj-...)" 
+                   value="">
+            <button onclick="saveApiKey()">API 키 저장</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>1. GPT-5 Responses API 연결 테스트 <span id="status1" class="status pending">대기중</span></h3>
+            <button onclick="testGPT5Connection()" id="testBtn1">GPT-5 연결 테스트</button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 구조화된 출력 (JSON Schema) 테스트 <span id="status2" class="status pending">대기중</span></h3>
+            <button onclick="testStructuredOutput()" id="testBtn2">구조화된 출력 테스트</button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 추론 제어 테스트 <span id="status3" class="status pending">대기중</span></h3>
+            <button onclick="testReasoningControl()" id="testBtn3">추론 제어 테스트</button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 유사문제 생성 (PatternBank) <span id="status4" class="status pending">대기중</span></h3>
+            <button onclick="testProblemGeneration()" id="testBtn4">문제 생성 테스트</button>
+            <div id="result4" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // API 키 저장/로드
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (apiKey) {
+                localStorage.setItem('openai_api_key', apiKey);
+                alert('API 키가 브라우저에 저장되었습니다.');
+            }
+        }
+        
+        // 페이지 로드시 저장된 API 키 불러오기
+        window.onload = function() {
+            const savedKey = localStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+            }
+        };
+        
+        // 1. GPT-5 Responses API 연결 테스트
+        async function testGPT5Connection() {
+            const apiKey = document.getElementById('apiKey').value;
+            const model = document.getElementById('modelSelect').value;
+            
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status1');
+            const resultEl = document.getElementById('result1');
+            const btnEl = document.getElementById('testBtn1');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = 'GPT-5 테스트 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = `${model} 연결 테스트 진행 중...\n`;
+            btnEl.disabled = true;
+            
+            try {
+                // GPT-5 Responses API 호출
+                const response = await fetch('https://api.openai.com/v1/responses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        input: '1+1은 무엇인가요? 한 단어로 답해주세요.',
+                        reasoning: { effort: 'minimal' },
+                        text: { 
+                            verbosity: 'low'
+                        },
+                        max_output_tokens: 20  // 최대 출력 토큰 (최소 16)
+                        // temperature not supported in GPT-5
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.output_text) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = 'GPT-5 성공';
+                    resultEl.textContent = `✅ GPT-5 Responses API 연결 성공!\n\n`;
+                    resultEl.textContent += `모델: ${model}\n`;
+                    resultEl.textContent += `응답: ${data.output_text}\n`;
+                    
+                    if (data.reasoning_text) {
+                        resultEl.textContent += `\n추론 과정: ${data.reasoning_text.substring(0, 100)}...\n`;
+                    }
+                    
+                    if (data.usage) {
+                        resultEl.textContent += `\n토큰 사용량:\n`;
+                        resultEl.textContent += `- 입력: ${data.usage.input_tokens || 0}\n`;
+                        resultEl.textContent += `- 출력: ${data.usage.output_tokens || 0}\n`;
+                        resultEl.textContent += `- 추론: ${data.usage.reasoning_tokens || 0}\n`;
+                        resultEl.textContent += `- 총합: ${data.usage.total_tokens || 0}`;
+                    }
+                } else if (response.status === 404) {
+                    // GPT-5가 없으면 GPT-4o로 폴백 시도
+                    statusEl.className = 'status fallback';
+                    statusEl.textContent = 'GPT-4o 폴백';
+                    resultEl.textContent = `⚠️ GPT-5를 찾을 수 없음. GPT-4o로 폴백 시도...\n\n`;
+                    
+                    const fallbackResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { role: 'user', content: '1+1은 무엇인가요? 한 단어로 답해주세요.' }
+                            ],
+                            max_tokens: 10
+                        })
+                    });
+                    
+                    const fallbackData = await fallbackResponse.json();
+                    
+                    if (fallbackResponse.ok) {
+                        resultEl.textContent += `✅ GPT-4o 폴백 성공!\n`;
+                        resultEl.textContent += `모델: gpt-4o-mini\n`;
+                        resultEl.textContent += `응답: ${fallbackData.choices[0].message.content}`;
+                    } else {
+                        resultEl.textContent += `❌ 폴백도 실패: ${fallbackData.error?.message || 'Unknown error'}`;
+                    }
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '실패';
+                    resultEl.textContent = `❌ API 오류\n\n`;
+                    resultEl.textContent += `상태 코드: ${response.status}\n`;
+                    resultEl.textContent += `오류: ${data.error?.message || JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '오류';
+                resultEl.textContent = `❌ 네트워크 오류\n\n${error.message}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+        
+        // 2. 구조화된 출력 테스트
+        async function testStructuredOutput() {
+            const apiKey = document.getElementById('apiKey').value;
+            const model = document.getElementById('modelSelect').value;
+            
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status2');
+            const resultEl = document.getElementById('result2');
+            const btnEl = document.getElementById('testBtn2');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '테스트 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = '구조화된 출력 테스트 중...\n';
+            btnEl.disabled = true;
+            
+            const schema = {
+                type: 'object',
+                properties: {
+                    question: { type: 'string' },
+                    solution: { type: 'string' },
+                    difficulty: { type: 'string', enum: ['easy', 'medium', 'hard'] }
+                },
+                required: ['question', 'solution', 'difficulty'],
+                additionalProperties: false
+            };
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/responses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        input: '간단한 수학 문제 1개를 만들어주세요. 난이도는 easy, medium, hard 중 하나로 표시해주세요.',
+                        reasoning: { effort: 'low' },
+                        text: { 
+                            verbosity: 'medium',
+                            format: {  // format은 text 안에 위치
+                                type: 'json_schema',
+                                name: 'MathProblem',
+                                schema: schema,
+                                strict: true
+                            }
+                        },
+                        max_output_tokens: 200
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.output_parsed) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '성공';
+                    resultEl.textContent = `✅ 구조화된 출력 성공!\n\n`;
+                    resultEl.textContent += `생성된 문제 (JSON):\n`;
+                    resultEl.textContent += JSON.stringify(data.output_parsed, null, 2);
+                } else if (response.status === 404) {
+                    statusEl.className = 'status fallback';
+                    statusEl.textContent = 'GPT-4o 사용';
+                    resultEl.textContent = `⚠️ GPT-5 구조화된 출력 실패. GPT-4o는 JSON 모드로 대체됩니다.`;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '실패';
+                    resultEl.textContent = `❌ 구조화된 출력 실패\n\n${data.error?.message || JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '오류';
+                resultEl.textContent = `❌ 오류 발생\n\n${error.message}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+        
+        // 3. 추론 제어 테스트
+        async function testReasoningControl() {
+            const apiKey = document.getElementById('apiKey').value;
+            const model = document.getElementById('modelSelect').value;
+            
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status3');
+            const resultEl = document.getElementById('result3');
+            const btnEl = document.getElementById('testBtn3');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '테스트 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = '다양한 추론 수준 테스트 중...\n\n';
+            btnEl.disabled = true;
+            
+            const levels = ['minimal', 'low', 'medium'];
+            const results = [];
+            
+            for (const level of levels) {
+                try {
+                    resultEl.textContent += `${level} 추론 테스트...\n`;
+                    
+                    const response = await fetch('https://api.openai.com/v1/responses', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            input: 'x^2 - 5x + 6 = 0의 해를 구하세요.',
+                            reasoning: { effort: level },
+                            text: { 
+                                verbosity: 'low'
+                            },
+                            max_output_tokens: 200  // 최대 완성 토큰
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.output_text) {
+                        results.push({
+                            level: level,
+                            output: data.output_text,
+                            reasoning_tokens: data.usage?.reasoning_tokens || 0,
+                            total_tokens: data.usage?.total_tokens || 0
+                        });
+                    }
+                } catch (error) {
+                    results.push({
+                        level: level,
+                        error: error.message
+                    });
+                }
+            }
+            
+            if (results.some(r => r.output)) {
+                statusEl.className = 'status success';
+                statusEl.textContent = '완료';
+                resultEl.textContent = `✅ 추론 제어 테스트 완료!\n\n`;
+                
+                results.forEach(r => {
+                    resultEl.textContent += `━━━ ${r.level.toUpperCase()} 추론 ━━━\n`;
+                    if (r.output) {
+                        resultEl.textContent += `응답: ${r.output}\n`;
+                        resultEl.textContent += `추론 토큰: ${r.reasoning_tokens} / 총 토큰: ${r.total_tokens}\n\n`;
+                    } else {
+                        resultEl.textContent += `오류: ${r.error}\n\n`;
+                    }
+                });
+            } else {
+                statusEl.className = 'status error';
+                statusEl.textContent = '실패';
+                resultEl.textContent = `❌ 모든 추론 수준 테스트 실패`;
+            }
+            
+            btnEl.disabled = false;
+        }
+        
+        // 4. 유사문제 생성 테스트
+        async function testProblemGeneration() {
+            const apiKey = document.getElementById('apiKey').value;
+            const model = document.getElementById('modelSelect').value;
+            
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status4');
+            const resultEl = document.getElementById('result4');
+            const btnEl = document.getElementById('testBtn4');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '생성 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = 'PatternBank 유사문제 생성 중...\n';
+            btnEl.disabled = true;
+            
+            const prompt = `다음 수학 문제를 바탕으로 유사한 문제를 1개 생성해주세요.
+
+원본 문제:
+문제: 다음 수열의 일반항을 구하시오: 3, 6, 12, 24, ...
+해설: 첫째항이 3이고 공비가 2인 등비수열입니다. 따라서 일반항은 a_n = 3 × 2^(n-1)입니다.
+
+JSON 형식으로 작성해주세요.`;
+            
+            const schema = {
+                type: 'object',
+                properties: {
+                    question: { type: 'string' },
+                    solution: { type: 'string' }
+                },
+                required: ['question', 'solution'],
+                additionalProperties: false
+            };
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/responses', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        input: prompt,
+                        reasoning: { effort: 'low' },
+                        text: { 
+                            verbosity: 'medium',
+                            format: {  // format은 text 안에 위치
+                                type: 'json_schema',
+                                name: 'MathProblem',
+                                schema: schema,
+                                strict: true
+                            }
+                        },
+                        max_output_tokens: 1000  // 최대 출력 토큰
+                        // temperature not supported in GPT-5
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && (data.output_parsed || data.output_text)) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '성공';
+                    resultEl.textContent = `✅ 문제 생성 성공!\n\n`;
+                    
+                    const problem = data.output_parsed || JSON.parse(data.output_text);
+                    resultEl.textContent += `생성된 문제:\n`;
+                    resultEl.textContent += `문제: ${problem.question}\n\n`;
+                    resultEl.textContent += `해설: ${problem.solution}\n\n`;
+                    
+                    if (data.usage) {
+                        resultEl.textContent += `토큰 사용량: ${data.usage.total_tokens}`;
+                    }
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '실패';
+                    resultEl.textContent = `❌ 생성 실패\n\n${data.error?.message || JSON.stringify(data)}`;
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '오류';
+                resultEl.textContent = `❌ 오류 발생\n\n${error.message}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

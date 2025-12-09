@@ -1,0 +1,3819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holarchy Dashboard - 회의 & 문서 관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-hover: #1a1a25;
+            --border: #2a2a3a;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888a0;
+            --text-muted: #555566;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #22c55e 0%, #00d4ff 100%);
+        }
+        
+        /* Light Mode */
+        :root.light {
+            --bg-dark: #f5f7fa;
+            --bg-card: #ffffff;
+            --bg-hover: #e8ecf0;
+            --border: #d0d7de;
+            --text-primary: #1a1a2e;
+            --text-secondary: #57606a;
+            --text-muted: #8b949e;
+            --accent-cyan: #0891b2;
+            --accent-purple: #7c3aed;
+            --accent-green: #16a34a;
+            --accent-yellow: #ca8a04;
+            --accent-red: #dc2626;
+            --accent-orange: #ea580c;
+            --gradient-1: linear-gradient(135deg, #0891b2 0%, #7c3aed 100%);
+            --gradient-2: linear-gradient(135deg, #16a34a 0%, #0891b2 100%);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-cyan);
+            transform: scale(1.05);
+        }
+        
+        .theme-toggle-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        :root.light .theme-toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, rgba(0,212,255,0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+
+        .header-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Layout - 3 Column */
+        .main {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1400px) {
+            .main {
+                grid-template-columns: 260px 1fr;
+            }
+            .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-left {
+                display: none;
+            }
+        }
+        
+        .sidebar-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--gradient-1);
+            color: #000;
+            border-color: transparent;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Meeting Input */
+        .meeting-input {
+            display: none;
+        }
+
+        .meeting-input.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        textarea.input-field {
+            min-height: 300px;
+            resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        .template-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .template-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+        }
+
+        /* Document List */
+        .doc-list {
+            display: none;
+        }
+
+        .doc-list.active {
+            display: block;
+        }
+
+        .doc-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .doc-item:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-hover);
+        }
+
+        .doc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .doc-icon.meeting { background: rgba(168,85,247,0.2); }
+        .doc-icon.decision { background: rgba(34,197,94,0.2); }
+        .doc-icon.task { background: rgba(249,115,22,0.2); }
+        .doc-icon.strategy { background: rgba(0,212,255,0.2); }
+        .doc-icon.feature { background: rgba(234,179,8,0.2); }
+
+        .doc-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .doc-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-meeting { background: var(--accent-purple); color: #fff; }
+        .badge-decision { background: var(--accent-green); color: #fff; }
+        .badge-task { background: var(--accent-orange); color: #fff; }
+        .badge-pending { background: var(--accent-yellow); color: #000; }
+        .badge-done { background: var(--accent-green); color: #fff; }
+
+        /* Graph View */
+        .graph-view {
+            display: none;
+        }
+
+        .graph-view.active {
+            display: block;
+        }
+
+        .graph-container {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .graph-node {
+            position: absolute;
+            padding: 0.75rem 1rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 150px;
+            text-align: center;
+        }
+
+        .graph-node:hover {
+            border-color: var(--accent-cyan);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .graph-node.root {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(135deg, rgba(0,212,255,0.2) 0%, rgba(168,85,247,0.2) 100%);
+        }
+
+        .graph-node.meeting { border-color: var(--accent-purple); }
+        .graph-node.decision { border-color: var(--accent-green); }
+        .graph-node.task { border-color: var(--accent-orange); }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .quick-stat {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .quick-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .quick-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .quick-stat.meetings .quick-stat-value { color: var(--accent-purple); }
+        .quick-stat.decisions .quick-stat-value { color: var(--accent-green); }
+        .quick-stat.tasks .quick-stat-value { color: var(--accent-orange); }
+        .quick-stat.health .quick-stat-value { color: var(--accent-cyan); }
+
+        /* Recent Activity */
+        .activity-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .activity-dot.new { background: var(--accent-green); }
+        .activity-dot.update { background: var(--accent-cyan); }
+        .activity-dot.check { background: var(--accent-yellow); }
+
+        .activity-text {
+            font-size: 0.85rem;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* CLI Panel */
+        .cli-panel {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .cli-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-hover);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cli-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .cli-dot.red { background: #ff5f56; }
+        .cli-dot.yellow { background: #ffbd2e; }
+        .cli-dot.green { background: #27c93f; }
+
+        .cli-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-left: 0.5rem;
+        }
+
+        .cli-content {
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.8;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cli-line {
+            color: var(--text-muted);
+        }
+
+        .cli-line .cmd { color: var(--accent-cyan); }
+        .cli-line .success { color: var(--accent-green); }
+        .cli-line .info { color: var(--accent-yellow); }
+
+        /* Result Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--bg-hover);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .result-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-icon.success { background: rgba(34,197,94,0.2); color: var(--accent-green); }
+        .result-icon.meeting { background: rgba(168,85,247,0.2); color: var(--accent-purple); }
+        .result-icon.decision { background: rgba(34,197,94,0.2); color: var(--accent-green); }
+        .result-icon.task { background: rgba(249,115,22,0.2); color: var(--accent-orange); }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* ============================================ */
+        /* 🧠 Memory Tuning Panel Styles */
+        /* ============================================ */
+        
+        #memory-panel .card-header {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .weight-sum {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 4px;
+            color: var(--accent-green);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .weight-sum.invalid {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+        
+        /* Mode Button Styles */
+        .mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .mode-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-cyan);
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(0,212,255,0.15) 0%, rgba(168,85,247,0.15) 100%);
+            border-color: var(--accent-cyan);
+        }
+        
+        .mode-btn .mode-icon {
+            font-size: 1rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .mode-btn .mode-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 60px;
+        }
+        
+        .mode-btn.active .mode-label {
+            color: var(--accent-cyan);
+        }
+        
+        .mode-btn .mode-desc {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+        
+        /* Compact Weight Sliders */
+        .weight-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .weight-row-compact {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .weight-row-compact .weight-icon {
+            width: 18px;
+            height: 18px;
+            font-size: 0.6rem;
+        }
+        
+        .weight-row-compact .weight-slider {
+            flex: 1;
+            height: 3px;
+        }
+        
+        .weight-val {
+            font-size: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+            min-width: 25px;
+            text-align: right;
+        }
+        
+        /* Mission Grid */
+        .mission-card {
+            padding: 0.4rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .mission-card:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-hover);
+        }
+        
+        .mission-card.active {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .mission-card .m-code {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .mission-card .m-name {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .mission-card .m-count {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+        }
+        
+        /* Type Button */
+        .type-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .type-btn:hover {
+            border-color: var(--accent-purple);
+        }
+        
+        .type-btn.active {
+            background: linear-gradient(135deg, rgba(168,85,247,0.2), rgba(0,212,255,0.1));
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+        }
+        
+        /* Detected Holon Item */
+        .detected-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-cyan);
+        }
+        
+        .detected-item .d-num {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            min-width: 20px;
+        }
+        
+        .detected-item .d-title {
+            flex: 1;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+        
+        .detected-item .d-type {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 4px;
+            color: var(--accent-purple);
+        }
+        
+        /* Created Holon Item */
+        .created-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-green);
+        }
+        
+        .created-item .c-module {
+            font-size: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-cyan);
+            min-width: 35px;
+        }
+        
+        .created-item .c-title {
+            flex: 1;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .created-item .c-conf {
+            font-size: 0.6rem;
+            color: var(--accent-green);
+        }
+        
+        .tuning-row {
+            margin-bottom: 1rem;
+        }
+        
+        .tuning-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .tuning-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+        
+        .tuning-slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--bg-dark);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .tuning-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .tuning-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .preset-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 0.4rem 0.3rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-cyan);
+        }
+        
+        .preset-btn.active {
+            background: linear-gradient(135deg, rgba(0,212,255,0.2) 0%, rgba(168,85,247,0.2) 100%);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        .weight-sliders {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .weight-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .weight-label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            min-width: 70px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .weight-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        
+        .weight-icon.wr { background: rgba(0, 212, 255, 0.3); color: var(--accent-cyan); }
+        .weight-icon.wp { background: rgba(168, 85, 247, 0.3); color: var(--accent-purple); }
+        .weight-icon.wv { background: rgba(34, 197, 94, 0.3); color: var(--accent-green); }
+        .weight-icon.wm { background: rgba(234, 179, 8, 0.3); color: var(--accent-yellow); }
+        
+        .weight-slider {
+            flex: 1;
+            height: 4px;
+            -webkit-appearance: none;
+            background: var(--bg-dark);
+            border-radius: 2px;
+            outline: none;
+        }
+        
+        .weight-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .weight-slider.wr::-webkit-slider-thumb { background: var(--accent-cyan); }
+        .weight-slider.wp::-webkit-slider-thumb { background: var(--accent-purple); }
+        .weight-slider.wv::-webkit-slider-thumb { background: var(--accent-green); }
+        .weight-slider.wm::-webkit-slider-thumb { background: var(--accent-yellow); }
+        
+        .weight-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        .weight-value {
+            min-width: 35px;
+            text-align: right;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+        
+        .normalize-btn {
+            width: 100%;
+            padding: 0.6rem;
+            background: var(--bg-dark);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+        
+        .normalize-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        .flow-guide {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        
+        .flow-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .flow-step {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        .flow-step.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        
+        .flow-arrow {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+        
+        .flow-formula {
+            font-size: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border-radius: 4px;
+        }
+        
+        .flow-formula .wr { color: var(--accent-cyan); }
+        .flow-formula .wp { color: var(--accent-purple); }
+        .flow-formula .wv { color: var(--accent-green); }
+        .flow-formula .wm { color: var(--accent-yellow); }
+
+        /* ============================================ */
+        /* 📚 Reference Selection Panel Styles */
+        /* ============================================ */
+        
+        .ref-count {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            color: var(--accent-cyan);
+        }
+        
+        .selected-refs {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .ref-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ref-item:hover {
+            border-color: var(--accent-cyan);
+            background: var(--bg-hover);
+        }
+        
+        .ref-item.selected {
+            border-color: var(--accent-green);
+            background: rgba(34, 197, 94, 0.1);
+        }
+        
+        .ref-item.replacing {
+            border-color: var(--accent-yellow);
+            background: rgba(234, 179, 8, 0.1);
+        }
+        
+        .ref-rank {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #000;
+            flex-shrink: 0;
+        }
+        
+        .ref-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .ref-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .ref-meta {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        
+        .ref-score {
+            width: 60px;
+            text-align: right;
+        }
+        
+        .ref-score-bar {
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.25rem;
+        }
+        
+        .ref-score-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+        
+        .ref-score-value {
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-cyan);
+        }
+        
+        .ref-replace-btn, .ref-view-btn {
+            padding: 0.4rem 0.6rem;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ref-replace-btn:hover {
+            background: var(--accent-yellow);
+            color: #000;
+            border-color: var(--accent-yellow);
+        }
+        
+        .ref-view-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            border-color: var(--accent-cyan);
+        }
+        
+        .replacement-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-yellow);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .replacement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--accent-yellow);
+        }
+        
+        .close-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: var(--bg-dark);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        .replacement-search {
+            margin-bottom: 0.75rem;
+        }
+        
+        .replacement-search input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        
+        .replacement-search input:focus {
+            outline: none;
+            border-color: var(--accent-yellow);
+        }
+        
+        .replacement-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .replacement-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+        
+        .replacement-item:hover {
+            background: var(--bg-hover);
+            color: var(--accent-yellow);
+        }
+        
+        .replacement-item .score {
+            margin-left: auto;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .ref-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-secondary);
+        }
+        
+        .ref-actions .btn-primary {
+            flex: 2;
+        }
+
+        /* ============================================ */
+        /* 📄 Inline Flow Sections */
+        /* ============================================ */
+        
+        .flow-section {
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        .flow-section.active {
+            display: block;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+        }
+        
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            z-index: 1;
+        }
+        
+        .step-dot.active {
+            background: var(--gradient-1);
+            border-color: var(--accent-cyan);
+            color: #000;
+        }
+        
+        .step-dot.completed {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+        
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+        
+        .step-line.completed {
+            background: var(--accent-green);
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            margin-top: 0.25rem;
+        }
+        
+        .step-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Result Section */
+        .result-section {
+            background: var(--bg-dark);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .result-header .icon {
+            font-size: 1.5rem;
+        }
+        
+        .result-header h4 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+        }
+        
+        .result-info {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .result-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+        }
+        
+        .result-row .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            min-width: 80px;
+        }
+        
+        .result-row .value {
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Document Viewer Inline */
+        .doc-viewer-inline {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        /* Attachments Section */
+        .doc-attachments {
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05) 0%, rgba(0, 212, 255, 0.05) 100%);
+        }
+        
+        .attachments-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+        
+        .attachment-count {
+            font-size: 0.75rem;
+            background: var(--accent-purple);
+            color: #000;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .attachments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        
+        .attachment-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-purple);
+        }
+        
+        .attachment-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .attachment-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .attachment-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .attachment-meta {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.2rem;
+        }
+        
+        .attachment-type {
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-hover);
+            border-radius: 4px;
+            font-size: 0.65rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+        }
+        
+        .attachment-action {
+            padding: 0.4rem 0.6rem;
+            background: var(--accent-purple);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .attachment-action:hover {
+            background: var(--accent-cyan);
+            transform: scale(1.05);
+        }
+        
+        .no-attachments {
+            text-align: center;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+        
+        .doc-viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--bg-hover);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .doc-viewer-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .doc-viewer-title h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .doc-viewer-title .filepath {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .doc-viewer-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .doc-viewer-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .doc-viewer-btn:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            border-color: var(--accent-cyan);
+        }
+        
+        .doc-viewer-content {
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .doc-content-wrapper {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text-primary);
+        }
+        
+        .doc-content-wrapper .json-block {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        /* Weights Applied Badge */
+        .weights-badge {
+            display: inline-flex;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-dark);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .weights-badge span:nth-child(1) { color: var(--accent-cyan); }
+        .weights-badge span:nth-child(2) { color: var(--accent-purple); }
+        .weights-badge span:nth-child(3) { color: var(--accent-green); }
+        .weights-badge span:nth-child(4) { color: var(--accent-yellow); }
+        
+        /* Collapse/Expand */
+        .collapse-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-hover);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .collapse-btn:hover {
+            background: var(--bg-dark);
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">🔥</div>
+                <span class="logo-text">Holarchy Dashboard</span>
+            </div>
+            <div class="header-actions">
+                <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-docs">15</div>
+                    <div class="stat-label">총 문서</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="health-score">90%</div>
+                    <div class="stat-label">건강도</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="today-updates">3</div>
+                    <div class="stat-label">오늘 업데이트</div>
+                </div>
+                </div>
+                <!-- Help Button -->
+                <a href="manual.html" class="theme-toggle" title="도움말" style="text-decoration: none;">
+                    <span>❓</span>
+                    <span>Help</span>
+                </a>
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" onclick="toggleTheme()" title="다크/라이트 모드 전환">
+                    <span class="theme-toggle-icon" id="theme-icon">🌙</span>
+                    <span id="theme-label">Dark</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Left Sidebar: Memory Tuning + Stats -->
+        <aside class="sidebar-left">
+            <!-- 🧠 Memory Tuning Panel -->
+            <div class="card" id="memory-panel">
+                <div class="card-header" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                    <h3 class="card-title" style="font-size: 0.95rem;">🧠 Memory</h3>
+                </div>
+                
+                <!-- 현재 모드 표시 -->
+                <div id="current-mode" style="text-align: center; margin-bottom: 1rem; padding: 0.5rem; background: rgba(0,212,255,0.1); border-radius: 6px;">
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">현재 모드</span>
+                    <div style="font-size: 0.9rem; font-weight: 600; color: var(--accent-cyan);" id="mode-name">⚖️ Balanced</div>
+                </div>
+                
+                <!-- 프리셋 버튼 (세로 배치, 명칭 포함) -->
+                <div style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem;">
+                    <button class="mode-btn" data-mode="fast_fresh" onclick="applyPreset('fast_fresh')">
+                        <span class="mode-icon">⚡</span>
+                        <span class="mode-label">Fast</span>
+                        <span class="mode-desc">최신 우선</span>
+                    </button>
+                    <button class="mode-btn" data-mode="wisdom" onclick="applyPreset('wisdom')">
+                        <span class="mode-icon">📚</span>
+                        <span class="mode-label">Wisdom</span>
+                        <span class="mode-desc">중요도 우선</span>
+                    </button>
+                    <button class="mode-btn active" data-mode="balanced" onclick="applyPreset('balanced')">
+                        <span class="mode-icon">⚖️</span>
+                        <span class="mode-label">Balanced</span>
+                        <span class="mode-desc">균형 모드</span>
+                    </button>
+                    <button class="mode-btn" data-mode="pattern" onclick="applyPreset('pattern')">
+                        <span class="mode-icon">🔍</span>
+                        <span class="mode-label">Pattern</span>
+                        <span class="mode-desc">패턴 탐색</span>
+                    </button>
+                    <button class="mode-btn" data-mode="trend" onclick="applyPreset('trend')">
+                        <span class="mode-icon">📈</span>
+                        <span class="mode-label">Trend</span>
+                        <span class="mode-desc">트렌드 분석</span>
+                    </button>
+                </div>
+                
+                <!-- 구분선 -->
+                <div style="border-top: 1px solid var(--border); margin: 1rem 0; padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary);">참조 문서</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: var(--accent-cyan);" id="topk-value">7</span>
+                    </div>
+                    <input type="range" class="tuning-slider" id="topk-slider" 
+                           min="3" max="20" value="7" oninput="updateTopK(this.value)" style="width: 100%;">
+                </div>
+                
+                <!-- 가중치 슬라이더 (컴팩트) -->
+                <div style="border-top: 1px solid var(--border); margin-top: 0.5rem; padding-top: 1rem;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.75rem;">가중치 미세 조정</div>
+                    <div class="weight-compact">
+                        <div class="weight-row-compact">
+                            <span class="weight-icon wr">R</span>
+                            <input type="range" class="weight-slider wr" id="weight-recency" 
+                                   min="0" max="100" value="25" oninput="updateWeight('recency', this.value)">
+                            <span class="weight-val" id="val-recency">.25</span>
+                        </div>
+                        <div class="weight-row-compact">
+                            <span class="weight-icon wp">P</span>
+                            <input type="range" class="weight-slider wp" id="weight-popularity" 
+                                   min="0" max="100" value="25" oninput="updateWeight('popularity', this.value)">
+                            <span class="weight-val" id="val-popularity">.25</span>
+                        </div>
+                        <div class="weight-row-compact">
+                            <span class="weight-icon wv">V</span>
+                            <input type="range" class="weight-slider wv" id="weight-relevance" 
+                                   min="0" max="100" value="25" oninput="updateWeight('relevance', this.value)">
+                            <span class="weight-val" id="val-relevance">.25</span>
+                        </div>
+                        <div class="weight-row-compact">
+                            <span class="weight-icon wm">M</span>
+                            <input type="range" class="weight-slider wm" id="weight-importance" 
+                                   min="0" max="100" value="25" oninput="updateWeight('importance', this.value)">
+                            <span class="weight-val" id="val-importance">.25</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
+                        <button onclick="normalizeWeights()" style="font-size: 0.6rem; color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='none'">🔄 정규화</button>
+                        <span class="weight-sum" id="weight-sum">1.00 ✓</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 현황</h3>
+                </div>
+                <div class="quick-stats" style="grid-template-columns: repeat(2, 1fr);">
+                    <div class="quick-stat meetings">
+                        <div class="quick-stat-value" id="stat-meetings">2</div>
+                        <div class="quick-stat-label">Meetings</div>
+                    </div>
+                    <div class="quick-stat decisions">
+                        <div class="quick-stat-value" id="stat-decisions">3</div>
+                        <div class="quick-stat-label">Decisions</div>
+                    </div>
+                    <div class="quick-stat tasks">
+                        <div class="quick-stat-value" id="stat-tasks">2</div>
+                        <div class="quick-stat-label">Tasks</div>
+                    </div>
+                    <div class="quick-stat health">
+                        <div class="quick-stat-value" id="stat-health">90</div>
+                        <div class="quick-stat-label">Health</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 플로우 가이드 -->
+            <div class="card">
+                <div class="flow-guide" style="background: transparent; padding: 0;">
+                    <div class="flow-title">📋 점수 공식</div>
+                    <div class="flow-formula" style="font-size: 0.6rem;">
+                        <span class="wr">R</span>×최근 + <span class="wp">P</span>×조회 + <span class="wv">V</span>×상관 + <span class="wm">M</span>×중요
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: Main Content -->
+        <div class="content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="input">📝 회의록</button>
+                <button class="tab" data-tab="mission">🎯 미션 배치</button>
+                <button class="tab" data-tab="issues">🔍 이슈 리뷰</button>
+                <button class="tab" data-tab="meetings">📋 Meetings</button>
+                <button class="tab" data-tab="decisions">✅ Decisions</button>
+                <button class="tab" data-tab="tasks">⬜ Tasks</button>
+                <button class="tab" data-tab="graph">🕸️ 그래프</button>
+            </div>
+
+            <!-- Meeting Input -->
+            <div class="meeting-input active" id="tab-input">
+                
+                <!-- Step Indicator -->
+                <div class="step-indicator" id="step-indicator">
+                    <div class="step-wrapper">
+                        <div class="step-dot active" id="step-1">1</div>
+                        <span class="step-label">입력</span>
+                    </div>
+                    <div class="step-line" id="line-1"></div>
+                    <div class="step-wrapper">
+                        <div class="step-dot" id="step-2">2</div>
+                        <span class="step-label">참조 선택</span>
+                    </div>
+                    <div class="step-line" id="line-2"></div>
+                    <div class="step-wrapper">
+                        <div class="step-dot" id="step-3">3</div>
+                        <span class="step-label">생성</span>
+                    </div>
+                    <div class="step-line" id="line-3"></div>
+                    <div class="step-wrapper">
+                        <div class="step-dot" id="step-4">4</div>
+                        <span class="step-label">완료</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: 입력 -->
+                <div class="flow-section active" id="section-input">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📝 Step 1: 회의록 입력</h3>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">템플릿 선택</label>
+                            <button class="template-btn" onclick="useTemplate('basic')">기본 회의록</button>
+                            <button class="template-btn" onclick="useTemplate('standup')">스탠드업</button>
+                            <button class="template-btn" onclick="useTemplate('planning')">기획 회의</button>
+                            <button class="template-btn" onclick="useTemplate('review')">리뷰 회의</button>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label">회의록 내용</label>
+                            <textarea class="input-field" id="meeting-content" placeholder="# 회의 제목
+
+일시: 2025-11-30
+참석자: 김철수, 이영희
+
+## 안건
+1. MVP 범위 확정
+2. 일정 논의
+
+## 논의 내용
+학생 진단 기능을 먼저 개발하기로 함.
+
+## 결정 사항
+- 결정: MVP는 진단 리포트 기능으로 한정
+- 결정: 2월 말 베타 출시 목표
+
+## 할일
+- TODO: 김철수 - UI 디자인 (12/15까지)
+- TODO: 이영희 - API 설계"></textarea>
+                        </div>
+                        
+                        <button class="btn-primary" onclick="goToStep2()">
+                            다음: 참조 문서 분석 →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 2: 참조 문서 선택 -->
+                <div class="flow-section" id="section-refs">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📚 Step 2: 참조 문서 선택</h3>
+                            <span class="ref-count" id="ref-count">0개 선택</span>
+                        </div>
+                        
+                        <div class="weights-badge" id="applied-weights">
+                            <span>R:0.25</span>
+                            <span>P:0.25</span>
+                            <span>V:0.25</span>
+                            <span>M:0.25</span>
+                        </div>
+                        
+                        <!-- 선택된 참조 문서 목록 -->
+                        <div id="selected-refs" class="selected-refs" style="margin-top: 1rem;">
+                            <!-- 동적 생성 -->
+                        </div>
+                        
+                        <!-- 대체 문서 선택 영역 (클릭 시 표시) -->
+                        <div id="replacement-panel" class="replacement-panel" style="display: none;">
+                            <div class="replacement-header">
+                                <span>🔄 대체할 문서 선택</span>
+                                <button class="close-btn" onclick="closeReplacementPanel()">×</button>
+                            </div>
+                            <div class="replacement-search">
+                                <input type="text" id="replacement-search" placeholder="문서 검색..." 
+                                       oninput="filterReplacements(this.value)">
+                            </div>
+                            <div id="replacement-list" class="replacement-list">
+                                <!-- 동적 생성 -->
+                            </div>
+                        </div>
+                        
+                        <div class="ref-actions" style="margin-top: 1rem;">
+                            <button class="btn-secondary" onclick="goToStep1()">
+                                ← 이전
+                            </button>
+                            <button class="btn-primary" onclick="goToStep3()">
+                                다음: 생성하기 →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: 생성 중 -->
+                <div class="flow-section" id="section-generating">
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+                        <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">생성 중...</h3>
+                        <p style="color: var(--text-secondary);">선택된 참조 문서를 기반으로 Holon을 생성하고 있습니다.</p>
+                    </div>
+                </div>
+
+                <!-- Step 4: 완료 & 문서 보기 -->
+                <div class="flow-section" id="section-result">
+                    <div class="result-section">
+                        <div class="result-header">
+                            <span class="icon">✅</span>
+                            <h4>생성 완료!</h4>
+                        </div>
+                        
+                        <div class="result-info" id="result-info">
+                            <!-- 동적 생성 -->
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <button class="btn-secondary" style="flex: none;" onclick="toggleDocViewer()">📄 문서 보기</button>
+                            <button class="btn-primary" style="flex: 1;" onclick="resetFlow()">+ 새 문서 생성</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 문서 뷰어 (인라인) -->
+                    <div class="doc-viewer-inline" id="doc-viewer-inline" style="display: none;">
+                        <div class="doc-viewer-header">
+                            <div class="doc-viewer-title">
+                                <span>📄</span>
+                                <div>
+                                    <h3 id="inline-doc-name">문서 이름</h3>
+                                    <div class="filepath" id="inline-doc-path">/path/to/file.md</div>
+                                </div>
+                            </div>
+                            <div class="doc-viewer-actions">
+                                <button class="doc-viewer-btn" onclick="copyDocContent()">📋 복사</button>
+                                <button class="collapse-btn" onclick="toggleDocViewer()">접기 ▲</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 첨부파일 섹션 -->
+                        <div class="doc-attachments" id="doc-attachments" style="display: none;">
+                            <div class="attachments-header">
+                                <span>📎 첨부파일</span>
+                                <span class="attachment-count" id="attachment-count">0개</span>
+                            </div>
+                            <div class="attachments-list" id="attachments-list">
+                                <!-- 동적 생성 -->
+                            </div>
+                        </div>
+                        
+                        <div class="doc-viewer-content">
+                            <div class="doc-content-wrapper" id="inline-doc-content">
+                                <!-- 문서 내용 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 참고 패널 (항상 표시) -->
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">💡 자동 인식 패턴</h3>
+                    </div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 2;">
+                        <div><code style="color: var(--accent-cyan);">결정:</code> 또는 <code style="color: var(--accent-cyan);">합의:</code> → Decision 자동 생성</div>
+                        <div><code style="color: var(--accent-orange);">TODO:</code> 또는 <code style="color: var(--accent-orange);">할일:</code> → Task 자동 생성</div>
+                        <div><code style="color: var(--accent-purple);">참석자:</code> → 참석자 자동 추출</div>
+                        <div><code style="color: var(--accent-green);">안건:</code> → 안건 목록 자동 추출</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mission Placement -->
+            <div class="doc-list" id="tab-mission">
+                <div class="card">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <h3 class="card-title">🎯 22개 미션 에이전트 배치</h3>
+                        <span style="color: var(--text-secondary); font-size: 0.75rem;">다중 홀론 동시 생성</span>
+                    </div>
+                    
+                    <!-- 입력 영역 -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.85rem; color: var(--text-secondary);">내용 입력 (구분자: --- 또는 ## 헤더)</label>
+                            <button class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick="analyzeInput()">🔍 분석</button>
+                        </div>
+                        <textarea id="mission-input" placeholder="여러 홀론을 동시에 입력하세요.
+
+예시 1 (구분자):
+AI 튜터 감정 엔진 개발
+---
+학생 성취도 대시보드 설계
+---
+실시간 피드백 시스템 구현
+
+예시 2 (헤더):
+## 프로젝트: AI 튜터 아키텍처
+딥러닝 기반 감정 분석
+
+## 태스크: API 연동
+OpenAI GPT 연결" style="width: 100%; height: 180px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; color: var(--text-primary); font-size: 0.85rem; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <!-- 분석 결과 -->
+                    <div id="analysis-result" style="display: none; margin-bottom: 1.5rem;">
+                        <div style="font-size: 0.8rem; color: var(--accent-cyan); margin-bottom: 0.75rem;">📊 분석 결과</div>
+                        <div id="detected-holons" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                    
+                    <!-- 미션 에이전트 그리드 -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">🎯 미션 에이전트 선택</span>
+                            <span id="selected-path" style="font-size: 0.65rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;">자동 분류</span>
+                        </div>
+                        <div id="mission-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; max-height: 280px; overflow-y: auto; padding: 0.5rem; background: var(--bg-dark); border-radius: 8px;">
+                            <!-- 미션 카드들이 동적으로 채워짐 -->
+                        </div>
+                        <div style="margin-top: 0.5rem; text-align: right;">
+                            <button onclick="clearMissionSelection()" style="font-size: 0.65rem; padding: 0.25rem 0.5rem; background: none; border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer;">✕ 선택 해제 (자동 분류)</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 홀론 타입 선택 -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">📦 홀론 타입</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="type-btn active" data-type="auto" onclick="selectHolonType('auto')">🤖 Auto</button>
+                            <button class="type-btn" data-type="project" onclick="selectHolonType('project')">📁 Project</button>
+                            <button class="type-btn" data-type="task" onclick="selectHolonType('task')">✅ Task</button>
+                            <button class="type-btn" data-type="drilling" onclick="selectHolonType('drilling')">🔬 Drilling</button>
+                            <button class="type-btn" data-type="app" onclick="selectHolonType('app')">🤖 App</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 생성 버튼 -->
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn-primary" style="flex: 1;" onclick="createMultiHolons()">
+                            ⚡ 다중 홀론 생성
+                        </button>
+                    </div>
+                    
+                    <!-- 생성 결과 -->
+                    <div id="multi-result" style="display: none; margin-top: 1.5rem; padding: 1rem; background: var(--bg-dark); border-radius: 8px;">
+                        <div style="font-size: 0.85rem; color: var(--accent-green); margin-bottom: 0.75rem;">✅ 생성 완료</div>
+                        <div id="created-holons" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 🔍 이슈 리뷰 탭 -->
+            <div class="doc-list" id="tab-issues">
+                <div class="card">
+                    <div class="card-header" style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;">
+                        <h3 class="card-title">🔍 미완성 지점 리뷰</h3>
+                        <span style="color: var(--text-secondary); font-size: 0.75rem;">코드/문서 이슈 탐지 및 처리</span>
+                    </div>
+                    
+                    <!-- 요약 카드 -->
+                    <div id="issue-summary" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--bg-dark); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);" id="issue-open-count">0</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">열린 이슈</div>
+                        </div>
+                        <div style="background: var(--bg-dark); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent-yellow);" id="issue-high-count">0</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">HIGH 심각도</div>
+                        </div>
+                        <div style="background: var(--bg-dark); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent-green);" id="issue-resolved-count">0</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">해결됨</div>
+                        </div>
+                        <div style="background: var(--bg-dark); padding: 0.75rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: var(--text-secondary);" id="issue-total-count">0</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">전체</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 필터 및 액션 -->
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <select id="issue-category-filter" style="padding: 0.4rem 0.6rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.75rem;">
+                            <option value="">모든 카테고리</option>
+                            <option value="placeholder">📝 Placeholder</option>
+                            <option value="hardcoded">⚙️ 하드코딩</option>
+                            <option value="api_gap">🔗 API 연동</option>
+                            <option value="error_handling">⚠️ 에러 처리</option>
+                            <option value="integration">🔄 기능 연동</option>
+                        </select>
+                        <select id="issue-severity-filter" style="padding: 0.4rem 0.6rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.75rem;">
+                            <option value="">모든 심각도</option>
+                            <option value="high">🔴 HIGH</option>
+                            <option value="medium">🟡 MEDIUM</option>
+                            <option value="low">🟢 LOW</option>
+                        </select>
+                        <button onclick="scanIssues()" style="padding: 0.4rem 0.8rem; background: var(--accent-blue); border: none; border-radius: 6px; color: white; font-size: 0.75rem; cursor: pointer;">
+                            🔍 스캔
+                        </button>
+                        <button onclick="loadIssues()" style="padding: 0.4rem 0.8rem; background: var(--bg-light); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.75rem; cursor: pointer;">
+                            🔄 새로고침
+                        </button>
+                    </div>
+                    
+                    <!-- 이슈 목록 -->
+                    <div id="issue-list" style="max-height: 400px; overflow-y: auto;">
+                        <div style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                            🔍 스캔 버튼을 클릭하여 이슈를 탐지하세요
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meetings List -->
+            <div class="doc-list" id="tab-meetings">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 회의 목록</h3>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;" id="meeting-count">2건</span>
+                    </div>
+                    <div id="meetings-container">
+                        <!-- 동적 생성 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Decisions List -->
+            <div class="doc-list" id="tab-decisions">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">✅ 결정 사항</h3>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;" id="decision-count">3건</span>
+                    </div>
+                    <div id="decisions-container">
+                        <!-- 동적 생성 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="doc-list" id="tab-tasks">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">⬜ 할일 목록</h3>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;" id="task-count">2건</span>
+                    </div>
+                    <div id="tasks-container">
+                        <!-- 동적 생성 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graph View -->
+            <div class="graph-view" id="tab-graph">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">🕸️ 문서 관계 그래프</h3>
+                    </div>
+                    <div class="graph-container" id="graph-container">
+                        <!-- 그래프 노드들 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar: Activity, CLI, Quick Actions -->
+        <aside class="sidebar-right">
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">⚡ 최근 활동</h3>
+                </div>
+                <div id="activity-container">
+                    <div class="activity-item">
+                        <div class="activity-dot new"></div>
+                        <div>
+                            <div class="activity-text">Meeting 생성: AI 튜터 킥오프</div>
+                            <div class="activity-time">방금 전</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot new"></div>
+                        <div>
+                            <div class="activity-text">Task 생성: UI 디자인</div>
+                            <div class="activity-time">방금 전</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot check"></div>
+                        <div>
+                            <div class="activity-text">Self-Healing 검증 완료</div>
+                            <div class="activity-time">5분 전</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLI Panel -->
+            <div class="card" style="padding: 0;">
+                <div class="cli-panel">
+                    <div class="cli-header">
+                        <div class="cli-dot red"></div>
+                        <div class="cli-dot yellow"></div>
+                        <div class="cli-dot green"></div>
+                        <span class="cli-title">Terminal</span>
+                    </div>
+                    <div class="cli-content" id="cli-output">
+                        <div class="cli-line"><span class="cmd">$</span> python _cli.py check</div>
+                        <div class="cli-line"><span class="success">🔥 Self-Healing 완료</span></div>
+                        <div class="cli-line"><span class="info">평균 점수: 90%</span></div>
+                        <div class="cli-line"></div>
+                        <div class="cli-line"><span class="cmd">$</span> _</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🚀 빠른 실행</h3>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="template-btn" style="width: 100%; text-align: center;" onclick="runCommand('check')">
+                        🔍 검증 (check)
+                    </button>
+                    <button class="template-btn" style="width: 100%; text-align: center;" onclick="runCommand('link')">
+                        🔗 링크 동기화
+                    </button>
+                    <button class="template-btn" style="width: 100%; text-align: center;" onclick="runCommand('report')">
+                        📋 리포트 보기
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- 모달 제거됨 - 인라인 플로우로 대체 -->
+
+    <script>
+        // ============================================================
+        // 🧠 Memory Weights 상태 관리
+        // ============================================================
+        let brainWeights = {
+            recency: 0.25,
+            popularity: 0.25,
+            relevance: 0.25,
+            importance: 0.25,
+            top_k: 7
+        };
+
+        const presets = {
+            fast_fresh: { recency: 0.5, popularity: 0.1, relevance: 0.3, importance: 0.1 },
+            wisdom: { recency: 0.1, popularity: 0.1, relevance: 0.3, importance: 0.5 },
+            balanced: { recency: 0.25, popularity: 0.25, relevance: 0.25, importance: 0.25 },
+            pattern: { recency: 0.0, popularity: 0.1, relevance: 0.4, importance: 0.5 },
+            trend: { recency: 0.4, popularity: 0.4, relevance: 0.2, importance: 0.0 }
+        };
+
+        // Top-K 업데이트
+        function updateTopK(value) {
+            brainWeights.top_k = parseInt(value);
+            document.getElementById('topk-value').textContent = value;
+            syncWeightsToServer();
+        }
+
+        // 개별 가중치 업데이트
+        function updateWeight(name, value) {
+            brainWeights[name] = value / 100;
+            // 짧은 형식으로 표시 (.25 형식)
+            document.getElementById('val-' + name).textContent = '.' + Math.round(value).toString().padStart(2, '0');
+            updateWeightSum();
+            
+            // 프리셋과 일치하지 않으면 Custom 표시
+            document.getElementById('mode-name').textContent = '🎛️ Custom';
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // 합계 업데이트 및 표시
+        function updateWeightSum() {
+            const sum = brainWeights.recency + brainWeights.popularity + 
+                       brainWeights.relevance + brainWeights.importance;
+            const sumEl = document.getElementById('weight-sum');
+            
+            if (Math.abs(sum - 1.0) < 0.01) {
+                sumEl.textContent = `${sum.toFixed(2)} ✓`;
+                sumEl.classList.remove('invalid');
+            } else {
+                sumEl.textContent = `${sum.toFixed(2)} ⚠`;
+                sumEl.classList.add('invalid');
+            }
+        }
+
+        // 정규화 (합계 = 1.0)
+        function normalizeWeights() {
+            const sum = brainWeights.recency + brainWeights.popularity + 
+                       brainWeights.relevance + brainWeights.importance;
+            
+            if (sum > 0) {
+                brainWeights.recency /= sum;
+                brainWeights.popularity /= sum;
+                brainWeights.relevance /= sum;
+                brainWeights.importance /= sum;
+            } else {
+                // 모두 0이면 균등 배분
+                brainWeights.recency = 0.25;
+                brainWeights.popularity = 0.25;
+                brainWeights.relevance = 0.25;
+                brainWeights.importance = 0.25;
+            }
+            
+            updateSliders();
+            updateWeightSum();
+            syncWeightsToServer();
+        }
+
+        // 프리셋 적용
+        // 모드 이름 매핑
+        const modeNames = {
+            fast_fresh: '⚡ Fast',
+            wisdom: '📚 Wisdom',
+            balanced: '⚖️ Balanced',
+            pattern: '🔍 Pattern',
+            trend: '📈 Trend'
+        };
+
+        function applyPreset(name) {
+            if (presets[name]) {
+                Object.assign(brainWeights, presets[name]);
+                updateSliders();
+                updateWeightSum();
+                
+                // 모드 버튼 활성화 표시
+                document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.mode-btn[data-mode="${name}"]`)?.classList.add('active');
+                
+                // 현재 모드 이름 업데이트
+                const modeNameEl = document.getElementById('mode-name');
+                if (modeNameEl) {
+                    modeNameEl.textContent = modeNames[name] || name;
+                }
+                
+                syncWeightsToServer();
+                addActivity(`🧠 모드 변경: ${modeNames[name]}`);
+            }
+        }
+
+        // 슬라이더 UI 업데이트
+        function updateSliders() {
+            document.getElementById('weight-recency').value = brainWeights.recency * 100;
+            document.getElementById('weight-popularity').value = brainWeights.popularity * 100;
+            document.getElementById('weight-relevance').value = brainWeights.relevance * 100;
+            document.getElementById('weight-importance').value = brainWeights.importance * 100;
+            
+            // 짧은 형식으로 표시 (.25 형식)
+            document.getElementById('val-recency').textContent = '.' + Math.round(brainWeights.recency * 100).toString().padStart(2, '0');
+            document.getElementById('val-popularity').textContent = '.' + Math.round(brainWeights.popularity * 100).toString().padStart(2, '0');
+            document.getElementById('val-relevance').textContent = '.' + Math.round(brainWeights.relevance * 100).toString().padStart(2, '0');
+            document.getElementById('val-importance').textContent = '.' + Math.round(brainWeights.importance * 100).toString().padStart(2, '0');
+        }
+
+        // 서버에 가중치 동기화
+        async function syncWeightsToServer() {
+            if (!useServer) return;
+            
+            try {
+                await fetch(API_BASE + '/api/brain/weights', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        recency: brainWeights.recency,
+                        popularity: brainWeights.popularity,
+                        relevance: brainWeights.relevance,
+                        importance: brainWeights.importance,
+                        top_k: brainWeights.top_k,
+                        normalize: false
+                    })
+                });
+            } catch (e) {
+                console.error('가중치 동기화 실패:', e);
+            }
+        }
+
+        // 서버에서 가중치 로드
+        async function loadWeightsFromServer() {
+            if (!useServer) return;
+            
+            try {
+                const res = await fetch(API_BASE + '/api/brain/weights');
+                const data = await res.json();
+                if (data.success && data.weights) {
+                    brainWeights = { ...brainWeights, ...data.weights };
+                    updateSliders();
+                    updateWeightSum();
+                    document.getElementById('topk-value').textContent = brainWeights.top_k;
+                    document.getElementById('topk-slider').value = brainWeights.top_k;
+                }
+            } catch (e) {
+                console.error('가중치 로드 실패:', e);
+            }
+        }
+
+        // ============================================================
+        // 📚 인라인 플로우 시스템 (4단계)
+        // ============================================================
+        
+        let selectedRefs = [];        // 선택된 참조 문서 목록
+        let allAvailableDocs = [];    // 전체 사용 가능한 문서 목록
+        let replacingIndex = -1;      // 현재 교체 중인 문서 인덱스
+        let pendingContent = '';      // 대기 중인 회의록 내용
+        let createdFilePath = '';     // 생성된 파일 경로
+        let currentStep = 1;          // 현재 단계
+
+        // 단계 이동 함수
+        function setStep(step) {
+            currentStep = step;
+            
+            // 모든 섹션 숨기기
+            document.querySelectorAll('.flow-section').forEach(s => s.classList.remove('active'));
+            
+            // 스텝 인디케이터 업데이트
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById('step-' + i);
+                const line = document.getElementById('line-' + i);
+                
+                dot.classList.remove('active', 'completed');
+                if (line) line.classList.remove('completed');
+                
+                if (i < step) {
+                    dot.classList.add('completed');
+                    dot.textContent = '✓';
+                    if (line) line.classList.add('completed');
+                } else if (i === step) {
+                    dot.classList.add('active');
+                    dot.textContent = i;
+                } else {
+                    dot.textContent = i;
+                }
+            }
+            
+            // 해당 섹션 표시
+            if (step === 1) document.getElementById('section-input').classList.add('active');
+            else if (step === 2) document.getElementById('section-refs').classList.add('active');
+            else if (step === 3) document.getElementById('section-generating').classList.add('active');
+            else if (step === 4) document.getElementById('section-result').classList.add('active');
+        }
+
+        // Step 1 → Step 2
+        async function goToStep2() {
+            const content = document.getElementById('meeting-content').value;
+            if (!content.trim()) {
+                alert('회의록 내용을 입력해주세요.');
+                return;
+            }
+            
+            pendingContent = content;
+            
+            if (!useServer) {
+                alert('서버가 필요합니다. python server.py 실행 후 새로고침하세요.');
+                return;
+            }
+            
+            try {
+                // 버튼 상태 변경
+                const btn = document.querySelector('#section-input .btn-primary');
+                btn.textContent = '⏳ 분석 중...';
+                btn.disabled = true;
+                
+                // 참조 문서 검색
+                const keywords = content.split(/\s+/).slice(0, 50).join(' ');
+                const res = await fetch(API_BASE + '/api/brain/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        query: keywords,
+                        top_k: brainWeights.top_k
+                    })
+                });
+                const data = await res.json();
+                
+                btn.textContent = '다음: 참조 문서 분석 →';
+                btn.disabled = false;
+                
+                if (data.success) {
+                    selectedRefs = data.results;
+                    allAvailableDocs = data.results;
+                    
+                    // 가중치 표시 업데이트
+                    document.getElementById('applied-weights').innerHTML = `
+                        <span>R:${brainWeights.recency.toFixed(2)}</span>
+                        <span>P:${brainWeights.popularity.toFixed(2)}</span>
+                        <span>V:${brainWeights.relevance.toFixed(2)}</span>
+                        <span>M:${brainWeights.importance.toFixed(2)}</span>
+                    `;
+                    
+                    renderRefPreview();
+                    setStep(2);
+                    addActivity(`🔍 참조 문서 ${data.results.length}개 분석 완료`);
+                } else {
+                    alert('오류: ' + data.error);
+                }
+            } catch (e) {
+                const btn = document.querySelector('#section-input .btn-primary');
+                btn.textContent = '다음: 참조 문서 분석 →';
+                btn.disabled = false;
+                alert('서버 오류: ' + e.message);
+            }
+        }
+
+        // Step 2 ← Step 1
+        function goToStep1() {
+            setStep(1);
+        }
+
+        // Step 2 → Step 3 → Step 4
+        async function goToStep3() {
+            setStep(3);
+            
+            try {
+                const refIds = selectedRefs.map(r => r.holon_id);
+                
+                const res = await fetch(API_BASE + '/api/brain/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        text: pendingContent, 
+                        type: 'meeting',
+                        top_k: selectedRefs.length,
+                        selected_refs: refIds
+                    })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    createdFilePath = data.created.file;
+                    
+                    // 참조 문서 목록 HTML 생성
+                    const refDocsHtml = data.referenced_docs && data.referenced_docs.length > 0
+                        ? data.referenced_docs.slice(0, 5).map(doc => 
+                            `<div style="font-size: 0.7rem; padding: 0.3rem 0.5rem; background: var(--bg-hover); border-radius: 4px; margin-top: 0.3rem;">
+                                📚 ${doc.filename || doc.holon_id} <span style="color: var(--accent-green);">${Math.round((doc.final_score || doc.score || 0) * 100)}%</span>
+                            </div>`
+                        ).join('')
+                        : '<span style="color: var(--text-muted);">없음</span>';
+                    
+                    // 결과 정보 표시
+                    document.getElementById('result-info').innerHTML = `
+                        <div class="result-row">
+                            <span class="label">문서 ID</span>
+                            <span class="value">${data.created.holon_id}</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">타입</span>
+                            <span class="value">${data.created.type}</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">파일 경로</span>
+                            <span class="value" style="font-size: 0.75rem;">${data.created.file.replace(/\\/g, '/')}</span>
+                        </div>
+                        <div class="result-row">
+                            <span class="label">적용 가중치</span>
+                            <div class="weights-badge">
+                                <span>R:${data.weights_used.recency.toFixed(2)}</span>
+                                <span>P:${data.weights_used.popularity.toFixed(2)}</span>
+                                <span>V:${data.weights_used.relevance.toFixed(2)}</span>
+                                <span>M:${data.weights_used.importance.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <div class="result-row" style="flex-direction: column; align-items: flex-start;">
+                            <span class="label">📚 참조된 HTE 문서 (${data.referenced_docs?.length || selectedRefs.length}개)</span>
+                            <div style="width: 100%; margin-top: 0.5rem;">${refDocsHtml}</div>
+                        </div>
+                    `;
+                    
+                    setStep(4);
+                    loadDocuments();
+                    addActivity(`📁 생성 완료: ${data.created.holon_id}`);
+                    
+                    // 자동으로 문서 뷰어 로드
+                    await loadDocumentContent(createdFilePath);
+                } else {
+                    alert('오류: ' + data.error);
+                    setStep(2);
+                }
+            } catch (e) {
+                alert('서버 오류: ' + e.message);
+                setStep(2);
+            }
+        }
+
+        // 플로우 리셋
+        function resetFlow() {
+            document.getElementById('meeting-content').value = '';
+            selectedRefs = [];
+            pendingContent = '';
+            createdFilePath = '';
+            document.getElementById('doc-viewer-inline').style.display = 'none';
+            setStep(1);
+        }
+
+        // ============================================================
+        // 🎯 미션 에이전트 배치 시스템
+        // ============================================================
+        
+        let selectedMission = null;
+        let selectedHolonType = 'auto';
+        let missionData = [];
+        
+        // 미션 그리드 로드
+        async function loadMissions() {
+            try {
+                const res = await fetch(`${API_URL}/api/missions`);
+                const data = await res.json();
+                
+                if (data.success) {
+                    missionData = data.missions;
+                    renderMissionGrid(data.missions);
+                }
+            } catch (e) {
+                console.error('미션 로드 실패:', e);
+            }
+        }
+        
+        // 미션 그리드 렌더링
+        function renderMissionGrid(missions) {
+            const grid = document.getElementById('mission-grid');
+            if (!grid) return;
+            
+            grid.innerHTML = missions.map(m => `
+                <div class="mission-card ${selectedMission === m.id ? 'active' : ''}" 
+                     onclick="selectMission('${m.id}')" 
+                     title="${m.full}&#10;${m.desc}&#10;─────────────&#10;키워드: ${m.keywords.slice(0,5).join(', ')}">
+                    <div class="m-code">${m.id}</div>
+                    <div class="m-name" title="${m.name}">${m.name.length > 10 ? m.name.slice(0,10) + '..' : m.name}</div>
+                    <div class="m-count">${m.file_count > 0 ? m.file_count + '📄' : '─'}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 미션 선택
+        function selectMission(missionId) {
+            if (selectedMission === missionId) {
+                selectedMission = null;  // 토글
+            } else {
+                selectedMission = missionId;
+            }
+            renderMissionGrid(missionData);
+            updateSelectedPath();
+        }
+        
+        // 선택 해제
+        function clearMissionSelection() {
+            selectedMission = null;
+            renderMissionGrid(missionData);
+            updateSelectedPath();
+        }
+        
+        // 선택된 경로 표시 업데이트
+        function updateSelectedPath() {
+            const pathEl = document.getElementById('selected-path');
+            if (pathEl) {
+                if (selectedMission) {
+                    const mission = missionData.find(m => m.id === selectedMission);
+                    if (mission) {
+                        pathEl.textContent = `📁 2 Company/4 HTE/${mission.full}/`;
+                        pathEl.style.color = 'var(--accent-green)';
+                    }
+                } else {
+                    pathEl.textContent = '자동 분류';
+                    pathEl.style.color = 'var(--accent-cyan)';
+                }
+            }
+        }
+        
+        // 홀론 타입 선택
+        function selectHolonType(type) {
+            selectedHolonType = type;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+        }
+        
+        // 입력 분석
+        async function analyzeInput() {
+            const text = document.getElementById('mission-input').value.trim();
+            if (!text) {
+                alert('내용을 입력해주세요.');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_URL}/api/analyze`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ text })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // 분석 결과 표시
+                    const resultDiv = document.getElementById('analysis-result');
+                    const holonsDiv = document.getElementById('detected-holons');
+                    
+                    resultDiv.style.display = 'block';
+                    
+                    holonsDiv.innerHTML = data.detected_holons.map(h => `
+                        <div class="detected-item">
+                            <span class="d-num">#${h.index}</span>
+                            <span class="d-title">${h.title}</span>
+                            <span class="d-type">${h.type}</span>
+                        </div>
+                    `).join('');
+                    
+                    // 추천 미션 하이라이트
+                    if (data.mission_recommendations) {
+                        const topMission = Object.keys(data.mission_recommendations)[0];
+                        if (topMission) {
+                            selectMission(topMission);
+                        }
+                    }
+                    
+                    addActivity(`🔍 분석 완료: ${data.holon_count}개 홀론 감지`);
+                }
+            } catch (e) {
+                console.error('분석 실패:', e);
+                alert('분석 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // 다중 홀론 생성
+        async function createMultiHolons() {
+            const text = document.getElementById('mission-input').value.trim();
+            if (!text) {
+                alert('내용을 입력해주세요.');
+                return;
+            }
+            
+            try {
+                const targetModule = selectedMission || null;
+                const targetPath = targetModule 
+                    ? missionData.find(m => m.id === targetModule)?.full 
+                    : '자동 분류';
+                
+                addActivity(`⚡ ${targetPath}에 홀론 생성 중...`);
+                
+                const res = await fetch(`${API_URL}/api/place/multi`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        text,
+                        module: targetModule,  // 선택된 미션 에이전트
+                        parent_id: targetModule ? `hte-${targetModule.toLowerCase()}` : null
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // 결과 표시
+                    const resultDiv = document.getElementById('multi-result');
+                    const holonsDiv = document.getElementById('created-holons');
+                    
+                    resultDiv.style.display = 'block';
+                    
+                    // 생성 경로 표시 추가
+                    const pathInfo = data.target_module 
+                        ? `<div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.5rem;">📁 ${data.target_path}</div>`
+                        : '';
+                    
+                    holonsDiv.innerHTML = pathInfo + data.holons.map(h => `
+                        <div class="created-item">
+                            <span class="c-module">${h.module.split('_')[0]}</span>
+                            <span class="c-title">${h.title}</span>
+                            <span class="c-conf">${Math.round(h.confidence * 100)}%</span>
+                        </div>
+                    `).join('');
+                    
+                    addActivity(`✅ ${data.count}개 홀론 → ${data.target_path || '자동 분류'}`);
+                    
+                    // 분석 결과 숨기기
+                    document.getElementById('analysis-result').style.display = 'none';
+                    
+                    // 미션 그리드 새로고침
+                    loadMissions();
+                    
+                    // 통계 업데이트
+                    updateStats();
+                } else {
+                    alert('생성 실패: ' + (data.error || '알 수 없는 오류'));
+                }
+            } catch (e) {
+                console.error('생성 실패:', e);
+                alert('생성 중 오류가 발생했습니다: ' + e.message);
+            }
+        }
+        
+        // 페이지 로드 시 미션 로드 및 테마 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMissions();
+            initTheme();
+        });
+        
+        // ============================================================
+        // 🌓 테마 토글 (다크/라이트 모드)
+        // ============================================================
+        
+        function initTheme() {
+            const savedTheme = localStorage.getItem('holarchy-theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light');
+                updateThemeUI('light');
+            }
+        }
+        
+        function toggleTheme() {
+            const isLight = document.documentElement.classList.toggle('light');
+            const theme = isLight ? 'light' : 'dark';
+            localStorage.setItem('holarchy-theme', theme);
+            updateThemeUI(theme);
+            addActivity(`🌓 테마 변경: ${theme === 'light' ? '라이트 모드' : '다크 모드'}`);
+        }
+        
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('theme-icon');
+            const label = document.getElementById('theme-label');
+            if (theme === 'light') {
+                icon.textContent = '☀️';
+                label.textContent = 'Light';
+            } else {
+                icon.textContent = '🌙';
+                label.textContent = 'Dark';
+            }
+        }
+
+        // 문서 뷰어 토글
+        function toggleDocViewer() {
+            const viewer = document.getElementById('doc-viewer-inline');
+            if (viewer.style.display === 'none') {
+                viewer.style.display = 'block';
+            } else {
+                viewer.style.display = 'none';
+            }
+        }
+
+        // 문서 내용 로드
+        async function loadDocumentContent(filepath) {
+            try {
+                const res = await fetch(API_BASE + '/api/document/read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filepath: filepath })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    currentDocContent = data.content;
+                    document.getElementById('inline-doc-name').textContent = data.filename;
+                    document.getElementById('inline-doc-path').textContent = filepath.replace(/\\/g, '/');
+                    
+                    let formattedContent = escapeHtml(data.content);
+                    formattedContent = formattedContent.replace(
+                        /(```json[\s\S]*?```)/g, 
+                        '<div class="json-block">$1</div>'
+                    );
+                    
+                    document.getElementById('inline-doc-content').innerHTML = formattedContent;
+                    document.getElementById('doc-viewer-inline').style.display = 'block';
+                    
+                    // 첨부파일 파싱 및 표시
+                    parseAndDisplayAttachments(data.content, filepath);
+                }
+            } catch (e) {
+                console.error('문서 로드 실패:', e);
+            }
+        }
+        
+        // 첨부파일 파싱 및 표시
+        function parseAndDisplayAttachments(content, filepath) {
+            const attachmentsDiv = document.getElementById('doc-attachments');
+            const listDiv = document.getElementById('attachments-list');
+            const countSpan = document.getElementById('attachment-count');
+            
+            // JSON 블록에서 attachments 추출
+            const jsonMatch = content.match(/```json\s*\n([\s\S]*?)\n```/);
+            let attachments = [];
+            
+            if (jsonMatch) {
+                try {
+                    const holon = JSON.parse(jsonMatch[1]);
+                    attachments = holon.attachments || [];
+                } catch (e) {
+                    console.log('JSON 파싱 실패:', e);
+                }
+            }
+            
+            if (attachments.length > 0) {
+                attachmentsDiv.style.display = 'block';
+                countSpan.textContent = `${attachments.length}개`;
+                
+                // 파일 기준 경로 계산
+                const basePath = filepath.replace(/[^/\\]+$/, '');
+                
+                let html = attachments.map(att => {
+                    const icon = getAttachmentIcon(att.type);
+                    const fullPath = att.path.startsWith('_attachments') 
+                        ? basePath + att.path 
+                        : att.path;
+                    
+                    return `
+                        <div class="attachment-item">
+                            <span class="attachment-icon">${icon}</span>
+                            <div class="attachment-info">
+                                <div class="attachment-name">${escapeHtml(att.name)}</div>
+                                <div class="attachment-meta">
+                                    <span class="attachment-type">${att.type}</span>
+                                    ${att.description ? `<span>${escapeHtml(att.description)}</span>` : ''}
+                                    ${att.added_at ? `<span>📅 ${att.added_at}</span>` : ''}
+                                </div>
+                            </div>
+                            <button class="attachment-action" onclick="openAttachment('${escapeHtml(fullPath)}')">열기</button>
+                        </div>
+                    `;
+                }).join('');
+                
+                listDiv.innerHTML = html;
+            } else {
+                attachmentsDiv.style.display = 'none';
+            }
+        }
+        
+        // 첨부파일 타입별 아이콘
+        function getAttachmentIcon(type) {
+            const icons = {
+                'image': '🖼️',
+                'document': '📄',
+                'data': '📊',
+                'code': '💻',
+                'other': '📁'
+            };
+            return icons[type] || icons['other'];
+        }
+        
+        // 첨부파일 열기
+        function openAttachment(path) {
+            // 로컬 파일 경로 처리
+            const normalizedPath = path.replace(/\//g, '\\');
+            addActivity(`📎 첨부파일 열기: ${path.split(/[/\\]/).pop()}`);
+            
+            // 새 탭에서 파일 열기 시도 (로컬 파일은 제한이 있을 수 있음)
+            window.open('file:///' + normalizedPath, '_blank');
+        }
+
+        // 참조 문서 미리보기 렌더링
+        function renderRefPreview() {
+            const container = document.getElementById('selected-refs');
+            let html = '';
+            
+            selectedRefs.forEach((ref, i) => {
+                const scorePercent = Math.round(ref.scores.final * 100);
+                html += `
+                    <div class="ref-item ${replacingIndex === i ? 'replacing' : 'selected'}" 
+                         data-index="${i}">
+                        <div class="ref-rank">${i + 1}</div>
+                        <div class="ref-info" style="cursor: pointer;" onclick="openRefDocumentInNewTab('${escapeHtml(ref.holon_id)}', '${escapeHtml(ref.filename || '')}')">
+                            <div class="ref-title">${ref.holon_id}</div>
+                            <div class="ref-meta">
+                                <span>📁 ${ref.type || 'holon'}</span>
+                                <span>📅 ${ref.age_days}일 전</span>
+                                <span>👁 ${ref.access_count || 0}회</span>
+                            </div>
+                        </div>
+                        <div class="ref-score">
+                            <div class="ref-score-bar">
+                                <div class="ref-score-fill" style="width: ${scorePercent}%"></div>
+                            </div>
+                            <div class="ref-score-value">${scorePercent}%</div>
+                        </div>
+                        <div class="ref-actions" style="display: flex; gap: 0.3rem;">
+                            <button class="ref-view-btn" onclick="event.stopPropagation(); openRefDocumentInNewTab('${escapeHtml(ref.holon_id)}', '${escapeHtml(ref.filename || '')}')">
+                                👁 보기
+                            </button>
+                            <button class="ref-replace-btn" onclick="event.stopPropagation(); showReplacementOptions(${i})">
+                                🔄 교체
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('ref-count').textContent = `${selectedRefs.length}개 선택`;
+        }
+        
+        // 참조 문서를 새 탭에서 열기
+        async function openRefDocumentInNewTab(holonId, filename) {
+            addActivity(`📖 문서 열기: ${holonId}`);
+            
+            try {
+                // API를 통해 문서 내용 가져오기
+                const res = await fetch(API_BASE + '/api/brain/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: holonId, top_k: 1 })
+                });
+                const data = await res.json();
+                
+                if (data.success && data.results && data.results.length > 0) {
+                    const doc = data.results.find(d => d.holon_id === holonId) || data.results[0];
+                    const filepath = doc.filepath || doc.filename;
+                    
+                    // 문서 내용 읽기
+                    const contentRes = await fetch(API_BASE + '/api/document/read', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ filepath: filepath })
+                    });
+                    const contentData = await contentRes.json();
+                    
+                    if (contentData.success) {
+                        // 새 탭에서 문서 표시
+                        openDocumentViewer(holonId, contentData.content, filepath);
+                    } else {
+                        alert('문서 내용을 로드할 수 없습니다.');
+                    }
+                } else {
+                    alert('문서를 찾을 수 없습니다: ' + holonId);
+                }
+            } catch (e) {
+                console.error('문서 열기 실패:', e);
+                alert('문서 열기 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // 새 창에서 문서 뷰어 열기
+        function openDocumentViewer(title, content, filepath) {
+            const isDark = !document.documentElement.classList.contains('light');
+            
+            const html = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>📄 ${escapeHtml(title)} - Holarchy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: ${isDark ? '#0a0a0f' : '#f5f7fa'};
+            --bg-card: ${isDark ? '#12121a' : '#ffffff'};
+            --border: ${isDark ? '#2a2a3a' : '#d0d7de'};
+            --text-primary: ${isDark ? '#e8e8f0' : '#1a1a2e'};
+            --text-secondary: ${isDark ? '#8888a0' : '#57606a'};
+            --accent-cyan: ${isDark ? '#00d4ff' : '#0891b2'};
+            --accent-purple: ${isDark ? '#a855f7' : '#7c3aed'};
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header h1 {
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header .path {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        pre {
+            background: var(--bg-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .json-block {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(168,85,247,0.1));
+            border: 1px solid var(--accent-cyan);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .copy-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            color: #000;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,212,255,0.3);
+        }
+        .copy-btn:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📄 ${escapeHtml(title)}</h1>
+        <div class="path">${escapeHtml(filepath)}</div>
+    </div>
+    <div class="content">
+        <pre>${escapeHtml(content).replace(/(\\x60\\x60\\x60json[\\s\\S]*?\\x60\\x60\\x60)/g, '<div class="json-block">$1</div>')}</pre>
+    </div>
+    <button class="copy-btn" onclick="copyContent()">📋 복사</button>
+    <scr` + `ipt>
+        const docContent = ${JSON.stringify(content)};
+        function copyContent() {
+            navigator.clipboard.writeText(docContent).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = '✅ 복사됨!';
+                setTimeout(() => btn.textContent = '📋 복사', 2000);
+            });
+        }
+    </scr` + `ipt>
+</bo` + `dy>
+</ht` + `ml>`;
+            
+            const newTab = window.open('', '_blank');
+            newTab.document.write(html);
+            newTab.document.close();
+        }
+
+        // 대체 문서 옵션 표시
+        async function showReplacementOptions(index) {
+            replacingIndex = index;
+            renderRefPreview(); // 강조 표시 업데이트
+            
+            // 전체 문서 목록 가져오기 (이미 없으면)
+            if (allAvailableDocs.length <= selectedRefs.length) {
+                try {
+                    const res = await fetch(API_BASE + '/api/brain/search', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: '', top_k: 50 })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        allAvailableDocs = data.results;
+                    }
+                } catch (e) {
+                    console.error('문서 목록 로드 실패:', e);
+                }
+            }
+            
+            renderReplacementList('');
+            document.getElementById('replacement-panel').style.display = 'block';
+            document.getElementById('replacement-search').value = '';
+            document.getElementById('replacement-search').focus();
+        }
+
+        // 대체 문서 목록 렌더링
+        function renderReplacementList(filter) {
+            const container = document.getElementById('replacement-list');
+            const filterLower = filter.toLowerCase();
+            
+            // 현재 선택된 것 제외하고 필터링
+            const selectedIds = selectedRefs.map(r => r.holon_id);
+            const filtered = allAvailableDocs.filter(doc => 
+                !selectedIds.includes(doc.holon_id) &&
+                (doc.holon_id.toLowerCase().includes(filterLower) ||
+                 doc.filename.toLowerCase().includes(filterLower))
+            );
+            
+            let html = '';
+            filtered.slice(0, 20).forEach(doc => {
+                const scorePercent = Math.round(doc.scores.final * 100);
+                html += `
+                    <div class="replacement-item" onclick="replaceDocument('${doc.holon_id}')">
+                        <span>📄 ${doc.holon_id}</span>
+                        <span class="score">${scorePercent}%</span>
+                    </div>
+                `;
+            });
+            
+            if (filtered.length === 0) {
+                html = '<div style="padding: 1rem; text-align: center; color: var(--text-muted);">검색 결과 없음</div>';
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // 필터링
+        function filterReplacements(value) {
+            renderReplacementList(value);
+        }
+
+        // 문서 교체
+        function replaceDocument(newDocId) {
+            const newDoc = allAvailableDocs.find(d => d.holon_id === newDocId);
+            if (newDoc && replacingIndex >= 0) {
+                selectedRefs[replacingIndex] = newDoc;
+                closeReplacementPanel();
+                renderRefPreview();
+                addActivity(`🔄 참조 문서 교체: ${newDocId}`);
+            }
+        }
+
+        // 대체 패널 닫기
+        function closeReplacementPanel() {
+            document.getElementById('replacement-panel').style.display = 'none';
+            replacingIndex = -1;
+            renderRefPreview();
+        }
+
+        // ============================================================
+        // 📄 문서 뷰어 유틸리티
+        // ============================================================
+        
+        let currentDocContent = '';  // 현재 표시 중인 문서 내용
+        
+        // 문서 내용 복사
+        function copyDocContent() {
+            if (currentDocContent) {
+                navigator.clipboard.writeText(currentDocContent).then(() => {
+                    const btn = document.querySelector('#doc-viewer-inline .doc-viewer-btn');
+                    const originalText = btn.textContent;
+                    btn.textContent = '✅ 복사됨!';
+                    setTimeout(() => {
+                        btn.textContent = '📋 복사';
+                    }, 2000);
+                }).catch(err => {
+                    alert('복사 실패: ' + err);
+                });
+            }
+        }
+        
+        // HTML 이스케이프
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================================
+        // 기존 데이터
+        // ============================================================
+        
+        // 데이터 (실제로는 서버에서 가져옴)
+        let meetings = [
+            { id: 'meeting-2025-001', title: 'MVP 기능 범위 회의', date: '2025-11-29', participants: ['김철수', '이영희'], status: 'active' },
+            { id: 'meeting-2025-002', title: 'AI 튜터 킥오프 회의', date: '2025-11-30', participants: ['김철수', '이영희'], status: 'active' }
+        ];
+
+        let decisions = [
+            { id: 'decision-2025-001', title: 'MVP는 학생 진단 기능만 포함', meeting: 'meeting-2025-002', status: 'active' },
+            { id: 'decision-2025-003', title: '2월 말 베타 출시', meeting: 'meeting-2025-002', status: 'active' },
+            { id: 'decision-2025-005', title: '일정 논의', meeting: 'meeting-2025-002', status: 'pending' }
+        ];
+
+        let tasks = [
+            { id: 'task-2025-001', title: '김철수 - UI 디자인', meeting: 'meeting-2025-002', status: 'pending', assignee: '김철수' },
+            { id: 'task-2025-003', title: '이영희 - API 설계', meeting: 'meeting-2025-002', status: 'pending', assignee: '이영희' }
+        ];
+
+        // 탭 전환
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabId = tab.dataset.tab;
+                document.querySelectorAll('.meeting-input, .doc-list, .graph-view').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.getElementById('tab-' + tabId).classList.add('active');
+                
+                if (tabId === 'graph') renderGraph();
+            });
+        });
+
+        // 템플릿 사용
+        const templates = {
+            basic: `# 회의 제목
+
+일시: ${new Date().toISOString().split('T')[0]}
+참석자: 
+
+## 안건
+1. 
+2. 
+
+## 논의 내용
+
+
+## 결정 사항
+- 결정: 
+
+## 할일
+- TODO: `,
+            standup: `# 스탠드업 미팅
+
+일시: ${new Date().toISOString().split('T')[0]}
+참석자: 
+
+## 어제 한 일
+
+
+## 오늘 할 일
+- TODO: 
+
+## 블로커
+`,
+            planning: `# 기획 회의
+
+일시: ${new Date().toISOString().split('T')[0]}
+참석자: 
+
+## 목표
+
+
+## 범위 정의
+- 결정: 
+
+## 일정
+- 결정: 
+
+## 담당자 배정
+- TODO: `,
+            review: `# 리뷰 회의
+
+일시: ${new Date().toISOString().split('T')[0]}
+참석자: 
+
+## 리뷰 대상
+
+
+## 피드백
+
+
+## 결정 사항
+- 결정: 
+
+## 후속 조치
+- TODO: `
+        };
+
+        function useTemplate(name) {
+            document.getElementById('meeting-content').value = templates[name];
+        }
+
+        // API 기본 URL (서버 실행 시)
+        const API_BASE = 'http://localhost:5000';
+        let useServer = false;
+
+        // 서버 연결 확인
+        async function checkServer() {
+            try {
+                const res = await fetch(API_BASE + '/api/stats', { method: 'GET' });
+                if (res.ok) {
+                    useServer = true;
+                    console.log('🔥 서버 연결됨 - 실제 파일 생성 모드');
+                    document.querySelector('.btn-primary').textContent = '🚀 파싱 & 실제 파일 생성 (가중치 적용)';
+                    loadDocuments();
+                    loadWeightsFromServer();
+                }
+            } catch (e) {
+                console.log('ℹ️ 서버 없음 - 시뮬레이션 모드');
+            }
+        }
+        checkServer();
+
+        // 문서 로드 (서버에서)
+        async function loadDocuments() {
+            if (!useServer) return;
+            try {
+                const res = await fetch(API_BASE + '/api/documents');
+                const data = await res.json();
+                if (data.success) {
+                    meetings = data.documents.meetings.map(m => ({
+                        id: m.id, title: m.title, date: m.date, status: m.status
+                    }));
+                    decisions = data.documents.decisions.map(d => ({
+                        id: d.id, title: d.title, status: d.status, meeting: d.parent
+                    }));
+                    tasks = data.documents.tasks.map(t => ({
+                        id: t.id, title: t.title, status: t.status, meeting: t.parent
+                    }));
+                    updateStats();
+                    renderLists();
+                }
+            } catch (e) {
+                console.error('문서 로드 실패:', e);
+            }
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('stat-meetings').textContent = meetings.length;
+            document.getElementById('stat-decisions').textContent = decisions.length;
+            document.getElementById('stat-tasks').textContent = tasks.length;
+            document.getElementById('meeting-count').textContent = meetings.length + '건';
+            document.getElementById('decision-count').textContent = decisions.length + '건';
+            document.getElementById('task-count').textContent = tasks.length + '건';
+            document.getElementById('total-docs').textContent = 10 + meetings.length + decisions.length + tasks.length;
+        }
+
+        // 리스트 렌더링
+        function renderLists() {
+            // Meetings
+            document.getElementById('meetings-container').innerHTML = meetings.map(m => `
+                <div class="doc-item">
+                    <div class="doc-icon meeting">📋</div>
+                    <div class="doc-content">
+                        <div class="doc-title">${m.title}</div>
+                        <div class="doc-meta">
+                            <span>${m.date}</span>
+                            <span>${m.id}</span>
+                        </div>
+                    </div>
+                    <span class="doc-badge badge-meeting">${m.status}</span>
+                </div>
+            `).join('');
+
+            // Decisions
+            document.getElementById('decisions-container').innerHTML = decisions.map(d => `
+                <div class="doc-item">
+                    <div class="doc-icon decision">✅</div>
+                    <div class="doc-content">
+                        <div class="doc-title">${d.title}</div>
+                        <div class="doc-meta">
+                            <span>from: ${d.meeting}</span>
+                        </div>
+                    </div>
+                    <span class="doc-badge badge-decision">${d.status}</span>
+                </div>
+            `).join('');
+
+            // Tasks
+            document.getElementById('tasks-container').innerHTML = tasks.map(t => `
+                <div class="doc-item">
+                    <div class="doc-icon task">⬜</div>
+                    <div class="doc-content">
+                        <div class="doc-title">${t.title}</div>
+                        <div class="doc-meta">
+                            <span>from: ${t.meeting}</span>
+                        </div>
+                    </div>
+                    <span class="doc-badge ${t.status === 'done' ? 'badge-done' : 'badge-pending'}">${t.status}</span>
+                </div>
+            `).join('');
+        }
+
+        // 그래프 렌더링
+        function renderGraph() {
+            const container = document.getElementById('graph-container');
+            const width = container.offsetWidth;
+            const height = 500;
+
+            let html = '';
+            
+            // Root
+            html += `<div class="graph-node root" style="left: ${width/2 - 75}px; top: 20px;">📌 hte-doc-000<br><small>Holarchy Root</small></div>`;
+            
+            // Strategy
+            html += `<div class="graph-node" style="left: ${width/2 - 75}px; top: 100px;">📋 strategy-2025-001<br><small>AI PM 시스템</small></div>`;
+            
+            // Meetings
+            meetings.forEach((m, i) => {
+                const x = 50 + (i * 180);
+                html += `<div class="graph-node meeting" style="left: ${x}px; top: 200px;">📋 ${m.id}<br><small>${m.title.substring(0, 15)}...</small></div>`;
+            });
+
+            // Decisions
+            decisions.forEach((d, i) => {
+                const x = 30 + (i * 150);
+                html += `<div class="graph-node decision" style="left: ${x}px; top: 320px;">✅ ${d.id}<br><small>${d.title.substring(0, 12)}...</small></div>`;
+            });
+
+            // Tasks
+            tasks.forEach((t, i) => {
+                const x = 80 + (i * 200);
+                html += `<div class="graph-node task" style="left: ${x}px; top: 420px;">⬜ ${t.id}<br><small>${t.title.substring(0, 12)}...</small></div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // 활동 추가
+        function addActivity(text) {
+            const container = document.getElementById('activity-container');
+            const item = document.createElement('div');
+            item.className = 'activity-item animate-in';
+            item.innerHTML = `
+                <div class="activity-dot new"></div>
+                <div>
+                    <div class="activity-text">${text}</div>
+                    <div class="activity-time">방금 전</div>
+                </div>
+            `;
+            container.insertBefore(item, container.firstChild);
+        }
+
+        // CLI 명령 실행 (시뮬레이션)
+        function runCommand(cmd) {
+            const output = document.getElementById('cli-output');
+            let result = '';
+            
+            if (cmd === 'check') {
+                result = `<div class="cli-line"><span class="cmd">$</span> python _cli.py check</div>
+                    <div class="cli-line"><span class="success">🔥 Self-Healing 완료</span></div>
+                    <div class="cli-line"><span class="info">평균 점수: 90%</span></div>`;
+            } else if (cmd === 'link') {
+                result = `<div class="cli-line"><span class="cmd">$</span> python _cli.py link</div>
+                    <div class="cli-line"><span class="success">✅ 양방향 링크 동기화 완료</span></div>`;
+            } else if (cmd === 'report') {
+                result = `<div class="cli-line"><span class="cmd">$</span> python _cli.py report</div>
+                    <div class="cli-line"><span class="info">📊 총 이슈: 12개</span></div>
+                    <div class="cli-line"><span class="info">ℹ️ error: 0, warning: 0, info: 12</span></div>`;
+            }
+            
+            output.innerHTML = result + `<div class="cli-line"></div><div class="cli-line"><span class="cmd">$</span> _</div>`;
+        }
+
+        // ============================================================
+        // 🔍 이슈 리뷰 시스템
+        // ============================================================
+        
+        async function loadIssueSummary() {
+            if (!useServer) return;
+            try {
+                const res = await fetch(API_BASE + '/api/issues/summary');
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('issue-total-count').textContent = data.total;
+                    document.getElementById('issue-open-count').textContent = data.by_status.open || 0;
+                    document.getElementById('issue-resolved-count').textContent = data.by_status.resolved || 0;
+                    document.getElementById('issue-high-count').textContent = data.by_severity.high || 0;
+                }
+            } catch (e) {
+                console.error('이슈 요약 로드 실패:', e);
+            }
+        }
+        
+        async function scanIssues() {
+            if (!useServer) {
+                alert('서버 연결 필요');
+                return;
+            }
+            
+            try {
+                document.getElementById('issue-list').innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">🔄 스캔 중...</div>';
+                
+                const res = await fetch(API_BASE + '/api/issues/scan', { method: 'POST' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    addActivity(`🔍 이슈 스캔: ${data.new_count}개 새 이슈 발견`);
+                    loadIssueSummary();
+                    loadIssues();
+                } else {
+                    alert('스캔 실패: ' + data.error);
+                }
+            } catch (e) {
+                alert('서버 오류: ' + e.message);
+            }
+        }
+        
+        async function loadIssues() {
+            if (!useServer) return;
+            
+            const category = document.getElementById('issue-category-filter').value;
+            const severity = document.getElementById('issue-severity-filter').value;
+            
+            try {
+                let url = API_BASE + '/api/issues?status=open';
+                if (category) url += `&category=${category}`;
+                if (severity) url += `&severity=${severity}`;
+                
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                if (data.success) {
+                    renderIssues(data.issues);
+                    loadIssueSummary();
+                }
+            } catch (e) {
+                console.error('이슈 로드 실패:', e);
+            }
+        }
+        
+        function renderIssues(issues) {
+            const container = document.getElementById('issue-list');
+            
+            if (!issues || issues.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-secondary);">✅ 열린 이슈가 없습니다</div>';
+                return;
+            }
+            
+            const severityEmoji = { critical: '🔴', high: '🟠', medium: '🟡', low: '🟢' };
+            const categoryEmoji = { placeholder: '📝', hardcoded: '⚙️', api_gap: '🔗', error_handling: '⚠️', integration: '🔄' };
+            
+            container.innerHTML = issues.map(issue => `
+                <div class="issue-item" style="padding: 0.75rem; margin-bottom: 0.5rem; background: var(--bg-dark); border-radius: 8px; border-left: 3px solid ${issue.severity === 'high' ? 'var(--accent-orange)' : issue.severity === 'medium' ? 'var(--accent-yellow)' : 'var(--accent-green)'};">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                        <div>
+                            <span style="font-size: 0.7rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace;">${issue.id}</span>
+                            <span style="font-size: 0.65rem; margin-left: 0.5rem;">${severityEmoji[issue.severity] || '⚪'} ${issue.severity}</span>
+                            <span style="font-size: 0.65rem; margin-left: 0.5rem;">${categoryEmoji[issue.category] || '📁'} ${issue.category}</span>
+                        </div>
+                        <div style="display: flex; gap: 0.25rem;">
+                            <button onclick="updateIssue('${issue.id}', 'resolved')" style="padding: 0.2rem 0.4rem; background: var(--accent-green); border: none; border-radius: 4px; color: white; font-size: 0.6rem; cursor: pointer;" title="해결됨">✓</button>
+                            <button onclick="updateIssue('${issue.id}', 'wontfix')" style="padding: 0.2rem 0.4rem; background: var(--text-secondary); border: none; border-radius: 4px; color: white; font-size: 0.6rem; cursor: pointer;" title="수정 안함">✗</button>
+                            <button onclick="updateIssue('${issue.id}', 'deferred')" style="padding: 0.2rem 0.4rem; background: var(--accent-blue); border: none; border-radius: 4px; color: white; font-size: 0.6rem; cursor: pointer;" title="연기">⏭</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text); margin-bottom: 0.25rem;">${issue.description}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-secondary);">
+                        📁 ${issue.file}${issue.line ? ':' + issue.line : ''}
+                    </div>
+                    <div style="font-size: 0.65rem; color: var(--accent-cyan); margin-top: 0.25rem;">
+                        💡 ${issue.suggestion}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function updateIssue(issueId, status) {
+            if (!useServer) return;
+            
+            const note = status === 'wontfix' ? prompt('이유를 입력하세요 (선택):') : '';
+            
+            try {
+                const res = await fetch(API_BASE + '/api/issues/update', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id: issueId, status, note })
+                });
+                
+                const data = await res.json();
+                if (data.success) {
+                    addActivity(`📝 이슈 ${issueId} → ${status}`);
+                    loadIssues();
+                } else {
+                    alert('업데이트 실패: ' + data.error);
+                }
+            } catch (e) {
+                alert('서버 오류: ' + e.message);
+            }
+        }
+        
+        // 필터 변경 시 자동 로드
+        document.getElementById('issue-category-filter')?.addEventListener('change', loadIssues);
+        document.getElementById('issue-severity-filter')?.addEventListener('change', loadIssues);
+
+        // 초기화
+        updateStats();
+        renderLists();
+        loadIssueSummary();
+
+        // 모달 외부 클릭 시 닫기
+    </script>
+</body>
+</html>
+

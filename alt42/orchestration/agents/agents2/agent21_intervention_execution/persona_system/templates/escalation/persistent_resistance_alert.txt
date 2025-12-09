@@ -1,0 +1,28 @@
+[INTERNAL_ALERT]
+
+=== 지속적 저항 알림 ===
+
+학생: {{student_name}} (ID: {{student_id}})
+담당 에이전트: Agent21 개입 실행
+
+[PATTERN_SUMMARY]
+
+저항 지속 기간: {{resistance_duration}}일
+저항 횟수: {{resistance_count}}회
+최근 저항 유형: {{latest_resistance_type}}
+
+[ATTEMPTED_INTERVENTIONS]
+
+{{intervention_history}}
+
+[CONCERN_LEVEL]
+
+심각도: {{severity_level}}
+권장 조치: {{recommended_action}}
+
+[REQUEST]
+
+담당 교사의 직접 개입 또는
+개입 전략 재검토가 필요합니다.
+
+생성 시각: {{timestamp}}

@@ -1,0 +1,679 @@
+# Mathking 문서 순환 업데이트 워크플로우
+# 평가표 기준을 충족할 때까지 무한 루프로 문서를 업데이트합니다.
+# 우선순위와 대표 문서 중심의 효율적인 구조로 설계되었습니다.
+
+version: "1.0.0"
+workflow_name: "document_update_loop"
+description: "평가표 기준(50점 이상)을 충족할 때까지 문서를 순환적으로 업데이트"
+created: "2025-10-30"
+updated: "2025-10-30"
+
+# ========================================
+# 평가 기준 정의 (총 60점 만점)
+# ========================================
+evaluation_criteria:
+  passing_score: 50  # 목표 점수 (우수 등급)
+  max_score: 60
+
+  categories:
+    structural_completeness:
+      name: "구조적 완성도"
+      weight: 10
+      checklist:
+        - "논리적 섹션 구성"
+        - "계층 구조의 명확성"
+        - "목차와 내용의 일치도"
+        - "문서 간 상호참조 정확성"
+
+    functional_clarity:
+      name: "기능적 명확성"
+      weight: 10
+      checklist:
+        - "기능 정의의 구체성"
+        - "사용 사례의 명확성"
+        - "입출력 명세의 정확성"
+        - "제약사항 명시"
+
+    technical_suitability:
+      name: "기술적 적합성"
+      weight: 10
+      checklist:
+        - "기술 스택 선택의 타당성"
+        - "아키텍처 패턴 적용"
+        - "성능/확장성 고려"
+        - "표준 준수"
+
+    maintainability:
+      name: "유지보수성"
+      weight: 10
+      checklist:
+        - "코드 가독성 가이드"
+        - "명명 규칙 일관성"
+        - "주석 및 문서화"
+        - "모듈화 수준"
+
+    security_deployment:
+      name: "보안/배포 고려"
+      weight: 10
+      checklist:
+        - "보안 요구사항 명시"
+        - "인증/권한 설계"
+        - "배포 전략 문서화"
+        - "롤백 계획"
+
+    document_quality:
+      name: "문서 품질"
+      weight: 10
+      checklist:
+        - "맞춤법/문법 정확성"
+        - "다이어그램 품질"
+        - "예제 코드의 실행 가능성"
+        - "버전 관리"
+
+# ========================================
+# 문서 계층 구조 (우선순위 기반)
+# ========================================
+document_hierarchy:
+
+  # Tier 1: 핵심 아키텍처 문서 (최우선 - 대표 문서)
+  tier1_core_architecture:
+    priority: 1
+    type: "master"
+    description: "프로젝트 전체의 설계 기반이 되는 핵심 문서"
+    documents:
+      - id: "01-AGENTS_TASK_SPECIFICATION"
+        path: "docs/01-AGENTS_TASK_SPECIFICATION.md"
+        role: "에이전트 및 태스크 명세의 기준 문서"
+        affects:
+          - "agents/*/config.yaml"
+          - "agents/*/tasks/*.yaml"
+
+      - id: "02-COLLABORATION_PATTERNS"
+        path: "docs/02-COLLABORATION_PATTERNS.md"
+        role: "에이전트 간 협업 패턴 정의"
+        affects:
+          - "agents/*/config.yaml"
+          - "ontology/relations/*.yaml"
+
+      - id: "03-KNOWLEDGE_BASE_ARCHITECTURE"
+        path: "docs/03-KNOWLEDGE_BASE_ARCHITECTURE.md"
+        role: "지식 베이스 구조 및 의사결정 로직"
+        affects:
+          - "knowledge/의사결정_지식.md"
+          - "agents/*/prompts/*.md"
+
+      - id: "04-ONTOLOGY_SYSTEM_DESIGN"
+        path: "docs/04-ONTOLOGY_SYSTEM_DESIGN.md"
+        role: "온톨로지 설계 및 관계 정의"
+        affects:
+          - "ontology/ontology.jsonld"
+          - "ontology/schema/*.yaml"
+
+      - id: "05-INTERFACE_SPECIFICATION"
+        path: "docs/05-INTERFACE_SPECIFICATION.md"
+        role: "API 및 인터페이스 명세"
+        affects:
+          - "interface/openapi.yaml"
+          - "interface/api/*.php"
+
+      - id: "05-REASONING_ENGINE_SPEC"
+        path: "docs/05-REASONING_ENGINE_SPEC.md"
+        role: "추론 엔진 상세 설계"
+        affects:
+          - "engine/reasoning/*.py"
+          - "engine/rule_engine/*.py"
+
+      - id: "06-INTEGRATION_ARCHITECTURE"
+        path: "docs/06-INTEGRATION_ARCHITECTURE.md"
+        role: "시스템 통합 아키텍처"
+        affects:
+          - "engine/pipeline.py"
+          - "config/global.yaml"
+
+      - id: "07-IMPLEMENTATION_ROADMAP"
+        path: "docs/07-IMPLEMENTATION_ROADMAP.md"
+        role: "구현 로드맵 및 우선순위"
+        affects:
+          - "전체 프로젝트 일정"
+
+  # Tier 2: 에이전트 대표 문서 (패턴 기준)
+  tier2_agent_templates:
+    priority: 2
+    type: "master"
+    description: "에이전트 구현의 템플릿 역할을 하는 대표 문서"
+    documents:
+      - id: "agent_04_curriculum"
+        path: "agents/agent_04/"
+        role: "완전 구현된 에이전트 (참조 템플릿)"
+        status: "completed"
+        serves_as_template_for:
+          - "Phase 1 에이전트 (01-06)"
+          - "Phase 2 에이전트 (07-13)"
+          - "Phase 3 에이전트 (14-19)"
+          - "Phase 4 에이전트 (20-22)"
+
+  # Tier 3: 지식 베이스 및 공통 자원
+  tier3_knowledge_base:
+    priority: 3
+    type: "shared"
+    description: "모든 에이전트가 공유하는 지식 및 리소스"
+    documents:
+      - id: "decision_knowledge"
+        path: "knowledge/의사결정_지식.md"
+        role: "의사결정 정책 및 전략"
+
+      - id: "ontology_main"
+        path: "ontology/ontology.jsonld"
+        role: "온톨로지 단일 진실원(SSOT)"
+
+      - id: "agent_registry"
+        path: "agents/registry.yaml"
+        role: "22개 에이전트 메타데이터 관리"
+
+  # Tier 4: 개별 에이전트 문서 (유사 문서)
+  tier4_individual_agents:
+    priority: 4
+    type: "similar"
+    description: "대표 템플릿을 따르는 개별 에이전트"
+    pattern_template: "agents/agent_04/"
+    documents:
+      phase1:
+        - "agents/agent_01/"  # 온보딩
+        - "agents/agent_02/"  # 시험일정
+        - "agents/agent_03/"  # 목표분석
+        - "agents/agent_05/"  # 학습정서
+        - "agents/agent_06/"  # 교사피드백
+
+      phase2:
+        - "agents/agent_07/"  # 상호작용타겟팅
+        - "agents/agent_08/"  # 평정심
+        - "agents/agent_09/"  # 학습관리
+        - "agents/agent_10/"  # 개념노트
+        - "agents/agent_11/"  # 문제노트
+        - "agents/agent_12/"  # 휴식루틴
+        - "agents/agent_13/"  # 학습이탈
+
+      phase3:
+        - "agents/agent_14/"  # 현재위치
+        - "agents/agent_15/"  # 문제재정의
+        - "agents/agent_16/"  # 상호작용준비
+        - "agents/agent_17/"  # 남은활동
+        - "agents/agent_18/"  # 시그니처루틴
+        - "agents/agent_19/"  # 상호작용내용
+
+      phase4:
+        - "agents/agent_20/"  # 개입준비
+        - "agents/agent_21/"  # 개입실행
+        - "agents/agent_22/"  # 모듈개선
+
+# ========================================
+# 순환 업데이트 워크플로우
+# ========================================
+workflow_loop:
+
+  # 루프 제어
+  max_iterations: 100  # 무한루프 방지 (실제로는 평가 기준 충족 시 종료)
+  iteration_delay_seconds: 60  # 각 반복 사이 대기 시간
+
+  # 종료 조건
+  termination_conditions:
+    - condition: "all_tier1_documents_pass"
+      description: "모든 Tier 1 문서가 50점 이상"
+    - condition: "all_agent_templates_pass"
+      description: "에이전트 템플릿이 50점 이상"
+    - condition: "consistency_check_pass"
+      description: "문서 간 일관성 검증 통과"
+
+  # 단계별 실행
+  stages:
+
+    # Stage 1: Tier 1 핵심 문서 평가 및 개선
+    stage1_evaluate_core:
+      order: 1
+      name: "핵심 아키텍처 문서 평가"
+      priority: "highest"
+
+      steps:
+        - step: "load_tier1_documents"
+          action: "read"
+          targets:
+            - "docs/01-AGENTS_TASK_SPECIFICATION.md"
+            - "docs/02-COLLABORATION_PATTERNS.md"
+            - "docs/03-KNOWLEDGE_BASE_ARCHITECTURE.md"
+            - "docs/04-ONTOLOGY_SYSTEM_DESIGN.md"
+            - "docs/05-INTERFACE_SPECIFICATION.md"
+            - "docs/05-REASONING_ENGINE_SPEC.md"
+            - "docs/06-INTEGRATION_ARCHITECTURE.md"
+            - "docs/07-IMPLEMENTATION_ROADMAP.md"
+
+        - step: "evaluate_each_document"
+          action: "evaluate"
+          method: "apply_evaluation_criteria"
+          output: "status/document_scores.json"
+
+        - step: "identify_low_scores"
+          action: "filter"
+          condition: "score < 50"
+          output: "status/needs_update.json"
+
+        - step: "update_low_score_docs"
+          action: "update"
+          foreach: "needs_update.json"
+          update_strategy:
+            - "analyze_gaps"
+            - "generate_improvements"
+            - "apply_changes"
+            - "re_evaluate"
+
+          improvement_focus:
+            - category: "structural_completeness"
+              actions:
+                - "add_missing_sections"
+                - "improve_hierarchy"
+                - "fix_cross_references"
+
+            - category: "functional_clarity"
+              actions:
+                - "clarify_use_cases"
+                - "add_input_output_specs"
+                - "document_constraints"
+
+            - category: "technical_suitability"
+              actions:
+                - "validate_tech_stack"
+                - "apply_architecture_patterns"
+                - "add_performance_notes"
+
+            - category: "maintainability"
+              actions:
+                - "improve_readability"
+                - "standardize_naming"
+                - "add_code_comments"
+
+            - category: "security_deployment"
+              actions:
+                - "document_security_reqs"
+                - "add_auth_design"
+                - "create_deployment_plan"
+
+            - category: "document_quality"
+              actions:
+                - "fix_typos"
+                - "improve_diagrams"
+                - "add_runnable_examples"
+
+        - step: "verify_improvements"
+          action: "re_evaluate"
+          condition: "repeat_until_pass"
+          max_retries: 5
+
+    # Stage 2: 대표 에이전트 템플릿 평가 및 개선
+    stage2_evaluate_template:
+      order: 2
+      name: "에이전트 템플릿 평가"
+      priority: "high"
+      depends_on: "stage1_evaluate_core"
+
+      steps:
+        - step: "load_template_agent"
+          action: "read"
+          targets:
+            - "agents/agent_04/config.yaml"
+            - "agents/agent_04/tasks/task_lagging.yaml"
+            - "agents/agent_04/prompts/report_lagging.md"
+            - "agents/agent_04/prompts/directive_focus.md"
+
+        - step: "evaluate_template"
+          action: "evaluate"
+          method: "apply_agent_evaluation_criteria"
+          output: "status/agent_template_score.json"
+
+        - step: "update_if_needed"
+          action: "update"
+          condition: "score < 50"
+          update_strategy:
+            - "align_with_tier1_specs"
+            - "improve_config_clarity"
+            - "enhance_task_definitions"
+            - "refine_prompts"
+
+        - step: "extract_patterns"
+          action: "analyze"
+          description: "템플릿에서 재사용 가능한 패턴 추출"
+          output: "status/agent_patterns.json"
+
+    # Stage 3: 지식 베이스 일관성 검증
+    stage3_knowledge_consistency:
+      order: 3
+      name: "지식 베이스 일관성 검증"
+      priority: "high"
+      depends_on: "stage1_evaluate_core"
+
+      steps:
+        - step: "load_knowledge_base"
+          action: "read"
+          targets:
+            - "knowledge/의사결정_지식.md"
+            - "ontology/ontology.jsonld"
+            - "agents/registry.yaml"
+
+        - step: "cross_reference_check"
+          action: "validate"
+          checks:
+            - "tier1_docs_references_match_kb"
+            - "ontology_entities_match_agents"
+            - "registry_matches_actual_agents"
+
+        - step: "update_inconsistencies"
+          action: "update"
+          foreach: "inconsistencies"
+          update_strategy: "align_to_tier1_source"
+
+    # Stage 4: 유사 에이전트 일괄 업데이트
+    stage4_batch_update_agents:
+      order: 4
+      name: "유사 에이전트 일괄 업데이트"
+      priority: "medium"
+      depends_on: "stage2_evaluate_template"
+
+      steps:
+        - step: "load_agent_patterns"
+          action: "read"
+          source: "status/agent_patterns.json"
+
+        - step: "identify_similar_agents"
+          action: "group"
+          grouping_criteria:
+            - "phase"
+            - "mathking_impl"
+            - "category"
+          output: "status/agent_groups.json"
+
+        - step: "batch_apply_patterns"
+          action: "batch_update"
+          foreach_group: "agent_groups.json"
+
+          batch_operations:
+            - operation: "apply_config_template"
+              template: "agents/agent_04/config.yaml"
+              customize:
+                - "agent_id"
+                - "heartbeat_interval"
+                - "task_list"
+
+            - operation: "apply_task_template"
+              template: "agents/agent_04/tasks/task_lagging.yaml"
+              customize:
+                - "task_id"
+                - "kpis"
+                - "triggers"
+                - "templates"
+
+            - operation: "apply_prompt_patterns"
+              patterns: "agent_patterns.json"
+              customize:
+                - "persona_specific_language"
+                - "context_variables"
+
+        - step: "validate_batch_updates"
+          action: "validate"
+          checks:
+            - "config_syntax_valid"
+            - "task_references_exist"
+            - "prompts_render_correctly"
+
+    # Stage 5: 전체 일관성 최종 검증
+    stage5_final_consistency:
+      order: 5
+      name: "전체 일관성 최종 검증"
+      priority: "highest"
+      depends_on:
+        - "stage1_evaluate_core"
+        - "stage2_evaluate_template"
+        - "stage3_knowledge_consistency"
+        - "stage4_batch_update_agents"
+
+      steps:
+        - step: "load_all_documents"
+          action: "read"
+          scope: "entire_project"
+
+        - step: "cross_document_validation"
+          action: "validate"
+          checks:
+            - name: "agent_count_consistency"
+              rule: "registry.yaml count == actual agent folders == tier1 docs mention"
+
+            - name: "ontology_coverage"
+              rule: "all agent contexts defined in ontology"
+
+            - name: "task_template_match"
+              rule: "all agent tasks follow template structure"
+
+            - name: "api_path_alignment"
+              rule: "openapi.yaml paths match folder structure"
+
+        - step: "generate_consistency_report"
+          action: "report"
+          output: "status/consistency_report.json"
+
+        - step: "update_status_dashboard"
+          action: "update"
+          target: "status/document_status.json"
+          fields:
+            - "consistency_checks"
+            - "quality_scores"
+            - "next_actions"
+
+    # Stage 6: 종료 조건 평가
+    stage6_check_termination:
+      order: 6
+      name: "종료 조건 평가"
+      priority: "critical"
+
+      steps:
+        - step: "evaluate_termination"
+          action: "check"
+          conditions:
+            - condition: "tier1_min_score >= 50"
+              source: "status/document_scores.json"
+
+            - condition: "agent_template_score >= 50"
+              source: "status/agent_template_score.json"
+
+            - condition: "consistency_report.all_checks_pass == true"
+              source: "status/consistency_report.json"
+
+        - step: "decide_loop_continuation"
+          action: "decide"
+          logic: |
+            if all_conditions_met:
+              return "TERMINATE"
+            else:
+              return "CONTINUE_LOOP"
+
+        - step: "log_iteration_result"
+          action: "log"
+          output: "logs/workflow_iterations.log"
+          data:
+            - "iteration_number"
+            - "scores"
+            - "issues_fixed"
+            - "decision"
+
+# ========================================
+# 자동화 스크립트 설정
+# ========================================
+automation:
+
+  # 실행 모드
+  execution_mode: "loop_until_pass"  # loop_until_pass | single_iteration | manual
+
+  # 병렬 처리
+  parallel_processing:
+    enabled: true
+    max_workers: 4
+    parallel_stages:
+      - "stage4_batch_update_agents"
+
+  # 백업 전략
+  backup_strategy:
+    enabled: true
+    backup_before_update: true
+    backup_location: "backups/workflow_runs/{timestamp}/"
+    retention_days: 30
+
+  # 알림 설정
+  notifications:
+    on_completion:
+      enabled: true
+      channels:
+        - "email"
+        - "slack"
+      recipients:
+        - "dev@mathking.kr"
+
+    on_failure:
+      enabled: true
+      channels:
+        - "email"
+        - "slack"
+        - "pagerduty"
+      severity: "high"
+
+    on_low_score:
+      enabled: true
+      threshold: 40
+      channels:
+        - "slack"
+
+  # 롤백 설정
+  rollback:
+    auto_rollback_on_failure: true
+    rollback_trigger_conditions:
+      - "consistency_check_fail"
+      - "score_degradation > 10"
+      - "validation_error_count > 5"
+
+# ========================================
+# 실행 예제
+# ========================================
+usage_examples:
+
+  # CLI 실행
+  cli:
+    - description: "전체 워크플로우 실행 (루프 모드)"
+      command: |
+        python workflows/run_document_loop.py \
+          --config workflows/document_update_loop.yaml \
+          --mode loop_until_pass \
+          --verbose
+
+    - description: "단일 반복 실행 (테스트용)"
+      command: |
+        python workflows/run_document_loop.py \
+          --config workflows/document_update_loop.yaml \
+          --mode single_iteration \
+          --stage stage1_evaluate_core
+
+    - description: "특정 문서만 평가"
+      command: |
+        python workflows/run_document_loop.py \
+          --config workflows/document_update_loop.yaml \
+          --mode manual \
+          --documents "01-AGENTS,04-ONTOLOGY"
+
+  # API 실행
+  api:
+    - description: "워크플로우 시작"
+      endpoint: "POST /workflows/document-update-loop/start"
+      payload:
+        execution_mode: "loop_until_pass"
+        max_iterations: 100
+
+    - description: "워크플로우 상태 조회"
+      endpoint: "GET /workflows/document-update-loop/status/{run_id}"
+
+    - description: "워크플로우 중지"
+      endpoint: "POST /workflows/document-update-loop/stop/{run_id}"
+
+# ========================================
+# 출력 파일 정의
+# ========================================
+outputs:
+
+  # 평가 결과
+  evaluation_results:
+    - file: "status/document_scores.json"
+      description: "각 문서별 평가 점수"
+      format: |
+        {
+          "document_id": {
+            "score": 58,
+            "breakdown": {
+              "structural_completeness": 10,
+              "functional_clarity": 9,
+              "technical_suitability": 10,
+              "maintainability": 10,
+              "security_deployment": 9,
+              "document_quality": 10
+            },
+            "status": "pass",
+            "issues": [],
+            "updated_at": "2025-10-30T10:00:00Z"
+          }
+        }
+
+  # 일관성 검증 결과
+  consistency_report:
+    - file: "status/consistency_report.json"
+      description: "문서 간 일관성 검증 결과"
+      format: |
+        {
+          "all_checks_pass": true,
+          "checks": [
+            {
+              "name": "agent_count_consistency",
+              "status": "pass",
+              "details": "22 agents in registry match 22 folders"
+            }
+          ],
+          "timestamp": "2025-10-30T10:00:00Z"
+        }
+
+  # 워크플로우 로그
+  workflow_log:
+    - file: "logs/workflow_iterations.log"
+      description: "각 반복의 실행 로그"
+      format: |
+        [2025-10-30 10:00:00] Iteration 1 started
+        [2025-10-30 10:05:00] Stage 1 completed - 2 docs need update
+        [2025-10-30 10:10:00] Stage 2 completed - template score: 58
+        [2025-10-30 10:15:00] Iteration 1 completed - CONTINUE_LOOP
+
+# ========================================
+# 성능 최적화
+# ========================================
+performance:
+
+  # 캐싱 전략
+  caching:
+    enabled: true
+    cache_evaluations: true
+    cache_ttl_seconds: 3600
+    cache_location: ".cache/workflow/"
+
+  # 증분 업데이트
+  incremental_updates:
+    enabled: true
+    only_update_changed: true
+    change_detection: "hash_based"
+
+  # 예상 실행 시간
+  estimated_time:
+    single_iteration: "15-20 minutes"
+    full_loop_until_pass: "1-3 hours (depends on initial quality)"
+
+# ========================================
+# 문서 끝
+# ========================================

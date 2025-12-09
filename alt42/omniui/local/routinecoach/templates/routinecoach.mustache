@@ -1,0 +1,227 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_routinecoach/routinecoach
+
+    Main dashboard template for Routine Coach plugin
+
+    Context variables required:
+    * userid - Current user ID
+    * routines - Array of active routines
+    * tasks - Array of pending tasks
+    * stats - User statistics object
+
+    Example context (json):
+    {
+        "userid": 123,
+        "routines": [
+            {
+                "id": 1,
+                "label": "중간고사",
+                "examdate_formatted": "2024-03-15",
+                "daysleft": 15,
+                "ratio_concept": 70,
+                "ratio_review": 30,
+                "status": "active"
+            }
+        ],
+        "tasks": [
+            {
+                "id": 1,
+                "title": "수학 개념 학습",
+                "type": "concept",
+                "duedate_formatted": "오늘",
+                "duration": 30,
+                "priority": 8
+            }
+        ],
+        "stats": {
+            "total_study_minutes": 120,
+            "concept_percentage": 65,
+            "review_percentage": 35
+        }
+    }
+}}
+
+<div class="local-routinecoach-dashboard">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <h2>{{#str}}dashboard_title, local_routinecoach{{/str}}</h2>
+                <p class="text-muted">{{#str}}dashboard_subtitle, local_routinecoach{{/str}}</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{#str}}active_exams, local_routinecoach{{/str}}</h5>
+                        <p class="display-4">{{exam_count}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{#str}}pending_tasks, local_routinecoach{{/str}}</h5>
+                        <p class="display-4">{{task_count}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{#str}}study_today, local_routinecoach{{/str}}</h5>
+                        <p class="display-4">{{today_minutes}}<small>분</small></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">{{#str}}study_ratio, local_routinecoach{{/str}}</h5>
+                        <p class="display-4">{{ratio_display}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Active Routines -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>{{#str}}active_routines, local_routinecoach{{/str}}</h4>
+                        <button class="btn btn-sm btn-primary" id="btn-create-exam">
+                            <i class="fa fa-plus"></i> {{#str}}add_exam, local_routinecoach{{/str}}
+                        </button>
+                    </div>
+                    <div class="card-body" id="routinecoach-routines">
+                        {{#hasroutines}}
+                        <div class="routine-list">
+                            {{#routines}}
+                            <div class="routine-item mb-3 p-3 border rounded">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="mb-1">{{label}}</h5>
+                                        <p class="text-muted mb-2">
+                                            <i class="fa fa-calendar"></i> {{examdate_formatted}}
+                                            <span class="badge badge-info ml-2">D-{{daysleft}}</span>
+                                        </p>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-primary" style="width: {{ratio_concept}}%">
+                                                선행 {{ratio_concept}}%
+                                            </div>
+                                            <div class="progress-bar bg-success" style="width: {{ratio_review}}%">
+                                                복습 {{ratio_review}}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary btn-edit-routine" data-routineid="{{id}}">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/routines}}
+                        </div>
+                        {{/hasroutines}}
+                        {{^hasroutines}}
+                        <p class="text-center text-muted">
+                            {{#str}}no_active_routines, local_routinecoach{{/str}}
+                        </p>
+                        {{/hasroutines}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Tasks -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4>{{#str}}today_tasks, local_routinecoach{{/str}}</h4>
+                        <button class="btn btn-sm btn-outline-secondary" id="btn-refresh-tasks">
+                            <i class="fa fa-refresh"></i>
+                        </button>
+                    </div>
+                    <div class="card-body" id="routinecoach-tasks">
+                        {{#hastasks}}
+                        <div class="task-list">
+                            {{#tasks}}
+                            <div class="task-item mb-2 p-2 border-left border-{{priorityclass}}">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input task-complete-checkbox" 
+                                           id="task-{{id}}" data-taskid="{{id}}" {{#completed}}checked{{/completed}}>
+                                    <label class="custom-control-label" for="task-{{id}}">
+                                        <span class="task-title">{{title}}</span>
+                                        <div class="task-meta small text-muted">
+                                            {{#isconcept}}
+                                            <span class="badge badge-primary">선행</span>
+                                            {{/isconcept}}
+                                            {{#isreview}}
+                                            <span class="badge badge-success">복습</span>
+                                            {{/isreview}}
+                                            {{#iswrongnote}}
+                                            <span class="badge badge-warning">오답</span>
+                                            {{/iswrongnote}}
+                                            <span class="ml-2">{{durationmin}}분</span>
+                                            <span class="ml-2">{{duedate_formatted}}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            {{/tasks}}
+                        </div>
+                        {{/hastasks}}
+                        {{^hastasks}}
+                        <p class="text-center text-muted">
+                            {{#str}}no_pending_tasks, local_routinecoach{{/str}}
+                        </p>
+                        {{/hastasks}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Progress Chart -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>{{#str}}weekly_progress, local_routinecoach{{/str}}</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="progress-chart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#js}}
+require(['local_routinecoach/routinecoach'], function(RoutineCoach) {
+    RoutineCoach.init({
+        userid: {{userid}},
+        autorefresh: true
+    });
+});
+{{/js}}

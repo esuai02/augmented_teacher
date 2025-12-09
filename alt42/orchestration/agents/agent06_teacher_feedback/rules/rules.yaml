@@ -1,0 +1,1448 @@
+# Auto-generated rules.yaml for teacher_feedback_agent
+# Generated at: 2025-01-21
+# Updated at: 2025-01-21 (v2.0 - 수학 교과 특화, 학원 통합, 수준별 차별화 추가)
+# Source: agent06_teacher_feedback_questions.md → natural request extension + teacher_level_evaluation.md 기반 개선
+
+version: "2.0"
+scenario: "teacher_feedback"
+description: "교사 피드백 기반 학생 상호작용 최적화 및 교사 페르소나 반영 상호작용 컨텐츠 생성 (수학 교과 특화, 학원 통합, 수준별 차별화 포함)"
+
+rules:
+  # ========== S1: 학생 변화 감지 시 관련 룰 ==========
+  
+  - rule_id: "R1a_student_change_detection"
+    priority: 95
+    description: "학생 집중도 변화 감지 시 맥락 분석 요청"
+    conditions:
+      - field: "focus_change_detected"
+        operator: "=="
+        value: true
+      - field: "recent_focus_score"
+        operator: "!="
+        value: null
+      - field: "baseline_focus_score"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'focus_change_context'"
+      - "generate_description: 'focus_change_analysis'"
+      - "request_teacher_input: '이 변화를 어떤 맥락으로 보고 계신가요? (피로·동기·환경 등)'"
+      - "display_message: '학생의 집중 흐름 변화를 감지했습니다. 선생님의 맥락 해석을 요청합니다.'"
+    confidence: 0.92
+    rationale: "집중도 변화는 학습 태도 변화의 초기 신호로 교사의 맥락 해석이 필수"
+
+  - rule_id: "R1b_emotional_state_change"
+    priority: 94
+    description: "학생 감정 상태 변화 감지 시 격려 방식 조회"
+    conditions:
+      - field: "emotion_change_detected"
+        operator: "=="
+        value: true
+      - field: "recent_emotion_score"
+        operator: "<"
+        value: 5
+      - field: "baseline_emotion_score"
+        operator: ">="
+        value: 6
+    action:
+      - "analyze: 'emotion_change_reason'"
+      - "request_teacher_input: '이럴 때 선생님은 평소 어떤 방식으로 격려하시나요?'"
+      - "generate_description: 'teacher_encouragement_style'"
+      - "display_message: '학생의 감정 상태 변화를 감지했습니다. 선생님의 격려 방식을 반영하겠습니다.'"
+    confidence: 0.91
+    rationale: "감정 상태 하락 시 교사의 개인화된 격려 방식이 효과적"
+
+  - rule_id: "R1c_learning_attitude_change"
+    priority: 93
+    description: "학습 태도 변화 패턴 분석 및 교사 의견 수집"
+    conditions:
+      - field: "attitude_change_detected"
+        operator: "=="
+        value: true
+      - field: "conversation_log_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'attitude_change_pattern'"
+      - "request_teacher_input: '학생의 학습 태도 변화에 대해 선생님의 의견을 알려주세요.'"
+      - "generate_description: 'attitude_change_context'"
+      - "display_message: '학습 태도 변화 패턴을 분석했습니다. 교사 피드백을 반영하여 상호작용을 조정합니다.'"
+    confidence: 0.9
+    rationale: "학습 태도 변화는 장기적 학습 동기에 영향을 미치는 핵심 요소"
+
+  - rule_id: "R1d_fatigue_context_analysis"
+    priority: 92
+    description: "피로도 증가 감지 시 교사 피드백 수집"
+    conditions:
+      - field: "fatigue_indicator"
+        operator: ">="
+        value: 7
+      - field: "recent_study_hours"
+        operator: ">"
+        value: 15
+    action:
+      - "analyze: 'fatigue_reason'"
+      - "request_teacher_input: '학생의 피로도가 높게 나타났습니다. 선생님의 판단을 알려주세요.'"
+      - "recommend: 'rest_routine_adjustment'"
+      - "display_message: '피로도 상승을 감지했습니다. 휴식 루틴 조정이 필요할 수 있습니다.'"
+    confidence: 0.89
+    rationale: "피로도는 학습 효율에 직접적 영향을 미치므로 교사의 판단이 중요"
+
+  - rule_id: "R1e_motivation_context_inquiry"
+    priority: 91
+    description: "동기 저하 감지 시 교사 의견 수집"
+    conditions:
+      - field: "motivation_score"
+        operator: "<"
+        value: 5
+      - field: "participation_decrease"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'motivation_decline_reason'"
+      - "request_teacher_input: '학생의 동기 저하 원인에 대한 선생님의 의견을 알려주세요.'"
+      - "generate_description: 'motivation_recovery_strategy'"
+      - "display_message: '동기 저하 패턴을 감지했습니다. 교사 피드백을 바탕으로 회복 전략을 수립합니다.'"
+    confidence: 0.88
+    rationale: "동기 저하는 학습 지속성에 위험 신호이므로 교사의 원인 분석이 필수"
+
+  - rule_id: "R1f_environment_change_detection"
+    priority: 87
+    description: "환경 변화 요인 분석 요청"
+    conditions:
+      - field: "external_factors_detected"
+        operator: "=="
+        value: true
+      - field: "performance_change"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'environment_impact'"
+      - "request_teacher_input: '학생의 환경 변화 요인에 대해 알고 계신 내용이 있나요?'"
+      - "generate_description: 'environment_context'"
+      - "display_message: '환경 변화 요인이 감지되었습니다. 교사 정보를 반영하여 분석합니다.'"
+    confidence: 0.85
+    rationale: "환경 요인은 학습 성과에 간접적이지만 중요한 영향을 미침"
+
+  # ========== S2: 시험 대비 기간 진입 시 관련 룰 ==========
+  
+  - rule_id: "R2a_exam_preparation_entry"
+    priority: 96
+    description: "시험 대비 기간 진입 시 핵심 전략 요청"
+    conditions:
+      - field: "exam_date"
+        operator: "!="
+        value: null
+      - field: "days_until_exam"
+        operator: "<="
+        value: 30
+      - field: "target_score"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'exam_preparation_strategy'"
+      - "request_teacher_input: '이번 시험에서 이 학생에게 가장 강조하고 싶은 핵심 전략이나 금지해야 할 패턴이 있을까요?'"
+      - "generate_description: 'exam_focused_strategy'"
+      - "display_message: '시험 대비 기간에 진입했습니다. 교사의 전문적 전략을 반영합니다.'"
+    confidence: 0.94
+    rationale: "시험 대비는 교사의 전문적 지식이 가장 중요한 시점"
+
+  - rule_id: "R2b_exam_feedback_tone_request"
+    priority: 95
+    description: "시험 대비 피드백 어조 설정 요청"
+    conditions:
+      - field: "exam_date"
+        operator: "!="
+        value: null
+      - field: "student_level"
+        operator: "!="
+        value: null
+      - field: "target_score"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '피드백 시 어떤 어조로 전달하길 원하시나요? (격려/경고/균형/도전)'"
+      - "generate_description: 'exam_feedback_tone'"
+      - "apply_tone: 'teacher_preference'"
+      - "display_message: '시험 대비 피드백의 어조를 교사 선호도에 맞춰 조정합니다.'"
+    confidence: 0.93
+    rationale: "시험 대비 기간의 피드백 톤은 학생의 심리 상태에 직접적 영향"
+
+  - rule_id: "R2c_exam_strength_weakness_analysis"
+    priority: 94
+    description: "시험 대비 학생 강점·약점 분석 요청"
+    conditions:
+      - field: "exam_type"
+        operator: "in"
+        value: ["학교시험", "모의고사", "입시"]
+      - field: "student_level"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'exam_strengths_weaknesses'"
+      - "request_teacher_input: '이번 시험에서 학생의 강점과 약점 영역에 대한 평가를 알려주세요.'"
+      - "generate_description: 'exam_competency_profile'"
+      - "display_message: '시험 대비를 위한 학생 역량 프로필을 교사 평가로 보완합니다.'"
+    confidence: 0.92
+    rationale: "시험 대비 전략 수립을 위해 교사의 전문적 평가가 필수"
+
+  - rule_id: "R2d_exam_forbidden_patterns"
+    priority: 93
+    description: "시험 대비 금지 패턴 확인 요청"
+    conditions:
+      - field: "exam_date"
+        operator: "!="
+        value: null
+      - field: "days_until_exam"
+        operator: "<="
+        value: 14
+    action:
+      - "request_teacher_input: '시험 전에 이 학생이 절대 하지 말아야 할 패턴이나 행동이 있나요?'"
+      - "generate_description: 'exam_forbidden_patterns'"
+      - "alert: 'forbidden_patterns_warning'"
+      - "display_message: '시험 전 금지 패턴을 확인하여 사전 예방 전략을 수립합니다.'"
+    confidence: 0.91
+    rationale: "시험 직전 금지 패턴 인지는 실수 방지에 핵심"
+
+  - rule_id: "R2e_exam_cramming_detection"
+    priority: 90
+    description: "벼락치기 성향 감지 시 단기 전략 요청"
+    conditions:
+      - field: "exam_style"
+        operator: "=="
+        value: "벼락치기"
+      - field: "days_until_exam"
+        operator: "<="
+        value: 7
+    action:
+      - "analyze: 'cramming_strategy'"
+      - "request_teacher_input: '벼락치기 성향 학생에게 이번 시험 대비 핵심 포인트를 알려주세요.'"
+      - "generate_description: 'short_term_exam_strategy'"
+      - "display_message: '단기 집중 전략이 필요한 상황입니다. 교사의 핵심 포인트를 반영합니다.'"
+    confidence: 0.89
+    rationale: "벼락치기 상황에서는 교사의 핵심 전략이 학습 효율을 결정"
+
+  - rule_id: "R2f_exam_stress_management"
+    priority: 88
+    description: "시험 스트레스 관리 방법 요청"
+    conditions:
+      - field: "exam_stress_level"
+        operator: ">="
+        value: 7
+      - field: "days_until_exam"
+        operator: "<="
+        value: 14
+    action:
+      - "request_teacher_input: '시험 스트레스가 높은 학생에게 선생님이 평소 사용하는 안정화 방법이 있나요?'"
+      - "generate_description: 'exam_stress_relief_method'"
+      - "recommend: 'stress_management_routine'"
+      - "display_message: '시험 스트레스 관리를 위한 교사 방법론을 반영합니다.'"
+    confidence: 0.87
+    rationale: "시험 스트레스는 성과에 부정적 영향을 미치므로 관리 필수"
+
+  # ========== S3: 담임 피드백 요청 시 관련 룰 ==========
+  
+  - rule_id: "R3a_parent_feedback_request"
+    priority: 97
+    description: "학부모 전달용 피드백 생성 요청"
+    conditions:
+      - field: "feedback_request_type"
+        operator: "=="
+        value: "parent"
+      - field: "learning_report_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'weekly_learning_pattern'"
+      - "request_teacher_input: '이번 주 학습 패턴 중 선생님이 특히 주목했던 점(칭찬, 개선, 의도)은 무엇인가요?'"
+      - "generate_description: 'parent_feedback_content'"
+      - "display_message: '학부모 전달용 피드백을 생성합니다. 교사의 핵심 관찰을 반영합니다.'"
+    confidence: 0.95
+    rationale: "학부모 피드백은 교사의 핵심 관찰이 가장 중요"
+
+  - rule_id: "R3b_feedback_emotional_tone"
+    priority: 96
+    description: "피드백 정서 톤 설정 요청"
+    conditions:
+      - field: "feedback_request_type"
+        operator: "in"
+        value: ["parent", "student"]
+      - field: "recent_performance"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '메시지의 중심 정서를 격려/경고/균형/도전 중 무엇으로 맞출까요?'"
+      - "generate_description: 'feedback_emotional_tone'"
+      - "apply_tone: 'selected_emotion'"
+      - "display_message: '피드백의 정서 톤을 교사 선호도에 맞춰 설정합니다.'"
+    confidence: 0.94
+    rationale: "피드백의 정서 톤은 학생/학부모의 수용도에 직접적 영향"
+
+  - rule_id: "R3c_student_feedback_generation"
+    priority: 95
+    description: "학생 전달용 피드백 생성"
+    conditions:
+      - field: "feedback_request_type"
+        operator: "=="
+        value: "student"
+      - field: "teacher_notes_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'student_communication_style'"
+      - "request_teacher_input: '학생에게 전달할 피드백의 핵심 메시지를 알려주세요.'"
+      - "generate_description: 'student_feedback_message'"
+      - "display_message: '학생에게 전달할 피드백을 교사 스타일에 맞춰 생성합니다.'"
+    confidence: 0.93
+    rationale: "학생 피드백은 교사의 개인적 소통 스타일 반영이 중요"
+
+  - rule_id: "R3d_praise_point_extraction"
+    priority: 94
+    description: "칭찬 포인트 추출 및 강화"
+    conditions:
+      - field: "recent_achievements"
+        operator: "!="
+        value: null
+      - field: "strength_areas"
+        operator: "!="
+        value: null
+    action:
+      - "identify_strengths: true"
+      - "request_teacher_input: '이번 주 학생의 칭찬할 만한 점을 구체적으로 알려주세요.'"
+      - "generate_description: 'praise_points'"
+      - "suggest_strength_activities: true"
+      - "display_message: '칭찬 포인트를 추출하여 동기 강화에 활용합니다.'"
+    confidence: 0.92
+    rationale: "칭찬은 학습 동기 유지의 핵심 요소"
+
+  - rule_id: "R3e_improvement_area_guidance"
+    priority: 93
+    description: "개선 영역 안내 생성"
+    conditions:
+      - field: "weakness_areas"
+        operator: "!="
+        value: null
+      - field: "error_patterns"
+        operator: "!="
+        value: null
+    action:
+      - "detect_error_patterns: true"
+      - "request_teacher_input: '학생이 개선해야 할 영역과 구체적인 방법을 알려주세요.'"
+      - "generate_description: 'improvement_guidance'"
+      - "create_checklist: true"
+      - "display_message: '개선 영역을 체계적으로 안내하는 피드백을 생성합니다.'"
+    confidence: 0.91
+    rationale: "구체적인 개선 안내는 학생의 행동 변화를 유도"
+
+  - rule_id: "R3f_teacher_intention_clarification"
+    priority: 92
+    description: "교사 의도 명확화 요청"
+    conditions:
+      - field: "teacher_notes"
+        operator: "=="
+        value: null
+      - field: "recent_interactions"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '이번 피드백을 통해 학생에게 전달하고 싶은 핵심 의도는 무엇인가요?'"
+      - "generate_description: 'teacher_intention'"
+      - "display_message: '교사의 핵심 의도를 파악하여 일관된 메시지를 전달합니다.'"
+    confidence: 0.9
+    rationale: "교사의 명확한 의도는 피드백의 효과성을 결정"
+
+  # ========== S4: 학습 부진/슬럼프 감지 시 관련 룰 ==========
+  
+  - rule_id: "R4a_learning_slump_detection"
+    priority: 98
+    description: "학습 부진 패턴 감지 시 원인 분석 요청"
+    conditions:
+      - field: "learning_density_decline"
+        operator: "=="
+        value: true
+      - field: "emotion_score_decline"
+        operator: "=="
+        value: true
+      - field: "performance_drop"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'slump_cause_analysis'"
+      - "request_teacher_input: '학생의 학습 부진 원인을 어디서 찾고 계신가요? (피로, 자신감 저하, 외부 스트레스 등)'"
+      - "generate_description: 'slump_recovery_strategy'"
+      - "display_message: '학습 부진 패턴을 감지했습니다. 교사의 원인 분석을 반영하여 회복 전략을 수립합니다.'"
+    confidence: 0.96
+    rationale: "학습 부진은 조기 개입이 필수이며 교사의 원인 파악이 핵심"
+
+  - rule_id: "R4b_confidence_decline_recovery"
+    priority: 97
+    description: "자신감 저하 회복 방법 요청"
+    conditions:
+      - field: "confidence_score"
+        operator: "<"
+        value: 5
+      - field: "confidence_decline_rate"
+        operator: ">"
+        value: 0.2
+    action:
+      - "analyze: 'confidence_recovery_methods'"
+      - "request_teacher_input: '자신감 저하 학생에게 선생님이 평소 사용하는 회복 방법이 있나요?'"
+      - "generate_description: 'teacher_confidence_boost_method'"
+      - "plan_success_experiences: true"
+      - "display_message: '자신감 회복을 위한 교사 방법론을 반영합니다.'"
+    confidence: 0.95
+    rationale: "자신감 저하는 학습 지속성에 치명적이므로 교사의 검증된 방법 필요"
+
+  - rule_id: "R4c_fatigue_recovery_strategy"
+    priority: 96
+    description: "피로 회복 전략 요청"
+    conditions:
+      - field: "fatigue_level"
+        operator: ">="
+        value: 8
+      - field: "study_hours"
+        operator: ">"
+        value: 20
+    action:
+      - "analyze: 'fatigue_recovery'"
+      - "request_teacher_input: '피로도가 높은 학생에게 선생님이 권하는 회복 방법은 무엇인가요?'"
+      - "generate_description: 'fatigue_management_strategy'"
+      - "recommend: 'rest_routine_adjustment'"
+      - "display_message: '피로 회복 전략을 교사 방법론으로 보완합니다.'"
+    confidence: 0.94
+    rationale: "피로는 학습 효율에 직접적 영향이므로 조기 관리 필수"
+
+  - rule_id: "R4d_external_stress_handling"
+    priority: 95
+    description: "외부 스트레스 대응 방법 요청"
+    conditions:
+      - field: "external_stress_detected"
+        operator: "=="
+        value: true
+      - field: "stress_source"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'external_stress_impact'"
+      - "request_teacher_input: '외부 스트레스 요인에 대해 알고 계신 내용과 대응 방법을 알려주세요.'"
+      - "generate_description: 'stress_handling_approach'"
+      - "display_message: '외부 스트레스 대응을 위한 교사 지침을 반영합니다.'"
+    confidence: 0.93
+    rationale: "외부 스트레스는 학습에 간접적이지만 강한 영향을 미침"
+
+  - rule_id: "R4e_question_reduction_analysis"
+    priority: 94
+    description: "질문 수 감소 원인 분석"
+    conditions:
+      - field: "question_count_decline"
+        operator: ">"
+        value: 0.3
+      - field: "participation_decrease"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'question_reduction_reason'"
+      - "request_teacher_input: '학생의 질문 수 감소에 대한 선생님의 해석을 알려주세요.'"
+      - "generate_description: 'participation_recovery_strategy'"
+      - "display_message: '질문 감소 패턴을 분석하여 참여 회복 전략을 수립합니다.'"
+    confidence: 0.92
+    rationale: "질문 감소는 학습 참여도 저하의 신호"
+
+  - rule_id: "R4f_performance_decline_intervention"
+    priority: 93
+    description: "성적 저하 개입 전략 요청"
+    conditions:
+      - field: "recent_score"
+        operator: "<"
+        value: "baseline_score"
+      - field: "score_decline_rate"
+        operator: ">"
+        value: 0.15
+    action:
+      - "analyze: 'performance_decline_pattern'"
+      - "request_teacher_input: '성적 저하에 대한 선생님의 분석과 개입 계획을 알려주세요.'"
+      - "generate_description: 'intervention_strategy'"
+      - "prioritize_areas: true"
+      - "display_message: '성적 저하 개입 전략을 교사 의견으로 보완합니다.'"
+    confidence: 0.91
+    rationale: "성적 저하는 즉각적 개입이 필요한 상황"
+
+  - rule_id: "R4g_teacher_recovery_phrases"
+    priority: 92
+    description: "교사 회복 말투 수집"
+    conditions:
+      - field: "slump_detected"
+        operator: "=="
+        value: true
+      - field: "recovery_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '회복을 위해 선생님이 평소 사용하는 말투나 표현이 있다면 알려주세요.'"
+      - "generate_description: 'teacher_recovery_language'"
+      - "apply_language_style: 'teacher_preference'"
+      - "display_message: '교사의 개인화된 회복 언어를 상호작용에 반영합니다.'"
+    confidence: 0.9
+    rationale: "교사의 개인적 언어 스타일은 학생에게 더 친숙하고 효과적"
+
+  # ========== S5: 새로운 전략 제시 시 관련 룰 ==========
+  
+  - rule_id: "R5a_new_strategy_intent_clarification"
+    priority: 96
+    description: "새 전략의 핵심 의도 확인 요청"
+    conditions:
+      - field: "new_strategy_proposed"
+        operator: "=="
+        value: true
+      - field: "strategy_content"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'strategy_intent'"
+      - "request_teacher_input: '이번 전략의 핵심 의도는 성장/도전/안정/균형 중 어떤 방향인가요?'"
+      - "generate_description: 'strategy_direction'"
+      - "display_message: '새 전략의 핵심 의도를 확인하여 일관된 메시지를 전달합니다.'"
+    confidence: 0.94
+    rationale: "전략의 명확한 의도는 학생의 이해도와 수용도를 결정"
+
+  - rule_id: "R5b_strategy_presentation_style"
+    priority: 95
+    description: "전략 제시 언어 스타일 요청"
+    conditions:
+      - field: "new_strategy_proposed"
+        operator: "=="
+        value: true
+      - field: "strategy_direction"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '이 전략을 학생에게 설득력 있게 전달하기 위한 선생님의 언어 스타일을 알려주세요.'"
+      - "generate_description: 'strategy_presentation_language'"
+      - "apply_language_style: 'strategy_specific'"
+      - "display_message: '전략 제시를 위한 교사 언어 스타일을 반영합니다.'"
+    confidence: 0.93
+    rationale: "전략의 효과는 제시 방식에 크게 의존"
+
+  - rule_id: "R5c_growth_strategy_design"
+    priority: 94
+    description: "성장 지향 전략 설계"
+    conditions:
+      - field: "strategy_direction"
+        operator: "=="
+        value: "성장"
+      - field: "student_potential"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'growth_strategy_elements'"
+      - "generate_description: 'growth_oriented_plan'"
+      - "recommend: 'challenging_activities'"
+      - "display_message: '성장 지향 전략을 설계하여 학생의 잠재력을 이끌어냅니다.'"
+    confidence: 0.92
+    rationale: "성장 전략은 학생의 장기적 발전을 목표로 함"
+
+  - rule_id: "R5d_challenge_strategy_design"
+    priority: 93
+    description: "도전 지향 전략 설계"
+    conditions:
+      - field: "strategy_direction"
+        operator: "=="
+        value: "도전"
+      - field: "student_level"
+        operator: "in"
+        value: ["상위권", "상위권 이상"]
+    action:
+      - "analyze: 'challenge_strategy_elements'"
+      - "generate_description: 'challenge_oriented_plan'"
+      - "recommend: 'advanced_problems'"
+      - "display_message: '도전 지향 전략을 설계하여 학생의 한계를 확장합니다.'"
+    confidence: 0.91
+    rationale: "도전 전략은 상위권 학생의 성장 동력 제공"
+
+  - rule_id: "R5e_stability_strategy_design"
+    priority: 92
+    description: "안정 지향 전략 설계"
+    conditions:
+      - field: "strategy_direction"
+        operator: "=="
+        value: "안정"
+      - field: "student_stability_needed"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'stability_strategy_elements'"
+      - "generate_description: 'stability_oriented_plan'"
+      - "recommend: 'consistent_routine'"
+      - "display_message: '안정 지향 전략을 설계하여 학습 기반을 탄탄히 합니다.'"
+    confidence: 0.9
+    rationale: "안정 전략은 학습 슬럼프 회복에 필수"
+
+  - rule_id: "R5f_balance_strategy_design"
+    priority: 91
+    description: "균형 지향 전략 설계"
+    conditions:
+      - field: "strategy_direction"
+        operator: "=="
+        value: "균형"
+      - field: "multiple_areas_need_attention"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'balance_strategy_elements'"
+      - "generate_description: 'balance_oriented_plan'"
+      - "recommend: 'integrated_approach'"
+      - "display_message: '균형 지향 전략을 설계하여 여러 영역을 조화롭게 발전시킵니다.'"
+    confidence: 0.89
+    rationale: "균형 전략은 다각적 학습 발전에 효과적"
+
+  - rule_id: "R5g_strategy_teacher_persona_alignment"
+    priority: 90
+    description: "전략과 교사 페르소나 정렬"
+    conditions:
+      - field: "new_strategy_proposed"
+        operator: "=="
+        value: true
+      - field: "teacher_persona_defined"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'persona_strategy_alignment'"
+      - "generate_description: 'aligned_strategy_presentation'"
+      - "display_message: '전략을 교사 페르소나와 일관되게 정렬합니다.'"
+    confidence: 0.88
+    rationale: "페르소나 일관성은 메시지의 신뢰도와 효과성을 높임"
+
+  # ========== S6: 상호작용 톤·언어 조정 필요 시 관련 룰 ==========
+  
+  - rule_id: "R6a_interaction_tone_selection"
+    priority: 95
+    description: "상호작용 톤 선택 요청"
+    conditions:
+      - field: "student_reaction_passive"
+        operator: "=="
+        value: true
+      - field: "interaction_effectiveness_decline"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'current_interaction_pattern'"
+      - "request_teacher_input: '지금 엄격한 톤, 공감 중심 톤, 유머 섞인 톤 중 어떤 스타일로 상호작용하길 원하시나요?'"
+      - "generate_description: 'selected_interaction_tone'"
+      - "apply_tone: 'teacher_selection'"
+      - "display_message: '상호작용 톤을 교사 선호도에 맞춰 조정합니다.'"
+    confidence: 0.93
+    rationale: "적절한 톤 선택은 학생의 반응성을 결정하는 핵심 요소"
+
+  - rule_id: "R6b_strict_tone_application"
+    priority: 94
+    description: "엄격한 톤 적용"
+    conditions:
+      - field: "selected_tone"
+        operator: "=="
+        value: "엄격한 톤"
+      - field: "discipline_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate_description: 'strict_communication_style'"
+      - "apply_tone: 'strict'"
+      - "display_message: '엄격한 톤으로 상호작용하여 규칙 준수를 강조합니다.'"
+    confidence: 0.92
+    rationale: "엄격한 톤은 규칙 위반이나 슬럼프 상황에 효과적"
+
+  - rule_id: "R6c_empathy_tone_application"
+    priority: 93
+    description: "공감 중심 톤 적용"
+    conditions:
+      - field: "selected_tone"
+        operator: "=="
+        value: "공감 중심 톤"
+      - field: "emotional_support_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate_description: 'empathy_communication_style'"
+      - "apply_tone: 'empathetic'"
+      - "display_message: '공감 중심 톤으로 상호작용하여 정서적 지지를 제공합니다.'"
+    confidence: 0.91
+    rationale: "공감 톤은 정서적 어려움 상황에 필수"
+
+  - rule_id: "R6d_humor_tone_application"
+    priority: 92
+    description: "유머 섞인 톤 적용"
+    conditions:
+      - field: "selected_tone"
+        operator: "=="
+        value: "유머 섞인 톤"
+      - field: "motivation_boost_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate_description: 'humor_communication_style'"
+      - "apply_tone: 'humorous'"
+      - "display_message: '유머 섞인 톤으로 상호작용하여 학습 분위기를 경쾌하게 만듭니다.'"
+    confidence: 0.9
+    rationale: "유머 톤은 학습 동기 회복에 효과적"
+
+  - rule_id: "R6e_effective_sentence_structure_request"
+    priority: 91
+    description: "효과적 문장 구조 요청"
+    conditions:
+      - field: "interaction_tone_selected"
+        operator: "=="
+        value: true
+      - field: "student_response_history"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '평소 학생에게 효과적이었던 문장 구조가 있나요?'"
+      - "generate_description: 'effective_communication_patterns'"
+      - "apply_sentence_structure: 'teacher_preference'"
+      - "display_message: '교사의 검증된 문장 구조를 상호작용에 반영합니다.'"
+    confidence: 0.89
+    rationale: "검증된 문장 구조는 학생의 이해도와 반응성을 높임"
+
+  - rule_id: "R6f_passive_response_handling"
+    priority: 90
+    description: "수동적 반응 대응 전략"
+    conditions:
+      - field: "student_reaction_passive"
+        operator: "=="
+        value: true
+      - field: "response_rate"
+        operator: "<"
+        value: 0.5
+    action:
+      - "analyze: 'passive_response_reason'"
+      - "generate_description: 'engagement_recovery_strategy'"
+      - "recommend: 'interactive_question_format'"
+      - "display_message: '수동적 반응에 대응하여 참여 회복 전략을 적용합니다.'"
+    confidence: 0.88
+    rationale: "수동적 반응은 학습 효과를 저하시키므로 즉각 대응 필요"
+
+  - rule_id: "R6g_interaction_pattern_optimization"
+    priority: 89
+    description: "상호작용 패턴 최적화"
+    conditions:
+      - field: "interaction_history_available"
+        operator: "=="
+        value: true
+      - field: "effectiveness_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'optimal_interaction_pattern'"
+      - "generate_description: 'optimized_communication_style'"
+      - "display_message: '과거 효과 데이터를 바탕으로 상호작용 패턴을 최적화합니다.'"
+    confidence: 0.87
+    rationale: "데이터 기반 최적화는 지속적 개선의 핵심"
+
+  # ========== S7: 시스템 정보 누락 또는 갱신 필요 시 관련 룰 ==========
+  
+  - rule_id: "R7a_missing_exam_info_request"
+    priority: 96
+    description: "누락된 시험 정보 요청"
+    conditions:
+      - field: "exam_date"
+        operator: "=="
+        value: null
+      - field: "exam_info_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '현재 학생의 최신 시험 일정을 알려주시겠어요?'"
+      - "generate_description: 'exam_info_update'"
+      - "send_notification: 'missing_exam_info'"
+      - "display_message: '시험 일정 정보가 누락되었습니다. 교사 입력을 요청합니다.'"
+    confidence: 0.94
+    rationale: "시험 정보는 학습 계획 수립의 필수 요소"
+
+  - rule_id: "R7b_missing_target_score_request"
+    priority: 95
+    description: "누락된 목표 점수 요청"
+    conditions:
+      - field: "target_score"
+        operator: "=="
+        value: null
+      - field: "exam_date"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '현재 학생의 목표 점수를 알려주시겠어요?'"
+      - "generate_description: 'target_score_update'"
+      - "send_notification: 'missing_target_score'"
+      - "display_message: '목표 점수 정보가 누락되었습니다. 교사 입력을 요청합니다.'"
+    confidence: 0.93
+    rationale: "목표 점수는 시험 대비 전략 수립의 기준점"
+
+  - rule_id: "R7c_outdated_info_detection"
+    priority: 94
+    description: "오래된 정보 갱신 요청"
+    conditions:
+      - field: "info_last_updated"
+        operator: "!="
+        value: null
+      - field: "days_since_update"
+        operator: ">"
+        value: 30
+      - field: "info_critical"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'outdated_info_impact'"
+      - "request_teacher_input: '정보가 오래되었습니다. 최신 정보로 갱신해주시겠어요?'"
+      - "generate_description: 'info_update_request'"
+      - "send_notification: 'info_needs_update'"
+      - "display_message: '오래된 정보를 감지했습니다. 갱신을 요청합니다.'"
+    confidence: 0.92
+    rationale: "오래된 정보는 잘못된 의사결정으로 이어질 수 있음"
+
+  - rule_id: "R7d_info_strategic_meaning_request"
+    priority: 93
+    description: "정보의 전략적 의미 확인 요청"
+    conditions:
+      - field: "new_info_provided"
+        operator: "=="
+        value: true
+      - field: "strategy_planning_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '이 정보가 향후 전략에 어떤 의미를 가지나요?'"
+      - "generate_description: 'strategic_implications'"
+      - "update_strategy: true"
+      - "display_message: '입력된 정보의 전략적 의미를 분석하여 학습 계획에 반영합니다.'"
+    confidence: 0.91
+    rationale: "정보의 전략적 의미 이해는 효과적 계획 수립에 필수"
+
+  - rule_id: "R7e_critical_info_missing_alert"
+    priority: 97
+    description: "중요 정보 누락 경고"
+    conditions:
+      - field: "critical_info_missing"
+        operator: "=="
+        value: true
+      - field: "info_type"
+        operator: "in"
+        value: ["exam_date", "target_score", "student_level"]
+    action:
+      - "alert: 'critical_info_missing'"
+      - "request_teacher_input: '중요 정보가 누락되었습니다. 즉시 입력이 필요합니다.'"
+      - "send_notification: 'urgent_info_request'"
+      - "display_message: '중요 정보 누락으로 인해 학습 계획 수립이 지연될 수 있습니다.'"
+    confidence: 0.95
+    rationale: "중요 정보 누락은 시스템 기능 제한을 초래"
+
+  - rule_id: "R7f_info_completeness_check"
+    priority: 92
+    description: "정보 완전성 검사"
+    conditions:
+      - field: "profile_completeness"
+        operator: "<"
+        value: 0.7
+      - field: "missing_fields_count"
+        operator: ">"
+        value: 3
+    action:
+      - "analyze: 'missing_info_impact'"
+      - "generate_description: 'completeness_report'"
+      - "request_teacher_input: '학생 프로필 정보를 완성해주시겠어요?'"
+      - "display_message: '프로필 정보가 불완전합니다. 완성도를 높이면 더 정확한 피드백이 가능합니다.'"
+    confidence: 0.9
+    rationale: "정보 완전성은 정확한 의사결정의 기반"
+
+  - rule_id: "R7g_auto_info_search_trigger"
+    priority: 88
+    description: "자동 정보 검색 트리거"
+    conditions:
+      - field: "info_missing"
+        operator: "=="
+        value: true
+      - field: "searchable_info_type"
+        operator: "=="
+        value: true
+    action:
+      - "search_info: 'auto'"
+      - "generate_description: 'searched_info_summary'"
+      - "display_message: '누락된 정보를 자동으로 검색하여 보완합니다.'"
+    confidence: 0.85
+    rationale: "자동 검색은 교사 부담을 줄이고 정보 완전성을 높임"
+
+  # ========== 추가 통합 룰 ==========
+  
+  - rule_id: "R8a_teacher_persona_extraction"
+    priority: 99
+    description: "교사 페르소나 추출 및 반영"
+    conditions:
+      - field: "teacher_notes_available"
+        operator: "=="
+        value: true
+      - field: "conversation_recording_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'teacher_persona'"
+      - "generate_description: 'teacher_persona_profile'"
+      - "apply_persona: true"
+      - "display_message: '교사의 페르소나를 추출하여 상호작용에 반영합니다.'"
+    confidence: 0.97
+    rationale: "교사 페르소나 반영은 일관된 상호작용의 핵심"
+
+  - rule_id: "R8b_feedback_consistency_review"
+    priority: 98
+    description: "피드백 일관성 검토 요청"
+    conditions:
+      - field: "interaction_generated"
+        operator: "=="
+        value: true
+      - field: "teacher_review_needed"
+        operator: "=="
+        value: true
+    action:
+      - "generate_description: 'interaction_review'"
+      - "request_teacher_review: true"
+      - "display_message: '생성된 상호작용을 교사가 검토하여 일관성을 유지합니다.'"
+    confidence: 0.96
+    rationale: "교사 검토는 페르소나 일관성 유지의 필수 단계"
+
+  - rule_id: "R8c_professional_knowledge_integration"
+    priority: 97
+    description: "교사 전문 지식 통합"
+    conditions:
+      - field: "exam_preparation_needed"
+        operator: "=="
+        value: true
+      - field: "teacher_expertise_available"
+        operator: "=="
+        value: true
+    action:
+      - "integrate_knowledge: 'teacher_expertise'"
+      - "generate_description: 'professional_strategy'"
+      - "display_message: '교사의 전문적 지식을 학습 전략에 통합합니다.'"
+    confidence: 0.95
+    rationale: "교사 전문 지식은 학습 효과성의 핵심 요소"
+
+  - rule_id: "R8d_interaction_content_generation"
+    priority: 96
+    description: "최적화된 상호작용 컨텐츠 생성"
+    conditions:
+      - field: "teacher_persona_applied"
+        operator: "=="
+        value: true
+      - field: "context_optimized"
+        operator: "=="
+        value: true
+    action:
+      - "generate_interaction_content: true"
+      - "apply_optimization: true"
+      - "display_message: '교사 페르소나와 맥락을 반영한 최적화된 상호작용 컨텐츠를 생성합니다.'"
+    confidence: 0.94
+    rationale: "최적화된 컨텐츠는 학생 참여도와 학습 효과를 극대화"
+
+  - rule_id: "R8e_long_term_improvement_focus"
+    priority: 95
+    description: "장기적 향상 초점 추출"
+    conditions:
+      - field: "teacher_notes"
+        operator: "contains"
+        value: "장기"
+      - field: "improvement_intent"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'long_term_intent'"
+      - "generate_description: 'long_term_improvement_strategy'"
+      - "display_message: '교사의 장기적 향상 의도를 추출하여 전략에 반영합니다.'"
+    confidence: 0.93
+    rationale: "장기적 관점은 학생의 지속적 성장을 보장"
+
+  - rule_id: "R8f_psychological_element_capture"
+    priority: 94
+    description: "심리 요소 포착 및 반영"
+    conditions:
+      - field: "teacher_notes"
+        operator: "contains"
+        value: "심리"
+      - field: "motivation_element"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'psychological_elements'"
+      - "generate_description: 'psychological_intent'"
+      - "display_message: '교사의 강렬한 내재적 동기와 심리 요소를 포착하여 반영합니다.'"
+    confidence: 0.92
+    rationale: "심리 요소는 학습 동기의 핵심"
+
+  # ========== S9: 수학 교과 특화 피드백 룰 ==========
+  
+  - rule_id: "R9a_math_error_type_classification"
+    priority: 96
+    description: "수학 오류 유형별 분류 및 피드백 템플릿 적용"
+    conditions:
+      - field: "math_error_detected"
+        operator: "=="
+        value: true
+      - field: "error_type"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'math_error_type'"
+      - "request_teacher_input: '이 오류의 유형을 알려주세요. (계산 실수/개념 오류/적용 오류)' 그리고 해당 유형에 대한 피드백 방식을 알려주세요."
+      - "generate_description: 'math_error_feedback_template'"
+      - "apply_feedback_template: 'error_type_specific'"
+      - "display_message: '수학 오류 유형을 분석하여 맞춤형 피드백을 생성합니다.'"
+    confidence: 0.94
+    rationale: "수학 오류 유형별로 차별화된 피드백이 학습 효과를 극대화"
+
+  - rule_id: "R9b_calculation_error_feedback"
+    priority: 95
+    description: "계산 실수 피드백 템플릿 적용"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "계산 실수"
+      - field: "calculation_error_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '계산 실수 학생에게 평소 어떤 피드백을 주시나요? (예: 풀이 과정 확인, 반복 연습 권장 등)'"
+      - "generate_description: 'calculation_error_feedback'"
+      - "recommend: 'process_check_practice'"
+      - "suggest_strength_activities: 'calculation_drill'"
+      - "display_message: '계산 실수 패턴을 감지했습니다. 풀이 과정 확인과 반복 연습을 강조하는 피드백을 생성합니다.'"
+    confidence: 0.93
+    rationale: "계산 실수는 반복 연습과 풀이 과정 확인으로 개선 가능"
+
+  - rule_id: "R9c_concept_error_feedback"
+    priority: 95
+    description: "개념 오류 피드백 템플릿 적용"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "개념 오류"
+      - field: "concept_misunderstanding"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '개념 오류 학생에게 평소 어떤 피드백을 주시나요? (예: 개념 재설명, 예제 단계별 설명 등)'"
+      - "generate_description: 'concept_error_feedback'"
+      - "recommend: 'concept_relearning'"
+      - "suggest_strength_activities: 'step_by_step_examples'"
+      - "display_message: '개념 오류를 감지했습니다. 개념 재학습과 단계별 예제 설명을 강조하는 피드백을 생성합니다.'"
+    confidence: 0.93
+    rationale: "개념 오류는 개념 재학습과 예제 단계별 설명으로 해결 가능"
+
+  - rule_id: "R9d_application_error_feedback"
+    priority: 94
+    description: "적용 오류 피드백 템플릿 적용"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "적용 오류"
+      - field: "application_difficulty"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '적용 오류 학생에게 평소 어떤 피드백을 주시나요? (예: 유형별 문제 다각도 제시, 패턴 인식 강화 등)'"
+      - "generate_description: 'application_error_feedback'"
+      - "recommend: 'varied_problem_types'"
+      - "suggest_strength_activities: 'pattern_recognition_practice'"
+      - "display_message: '적용 오류를 감지했습니다. 유형별 문제 다각도 제시와 패턴 인식 강화를 강조하는 피드백을 생성합니다.'"
+    confidence: 0.92
+    rationale: "적용 오류는 다양한 유형 문제 제시와 패턴 인식으로 개선 가능"
+
+  - rule_id: "R9e_unit_specific_feedback"
+    priority: 93
+    description: "단원별 피드백 특성 반영"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "unit_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '이 단원(함수/도형/통계 등)에서 강조하고 싶은 피드백 포인트를 알려주세요. (예: 함수는 함수식 의미, 도형은 시각화 등)'"
+      - "generate_description: 'unit_specific_feedback_characteristics'"
+      - "apply_feedback_template: 'unit_specific'"
+      - "display_message: '단원별 특성을 반영한 맞춤형 피드백을 생성합니다.'"
+    confidence: 0.91
+    rationale: "단원별 특성을 반영한 피드백이 학습 이해도를 향상"
+
+  - rule_id: "R9f_problem_type_feedback"
+    priority: 92
+    description: "문제 유형별 피드백 차별화"
+    conditions:
+      - field: "problem_type"
+        operator: "in"
+        value: ["기본형", "유형", "심화"]
+      - field: "problem_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '이 문제 유형(기본형/유형/심화)에 대한 피드백 방식을 알려주세요. (예: 기본형은 정확성, 유형은 패턴 인식, 심화는 사고력)'"
+      - "generate_description: 'problem_type_feedback_strategy'"
+      - "apply_feedback_template: 'problem_type_specific'"
+      - "display_message: '문제 유형별 차별화된 피드백을 생성합니다.'"
+    confidence: 0.9
+    rationale: "문제 유형별로 다른 피드백 전략이 필요"
+
+  # ========== S10: 학원 선생님 피드백 통합 룰 ==========
+  
+  - rule_id: "R10a_academy_teacher_feedback_collection"
+    priority: 97
+    description: "학원 선생님 피드백 수집 요청"
+    conditions:
+      - field: "academy_enrolled"
+        operator: "=="
+        value: true
+      - field: "academy_feedback_available"
+        operator: "=="
+        value: false
+    action:
+      - "request_teacher_input: '학원 선생님의 피드백이나 조언을 알려주세요. 또한 학원에서의 학습 상황도 함께 알려주시면 좋겠습니다.'"
+      - "generate_description: 'academy_teacher_feedback'"
+      - "request_teacher_input: '학원 수업의 현재 진도와 주요 내용을 알려주세요.'"
+      - "display_message: '학원 선생님의 피드백을 수집하여 통합 분석합니다.'"
+    confidence: 0.95
+    rationale: "학원 선생님 피드백은 학생 이해를 위한 중요한 정보"
+
+  - rule_id: "R10b_multiple_teacher_feedback_integration"
+    priority: 96
+    description: "학교-학원 다중 선생님 피드백 통합"
+    conditions:
+      - field: "school_teacher_feedback"
+        operator: "!="
+        value: null
+      - field: "academy_teacher_feedback"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'multiple_teacher_feedback_comparison'"
+      - "request_teacher_input: '학교와 학원 선생님의 피드백이 다를 경우, 어떤 것을 우선시하거나 통합하길 원하시나요?'"
+      - "generate_description: 'integrated_feedback_strategy'"
+      - "apply_feedback_template: 'integrated_approach'"
+      - "display_message: '학교와 학원 선생님의 피드백을 통합하여 일관된 피드백을 생성합니다.'"
+    confidence: 0.94
+    rationale: "다중 선생님 피드백 통합은 학생에게 일관된 지침 제공"
+
+  - rule_id: "R10c_academy_school_feedback_conflict_resolution"
+    priority: 95
+    description: "학교-학원 피드백 충돌 해결"
+    conditions:
+      - field: "feedback_conflict_detected"
+        operator: "=="
+        value: true
+      - field: "school_teacher_feedback"
+        operator: "!="
+        value: null
+      - field: "academy_teacher_feedback"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'feedback_conflict_analysis'"
+      - "request_teacher_input: '학교와 학원 피드백이 충돌할 경우, 우선순위를 어떻게 설정하시겠어요? (학교 우선/학원 우선/상황별 판단)'"
+      - "generate_description: 'conflict_resolution_strategy'"
+      - "apply_feedback_template: 'priority_based'"
+      - "display_message: '피드백 충돌을 해결하여 학생에게 혼란을 주지 않는 일관된 메시지를 전달합니다.'"
+    confidence: 0.93
+    rationale: "피드백 충돌 해결은 학생의 혼란 방지에 필수"
+
+  - rule_id: "R10d_academy_learning_context_integration"
+    priority: 94
+    description: "학원 학습 맥락 통합"
+    conditions:
+      - field: "academy_enrolled"
+        operator: "=="
+        value: true
+      - field: "academy_progress_info"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'academy_school_learning_alignment'"
+      - "request_teacher_input: '학원 진도와 학교 진도의 차이를 어떻게 활용하시나요? (선행 학습/보충 학습 등)'"
+      - "generate_description: 'academy_context_integrated_feedback'"
+      - "display_message: '학원 학습 맥락을 반영하여 더 정확한 피드백을 생성합니다.'"
+    confidence: 0.92
+    rationale: "학원 맥락 통합은 더 정확한 학생 이해를 제공"
+
+  # ========== S11: 학생 수준별 피드백 차별화 룰 ==========
+  
+  - rule_id: "R11a_student_level_feedback_differentiation"
+    priority: 98
+    description: "학생 수준별 피드백 차별화"
+    conditions:
+      - field: "student_level"
+        operator: "in"
+        value: ["하위권", "중위권", "상위권"]
+      - field: "feedback_generation_needed"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'student_level_assessment'"
+      - "request_teacher_input: '이 학생 수준(하위권/중위권/상위권)에 맞는 피드백 스타일을 알려주세요. (예: 하위권은 격려 중심, 상위권은 도전 중심)'"
+      - "generate_description: 'level_specific_feedback_strategy'"
+      - "apply_feedback_template: 'level_based'"
+      - "display_message: '학생 수준에 맞는 차별화된 피드백을 생성합니다.'"
+    confidence: 0.96
+    rationale: "학생 수준별 차별화된 피드백이 학습 효과를 극대화"
+
+  - rule_id: "R11b_lower_level_praise_strategy"
+    priority: 97
+    description: "하위권 학생 칭찬 전략"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "하위권"
+      - field: "praise_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '하위권 학생에게 어떤 칭찬 포인트를 강조하시나요? (예: 작은 성공, 기본 개념 이해, 노력 과정 등)'"
+      - "generate_description: 'lower_level_praise_template'"
+      - "identify_strengths: 'small_achievements'"
+      - "suggest_strength_activities: 'basic_concept_reinforcement'"
+      - "display_message: '하위권 학생의 작은 성공과 기본 개념 이해를 강조하는 칭찬 피드백을 생성합니다.'"
+    confidence: 0.95
+    rationale: "하위권 학생은 작은 성공 강조가 동기 유지에 핵심"
+
+  - rule_id: "R11c_middle_level_feedback_strategy"
+    priority: 96
+    description: "중위권 학생 피드백 전략"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "중위권"
+      - field: "feedback_generation_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '중위권 학생에게 어떤 피드백 스타일을 사용하시나요? (예: 유형별 성취 강조, 오답 정리 가이드, 목표 제시 등)'"
+      - "generate_description: 'middle_level_feedback_template'"
+      - "apply_feedback_template: 'balanced_approach'"
+      - "create_checklist: 'error_analysis_guide'"
+      - "display_message: '중위권 학생에게 균형 잡힌 피드백과 목표 제시를 포함한 피드백을 생성합니다.'"
+    confidence: 0.94
+    rationale: "중위권 학생은 균형 잡힌 피드백과 목표 제시가 효과적"
+
+  - rule_id: "R11d_upper_level_challenge_strategy"
+    priority: 95
+    description: "상위권 학생 도전 전략"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "상위권"
+      - field: "challenge_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '상위권 학생에게 어떤 피드백 스타일을 사용하시나요? (예: 도전 문제 제시, 사고 과정 칭찬, 창의적 접근 권장 등)'"
+      - "generate_description: 'upper_level_challenge_template'"
+      - "recommend: 'advanced_problems'"
+      - "suggest_strength_activities: 'creative_thinking'"
+      - "display_message: '상위권 학생에게 도전 문제와 창의적 접근을 강조하는 피드백을 생성합니다.'"
+    confidence: 0.93
+    rationale: "상위권 학생은 도전과 창의적 접근이 성장 동력"
+
+  - rule_id: "R11e_level_based_improvement_guidance"
+    priority: 94
+    description: "수준별 개선 안내 차별화"
+    conditions:
+      - field: "student_level"
+        operator: "!="
+        value: null
+      - field: "improvement_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '이 학생 수준에 맞는 개선 안내 방식을 알려주세요. (하위권: 단계별 안내, 중위권: 오답 정리, 상위권: 심화 문제)'"
+      - "generate_description: 'level_based_improvement_template'"
+      - "create_checklist: 'level_specific_checklist'"
+      - "display_message: '학생 수준에 맞는 개선 안내를 생성합니다.'"
+    confidence: 0.92
+    rationale: "수준별 개선 안내는 학생의 성장 단계에 맞는 조언 제공"
+
+  # ========== S12: 수학 학습 특화 관찰 룰 ==========
+  
+  - rule_id: "R12a_math_problem_solving_process_observation"
+    priority: 93
+    description: "수학 문제 풀이 과정 관찰"
+    conditions:
+      - field: "math_problem_solving_active"
+        operator: "=="
+        value: true
+      - field: "solving_process_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'problem_solving_stages'"
+      - "request_teacher_input: '학생이 문제를 풀 때 어떤 단계(이해→풀이→계산→검증)에서 막히는지 관찰하신 적이 있나요?'"
+      - "request_student_survey: '문제를 풀 때 어떤 단계에서 막히나요? (이해/풀이/계산/검증)'"
+      - "generate_description: 'solving_process_analysis'"
+      - "display_message: '문제 풀이 과정을 분석하여 막히는 단계를 파악합니다.'"
+    confidence: 0.91
+    rationale: "문제 풀이 과정 관찰은 취약점 정밀 진단에 필수"
+
+  - rule_id: "R12b_unit_capability_detailed_diagnosis"
+    priority: 92
+    description: "단원별 세부 역량 진단"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "unit_performance_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'unit_capability_breakdown'"
+      - "request_teacher_input: '이 단원에서 학생의 세부 역량을 평가해주세요. (예: 함수 단원 - 함수식 이해(O), 그래프 해석(X), 응용 문제(X))'"
+      - "generate_description: 'detailed_unit_capability_profile'"
+      - "prioritize_areas: 'capability_gaps'"
+      - "display_message: '단원별 세부 역량을 진단하여 정확한 취약점을 파악합니다.'"
+    confidence: 0.9
+    rationale: "단원별 세부 역량 진단은 맞춤형 피드백의 기반"
+
+  - rule_id: "R12c_math_learning_motivation_elements"
+    priority: 91
+    description: "수학 학습 특화 동기 요소 파악"
+    conditions:
+      - field: "motivation_analysis_needed"
+        operator: "=="
+        value: true
+      - field: "math_learning_context"
+        operator: "!="
+        value: null
+    action:
+      - "request_teacher_input: '수학에서 어떤 순간이 학생에게 동기가 되나요? (예: 문제를 풀었을 때의 성취감, 개념을 이해했을 때의 깨달음 등)'"
+      - "generate_description: 'math_specific_motivation_elements'"
+      - "plan_success_experiences: 'math_achievement_focused'"
+      - "display_message: '수학 학습 특화 동기 요소를 파악하여 동기 강화 전략을 수립합니다.'"
+    confidence: 0.89
+    rationale: "수학 특화 동기 요소는 장기적 학습 지속성에 중요"
+
+  # ========== S13: 학습 단계별 피드백 룰 ==========
+  
+  - rule_id: "R13a_learning_stage_feedback_differentiation"
+    priority: 92
+    description: "학습 단계별 피드백 차별화"
+    conditions:
+      - field: "current_learning_stage"
+        operator: "in"
+        value: ["개념 학습", "유형 연습", "심화"]
+      - field: "stage_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'learning_stage_assessment'"
+      - "request_teacher_input: '이 학습 단계(개념 학습/유형 연습/심화)에서 어떤 피드백을 주시나요?'"
+      - "generate_description: 'stage_specific_feedback_strategy'"
+      - "apply_feedback_template: 'stage_based'"
+      - "display_message: '학습 단계에 맞는 차별화된 피드백을 생성합니다.'"
+    confidence: 0.9
+    rationale: "학습 단계별 피드백은 단계적 학습 효과를 극대화"
+
+  - rule_id: "R13b_concept_learning_feedback"
+    priority: 91
+    description: "개념 학습 단계 피드백"
+    conditions:
+      - field: "current_learning_stage"
+        operator: "=="
+        value: "개념 학습"
+      - field: "concept_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '개념 학습 단계에서 어떤 피드백을 주시나요? (예: 이해 확인 질문, 예제 안내, 개념 연결 설명 등)'"
+      - "generate_description: 'concept_learning_feedback_template'"
+      - "recommend: 'understanding_check_questions'"
+      - "suggest_strength_activities: 'concept_examples'"
+      - "display_message: '개념 학습 단계에 맞는 이해 확인과 예제 안내 피드백을 생성합니다.'"
+    confidence: 0.89
+    rationale: "개념 학습 단계는 이해 확인과 예제가 핵심"
+
+  - rule_id: "R13c_problem_type_practice_feedback"
+    priority: 90
+    description: "유형 연습 단계 피드백"
+    conditions:
+      - field: "current_learning_stage"
+        operator: "=="
+        value: "유형 연습"
+      - field: "practice_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '유형 연습 단계에서 어떤 피드백을 주시나요? (예: 패턴 인식 강조, 오답 분석, 유형별 전략 제시 등)'"
+      - "generate_description: 'problem_type_practice_feedback_template'"
+      - "recommend: 'pattern_recognition'"
+      - "create_checklist: 'error_analysis_checklist'"
+      - "display_message: '유형 연습 단계에 맞는 패턴 인식과 오답 분석 피드백을 생성합니다.'"
+    confidence: 0.88
+    rationale: "유형 연습 단계는 패턴 인식과 오답 분석이 핵심"
+
+  - rule_id: "R13d_advanced_learning_feedback"
+    priority: 89
+    description: "심화 학습 단계 피드백"
+    conditions:
+      - field: "current_learning_stage"
+        operator: "=="
+        value: "심화"
+      - field: "advanced_feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "request_teacher_input: '심화 학습 단계에서 어떤 피드백을 주시나요? (예: 사고 과정 칭찬, 창의적 접근 권장, 변형 문제 제시 등)'"
+      - "generate_description: 'advanced_learning_feedback_template'"
+      - "recommend: 'creative_thinking_problems'"
+      - "suggest_strength_activities: 'variation_problems'"
+      - "display_message: '심화 학습 단계에 맞는 사고 과정 강조와 창의적 접근 피드백을 생성합니다.'"
+    confidence: 0.87
+    rationale: "심화 학습 단계는 사고 과정과 창의적 접근이 핵심"
+
+  - rule_id: "R13e_feedback_execution_tracking"
+    priority: 88
+    description: "피드백 실행 여부 추적"
+    conditions:
+      - field: "feedback_provided"
+        operator: "=="
+        value: true
+      - field: "feedback_tracking_needed"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'feedback_execution_status'"
+      - "request_teacher_input: '제공한 피드백을 학생이 실제로 반영했는지 확인해주세요.'"
+      - "generate_description: 'feedback_effectiveness_report'"
+      - "display_message: '피드백 실행 여부를 추적하여 효과성을 평가합니다.'"
+    confidence: 0.86
+    rationale: "피드백 실행 추적은 지속적 개선의 기반"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '교사 피드백 정보를 분석 중입니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용"
+
+# ========== 데이터 기반 질문 연계 정보 ==========
+# 
+# 이 rules.yaml 파일은 questions.html의 포괄형 질문과 data_based_questions.js의 데이터 기반 질문과 연계됩니다.
+#
+# 포괄형 질문 A: "최근 상호작용(메모/녹취/귀가검사)을 바탕으로, 내가 이 학생에게 일관되게 전하고 싶은 '핵심 의도'는 무엇이고(성장/도전/안정/회복), 그 의도를 가장 자연스럽게 전달하는 나의 페르소나 톤·언어 패턴은 무엇인지 요약해줘."
+#   - 연계 룰: R1a~R1d (학생 변화 감지 시)
+#   - 데이터 소스: recent_interactions, teacher_memo, departure_check_data, core_intention, teacher_feedback_style, persona_tone, risk_signals
+#   - 온톨로지: TeacherPersonaTone, CoreIntention
+#
+# 포괄형 질문 B: "학생의 최근 변화 신호(집중/감정/진도)와 다가오는 문맥(시험·모의·진학 상담 등)을 종합해서, 3단계 개입 시나리오(오프닝 → 코칭 → 클로징)를 만들어줘."
+#   - 연계 룰: R2a~R2d (3단계 개입 시나리오 설계)
+#   - 데이터 소스: concentration_change, emotion_change, progress_change, upcoming_context, opening_strategy, core_message, tone_switch_rules
+#   - 온톨로지: InteractionScenario, ToneSwitchRules
+#   - 연계 에이전트: Agent 02 (시험일정), Agent 05 (학습감정)
+#
+# 포괄형 질문 C: "상호작용을 최적화하는 데 비어있는 핵심 정보(목표, 시험 일정, 톤 선호, 최근 감정 패턴 등)를 식별하고, 이를 자동 수집 절차(알림→질문 폼→검증)로 채워줘."
+#   - 연계 룰: R3a~R3d (누락 정보 자동 수집)
+#   - 데이터 소스: goals, exam_schedule, tone_preference, recent_emotion_pattern, missing_info_priority, collection_message_template, auto_update_rules
+#   - 온톨로지: InformationCollection, InfoCompleteness
+#   - 연계 에이전트: Agent 02 (시험일정), Agent 03 (목표분석), Agent 05 (학습감정)
+#
+# 자세한 데이터 기반 질문 정의는 data_based_questions.js의 agent06 섹션을 참조하세요.

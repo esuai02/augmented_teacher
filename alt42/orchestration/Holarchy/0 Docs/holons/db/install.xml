@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/augmented_teacher/alt42/orchestration/Holarchy/0 Docs/holons/db" VERSION="20251209" COMMENT="A/B Testing Framework Database Tables - Phase 11.1">
+  <TABLES>
+
+    <!-- A/B Test Group Assignments -->
+    <TABLE NAME="quantum_ab_tests" COMMENT="Stores A/B test group assignments for students">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="test_id" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Unique identifier for the A/B test"/>
+        <FIELD NAME="student_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Moodle user ID"/>
+        <FIELD NAME="group_name" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="control or treatment"/>
+        <FIELD NAME="treatment_ratio" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="true" DEFAULT="0.50" COMMENT="Ratio of treatment group (0.00-1.00)"/>
+        <FIELD NAME="seed" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="42" COMMENT="Random seed for reproducibility"/>
+        <FIELD NAME="hash_value" TYPE="number" LENGTH="10" DECIMALS="8" NOTNULL="false" COMMENT="Calculated hash value for assignment"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of creation"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of last modification"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_test_student" UNIQUE="true" FIELDS="test_id, student_id" COMMENT="Unique assignment per test per student"/>
+        <INDEX NAME="idx_test_group" UNIQUE="false" FIELDS="test_id, group_name" COMMENT="Fast lookup by test and group"/>
+        <INDEX NAME="idx_student" UNIQUE="false" FIELDS="student_id" COMMENT="Fast lookup by student"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- A/B Test Outcomes (Learning Metrics) -->
+    <TABLE NAME="quantum_ab_test_outcomes" COMMENT="Records learning outcomes for A/B test analysis">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="test_id" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Reference to the A/B test"/>
+        <FIELD NAME="student_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Moodle user ID"/>
+        <FIELD NAME="metric_name" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="Name of the metric (learning_gain, engagement_rate, effectiveness_score)"/>
+        <FIELD NAME="metric_value" TYPE="number" LENGTH="12" DECIMALS="4" NOTNULL="true" COMMENT="Numeric value of the metric"/>
+        <FIELD NAME="session_id" TYPE="char" LENGTH="100" NOTNULL="false" COMMENT="Optional session identifier"/>
+        <FIELD NAME="context_data" TYPE="text" NOTNULL="false" COMMENT="JSON encoded additional context"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of recording"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_test_metric" UNIQUE="false" FIELDS="test_id, metric_name" COMMENT="Fast lookup by test and metric"/>
+        <INDEX NAME="idx_student_test" UNIQUE="false" FIELDS="student_id, test_id" COMMENT="Fast lookup by student and test"/>
+        <INDEX NAME="idx_metric_time" UNIQUE="false" FIELDS="metric_name, timecreated" COMMENT="Time-series analysis"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- A/B Test State Changes (8D StateVector tracking) -->
+    <TABLE NAME="quantum_ab_test_state_changes" COMMENT="Tracks 8D StateVector changes during A/B tests">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="test_id" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Reference to the A/B test"/>
+        <FIELD NAME="student_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Moodle user ID"/>
+        <FIELD NAME="dimension_name" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="8D dimension name (cognitive_clarity, emotional_stability, etc.)"/>
+        <FIELD NAME="before_value" TYPE="number" LENGTH="10" DECIMALS="4" NOTNULL="false" COMMENT="State value before intervention"/>
+        <FIELD NAME="after_value" TYPE="number" LENGTH="10" DECIMALS="4" NOTNULL="false" COMMENT="State value after intervention"/>
+        <FIELD NAME="change_value" TYPE="number" LENGTH="10" DECIMALS="4" NOTNULL="false" COMMENT="Calculated change (after - before)"/>
+        <FIELD NAME="intervention_type" TYPE="char" LENGTH="50" NOTNULL="false" COMMENT="Type of intervention applied"/>
+        <FIELD NAME="agent_id" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Agent that caused the change"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of recording"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_test_dimension" UNIQUE="false" FIELDS="test_id, dimension_name" COMMENT="Fast lookup by test and dimension"/>
+        <INDEX NAME="idx_student_test" UNIQUE="false" FIELDS="student_id, test_id" COMMENT="Fast lookup by student"/>
+        <INDEX NAME="idx_time_dimension" UNIQUE="false" FIELDS="timecreated, dimension_name" COMMENT="Time-series by dimension"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- A/B Test Reports (Cached Analysis Results) -->
+    <TABLE NAME="quantum_ab_test_reports" COMMENT="Stores cached statistical analysis reports">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="test_id" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Reference to the A/B test"/>
+        <FIELD NAME="report_type" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="Type of report (overview, metrics, full)"/>
+        <FIELD NAME="report_data" TYPE="text" NOTNULL="true" COMMENT="JSON encoded report data"/>
+        <FIELD NAME="control_size" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Number of control group participants"/>
+        <FIELD NAME="treatment_size" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Number of treatment group participants"/>
+        <FIELD NAME="recommendation" TYPE="char" LENGTH="20" NOTNULL="false" COMMENT="ADOPT, CONTINUE, or REJECT"/>
+        <FIELD NAME="confidence" TYPE="char" LENGTH="20" NOTNULL="false" COMMENT="high, medium, low"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Unix timestamp of report generation"/>
+        <FIELD NAME="valid_until" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Cache expiration timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_test_type" UNIQUE="false" FIELDS="test_id, report_type" COMMENT="Fast lookup by test and type"/>
+        <INDEX NAME="idx_recommendation" UNIQUE="false" FIELDS="recommendation" COMMENT="Filter by recommendation"/>
+        <INDEX NAME="idx_valid" UNIQUE="false" FIELDS="valid_until" COMMENT="Cache cleanup"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- A/B Test Configuration -->
+    <TABLE NAME="quantum_ab_test_config" COMMENT="Stores A/B test configuration and metadata">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="test_id" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Unique test identifier"/>
+        <FIELD NAME="test_name" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Human readable test name"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" COMMENT="Test description and hypothesis"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="active" COMMENT="active, paused, completed, archived"/>
+        <FIELD NAME="treatment_ratio" TYPE="number" LENGTH="5" DECIMALS="2" NOTNULL="true" DEFAULT="0.50" COMMENT="Default treatment ratio"/>
+        <FIELD NAME="min_sample_size" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100" COMMENT="Minimum sample size for significance"/>
+        <FIELD NAME="target_metrics" TYPE="text" NOTNULL="false" COMMENT="JSON array of target metric names"/>
+        <FIELD NAME="created_by" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="User ID who created the test"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Test creation timestamp"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="Last modification timestamp"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Test start timestamp"/>
+        <FIELD NAME="timeended" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="Test end timestamp"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_test_id" UNIQUE="true" FIELDS="test_id" COMMENT="Unique test identifier"/>
+        <INDEX NAME="idx_status" UNIQUE="false" FIELDS="status" COMMENT="Filter by status"/>
+        <INDEX NAME="idx_created_by" UNIQUE="false" FIELDS="created_by" COMMENT="Filter by creator"/>
+      </INDEXES>
+    </TABLE>
+
+  </TABLES>
+</XMLDB>

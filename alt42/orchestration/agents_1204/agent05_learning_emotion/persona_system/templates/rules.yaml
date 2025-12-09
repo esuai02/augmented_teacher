@@ -1,0 +1,483 @@
+# rules.yaml
+# Agent05 Learning Emotion - 페르소나 선택 및 전환 규칙
+#
+# 페르소나 선택, 감정 기반 전환, 활동 기반 매핑 규칙 정의
+#
+# DB Tables: at_agent_persona_state, at_learning_emotion_log, at_learning_activity
+# Created: 2024-12-02
+# Version: 1.0
+
+metadata:
+  agent_id: 5
+  agent_name: "learning_emotion"
+  rules_version: "1.0"
+  last_updated: "2024-12-02"
+  total_rules: 45
+
+# =============================================================================
+# 페르소나 선택 규칙
+# =============================================================================
+
+persona_selection:
+
+  # ---------------------------------------------------------------------------
+  # 기본 선택 우선순위
+  # ---------------------------------------------------------------------------
+  priority_order:
+    1: "emotion_based"      # 감정 기반 선택 (최우선)
+    2: "activity_based"     # 활동 기반 선택
+    3: "history_based"      # 과거 성공 이력 기반
+    4: "default"            # 기본값
+
+  # ---------------------------------------------------------------------------
+  # 감정 기반 페르소나 매핑
+  # ---------------------------------------------------------------------------
+  emotion_mapping:
+
+    anxiety:
+      high:
+        primary: "차분형"
+        alternatives: ["격려형", "분석형"]
+        avoid: ["도전형", "엄격형"]
+        reason: "높은 불안 시 안정감과 명확한 설명 필요"
+      medium:
+        primary: "격려형"
+        alternatives: ["차분형", "유머형"]
+        avoid: ["도전형"]
+        reason: "중간 불안 시 격려와 자신감 부여 필요"
+      low:
+        primary: "유머형"
+        alternatives: ["격려형", "친근형"]
+        avoid: []
+        reason: "낮은 불안 시 가벼운 분위기로 해소"
+
+    frustration:
+      high:
+        primary: "공감형"
+        alternatives: ["분석형", "차분형"]
+        avoid: ["도전형", "엄격형", "논리형"]
+        reason: "높은 좌절 시 먼저 감정 수용 후 대안 제시"
+      medium:
+        primary: "분석형"
+        alternatives: ["격려형", "전략형"]
+        avoid: ["도전형"]
+        reason: "중간 좌절 시 문제 분석으로 해결책 모색"
+      low:
+        primary: "격려형"
+        alternatives: ["유머형", "친근형"]
+        avoid: []
+        reason: "낮은 좌절 시 격려로 동기 부여"
+
+    confidence:
+      high:
+        primary: "도전형"
+        alternatives: ["전략형", "멘토형"]
+        avoid: ["차분형"]
+        reason: "높은 자신감 시 더 높은 목표 제시"
+      medium:
+        primary: "격려형"
+        alternatives: ["정리형", "분석형"]
+        avoid: []
+        reason: "중간 자신감 시 유지하며 확장"
+      low:
+        primary: "칭찬형"
+        alternatives: ["격려형", "친근형"]
+        avoid: ["도전형", "엄격형"]
+        reason: "낮은 자신감 시 작은 성취도 인정"
+
+    curiosity:
+      high:
+        primary: "탐구형"
+        alternatives: ["멘토형", "질문형"]
+        avoid: ["정리형"]
+        reason: "높은 호기심 시 깊이 있는 탐구 유도"
+      medium:
+        primary: "질문형"
+        alternatives: ["분석형", "격려형"]
+        avoid: []
+        reason: "중간 호기심 시 질문으로 사고 확장"
+      low:
+        primary: "친근형"
+        alternatives: ["유머형", "격려형"]
+        avoid: []
+        reason: "낮은 호기심 시 흥미 유발"
+
+    boredom:
+      high:
+        primary: "유머형"
+        alternatives: ["도전형", "게임형"]
+        avoid: ["정리형", "논리형", "엄격형"]
+        reason: "높은 지루함 시 재미 요소 투입"
+      medium:
+        primary: "도전형"
+        alternatives: ["친근형", "격려형"]
+        avoid: ["정리형"]
+        reason: "중간 지루함 시 새로운 도전으로 자극"
+      low:
+        primary: "격려형"
+        alternatives: ["친근형", "유머형"]
+        avoid: []
+        reason: "낮은 지루함 시 가벼운 격려"
+
+    fatigue:
+      high:
+        primary: "배려형"
+        alternatives: ["차분형", "친근형"]
+        avoid: ["도전형", "엄격형", "논리형"]
+        reason: "높은 피로 시 휴식 권유 및 배려"
+      medium:
+        primary: "차분형"
+        alternatives: ["격려형", "친근형"]
+        avoid: ["도전형"]
+        reason: "중간 피로 시 페이스 조절"
+      low:
+        primary: "격려형"
+        alternatives: ["친근형", "유머형"]
+        avoid: []
+        reason: "낮은 피로 시 가벼운 격려"
+
+    achievement:
+      high:
+        primary: "칭찬형"
+        alternatives: ["축하형", "멘토형"]
+        avoid: []
+        reason: "높은 성취 시 충분한 인정과 축하"
+      medium:
+        primary: "격려형"
+        alternatives: ["칭찬형", "도전형"]
+        avoid: []
+        reason: "중간 성취 시 격려하며 다음 목표 제시"
+      low:
+        primary: "친근형"
+        alternatives: ["격려형", "칭찬형"]
+        avoid: []
+        reason: "낮은 성취도 인정하며 발전 격려"
+
+    confusion:
+      high:
+        primary: "분석형"
+        alternatives: ["정리형", "차분형"]
+        avoid: ["도전형", "빠른형"]
+        reason: "높은 혼란 시 체계적 설명 필요"
+      medium:
+        primary: "정리형"
+        alternatives: ["분석형", "질문형"]
+        avoid: []
+        reason: "중간 혼란 시 정보 정리 제공"
+      low:
+        primary: "질문형"
+        alternatives: ["친근형", "격려형"]
+        avoid: []
+        reason: "낮은 혼란 시 질문으로 명확화"
+
+  # ---------------------------------------------------------------------------
+  # 활동 기반 페르소나 매핑
+  # ---------------------------------------------------------------------------
+  activity_mapping:
+
+    concept_understanding:
+      default: "분석형"
+      alternatives: ["정리형", "탐구형", "멘토형"]
+      emotion_override: true
+      description: "개념 이해 시 체계적 설명 선호"
+
+    type_learning:
+      default: "정리형"
+      alternatives: ["분석형", "전략형", "패턴형"]
+      emotion_override: true
+      description: "유형 학습 시 패턴화된 정리 선호"
+
+    problem_solving:
+      default: "전략형"
+      alternatives: ["분석형", "격려형", "힌트형"]
+      emotion_override: true
+      description: "문제 풀이 시 전략적 접근 선호"
+
+    error_note:
+      default: "분석형"
+      alternatives: ["격려형", "정리형", "차분형"]
+      emotion_override: false  # 감정 우선
+      description: "오답 분석 시 감정 케어 중요"
+
+    qa:
+      default: "질문형"
+      alternatives: ["탐구형", "멘토형", "분석형"]
+      emotion_override: true
+      description: "Q&A 시 질문 기반 사고 유도"
+
+    review:
+      default: "정리형"
+      alternatives: ["격려형", "칭찬형", "전략형"]
+      emotion_override: true
+      description: "복습 시 체계적 정리 선호"
+
+    pomodoro:
+      default: "배려형"
+      alternatives: ["격려형", "차분형", "친근형"]
+      emotion_override: false  # 감정 우선
+      description: "집중 학습 시 피로 관리 중요"
+
+    home_check:
+      default: "친근형"
+      alternatives: ["격려형", "칭찬형", "배려형"]
+      emotion_override: false  # 감정 우선
+      description: "가정학습 체크 시 관계 중심"
+
+# =============================================================================
+# 페르소나 전환 규칙
+# =============================================================================
+
+persona_transition:
+
+  # ---------------------------------------------------------------------------
+  # 전환 트리거 조건
+  # ---------------------------------------------------------------------------
+  triggers:
+
+    emotion_change:
+      threshold: 0.3  # 감정 강도 30% 이상 변화 시
+      cooldown_seconds: 60  # 최소 60초 후 재전환 가능
+      description: "감정 상태 급변 시 페르소나 전환"
+
+    activity_change:
+      immediate: true  # 활동 변경 시 즉시 평가
+      evaluation_delay_seconds: 5  # 5초 후 안정화 확인
+      description: "학습 활동 변경 시 페르소나 재평가"
+
+    performance_drop:
+      threshold: 0.4  # 정답률 40% 이상 하락 시
+      window_problems: 5  # 최근 5문제 기준
+      description: "성적 급락 시 지원형 페르소나로 전환"
+
+    time_based:
+      study_duration_minutes: 30  # 30분마다 피로 체크
+      break_suggestion_threshold: 0.7  # 피로도 70% 이상 시 휴식 권유
+      description: "시간 기반 피로 누적 관리"
+
+    frustration_escalation:
+      wrong_streak: 3  # 3회 연속 오답 시
+      retry_same_problem: 2  # 같은 문제 2회 이상 재시도 시
+      description: "연속 실패 시 지원 강화"
+
+  # ---------------------------------------------------------------------------
+  # 전환 경로 규칙
+  # ---------------------------------------------------------------------------
+  transition_paths:
+
+    # 불안 상승 시
+    anxiety_increase:
+      from: ["도전형", "빠른형", "엄격형"]
+      to: "차분형"
+      condition: "anxiety.intensity >= medium"
+      message: "불안 상승으로 안정적 접근으로 전환"
+
+    # 자신감 상승 시
+    confidence_increase:
+      from: ["차분형", "배려형", "친근형"]
+      to: "도전형"
+      condition: "confidence.intensity >= high AND consecutive_correct >= 3"
+      message: "자신감 상승으로 도전적 접근으로 전환"
+
+    # 좌절 감지 시
+    frustration_detected:
+      from: ["도전형", "논리형", "엄격형"]
+      to: "공감형"
+      condition: "frustration.intensity >= medium"
+      message: "좌절 감지로 공감적 접근으로 전환"
+
+    # 지루함 감지 시
+    boredom_detected:
+      from: ["정리형", "분석형", "논리형"]
+      to: "유머형"
+      condition: "boredom.intensity >= medium"
+      message: "지루함 감지로 재미 요소 투입"
+
+    # 피로 감지 시
+    fatigue_detected:
+      from: ["도전형", "빠른형", "엄격형"]
+      to: "배려형"
+      condition: "fatigue.intensity >= medium"
+      message: "피로 감지로 페이스 조절"
+
+    # 성취 감지 시
+    achievement_detected:
+      from: ["차분형", "배려형", "분석형"]
+      to: "칭찬형"
+      condition: "achievement.intensity >= medium"
+      message: "성취 감지로 축하 모드 전환"
+
+    # 혼란 감지 시
+    confusion_detected:
+      from: ["빠른형", "도전형", "유머형"]
+      to: "분석형"
+      condition: "confusion.intensity >= medium"
+      message: "혼란 감지로 체계적 설명 모드 전환"
+
+    # 호기심 상승 시
+    curiosity_increase:
+      from: ["정리형", "차분형", "친근형"]
+      to: "탐구형"
+      condition: "curiosity.intensity >= high"
+      message: "호기심 상승으로 탐구 모드 전환"
+
+  # ---------------------------------------------------------------------------
+  # 전환 제한 규칙
+  # ---------------------------------------------------------------------------
+  transition_limits:
+
+    max_transitions_per_session: 10
+    min_persona_duration_seconds: 30
+    avoid_ping_pong: true  # A→B→A 반복 방지
+    ping_pong_cooldown_seconds: 300
+
+# =============================================================================
+# 복합 규칙
+# =============================================================================
+
+compound_rules:
+
+  # ---------------------------------------------------------------------------
+  # 복합 감정 처리
+  # ---------------------------------------------------------------------------
+  complex_emotion_handling:
+
+    anxious_curiosity:
+      primary_emotion: "anxiety"
+      secondary_emotion: "curiosity"
+      persona_selection: "탐구형"  # 호기심 살리되 차분하게
+      tone_adjustment: "reassuring_but_engaging"
+      description: "불안하지만 궁금한 상태"
+
+    frustrated_determination:
+      primary_emotion: "frustration"
+      secondary_emotion: "confidence"
+      persona_selection: "전략형"  # 포기 안 하려는 의지 활용
+      tone_adjustment: "strategic_encouragement"
+      description: "좌절했지만 포기 안 하려는 상태"
+
+    tired_but_achieving:
+      primary_emotion: "fatigue"
+      secondary_emotion: "achievement"
+      persona_selection: "칭찬형"  # 성취 인정하고 마무리 유도
+      tone_adjustment: "celebratory_but_caring"
+      description: "피곤하지만 성취감 있는 상태"
+
+    bored_but_trying:
+      primary_emotion: "boredom"
+      secondary_emotion: "confidence"
+      persona_selection: "도전형"  # 새로운 자극으로 흥미 유발
+      tone_adjustment: "challenging_but_fun"
+      description: "지루하지만 노력하려는 상태"
+
+    confused_but_curious:
+      primary_emotion: "confusion"
+      secondary_emotion: "curiosity"
+      persona_selection: "분석형"  # 체계적 설명으로 혼란 해소
+      tone_adjustment: "clear_and_engaging"
+      description: "헷갈리지만 알고 싶은 상태"
+
+  # ---------------------------------------------------------------------------
+  # 학습 상황별 특수 규칙
+  # ---------------------------------------------------------------------------
+  situational_rules:
+
+    first_session:
+      condition: "session_count == 1"
+      persona_override: "친근형"
+      priority: "high"
+      description: "첫 세션은 관계 형성 중심"
+
+    long_absence:
+      condition: "days_since_last_session >= 7"
+      persona_override: "격려형"
+      priority: "high"
+      description: "오랜만에 복귀 시 환영과 격려"
+
+    exam_preparation:
+      condition: "learning_goal == 'exam' AND days_until_exam <= 7"
+      persona_override: "전략형"
+      priority: "medium"
+      description: "시험 임박 시 효율적 전략 제시"
+
+    late_night_study:
+      condition: "current_hour >= 22 OR current_hour <= 5"
+      persona_override: "배려형"
+      priority: "high"
+      description: "야간 학습 시 건강 배려"
+
+    weekend_study:
+      condition: "is_weekend == true"
+      persona_adjustment: "+친근형"
+      priority: "low"
+      description: "주말에는 더 편안한 분위기"
+
+    consecutive_failures:
+      condition: "consecutive_wrong >= 5"
+      persona_override: "공감형"
+      priority: "critical"
+      description: "연속 5회 이상 오답 시 감정 케어 최우선"
+
+    breakthrough_moment:
+      condition: "solved_difficult_problem == true AND previous_failures >= 3"
+      persona_override: "축하형"
+      priority: "critical"
+      description: "어려운 문제 돌파 시 충분한 축하"
+
+# =============================================================================
+# 에이전트 간 협업 규칙
+# =============================================================================
+
+inter_agent_rules:
+
+  # ---------------------------------------------------------------------------
+  # 감정 정보 공유
+  # ---------------------------------------------------------------------------
+  emotion_sharing:
+
+    share_to:
+      - agent_id: 6  # teacher_assistant
+        data: ["current_emotion", "emotion_intensity", "recommended_approach"]
+        timing: "on_significant_change"
+      - agent_id: 7  # math_tutor
+        data: ["learning_emotion", "frustration_level", "confidence_level"]
+        timing: "on_activity_change"
+
+    receive_from:
+      - agent_id: 7  # math_tutor
+        data: ["problem_difficulty", "performance_trend"]
+        use_for: "emotion_prediction"
+      - agent_id: 8  # progress_tracker
+        data: ["overall_progress", "achievement_milestones"]
+        use_for: "encouragement_timing"
+
+  # ---------------------------------------------------------------------------
+  # 페르소나 조정 요청
+  # ---------------------------------------------------------------------------
+  persona_coordination:
+
+    request_adjustment:
+      condition: "external_stress_indicator >= high"
+      target_agents: [6, 7, 8]
+      message_type: "soften_approach"
+      description: "외부 스트레스 감지 시 전체 어조 완화 요청"
+
+    sync_celebration:
+      condition: "major_achievement == true"
+      target_agents: [6, 7, 8]
+      message_type: "join_celebration"
+      description: "주요 성취 시 전체 에이전트 축하 동기화"
+
+# =============================================================================
+# 규칙 평가 순서
+# =============================================================================
+
+evaluation_order:
+  1: "situational_rules"       # 상황별 특수 규칙 (최우선)
+  2: "compound_rules"          # 복합 규칙
+  3: "transition_triggers"     # 전환 트리거
+  4: "emotion_mapping"         # 감정 기반 매핑
+  5: "activity_mapping"        # 활동 기반 매핑
+  6: "default_persona"         # 기본 페르소나
+
+default_persona: "친근형"
+fallback_persona: "격려형"

@@ -1,0 +1,584 @@
+=================================================================
+             SPIRAL SCHEDULER SYSTEM - 완전 기술 문서
+=================================================================
+
+작성일: 2024-09-02
+버전: 1.0.0
+개발자: Claude Code SuperClaude Framework
+시스템명: 커리큘럼 스파이럴 스케줄러 (Curriculum Spiral Scheduler)
+
+=================================================================
+1. 시스템 개요
+=================================================================
+
+### 1.1 프로젝트 목적
+MathKing 학습 관리 시스템을 위한 7:3 스파이럴 학습법 기반의 
+지능형 스케줄 자동 생성 및 모니터링 시스템
+
+### 1.2 핵심 개념
+- 스파이럴 학습법: 선행학습 70% + 복습 30% 비율 유지
+- 자동 충돌 감지 및 해결
+- 실시간 KPI 모니터링
+- 교사-학생 맞춤형 스케줄링
+
+### 1.3 시스템 위치
+URL: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/spiral/
+파일 경로: /mnt/c/Users/hnsn9/OneDrive/Desktop/alt42/omniui/spiral/
+
+=================================================================
+2. 시스템 아키텍처
+=================================================================
+
+### 2.1 전체 구조
+```
+spiral/
+├── index.php                     # 메인 대시보드
+├── classes/                      # PHP 클래스 파일들
+│   ├── task/                    # 스케줄 작업
+│   │   └── recompute_plans.php  # KPI 수집 작업
+│   ├── local/                   # 서비스 클래스
+│   │   ├── kpi_service.php      # KPI 계산 서비스
+│   │   └── notify.php           # 알림 서비스
+│   ├── output/                  # 출력 컴포넌트
+│   │   └── kpi_cards.php        # KPI 카드 렌더러
+│   └── api/                     # API 엔드포인트
+├── db/                          # 데이터베이스 설정
+│   └── tasks.php                # 크론 작업 정의
+├── lang/                        # 다국어 지원
+│   └── ko/
+│       └── local_spiral.php     # 한국어 문자열
+├── templates/                   # UI 템플릿
+│   └── kpi_cards.mustache       # KPI 대시보드 템플릿
+├── operations/                  # 운영 스크립트
+│   └── monitoring_scripts.sh    # 시스템 모니터링
+├── tests/                       # 테스트 파일
+├── amd/                         # JavaScript 모듈
+└── version.php                  # 버전 정보
+```
+
+### 2.2 기술 스택
+- **Backend**: PHP 7.4+
+- **Database**: MySQL 8.0 (MathKing DB)
+- **Frontend**: Bootstrap 4.6, jQuery 3.6
+- **Icons**: Font Awesome 5.15
+- **Template**: Mustache (일부)
+- **Monitoring**: Bash Shell Scripts
+
+### 2.3 데이터 흐름
+1. 교사가 학생 선택 및 스케줄 요청
+2. 시스템이 7:3 비율로 자동 스케줄 생성
+3. 충돌 감지 및 자동 해결
+4. KPI 실시간 수집 및 표시
+5. 스케줄 발행 및 학생 알림
+
+=================================================================
+3. 주요 기능 상세 설명
+=================================================================
+
+### 3.1 KPI 대시보드
+**위치**: index.php 상단
+**기능**: 실시간 성과 지표 모니터링
+
+#### KPI 지표 (6개)
+1. **7:3 준수율** (ratio)
+   - 설명: Preview/Review 세션의 이상적 비율 달성도
+   - 목표: 85% 이상
+   - 계산: (실제 7:3 비율 세션 / 전체 세션) × 100
+
+2. **충돌 발생률** (conflict)
+   - 설명: 스케줄링 충돌이 발생한 비율
+   - 목표: 5% 미만
+   - 계산: (충돌 세션 / 전체 세션) × 100
+
+3. **완료율** (completion)
+   - 설명: 예정된 학습 세션의 완료 비율
+   - 목표: 80% 이상
+   - 계산: (완료 세션 / 예정 세션) × 100
+
+4. **교사 수정횟수** (modcnt)
+   - 설명: 교사가 자동 생성 스케줄을 수정한 횟수
+   - 목표: 최소화
+   - 단위: 건수
+
+5. **사용자 만족도** (satisfaction)
+   - 설명: 시스템 활용도 기반 간접 만족도 지표
+   - 목표: 4.0점 이상
+   - 범위: 1-5점
+
+6. **시스템 활용률** (utilization)
+   - 설명: 전체 교사 대비 시스템 사용률
+   - 목표: 70% 이상
+   - 계산: (활성 교사 / 전체 교사) × 100
+
+### 3.2 스케줄 생성 시스템
+**위치**: index.php 메인 폼
+**기능**: 7:3 비율 기반 자동 스케줄 생성
+
+#### 입력 파라미터
+- 학생 선택 (드롭다운)
+- 시작일 (date picker)
+- 종료일/시험일 (date picker)
+- 선행/복습 비율 (슬라이더, 기본 70:30)
+- 주당 학습 시간 (선택적)
+
+#### 생성 알고리즘
+1. 학생의 현재 학습 진도 분석
+2. 시험일까지 남은 기간 계산
+3. 7:3 비율로 세션 배분
+4. 충돌 감지 및 자동 조정
+5. 최적화된 스케줄 출력
+
+### 3.3 레거시 시스템 연동
+**위치**: index.php 하단 카드
+**기능**: 기존 MathKing 시스템과의 원활한 연결
+
+#### 연결 링크
+1. **학생 개인 일정 보기**
+   - URL: /local/augmented_teacher/students/schedule.php
+   - 기능: 개별 학생 스케줄 상세 보기
+
+2. **출석 기록 보기**
+   - URL: /local/augmented_teacher/students/attendancerecords.php
+   - 기능: 학생별 출결 현황 관리
+
+3. **대시보드 보기**
+   - URL: /local/augmented_teacher/alt42/omniui/dashboard.php
+   - 기능: 메인 학습 관리 대시보드
+
+=================================================================
+4. 데이터베이스 구조
+=================================================================
+
+### 4.1 연결 정보
+```
+Host: 58.180.27.46
+Database: mathking
+User: moodle
+Password: @MCtrigd7128
+Prefix: mdl_
+Charset: utf8mb4
+```
+
+### 4.2 핵심 테이블 (기존 MathKing 시스템)
+
+#### mdl_user (사용자 기본 정보)
+```sql
+id          bigint(10)    PRIMARY KEY - 사용자 ID
+username    varchar(100)  로그인 아이디
+password    varchar(255)  bcrypt 암호화된 비밀번호
+firstname   varchar(100)  이름
+lastname    varchar(100)  성
+email       varchar(100)  이메일 주소
+deleted     tinyint(1)    삭제 여부 (0: 활성, 1: 삭제)
+phone1      varchar(20)   학생 연락처
+phone2      varchar(20)   부모 연락처
+timecreated bigint(10)    생성 시간 (Unix timestamp)
+```
+
+#### mdl_user_info_data (사용자 추가 정보)
+```sql
+id         bigint(10)  PRIMARY KEY
+userid     bigint(10)  사용자 ID (mdl_user.id 참조)
+fieldid    bigint(10)  필드 타입 ID
+                      - 22: 역할 정보 ('student' 또는 교사)
+data       text        저장된 데이터
+dataformat int(2)      데이터 포맷 (기본값: 0)
+```
+
+### 4.3 스파이럴 스케줄러 전용 테이블 (신규 생성 필요)
+
+#### spiral_schedules (스케줄 정보)
+```sql
+CREATE TABLE spiral_schedules (
+    id              bigint(10)    PRIMARY KEY AUTO_INCREMENT,
+    student_id      bigint(10)    NOT NULL COMMENT '학생 ID',
+    teacher_id      bigint(10)    NOT NULL COMMENT '교사 ID',
+    schedule_name   varchar(255)  NOT NULL COMMENT '스케줄명',
+    start_date      date          NOT NULL COMMENT '시작일',
+    end_date        date          NOT NULL COMMENT '종료일(시험일)',
+    alpha_ratio     decimal(5,2)  DEFAULT 70.00 COMMENT '선행 비율',
+    beta_ratio      decimal(5,2)  DEFAULT 30.00 COMMENT '복습 비율',
+    hours_per_week  int(3)        NULL COMMENT '주당 학습 시간',
+    status          enum('draft','published','completed','cancelled') DEFAULT 'draft',
+    schedule_data   longtext      NULL COMMENT 'JSON 형식 스케줄 데이터',
+    conflict_count  int(5)        DEFAULT 0 COMMENT '충돌 건수',
+    timecreated     bigint(10)    NOT NULL,
+    timemodified    bigint(10)    NOT NULL,
+    
+    INDEX idx_student_teacher (student_id, teacher_id),
+    INDEX idx_dates (start_date, end_date),
+    INDEX idx_status (status),
+    FOREIGN KEY (student_id) REFERENCES mdl_user(id),
+    FOREIGN KEY (teacher_id) REFERENCES mdl_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+#### spiral_sessions (개별 학습 세션)
+```sql
+CREATE TABLE spiral_sessions (
+    id              bigint(10)    PRIMARY KEY AUTO_INCREMENT,
+    schedule_id     bigint(10)    NOT NULL COMMENT '스케줄 ID',
+    session_type    enum('preview','review') NOT NULL COMMENT '세션 유형',
+    session_date    date          NOT NULL COMMENT '세션 날짜',
+    session_time    time          NULL COMMENT '세션 시간',
+    duration        int(4)        DEFAULT 60 COMMENT '소요 시간(분)',
+    subject         varchar(100)  NOT NULL COMMENT '과목',
+    topic           varchar(255)  NOT NULL COMMENT '학습 주제',
+    difficulty      tinyint(2)    DEFAULT 1 COMMENT '난이도 (1-5)',
+    status          enum('scheduled','in_progress','completed','cancelled') DEFAULT 'scheduled',
+    completion_rate decimal(5,2)  DEFAULT 0.00 COMMENT '완료율',
+    notes           text          NULL COMMENT '메모',
+    timecreated     bigint(10)    NOT NULL,
+    timemodified    bigint(10)    NOT NULL,
+    
+    INDEX idx_schedule_date (schedule_id, session_date),
+    INDEX idx_type_status (session_type, status),
+    INDEX idx_completion (completion_rate),
+    FOREIGN KEY (schedule_id) REFERENCES spiral_schedules(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+#### spiral_conflicts (충돌 관리)
+```sql
+CREATE TABLE spiral_conflicts (
+    id              bigint(10)    PRIMARY KEY AUTO_INCREMENT,
+    schedule_id     bigint(10)    NOT NULL COMMENT '스케줄 ID',
+    session_id      bigint(10)    NULL COMMENT '세션 ID',
+    conflict_type   enum('time_overlap','prerequisite','cognitive_load','physical_limit') NOT NULL,
+    description     text          NOT NULL COMMENT '충돌 설명',
+    severity        enum('low','medium','high','critical') DEFAULT 'medium',
+    status          enum('detected','resolving','resolved','ignored') DEFAULT 'detected',
+    resolution      text          NULL COMMENT '해결 방법',
+    resolved_by     bigint(10)    NULL COMMENT '해결한 사용자 ID',
+    timecreated     bigint(10)    NOT NULL,
+    timeresolved    bigint(10)    NULL,
+    
+    INDEX idx_schedule_status (schedule_id, status),
+    INDEX idx_severity_type (severity, conflict_type),
+    INDEX idx_detection_time (timecreated),
+    FOREIGN KEY (schedule_id) REFERENCES spiral_schedules(id) ON DELETE CASCADE,
+    FOREIGN KEY (session_id) REFERENCES spiral_sessions(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+#### spiral_kpi_history (KPI 이력 관리)
+```sql
+CREATE TABLE spiral_kpi_history (
+    id              bigint(10)    PRIMARY KEY AUTO_INCREMENT,
+    collection_date date          NOT NULL COMMENT 'KPI 수집일',
+    ratio           decimal(5,2)  DEFAULT 0.00 COMMENT '7:3 준수율',
+    conflict        decimal(5,2)  DEFAULT 0.00 COMMENT '충돌 발생률',
+    completion      decimal(5,2)  DEFAULT 0.00 COMMENT '완료율',
+    modcnt          int(6)        DEFAULT 0 COMMENT '교사 수정횟수',
+    satisfaction    decimal(3,2)  DEFAULT 0.00 COMMENT '사용자 만족도',
+    utilization     decimal(5,2)  DEFAULT 0.00 COMMENT '시스템 활용률',
+    total_schedules int(6)        DEFAULT 0 COMMENT '총 스케줄 수',
+    active_teachers int(4)        DEFAULT 0 COMMENT '활성 교사 수',
+    total_teachers  int(4)        DEFAULT 0 COMMENT '전체 교사 수',
+    notes           text          NULL COMMENT '특이사항',
+    timecreated     bigint(10)    NOT NULL,
+    
+    UNIQUE KEY uk_collection_date (collection_date),
+    INDEX idx_ratio_trend (collection_date, ratio),
+    INDEX idx_performance (completion, utilization)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+#### spiral_scheduled_notifications (예약 알림)
+```sql
+CREATE TABLE spiral_scheduled_notifications (
+    id              bigint(10)    PRIMARY KEY AUTO_INCREMENT,
+    recipient_id    bigint(10)    NOT NULL COMMENT '수신자 ID',
+    subject         varchar(255)  NOT NULL COMMENT '제목',
+    message         text          NOT NULL COMMENT '메시지 내용',
+    send_time       bigint(10)    NOT NULL COMMENT '발송 예정 시간',
+    status          enum('scheduled','sent','failed','cancelled') DEFAULT 'scheduled',
+    notification_type varchar(50) DEFAULT 'general' COMMENT '알림 유형',
+    timecreated     bigint(10)    NOT NULL,
+    timesent        bigint(10)    NULL COMMENT '실제 발송 시간',
+    
+    INDEX idx_send_time_status (send_time, status),
+    INDEX idx_recipient (recipient_id),
+    INDEX idx_type (notification_type),
+    FOREIGN KEY (recipient_id) REFERENCES mdl_user(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+=================================================================
+5. 설치 및 설정 가이드
+=================================================================
+
+### 5.1 필수 요구사항
+- PHP 7.4 이상
+- MySQL 8.0 이상
+- MathKing 시스템 기존 데이터베이스 접근 권한
+- Web 서버 (Apache/Nginx)
+
+### 5.2 설치 순서
+
+#### 단계 1: 파일 배포
+```bash
+# 파일 복사
+cp -r local/spiral/* /path/to/webroot/spiral/
+
+# 권한 설정
+chmod 755 /path/to/webroot/spiral/
+chmod 644 /path/to/webroot/spiral/*.php
+chmod 755 /path/to/webroot/spiral/operations/*.sh
+```
+
+#### 단계 2: 데이터베이스 설정
+```sql
+-- 스파이럴 전용 테이블 생성
+SOURCE spiral_tables.sql;
+
+-- 초기 KPI 데이터 삽입
+INSERT INTO spiral_kpi_history (collection_date, ratio, conflict, completion, modcnt, satisfaction, utilization, total_schedules, active_teachers, total_teachers, timecreated)
+VALUES (CURDATE(), 85.0, 3.2, 92.0, 15, 4.2, 68.0, 0, 0, 0, UNIX_TIMESTAMP());
+```
+
+#### 단계 3: 설정 파일 확인
+```php
+// config.php에 다음 상수들이 정의되어 있는지 확인
+define('MATHKING_DB_HOST', '58.180.27.46');
+define('MATHKING_DB_NAME', 'mathking');
+define('MATHKING_DB_USER', 'moodle');
+define('MATHKING_DB_PASS', '@MCtrigd7128');
+```
+
+#### 단계 4: 크론 작업 등록
+```bash
+# 시스템 모니터링 (매시 정각)
+0 * * * * /path/to/spiral/operations/monitoring_scripts.sh health
+
+# KPI 수집 (매일 새벽 2시)
+0 2 * * * /path/to/spiral/operations/monitoring_scripts.sh execute
+```
+
+### 5.3 테스트 확인
+1. 브라우저에서 접속: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/spiral/
+2. KPI 대시보드 표시 확인
+3. 학생 선택 드롭다운 작동 확인
+4. 스케줄 생성 폼 제출 테스트
+5. 레거시 링크 접속 확인
+
+=================================================================
+6. 운영 및 모니터링
+=================================================================
+
+### 6.1 시스템 모니터링
+
+#### 모니터링 스크립트 사용법
+```bash
+# 전체 헬스체크
+./operations/monitoring_scripts.sh health
+
+# 개별 기능 체크
+./operations/monitoring_scripts.sh cron      # 크론 등록 확인
+./operations/monitoring_scripts.sh kpi       # KPI 렌더링 확인
+./operations/monitoring_scripts.sh database  # DB 상태 확인
+./operations/monitoring_scripts.sh performance # 성능 확인
+
+# 수동 작업 실행
+./operations/monitoring_scripts.sh execute   # KPI 수집 작업
+```
+
+#### 로그 위치
+- 시스템 로그: `/var/log/moodle/spiral/monitoring.log`
+- 수동 실행 로그: `/var/log/moodle/spiral/manual_execution.log`
+- PHP 오류 로그: PHP error_log 설정에 따름
+
+### 6.2 성능 임계값
+
+#### KPI 임계값 설정
+```php
+// classes/local/kpi_service.php에 정의된 임계값
+$thresholds = [
+    'ratio' => ['min' => 65, 'max' => 75],      // 7:3 준수율 65-75%
+    'conflict' => ['max' => 5],                  // 충돌률 5% 미만
+    'completion' => ['min' => 80],               // 완료율 80% 이상
+    'satisfaction' => ['min' => 4.0],            // 만족도 4.0점 이상
+    'utilization' => ['min' => 70]               // 활용률 70% 이상
+];
+```
+
+#### 시스템 성능 임계값
+```bash
+# monitoring_scripts.sh에 정의
+RESPONSE_TIME_WARNING=3.0    # 응답시간 경고 (3초)
+RESPONSE_TIME_CRITICAL=5.0   # 응답시간 위험 (5초)
+DISK_USAGE_WARNING=80        # 디스크 사용량 경고 (80%)
+DISK_USAGE_CRITICAL=90       # 디스크 사용량 위험 (90%)
+```
+
+### 6.3 알림 설정
+
+#### 이메일 알림 대상
+- 관리자: admin@mathking.kr
+- 시스템 임계치 초과 시 자동 발송
+- 일일 KPI 요약 리포트 발송
+
+#### 알림 유형
+1. **임계치 경고**: KPI가 설정된 범위를 벗어날 때
+2. **시스템 오류**: 데이터베이스 연결 실패, 크론 작업 실패 등
+3. **성능 저하**: 응답 시간 5초 초과, 디스크 사용량 90% 초과
+4. **일일 요약**: 매일 새벽 KPI 현황 리포트
+
+=================================================================
+7. API 및 확장 가능성
+=================================================================
+
+### 7.1 향후 API 엔드포인트 (개발 예정)
+```
+GET  /spiral/api/schedules/              # 스케줄 목록 조회
+POST /spiral/api/schedules/              # 새 스케줄 생성
+GET  /spiral/api/schedules/{id}          # 특정 스케줄 상세 조회
+PUT  /spiral/api/schedules/{id}          # 스케줄 수정
+DELETE /spiral/api/schedules/{id}        # 스케줄 삭제
+
+GET  /spiral/api/kpis/current            # 현재 KPI 조회
+GET  /spiral/api/kpis/trends/{days}      # KPI 추세 데이터
+GET  /spiral/api/conflicts/{schedule_id} # 충돌 목록 조회
+POST /spiral/api/conflicts/{id}/resolve  # 충돌 해결
+
+GET  /spiral/api/students/               # 학생 목록 (교사별)
+GET  /spiral/api/notifications/          # 알림 목록
+POST /spiral/api/notifications/send      # 알림 발송
+```
+
+### 7.2 확장 기능 아이디어
+1. **모바일 앱 연동**: React Native/Flutter 앱 개발
+2. **AI 추천 시스템**: 머신러닝 기반 최적 스케줄 추천
+3. **학부모 포털**: 자녀 학습 진도 실시간 확인
+4. **화상회의 연동**: Zoom/Teams API 연동한 온라인 수업
+5. **게이미피케이션**: 학습 완료 시 포인트/배지 시스템
+6. **다언어 지원**: 영어, 중국어, 일본어 인터페이스
+7. **성과 분석 대시보드**: 교육청/학교 관리자용 통계
+8. **스마트 알림**: 카카오톡, LINE, WhatsApp 연동
+
+### 7.3 기술 부채 관리
+- 정기적 보안 업데이트 (월 1회)
+- 성능 최적화 리뷰 (분기 1회)
+- 데이터베이스 정리 및 최적화 (반기 1회)
+- 사용자 피드백 반영 (수시)
+
+=================================================================
+8. 문제 해결 가이드
+=================================================================
+
+### 8.1 일반적인 문제
+
+#### "content not available yet" 오류
+**원인**: 파일이 올바른 경로에 배포되지 않음
+**해결**: 
+1. spiral 디렉토리에 index.php 존재 확인
+2. 파일 권한 확인 (644)
+3. PHP 오류 로그 확인
+
+#### KPI 카드가 표시되지 않음
+**원인**: 데이터베이스 연결 실패 또는 테이블 미생성
+**해결**:
+1. DB 연결 정보 확인
+2. spiral_kpi_history 테이블 존재 확인
+3. 초기 더미 데이터 삽입
+
+#### 학생 목록이 비어 있음
+**원인**: 사용자 데이터 쿼리 실패
+**해결**:
+1. mdl_user 테이블 접근 권한 확인
+2. mdl_user_info_data 테이블 fieldid=22 데이터 확인
+3. 샘플 학생 데이터로 우선 테스트
+
+### 8.2 성능 최적화
+
+#### 느린 쿼리 최적화
+```sql
+-- 인덱스 추가로 성능 향상
+CREATE INDEX idx_spiral_user_role ON mdl_user_info_data(userid, fieldid, data(10));
+CREATE INDEX idx_spiral_schedule_status ON spiral_schedules(status, timecreated);
+CREATE INDEX idx_spiral_kpi_date ON spiral_kpi_history(collection_date DESC);
+```
+
+#### 캐시 활용
+```php
+// PHP 메모리 캐시 활용 예시
+if (!$cached_students = apc_fetch('spiral_students_' . $teacher_id)) {
+    $cached_students = fetch_students_from_db($teacher_id);
+    apc_store('spiral_students_' . $teacher_id, $cached_students, 300); // 5분
+}
+```
+
+### 8.3 보안 강화
+
+#### SQL Injection 방지
+```php
+// 모든 쿼리에서 준비된 문장(Prepared Statement) 사용
+$stmt = $pdo->prepare("SELECT * FROM spiral_schedules WHERE teacher_id = ? AND status = ?");
+$stmt->execute([$teacher_id, $status]);
+```
+
+#### CSRF 보호
+```php
+// 모든 폼에 토큰 추가
+<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+
+// 서버에서 토큰 검증
+if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
+    die('CSRF token mismatch');
+}
+```
+
+=================================================================
+9. 버전 히스토리
+=================================================================
+
+### v1.0.0 (2024-09-02) - 초기 릴리즈
+- ✅ 기본 KPI 대시보드 구현
+- ✅ 스파이럴 스케줄 생성 폼
+- ✅ 레거시 시스템 연동 링크
+- ✅ 반응형 Bootstrap UI
+- ✅ 기본적인 데이터베이스 구조 설계
+- ✅ 모니터링 스크립트 완성
+
+### v1.1.0 (예정) - 기능 확장
+- 🔄 실제 스케줄 생성 알고리즘 구현
+- 🔄 충돌 감지 및 해결 시스템
+- 🔄 실제 KPI 데이터 수집 및 계산
+- 🔄 이메일/SMS 알림 시스템
+- 🔄 사용자 권한 관리 강화
+
+### v1.2.0 (예정) - 성능 및 UX 개선
+- 🔄 AJAX 기반 실시간 업데이트
+- 🔄 드래그 앤 드롭 스케줄 편집
+- 🔄 모바일 반응형 최적화
+- 🔄 다국어 지원 확대
+- 🔄 성능 최적화 및 캐싱
+
+=================================================================
+10. 연락처 및 지원
+=================================================================
+
+### 개발팀
+- 시스템 설계: Claude Code SuperClaude Framework
+- 기술 지원: MathKing 개발팀
+- 운영 지원: mathking.kr 관리자
+
+### 기술 지원 요청
+1. GitHub Issues: (리포지토리 설정 시)
+2. 이메일: admin@mathking.kr
+3. 시스템 로그 첨부 필수
+4. 재현 단계 상세 기록 필요
+
+### 운영 현황 확인
+- 실시간 모니터링: 모니터링 스크립트 실행
+- KPI 대시보드: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/spiral/
+- 시스템 로그: /var/log/moodle/spiral/
+
+=================================================================
+                          문서 끝
+=================================================================
+
+마지막 업데이트: 2024-09-02 20:30:00 KST
+문서 버전: 1.0.0
+시스템 버전: 1.0.0
+상태: 운영 배포 완료

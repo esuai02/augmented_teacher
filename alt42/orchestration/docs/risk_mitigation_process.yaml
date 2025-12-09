@@ -1,0 +1,802 @@
+# AI 튜터 시스템 위험 제거 프로세스 가이드
+# 이 파일은 RISK_ASSESSMENT_REPORT.md의 위험 요소들을 체계적으로 제거하기 위한 AI 실행 가이드입니다.
+
+version: "1.0"
+created_date: "2025-01-27"
+last_updated: "2025-01-27"
+description: "21개 에이전트 기반 AI 튜터 시스템의 위험 요소 제거 프로세스"
+
+# 프로세스 실행 설정
+execution:
+  max_parallel_tasks: 3
+  retry_on_failure: true
+  max_retries: 3
+  rollback_on_failure: true
+
+# 위험 요소별 작업 정의
+risks:
+  # ============================================================
+  # P0: 치명적 위험 요소
+  # ============================================================
+  
+  - id: "P0-001"
+    priority: "P0"
+    title: "데이터 소스 검증 시스템 구축"
+    description: "data_based_questions.js의 모든 dataSources를 DB 스키마와 대조하고 검증 로직 추가"
+    deadline_days: 7
+    status: "pending"
+    
+    steps:
+      - step: 1
+        name: "데이터 소스 추출"
+        description: "data_based_questions.js에서 모든 dataSources 추출"
+        action: "extract"
+        inputs:
+          - file: "alt42/orchestration/agents/agent_orchestration/data_based_questions.js"
+          - pattern: "dataSources.*\\[.*\\]"
+        outputs:
+          - file: "alt42/orchestration/tmp/extracted_data_sources.json"
+        validation:
+          - check: "모든 에이전트의 질문 세트에서 dataSources 추출됨"
+          - check: "JSON 형식이 유효함"
+        
+      - step: 2
+        name: "DB 스키마 분석"
+        description: "systemdata.md와 실제 DB에서 사용 가능한 필드 목록 생성"
+        action: "analyze"
+        inputs:
+          - file: "alt42/orchestration/docs/systemdata.md"
+          - database: "mdl_*"
+        outputs:
+          - file: "alt42/orchestration/tmp/db_schema_mapping.json"
+        validation:
+          - check: "모든 테이블과 필드가 매핑됨"
+          - check: "NULL 허용 여부 정보 포함"
+        
+      - step: 3
+        name: "매핑 불일치 검사"
+        description: "추출된 dataSources와 DB 스키마를 대조하여 불일치 항목 식별"
+        action: "validate"
+        inputs:
+          - file: "alt42/orchestration/tmp/extracted_data_sources.json"
+          - file: "alt42/orchestration/tmp/db_schema_mapping.json"
+        outputs:
+          - file: "alt42/orchestration/tmp/data_source_mismatches.json"
+          - report: "alt42/orchestration/docs/data_source_validation_report.md"
+        validation:
+          - check: "불일치 항목이 모두 식별됨"
+          - check: "각 불일치에 대한 해결 방안 제시됨"
+        
+      - step: 4
+        name: "검증 클래스 생성"
+        description: "DataSourceValidator 클래스 생성 및 각 에이전트 data.php에 통합"
+        action: "create"
+        template: "php_class"
+        inputs:
+          - file: "alt42/orchestration/tmp/data_source_mismatches.json"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/data_source_validator.php"
+        code_template: |
+          <?php
+          // File: mvp_system/lib/data_source_validator.php
+          // Data Source Validator - 데이터 소스 검증 시스템
+          
+          class DataSourceValidator {
+              private $db;
+              private $schemaMapping;
+              
+              public function __construct($db) {
+                  $this->db = $db;
+                  $this->loadSchemaMapping();
+              }
+              
+              public function validateDataSources($dataSources, $studentId) {
+                  $missing = [];
+                  $invalid = [];
+                  
+                  foreach ($dataSources as $source) {
+                      if (!$this->hasData($source, $studentId)) {
+                          $missing[] = $source;
+                      }
+                      if (!$this->isValidField($source)) {
+                          $invalid[] = $source;
+                      }
+                  }
+                  
+                  if (!empty($missing) || !empty($invalid)) {
+                      throw new DataSourceMissingException(
+                          "Missing: " . implode(', ', $missing) . 
+                          " | Invalid: " . implode(', ', $invalid) . 
+                          " at " . __FILE__ . ":" . __LINE__
+                      );
+                  }
+                  
+                  return true;
+              }
+              
+              private function hasData($source, $studentId) {
+                  // 구현 필요
+              }
+              
+              private function isValidField($source) {
+                  // 구현 필요
+              }
+              
+              private function loadSchemaMapping() {
+                  // systemdata.md 기반 매핑 로드
+              }
+          }
+          
+          class DataSourceMissingException extends Exception {}
+        validation:
+          - check: "클래스가 올바른 네임스페이스에 생성됨"
+          - check: "에러 메시지에 파일:라인 정보 포함"
+        
+      - step: 5
+        name: "에이전트 통합"
+        description: "각 에이전트의 data.php에 검증 로직 통합"
+        action: "integrate"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/lib/data_source_validator.php"
+          - pattern: "agents/agent*/rules/data.php"
+        outputs:
+          - modified_files: "agents/agent*/rules/data.php"
+        integration_template: |
+          require_once(__DIR__ . '/../../mvp_system/lib/data_source_validator.php');
+          
+          function validateQuestionDataSources($questionSet, $studentId) {
+              global $DB;
+              $validator = new DataSourceValidator($DB);
+              
+              if (isset($questionSet['dataSources'])) {
+                  $validator->validateDataSources($questionSet['dataSources'], $studentId);
+              }
+          }
+        validation:
+          - check: "모든 에이전트의 data.php에 검증 로직 추가됨"
+          - check: "기존 코드와 충돌 없음"
+    
+    rollback:
+      - action: "restore_backup"
+      - files_to_restore:
+          - "agents/agent*/rules/data.php"
+    
+    test:
+      - name: "검증 로직 테스트"
+        script: "alt42/orchestration/tests/test_data_source_validation.php"
+        expected_result: "모든 테스트 통과"
+  
+  - id: "P0-002"
+    priority: "P0"
+    title: "온톨로지 자동 생성 메커니즘 구축"
+    description: "data_based_questions.js의 ontology 정의에서 OWL 파일 자동 생성"
+    deadline_days: 7
+    status: "pending"
+    depends_on: ["P0-001"]
+    
+    steps:
+      - step: 1
+        name: "온톨로지 정의 추출"
+        description: "data_based_questions.js에서 모든 ontology 배열 추출"
+        action: "extract"
+        inputs:
+          - file: "alt42/orchestration/agents/agent_orchestration/data_based_questions.js"
+          - pattern: "ontology.*\\[.*\\]"
+        outputs:
+          - file: "alt42/orchestration/tmp/extracted_ontologies.json"
+        validation:
+          - check: "모든 에이전트의 온톨로지 정의 추출됨"
+        
+      - step: 2
+        name: "기존 온톨로지 분석"
+        description: "math topics/ 디렉토리의 기존 OWL 파일 분석"
+        action: "analyze"
+        inputs:
+          - directory: "alt42/orchestration/agents/math topics/"
+          - pattern: "*.owl"
+        outputs:
+          - file: "alt42/orchestration/tmp/existing_ontologies_analysis.json"
+        validation:
+          - check: "기존 온톨로지 구조 파악됨"
+          - check: "네임스페이스 및 클래스 정의 추출됨"
+        
+      - step: 3
+        name: "온톨로지 생성기 클래스 생성"
+        description: "OntologyGenerator 클래스 생성"
+        action: "create"
+        template: "php_class"
+        inputs:
+          - file: "alt42/orchestration/tmp/extracted_ontologies.json"
+          - file: "alt42/orchestration/tmp/existing_ontologies_analysis.json"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/ontology_generator.php"
+        code_template: |
+          <?php
+          // File: mvp_system/lib/ontology_generator.php
+          // Ontology Generator - 온톨로지 자동 생성 시스템
+          
+          class OntologyGenerator {
+              private $outputDir;
+              
+              public function __construct($outputDir = null) {
+                  $this->outputDir = $outputDir ?: __DIR__ . '/../../agents/math topics/';
+              }
+              
+              public function generateFromQuestionSet($questionSet) {
+                  // 1. 질문 세트에서 온톨로지 추출
+                  $ontologies = $this->extractOntologies($questionSet);
+                  
+                  // 2. OWL 파일 생성
+                  foreach ($ontologies as $ontology) {
+                      $owlContent = $this->generateOWL($ontology);
+                      $this->saveOWLFile($ontology['name'], $owlContent);
+                  }
+                  
+                  // 3. 기존 온톨로지와 충돌 검사
+                  $conflicts = $this->checkConflicts($ontologies);
+                  
+                  // 4. 검증 및 저장
+                  if (empty($conflicts)) {
+                      return ['success' => true, 'generated' => count($ontologies)];
+                  } else {
+                      return ['success' => false, 'conflicts' => $conflicts];
+                  }
+              }
+              
+              private function extractOntologies($questionSet) {
+                  // 구현 필요
+              }
+              
+              private function generateOWL($ontology) {
+                  // OWL RDF/XML 생성
+              }
+              
+              private function checkConflicts($ontologies) {
+                  // 기존 온톨로지와 충돌 검사
+              }
+              
+              private function saveOWLFile($name, $content) {
+                  // 파일 저장
+              }
+          }
+        validation:
+          - check: "클래스가 올바르게 생성됨"
+          - check: "OWL 파일 생성 로직 포함"
+        
+      - step: 4
+        name: "온톨로지 생성 스크립트 작성"
+        description: "배치로 모든 온톨로지 생성하는 스크립트 작성"
+        action: "create"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/lib/ontology_generator.php"
+          - file: "alt42/orchestration/tmp/extracted_ontologies.json"
+        outputs:
+          - file: "alt42/orchestration/scripts/generate_all_ontologies.php"
+        validation:
+          - check: "스크립트가 모든 에이전트의 온톨로지 생성"
+        
+      - step: 5
+        name: "온톨로지 검증 도구 생성"
+        description: "생성된 OWL 파일의 유효성 검증 도구"
+        action: "create"
+        inputs:
+          - directory: "alt42/orchestration/agents/math topics/"
+        outputs:
+          - file: "alt42/orchestration/scripts/validate_ontologies.php"
+        validation:
+          - check: "OWL 파일 문법 검증"
+          - check: "네임스페이스 충돌 검사"
+    
+    rollback:
+      - action: "delete_generated_files"
+      - files_to_delete:
+          - "agents/math topics/*_generated.owl"
+    
+    test:
+      - name: "온톨로지 생성 테스트"
+        script: "alt42/orchestration/tests/test_ontology_generation.php"
+        expected_result: "모든 온톨로지 생성 및 검증 통과"
+  
+  - id: "P0-003"
+    priority: "P0"
+    title: "에이전트 실행 순서 및 의존성 관리 시스템 구축"
+    description: "orchestration_flow.yaml 생성 및 실행 순서 강제 메커니즘 구현"
+    deadline_days: 7
+    status: "pending"
+    
+    steps:
+      - step: 1
+        name: "의존성 그래프 분석"
+        description: "각 에이전트의 rules.yaml과 문서에서 의존성 추출"
+        action: "analyze"
+        inputs:
+          - pattern: "agents/agent*/rules/rules.yaml"
+          - file: "alt42/orchestration/docs/RISK_ASSESSMENT_REPORT.md"
+        outputs:
+          - file: "alt42/orchestration/tmp/agent_dependencies.json"
+        validation:
+          - check: "모든 에이전트 간 의존성 식별됨"
+          - check: "순환 의존성 탐지됨"
+        
+      - step: 2
+        name: "orchestration_flow.yaml 생성"
+        description: "에이전트 실행 순서 및 의존성 정의 파일 생성"
+        action: "create"
+        inputs:
+          - file: "alt42/orchestration/tmp/agent_dependencies.json"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/decision/rules/orchestration_flow.yaml"
+        template: |
+          # Agent Orchestration Flow
+          # 에이전트 실행 순서 및 의존성 정의
+          
+          agent_dependencies:
+            agent01:
+              requires: []
+              priority: 10
+              name: "온보딩"
+              
+            agent02:
+              requires: [agent01]
+              priority: 20
+              name: "시험일정"
+              
+            agent03:
+              requires: [agent01]
+              priority: 30
+              name: "목표분석"
+              
+            agent04:
+              requires: [agent01]
+              priority: 40
+              name: "취약점검사"
+              
+            agent05:
+              requires: [agent01, agent04]
+              priority: 50
+              name: "학습감정"
+              
+            agent06:
+              requires: [agent01]
+              priority: 60
+              name: "교사피드백"
+              
+            agent07:
+              requires: [agent05, agent06]
+              priority: 70
+              name: "상호작용타게팅"
+              
+            agent16:
+              requires: [agent07]
+              priority: 80
+              name: "상호작용준비"
+              
+            agent19:
+              requires: [agent16]
+              priority: 90
+              name: "상호작용컨텐츠"
+              
+            agent20:
+              requires: [agent16, agent17]
+              priority: 95
+              name: "개입준비"
+              
+            agent21:
+              requires: [agent20, agent19]
+              priority: 100
+              name: "개입실행"
+          
+          execution_order:
+            - stage: "initialization"
+              agents: [agent01]
+            - stage: "analysis"
+              agents: [agent02, agent03, agent04]
+            - stage: "evaluation"
+              agents: [agent05, agent06]
+            - stage: "targeting"
+              agents: [agent07]
+            - stage: "preparation"
+              agents: [agent16, agent17, agent18]
+            - stage: "content_generation"
+              agents: [agent19]
+            - stage: "intervention"
+              agents: [agent20, agent21]
+          
+          circular_dependency_check: true
+          max_execution_time_seconds: 180
+        validation:
+          - check: "모든 에이전트가 정의됨"
+          - check: "순환 의존성 없음"
+          - check: "우선순위가 논리적임"
+        
+      - step: 3
+        name: "의존성 검증기 생성"
+        description: "의존성 그래프 검증 및 순환 의존성 탐지 클래스"
+        action: "create"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/decision/rules/orchestration_flow.yaml"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/dependency_validator.php"
+        code_template: |
+          <?php
+          // File: mvp_system/lib/dependency_validator.php
+          // Dependency Validator - 의존성 검증 시스템
+          
+          class DependencyValidator {
+              private $dependencies;
+              
+              public function __construct($flowFile) {
+                  $this->loadFlowFile($flowFile);
+              }
+              
+              public function validate() {
+                  $errors = [];
+                  
+                  // 순환 의존성 검사
+                  $circular = $this->detectCircularDependencies();
+                  if (!empty($circular)) {
+                      $errors[] = "Circular dependencies detected: " . implode(', ', $circular);
+                  }
+                  
+                  // 누락된 의존성 검사
+                  $missing = $this->checkMissingDependencies();
+                  if (!empty($missing)) {
+                      $errors[] = "Missing dependencies: " . implode(', ', $missing);
+                  }
+                  
+                  return empty($errors) ? ['valid' => true] : ['valid' => false, 'errors' => $errors];
+              }
+              
+              public function getExecutionOrder() {
+                  // 위상 정렬(Topological Sort) 알고리즘
+                  return $this->topologicalSort();
+              }
+              
+              private function detectCircularDependencies() {
+                  // DFS 기반 순환 탐지
+              }
+              
+              private function checkMissingDependencies() {
+                  // 의존성 존재 여부 확인
+              }
+              
+              private function topologicalSort() {
+                  // 위상 정렬 구현
+              }
+          }
+        validation:
+          - check: "순환 의존성 탐지 로직 포함"
+          - check: "위상 정렬 알고리즘 구현"
+        
+      - step: 4
+        name: "오케스트레이터 업데이트"
+        description: "orchestrator.php에 의존성 기반 실행 순서 강제 로직 추가"
+        action: "modify"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/orchestrator.php"
+          - file: "alt42/orchestration/mvp_system/lib/dependency_validator.php"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/orchestrator.php"
+        modifications:
+          - location: "executeDecision method"
+            add_before: |
+              // 의존성 검증 및 실행 순서 결정
+              $validator = new DependencyValidator(__DIR__ . '/decision/rules/orchestration_flow.yaml');
+              $validation = $validator->validate();
+              
+              if (!$validation['valid']) {
+                  throw new Exception("Dependency validation failed: " . implode(', ', $validation['errors']) . 
+                                    " at " . __FILE__ . ":" . __LINE__);
+              }
+              
+              $executionOrder = $validator->getExecutionOrder();
+        validation:
+          - check: "의존성 검증이 실행 전에 수행됨"
+          - check: "실행 순서가 강제됨"
+    
+    rollback:
+      - action: "restore_backup"
+      - files_to_restore:
+          - "mvp_system/orchestrator.php"
+    
+    test:
+      - name: "의존성 검증 테스트"
+        script: "alt42/orchestration/tests/test_dependency_validation.php"
+        expected_result: "순환 의존성 탐지 및 실행 순서 검증 통과"
+  
+  # ============================================================
+  # P1: 높은 우선순위 위험 요소
+  # ============================================================
+  
+  - id: "P1-004"
+    priority: "P1"
+    title: "실시간 트리거 락 메커니즘 구현"
+    description: "Agent 21의 실시간 트리거 처리 시 중복 개입 방지"
+    deadline_days: 30
+    status: "pending"
+    depends_on: ["P0-003"]
+    
+    steps:
+      - step: 1
+        name: "트리거 락 클래스 생성"
+        description: "TriggerLock 클래스 생성 (DB 기반 락)"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/trigger_lock.php"
+        code_template: |
+          <?php
+          // File: mvp_system/lib/trigger_lock.php
+          // Trigger Lock - 실시간 트리거 중복 방지 시스템
+          
+          class TriggerLock {
+              private $db;
+              private $lockTable = 'mvp_trigger_locks';
+              
+              public function __construct($db) {
+                  $this->db = $db;
+                  $this->ensureLockTable();
+              }
+              
+              public function acquireLock($studentId, $triggerType, $ttl = 300) {
+                  $lockKey = $this->generateLockKey($studentId, $triggerType);
+                  
+                  // 기존 락 확인
+                  $existing = $this->getExistingLock($lockKey);
+                  if ($existing && $this->isLockValid($existing)) {
+                      return false; // 락 획득 실패
+                  }
+                  
+                  // 새 락 생성
+                  return $this->createLock($lockKey, $studentId, $triggerType, $ttl);
+              }
+              
+              public function releaseLock($studentId, $triggerType) {
+                  $lockKey = $this->generateLockKey($studentId, $triggerType);
+                  return $this->deleteLock($lockKey);
+              }
+              
+              private function generateLockKey($studentId, $triggerType) {
+                  return "lock_{$studentId}_{$triggerType}";
+              }
+              
+              private function ensureLockTable() {
+                  // 테이블 생성 SQL
+              }
+          }
+        validation:
+          - check: "락 획득/해제 로직 구현"
+          - check: "TTL 기반 자동 만료"
+        
+      - step: 2
+        name: "Agent 21 통합"
+        description: "intervention_execution에 트리거 락 통합"
+        action: "modify"
+        inputs:
+          - file: "alt42/orchestration/agents/agent21_intervention_execution/"
+          - file: "alt42/orchestration/mvp_system/lib/trigger_lock.php"
+        outputs:
+          - modified_files: "agents/agent21_intervention_execution/*.php"
+        validation:
+          - check: "트리거 실행 전 락 획득"
+          - check: "실행 후 락 해제"
+    
+    test:
+      - name: "트리거 락 테스트"
+        script: "alt42/orchestration/tests/test_trigger_lock.php"
+        expected_result: "중복 트리거 방지 확인"
+  
+  - id: "P1-005"
+    priority: "P1"
+    title: "데이터 소스 매핑 검증 스크립트 생성"
+    description: "systemdata.md와 data_based_questions.js의 dataSources 일치성 검증"
+    deadline_days: 30
+    status: "pending"
+    depends_on: ["P0-001"]
+    
+    steps:
+      - step: 1
+        name: "검증 스크립트 생성"
+        description: "DataSourceMappingValidator 스크립트 생성"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/scripts/validate_data_source_mapping.php"
+        validation:
+          - check: "모든 매핑 불일치 리포트 생성"
+    
+    test:
+      - name: "매핑 검증 테스트"
+        script: "alt42/orchestration/tests/test_data_source_mapping.php"
+  
+  - id: "P1-006"
+    priority: "P1"
+    title: "에러 처리 및 복구 메커니즘 강화"
+    description: "트랜잭션 및 롤백 메커니즘 추가"
+    deadline_days: 30
+    status: "pending"
+    
+    steps:
+      - step: 1
+        name: "AgentExecutor 클래스 생성"
+        description: "트랜잭션 기반 에이전트 실행 클래스"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/agent_executor.php"
+        code_template: |
+          <?php
+          // File: mvp_system/lib/agent_executor.php
+          // Agent Executor - 트랜잭션 기반 에이전트 실행 시스템
+          
+          class AgentExecutor {
+              private $db;
+              private $logger;
+              
+              public function __construct($db, $logger) {
+                  $this->db = $db;
+                  $this->logger = $logger;
+              }
+              
+              public function executeWithRollback($agentId, $studentId, $executionData) {
+                  $this->db->beginTransaction();
+                  
+                  try {
+                      $result = $this->executeAgent($agentId, $studentId, $executionData);
+                      $this->db->commit();
+                      return $result;
+                  } catch (Exception $e) {
+                      $this->db->rollback();
+                      $this->logger->error("Agent execution rolled back", [
+                          'agent_id' => $agentId,
+                          'student_id' => $studentId,
+                          'error' => $e->getMessage(),
+                          'file' => __FILE__,
+                          'line' => __LINE__
+                      ]);
+                      throw $e;
+                  }
+              }
+              
+              private function executeAgent($agentId, $studentId, $executionData) {
+                  // 에이전트 실행 로직
+              }
+          }
+        validation:
+          - check: "트랜잭션 시작/커밋/롤백 구현"
+          - check: "에러 로깅에 파일:라인 정보 포함"
+        
+      - step: 2
+        name: "오케스트레이터 통합"
+        description: "orchestrator.php에 AgentExecutor 통합"
+        action: "modify"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/orchestrator.php"
+          - file: "alt42/orchestration/mvp_system/lib/agent_executor.php"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/orchestrator.php"
+        validation:
+          - check: "모든 에이전트 실행이 트랜잭션으로 감싸짐"
+    
+    test:
+      - name: "롤백 테스트"
+        script: "alt42/orchestration/tests/test_rollback_mechanism.php"
+        expected_result: "에러 발생 시 롤백 확인"
+  
+  # ============================================================
+  # P2: 중간 우선순위 위험 요소
+  # ============================================================
+  
+  - id: "P2-007"
+    priority: "P2"
+    title: "성능 최적화"
+    description: "병렬 실행 가능 에이전트 식별 및 캐싱 전략 도입"
+    deadline_days: 90
+    status: "pending"
+    depends_on: ["P0-003"]
+    
+    steps:
+      - step: 1
+        name: "병렬 실행 가능 에이전트 분석"
+        description: "의존성 그래프에서 병렬 실행 가능한 에이전트 식별"
+        action: "analyze"
+        inputs:
+          - file: "alt42/orchestration/mvp_system/decision/rules/orchestration_flow.yaml"
+        outputs:
+          - file: "alt42/orchestration/tmp/parallel_execution_candidates.json"
+        
+      - step: 2
+        name: "병렬 실행 엔진 구현"
+        description: "병렬 에이전트 실행을 위한 엔진 구현"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/parallel_executor.php"
+    
+    test:
+      - name: "병렬 실행 성능 테스트"
+        script: "alt42/orchestration/tests/test_parallel_execution.php"
+  
+  - id: "P2-008"
+    priority: "P2"
+    title: "온톨로지 일관성 검증 시스템"
+    description: "중앙 온톨로지 레지스트리 및 일관성 검증 도구"
+    deadline_days: 90
+    status: "pending"
+    depends_on: ["P0-002"]
+    
+    steps:
+      - step: 1
+        name: "온톨로지 레지스트리 생성"
+        description: "중앙 온톨로지 레지스트리 구축"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/ontology_registry.php"
+    
+    test:
+      - name: "온톨로지 일관성 테스트"
+        script: "alt42/orchestration/tests/test_ontology_consistency.php"
+  
+  - id: "P2-009"
+    priority: "P2"
+    title: "데이터 프라이버시 및 보안 강화"
+    description: "데이터 암호화, 로그 마스킹, 접근 제어"
+    deadline_days: 90
+    status: "pending"
+    
+    steps:
+      - step: 1
+        name: "로그 마스킹 도구 생성"
+        description: "개인정보 마스킹 유틸리티"
+        action: "create"
+        outputs:
+          - file: "alt42/orchestration/mvp_system/lib/data_masking.php"
+    
+    test:
+      - name: "데이터 마스킹 테스트"
+        script: "alt42/orchestration/tests/test_data_masking.php"
+
+# 실행 순서 정의
+execution_order:
+  phase_1_immediate:  # 1주일 내
+    - "P0-001"
+    - "P0-002"
+    - "P0-003"
+  
+  phase_2_short_term:  # 1개월 내
+    - "P1-004"
+    - "P1-005"
+    - "P1-006"
+  
+  phase_3_long_term:  # 3개월 내
+    - "P2-007"
+    - "P2-008"
+    - "P2-009"
+
+# 검증 및 모니터링
+monitoring:
+  - name: "위험 요소 해결 진행 상황"
+    check_interval: "daily"
+    metrics:
+      - completed_tasks
+      - failed_tasks
+      - pending_tasks
+      - test_coverage
+  
+  - name: "시스템 안정성 모니터링"
+    check_interval: "hourly"
+    metrics:
+      - error_rate
+      - execution_time
+      - data_validation_success_rate
+
+# 롤백 전략
+rollback_strategy:
+  on_failure: "restore_backup"
+  backup_location: "alt42/orchestration/backups/"
+  backup_frequency: "before_each_major_change"
+
+# 알림 설정
+notifications:
+  on_task_completion: true
+  on_task_failure: true
+  on_validation_failure: true
+  recipients:
+    - "development_team"
+

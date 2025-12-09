@@ -1,0 +1,28 @@
+Here are three similar problems based on your request:
+
+[
+  {
+    "문항": "다음 미분을 계산하라: $\\frac{d}{dx}(x^3 + 2x)$",
+    "해설": "미분 공식을 적용하면 $3x^2 + 2$입니다.",
+    "정답": "$3x^2 + 2$",
+    "선택지": [
+      "$3x^2 + 2$",
+      "$3x^2$",
+      "$x^2 + 2$",
+      "$3x + 2$"
+    ]
+  },
+  {
+    "문항": "행렬의 곱셈: $\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix} \\begin{pmatrix} 5 \\\\ 6 \\end{pmatrix}$",
+    "해설": "행렬 곱셈을 수행하면 $\\begin{pmatrix} 1 \\cdot 5 + 2 \\cdot 6 \\\\ 3 \\cdot 5 + 4 \\cdot 6 \\end{pmatrix} = \\begin{pmatrix} 17 \\\\ 39 \\end{pmatrix}$",
+    "정답": "$\\begin{pmatrix} 17 \\\\ 39 \\end{pmatrix}$",
+    "선택지": [
+      "$\\begin{pmatrix} 17 \\\\ 39 \\end{pmatrix}$",
+      "$\\begin{pmatrix} 5 \\\\ 18 \\end{pmatrix}$",
+      "$\\begin{pmatrix} 11 \\\\ 24 \\end{pmatrix}$",
+      "정의되지 않음"
+    ]
+  }
+]
+
+I hope these problems help! Let me know if you need any adjustments.

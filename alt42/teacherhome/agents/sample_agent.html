@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>샘플 에이전트</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #111827;
+            color: #f9fafb;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .agent-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .agent-header {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .agent-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #f9fafb;
+        }
+        
+        .agent-header p {
+            margin: 0;
+            color: #9ca3af;
+        }
+        
+        .agent-content {
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #f9fafb;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f9fafb;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .btn:hover {
+            background: #764ba2;
+        }
+        
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            min-height: 100px;
+        }
+        
+        .result-area h3 {
+            margin: 0 0 10px 0;
+            color: #f9fafb;
+            font-size: 16px;
+        }
+        
+        .result-content {
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="agent-container">
+        <div class="agent-header">
+            <h1>🤖 샘플 에이전트</h1>
+            <p>이것은 에이전트 기능의 예시입니다. 여기에서 다양한 작업을 수행할 수 있습니다.</p>
+        </div>
+        
+        <div class="agent-content">
+            <form id="agentForm">
+                <div class="form-group">
+                    <label for="taskInput">작업 내용</label>
+                    <input type="text" class="form-control" id="taskInput" placeholder="수행할 작업을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="detailsInput">상세 설명</label>
+                    <textarea class="form-control" id="detailsInput" rows="4" placeholder="작업에 대한 상세 설명을 입력하세요"></textarea>
+                </div>
+                
+                <button type="submit" class="btn">작업 실행</button>
+            </form>
+            
+            <div class="result-area" id="resultArea" style="display: none;">
+                <h3>실행 결과</h3>
+                <div class="result-content" id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('agentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const task = document.getElementById('taskInput').value;
+            const details = document.getElementById('detailsInput').value;
+            
+            if (!task) {
+                alert('작업 내용을 입력해주세요.');
+                return;
+            }
+            
+            // 결과 표시
+            const resultArea = document.getElementById('resultArea');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultArea.style.display = 'block';
+            resultContent.innerHTML = `
+                <p><strong>작업:</strong> ${task}</p>
+                ${details ? `<p><strong>상세:</strong> ${details}</p>` : ''}
+                <p><strong>상태:</strong> 작업이 성공적으로 시작되었습니다.</p>
+                <p><em>실제 환경에서는 여기에서 서버와 통신하여 실제 작업을 수행합니다.</em></p>
+            `;
+            
+            // 스크롤을 결과 영역으로 이동
+            resultArea.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

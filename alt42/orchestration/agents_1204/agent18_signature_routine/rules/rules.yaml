@@ -1,0 +1,911 @@
+# Rules for Agent 18 - Signature Routine
+# Generated at: 2025-01-21
+# Updated at: 2025-01-21 (온톨로지 매핑 추가)
+# Purpose: 현직 수학선생님 수준 90% 달성을 위한 시그너처 루틴 발견 및 정교화 룰셋
+# Source: teacher_level_evaluation.md 기반 개선
+# Ontology: alphatutor_ontology.owl (SignatureRoutineDiscovery, RoutineMaintenanceReinforcement, RoutineEvolutionPath)
+
+version: "1.1"
+scenario: "signature_routine"
+description: "학생의 온보딩 정보와 선호동 데이터를 통합 분석하여 개인 최적 학습 루틴(시그너처)을 발견하고 정교화하는 에이전트"
+ontology_mapping:
+  - concept: "SignatureRoutineDiscovery"
+    description: "시그너처 루틴 발견을 위한 데이터 통합"
+    data_sources:
+      - "OnboardingInfo"
+      - "LatestPreferenceInfo"
+      - "ImmersionPsychologicalTrigger"
+      - "EmotionTrigger"
+      - "EnvironmentTrigger"
+      - "BehaviorTrigger"
+      - "StartRoutine"
+      - "ConcentrationRoutine"
+      - "RecoveryRoutine"
+      - "SignatureRoutineDraft"
+      - "NaturalImmersionCondition"
+      - "ImmersionBreakPoint"
+  - concept: "RoutineMaintenanceReinforcement"
+    description: "루틴 유지 및 강화 요소"
+    data_sources:
+      - "LearningEmotionCurve"
+      - "ImmersionDuration"
+      - "ReinforcementFeedbackResponse"
+      - "RewardLoopDesign"
+      - "RecoveryFeedbackStrategy"
+      - "EmotionalReinforcement"
+      - "InteractionMethodForRoutine"
+  - concept: "RoutineEvolutionPath"
+    description: "루틴 진화 경로 설계"
+    data_sources:
+      - "RoutineRepetitionStability"
+      - "EmotionAmplitude"
+      - "CognitiveLoadPattern"
+      - "EmotionalCorrectionPoint"
+      - "CognitiveCorrectionPoint"
+      - "LongTermImmersionGrowth"
+      - "RoutineEvolutionStage"
+      - "SignatureRoutineLevel"
+
+rules:
+  # ========== S0: 시그너처 루틴 발견을 위한 필수 정보 수집 룰 ==========
+  
+  - rule_id: "S0_R1_math_learning_stage_routine_collection"
+    priority: 99
+    description: "수학 학습 단계별 루틴 데이터 수집 (개념 학습, 유형 연습, 심화 학습)"
+    conditions:
+      - field: "math_learning_stage_routines"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "signature_routine_discovery_flag"
+          operator: "=="
+          value: true
+        - field: "routine_refinement_flag"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'math_learning_stage_routines'"
+      - "validate: '수학 학습 단계별 루틴은 개념 학습, 유형 연습, 심화 학습 각각의 순서와 방법을 포함해야 합니다'"
+      - "display_message: '수학 학습 단계별로 어떤 순서와 방법이 효과적이었는지 파악하여 맞춤형 시그너처 루틴을 발견합니다.'"
+      - "question: '개념을 학습할 때 어떤 순서가 편하신가요? (A) 필기 → TTS 듣기 → 예제 풀이 (B) TTS 듣기 → 필기 → 예제 풀이 (C) 예제 풀이 → 필기 → TTS 듣기'"
+      - "question: '유형 연습을 할 때 어떤 순서가 효과적이었나요? (A) 문제 읽기 → 풀이 → 검토 (B) 풀이 → 문제 읽기 → 검토 (C) 검토 → 문제 읽기 → 풀이'"
+    confidence: 0.97
+    rationale: "S0: 수학 학습 단계별 루틴은 시그너처 루틴의 핵심 구성 요소"
+  
+  - rule_id: "S0_R2_academy_prep_review_routine_collection"
+    priority: 98
+    description: "학원 수업 전후 루틴 데이터 수집 (예습, 복습)"
+    conditions:
+      - field: "academy_name"
+        operator: "!="
+        value: null
+      - field: "academy_prep_review_routines"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "signature_routine_discovery_flag"
+          operator: "=="
+          value: true
+        - field: "routine_refinement_flag"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'academy_prep_review_routines'"
+      - "validate: '학원 수업 전후 루틴은 예습 시간/방법과 복습 시간/방법을 포함해야 합니다'"
+      - "display_message: '학원 수업 전후 어떤 루틴이 효과적이었는지 파악하여 학원 맥락을 고려한 시그너처 루틴을 발견합니다.'"
+      - "question: '학원 수업 전 예습 시간과 방법을 알려주세요. (예: 30분, 개념 읽기 → 핵심 정리 → 질문 준비)'"
+      - "question: '학원 수업 후 복습 시간과 방법을 알려주세요. (예: 45분, 수업 내용 정리 → 예제 재풀이 → 과제 확인)'"
+    confidence: 0.96
+    rationale: "S0: 학원 수업 전후 루틴은 학원 시스템 특화 시그너처 루틴의 필수 요소"
+  
+  - rule_id: "S0_R3_unit_difficulty_info_collection"
+    priority: 97
+    description: "단원별 난이도 정보 수집 (math_unit_relations.yaml 연동)"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "unit_difficulty_info"
+        operator: "=="
+        value: null
+    action:
+      - "load_db: 'math_unit_relations.yaml'"
+      - "collect_info: 'unit_difficulty_info'"
+      - "analyze: 'unit_difficulty_mapping'"
+      - "validate: '단원별 난이도 정보는 난이도 수준, 평균 학습 시간, 출제 비중을 포함해야 합니다'"
+      - "display_message: '단원별 난이도 정보를 파악하여 난이도 기반 루틴 조정을 수행합니다.'"
+    confidence: 0.95
+    rationale: "S0: 단원별 난이도는 루틴 조정의 핵심 기준"
+  
+  - rule_id: "S0_R4_weak_unit_info_collection"
+    priority: 96
+    description: "취약 단원 정보 수집"
+    conditions:
+      - field: "weak_units"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "signature_routine_discovery_flag"
+          operator: "=="
+          value: true
+        - field: "routine_refinement_flag"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'weak_units'"
+      - "analyze: 'weak_unit_identification'"
+      - "validate: '취약 단원 정보는 단원명과 취약 정도를 포함해야 합니다'"
+      - "display_message: '취약 단원 정보를 파악하여 취약 단원 특화 루틴을 설계합니다.'"
+      - "question: '어떤 단원이 가장 어렵거나 취약한가요? (단원명과 어려운 정도를 알려주세요)'"
+    confidence: 0.94
+    rationale: "S0: 취약 단원 정보는 특화 루틴 설계에 필수"
+  
+  - rule_id: "S0_R5_math_learning_style_collection"
+    priority: 95
+    description: "수학 학습 스타일 정보 수집 (계산형/개념형/응용형, agent01 연동)"
+    conditions:
+      - field: "math_learning_style"
+        operator: "=="
+        value: null
+    action:
+      - "load_from_agent: 'agent01_onboarding'"
+      - "collect_info: 'math_learning_style'"
+      - "validate: '수학 학습 스타일은 계산형, 개념형, 응용형 중 하나여야 합니다'"
+      - "display_message: '수학 학습 스타일을 파악하여 스타일별 맞춤형 루틴을 설계합니다.'"
+    confidence: 0.93
+    rationale: "S0: 수학 학습 스타일은 루틴 개인화의 핵심 기준"
+  
+  - rule_id: "S0_R6_academy_info_collection"
+    priority: 94
+    description: "학원 정보 수집 (agent01 연동)"
+    conditions:
+      - field: "academy_name"
+        operator: "=="
+        value: null
+    action:
+      - "load_from_agent: 'agent01_onboarding'"
+      - "collect_info: 'academy_info'"
+      - "validate: '학원 정보는 학원명, 학원 등급(반), 학원 수업 일정을 포함해야 합니다'"
+      - "display_message: '학원 정보를 파악하여 학원 맥락을 고려한 루틴을 설계합니다.'"
+    confidence: 0.92
+    rationale: "S0: 학원 정보는 학원 시스템 특화 루틴 설계에 필수"
+  
+  - rule_id: "S0_R7_routine_feasibility_data_collection"
+    priority: 93
+    description: "루틴 실행 가능성 데이터 수집"
+    conditions:
+      - field: "routine_proposed"
+        operator: "=="
+        value: true
+      - field: "routine_feasibility_data"
+        operator: "=="
+        value: null
+    action:
+      - "collect_info: 'routine_feasibility_data'"
+      - "validate: '루틴 실행 가능성 데이터는 시간 배분, 난이도, 학생 수용성을 포함해야 합니다'"
+      - "display_message: '제안된 루틴의 실행 가능성을 검증하기 위해 데이터를 수집합니다.'"
+      - "question: '제안된 루틴을 실행할 수 있나요? 어떤 부분이 어려울 것 같나요?'"
+    confidence: 0.91
+    rationale: "S0: 루틴 실행 가능성 검증을 위한 데이터 수집"
+  
+  - rule_id: "S0_R8_routine_effectiveness_data_collection"
+    priority: 92
+    description: "루틴 효과성 데이터 수집 (몰입도, 성취감, 성과)"
+    conditions:
+      - field: "routine_executed"
+        operator: "=="
+        value: true
+      - field: "routine_effectiveness_data"
+        operator: "=="
+        value: null
+    action:
+      - "collect_info: 'routine_effectiveness_data'"
+      - "analyze: 'routine_effectiveness_analysis'"
+      - "validate: '루틴 효과성 데이터는 몰입도, 성취감, 성과를 포함해야 합니다'"
+      - "display_message: '루틴 실행 후 효과성을 측정하여 루틴을 정교화합니다.'"
+    confidence: 0.90
+    rationale: "S0: 루틴 효과성 측정을 위한 데이터 수집"
+  
+  # ========== S1: Drilling 분석 룰 ==========
+  
+  - rule_id: "S1_R1_concept_learning_immersion_analysis"
+    priority: 95
+    description: "개념 학습 단계 몰입 패턴 분석"
+    conditions:
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+      - field: "concept_learning_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'concept_learning_immersion_pattern'"
+      - "detect_pattern: 'concept_learning_flow'"
+      - "generate_description: 'concept_learning_immersion_analysis'"
+      - "display_message: '개념 학습 단계에서 몰입이 상승하는 패턴을 분석합니다. (예: 필기 → TTS → 예제 풀이 순서에서 몰입도 상승)'"
+    confidence: 0.92
+    rationale: "S1: 개념 학습 단계 몰입 패턴은 시그너처 루틴의 핵심 구성 요소"
+  
+  - rule_id: "S1_R2_type_practice_immersion_analysis"
+    priority: 94
+    description: "유형 연습 단계 몰입 패턴 분석"
+    conditions:
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+      - field: "type_practice_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'type_practice_immersion_pattern'"
+      - "detect_pattern: 'type_practice_flow'"
+      - "generate_description: 'type_practice_immersion_analysis'"
+      - "display_message: '유형 연습 단계에서 몰입이 상승하는 패턴을 분석합니다. (예: 문제 읽기 → 풀이 → 검토 순서에서 성취감 상승)'"
+    confidence: 0.91
+    rationale: "S1: 유형 연습 단계 몰입 패턴은 시그너처 루틴의 핵심 구성 요소"
+  
+  - rule_id: "S1_R3_advanced_learning_immersion_analysis"
+    priority: 93
+    description: "심화 학습 단계 몰입 패턴 분석"
+    conditions:
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+      - field: "advanced_learning_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'advanced_learning_immersion_pattern'"
+      - "detect_pattern: 'advanced_learning_flow'"
+      - "generate_description: 'advanced_learning_immersion_analysis'"
+      - "display_message: '심화 학습 단계에서 몰입이 상승하는 패턴을 분석합니다. (예: 고난도 문제 → 힌트 활용 → 풀이 완성 순서에서 도전 의식 상승)'"
+    confidence: 0.90
+    rationale: "S1: 심화 학습 단계 몰입 패턴은 시그너처 루틴의 핵심 구성 요소"
+  
+  - rule_id: "S1_R4_academy_prep_effectiveness_analysis"
+    priority: 92
+    description: "학원 수업 전 예습 효과성 분석"
+    conditions:
+      - field: "academy_prep_review_routines"
+        operator: "!="
+        value: null
+      - field: "academy_prep_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'academy_prep_effectiveness'"
+      - "correlate: 'prep_time_vs_class_understanding'"
+      - "generate_description: 'academy_prep_effectiveness_analysis'"
+      - "display_message: '학원 수업 전 예습 루틴의 효과성을 분석합니다. (예: 30분 예습으로 수업 이해도 40% 향상)'"
+    confidence: 0.89
+    rationale: "S1: 학원 수업 전 예습 효과성은 학원 시스템 특화 루틴의 핵심"
+  
+  - rule_id: "S1_R5_academy_review_effectiveness_analysis"
+    priority: 91
+    description: "학원 수업 후 복습 효과성 분석"
+    conditions:
+      - field: "academy_prep_review_routines"
+        operator: "!="
+        value: null
+      - field: "academy_review_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'academy_review_effectiveness'"
+      - "correlate: 'review_time_vs_retention'"
+      - "generate_description: 'academy_review_effectiveness_analysis'"
+      - "display_message: '학원 수업 후 복습 루틴의 효과성을 분석합니다. (예: 45분 복습으로 내용 기억률 60% 향상)'"
+    confidence: 0.88
+    rationale: "S1: 학원 수업 후 복습 효과성은 학원 시스템 특화 루틴의 핵심"
+  
+  - rule_id: "S1_R6_unit_difficulty_immersion_correlation"
+    priority: 90
+    description: "단원별 난이도-몰입도 상관 분석"
+    conditions:
+      - field: "unit_difficulty_info"
+        operator: "!="
+        value: null
+      - field: "unit_immersion_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'unit_difficulty_immersion_correlation'"
+      - "correlate: 'difficulty_vs_immersion_level'"
+      - "generate_description: 'unit_difficulty_immersion_analysis'"
+      - "display_message: '단원별 난이도와 몰입도 간의 상관관계를 분석합니다. (예: 어려운 단원일수록 더 세밀한 루틴 필요)'"
+    confidence: 0.87
+    rationale: "S1: 단원별 난이도-몰입도 상관은 난이도 기반 루틴 조정의 기준"
+  
+  - rule_id: "S1_R7_weak_unit_routine_effectiveness_analysis"
+    priority: 89
+    description: "취약 단원 루틴 효과성 분석"
+    conditions:
+      - field: "weak_units"
+        operator: "!="
+        value: null
+      - field: "weak_unit_routine_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'weak_unit_routine_effectiveness'"
+      - "compare: 'weak_unit_vs_normal_unit_routine'"
+      - "generate_description: 'weak_unit_routine_effectiveness_analysis'"
+      - "display_message: '취약 단원에서 특화 루틴의 효과성을 분석합니다. (예: 확인 문제 빈도 증가로 이해도 30% 향상)'"
+    confidence: 0.86
+    rationale: "S1: 취약 단원 루틴 효과성은 특화 루틴 설계의 기준"
+  
+  - rule_id: "S1_R8_time_performance_stage_analysis"
+    priority: 88
+    description: "시간대별 학습 단계 성과 분석"
+    conditions:
+      - field: "time_performance_logs"
+        operator: "!="
+        value: null
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'time_performance_by_stage'"
+      - "correlate: 'time_vs_stage_performance'"
+      - "generate_description: 'time_performance_stage_analysis'"
+      - "display_message: '시간대별로 어떤 학습 단계가 가장 효과적인지 분석합니다. (예: 오후 2-4시 개념 학습, 저녁 7-9시 유형 연습)'"
+    confidence: 0.85
+    rationale: "S1: 시간대별 학습 단계 성과는 시간대-단계 매칭 루틴의 기준"
+  
+  - rule_id: "S1_R9_session_length_stage_analysis"
+    priority: 87
+    description: "세션 길이별 학습 단계 성과 분석"
+    conditions:
+      - field: "session_length_logs"
+        operator: "!="
+        value: null
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'session_length_by_stage'"
+      - "correlate: 'session_length_vs_stage_performance'"
+      - "generate_description: 'session_length_stage_analysis'"
+      - "display_message: '세션 길이별로 어떤 학습 단계가 가장 효과적인지 분석합니다. (예: 25분 개념 학습, 45분 유형 연습)'"
+    confidence: 0.84
+    rationale: "S1: 세션 길이별 학습 단계 성과는 세션 길이-단계 매칭 루틴의 기준"
+  
+  - rule_id: "S1_R10_emotion_behavior_result_stage_analysis"
+    priority: 86
+    description: "감정-행동-결과 학습 단계별 분석"
+    conditions:
+      - field: "emotion_logs"
+        operator: "!="
+        value: null
+      - field: "behavior_logs"
+        operator: "!="
+        value: null
+      - field: "result_logs"
+        operator: "!="
+        value: null
+      - field: "math_learning_stage_routines"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'emotion_behavior_result_by_stage'"
+      - "correlate: 'emotion_behavior_result_correlation'"
+      - "generate_description: 'emotion_behavior_result_stage_analysis'"
+      - "display_message: '각 학습 단계별로 감정-행동-결과 간의 상관관계를 분석합니다. (예: 개념 학습에서 성취감 → 필기 강화 → 이해도 상승)'"
+    confidence: 0.83
+    rationale: "S1: 감정-행동-결과 학습 단계별 분석은 심리요인 도출의 기초"
+  
+  - rule_id: "S1_R11_math_learning_style_routine_effectiveness"
+    priority: 85
+    description: "수학 학습 스타일별 루틴 효과성 분석"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+      - field: "routine_effectiveness_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'math_learning_style_routine_effectiveness'"
+      - "compare: 'calculation_vs_concept_vs_application'"
+      - "generate_description: 'math_learning_style_routine_effectiveness_analysis'"
+      - "display_message: '수학 학습 스타일별로 어떤 루틴이 가장 효과적인지 분석합니다. (예: 계산형은 반복 연습 중심, 개념형은 이해 확인 중심)'"
+    confidence: 0.82
+    rationale: "S1: 수학 학습 스타일별 루틴 효과성은 스타일별 루틴 설계의 기준"
+  
+  - rule_id: "S1_R12_academy_context_integration_analysis"
+    priority: 84
+    description: "학원 맥락 통합 분석"
+    conditions:
+      - field: "academy_info"
+        operator: "!="
+        value: null
+      - field: "academy_prep_review_routines"
+        operator: "!="
+        value: null
+      - field: "routine_effectiveness_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'academy_context_integration'"
+      - "integrate: 'academy_school_home_routine'"
+      - "generate_description: 'academy_context_integration_analysis'"
+      - "display_message: '학원-학교-집 학습을 통합한 루틴 효과성을 분석합니다. (예: 학원 수업 전 예습 + 학원 수업 + 학원 수업 후 복습 통합 루틴)'"
+    confidence: 0.81
+    rationale: "S1: 학원 맥락 통합 분석은 학원 시스템 특화 루틴 설계의 핵심"
+  
+  # ========== S2: 심리요인 도출 룰 ==========
+  
+  - rule_id: "S2_R1_concept_learning_psychological_factor"
+    priority: 95
+    description: "개념 학습 단계 심리요인 도출"
+    conditions:
+      - field: "concept_learning_immersion_pattern"
+        operator: "!="
+        value: null
+      - field: "emotion_behavior_result_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "derive: 'concept_learning_psychological_factor'"
+      - "classify: 'psychological_factor_type'"
+      - "generate_description: 'concept_learning_psychological_factor_derivation'"
+      - "display_message: '개념 학습 단계에서 작동하는 핵심 심리요인을 도출합니다. (예: 성취감 중심형 - 필기 완성 시 성취감)'"
+    confidence: 0.92
+    rationale: "S2: 개념 학습 단계 심리요인은 개념 학습 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R2_type_practice_psychological_factor"
+    priority: 94
+    description: "유형 연습 단계 심리요인 도출"
+    conditions:
+      - field: "type_practice_immersion_pattern"
+        operator: "!="
+        value: null
+      - field: "emotion_behavior_result_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "derive: 'type_practice_psychological_factor'"
+      - "classify: 'psychological_factor_type'"
+      - "generate_description: 'type_practice_psychological_factor_derivation'"
+      - "display_message: '유형 연습 단계에서 작동하는 핵심 심리요인을 도출합니다. (예: 탐구형 - 문제 해결 과정 자체에서 흥미)'"
+    confidence: 0.91
+    rationale: "S2: 유형 연습 단계 심리요인은 유형 연습 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R3_advanced_learning_psychological_factor"
+    priority: 93
+    description: "심화 학습 단계 심리요인 도출"
+    conditions:
+      - field: "advanced_learning_immersion_pattern"
+        operator: "!="
+        value: null
+      - field: "emotion_behavior_result_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "derive: 'advanced_learning_psychological_factor'"
+      - "classify: 'psychological_factor_type'"
+      - "generate_description: 'advanced_learning_psychological_factor_derivation'"
+      - "display_message: '심화 학습 단계에서 작동하는 핵심 심리요인을 도출합니다. (예: 도전형 - 고난도 문제 해결 시 동기 상승)'"
+    confidence: 0.90
+    rationale: "S2: 심화 학습 단계 심리요인은 심화 학습 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R4_academy_prep_review_psychological_factor"
+    priority: 92
+    description: "학원 수업 전후 심리요인 도출"
+    conditions:
+      - field: "academy_prep_effectiveness"
+        operator: "!="
+        value: null
+      - field: "academy_review_effectiveness"
+        operator: "!="
+        value: null
+    action:
+      - "derive: 'academy_prep_review_psychological_factor'"
+      - "classify: 'psychological_factor_type'"
+      - "generate_description: 'academy_prep_review_psychological_factor_derivation'"
+      - "display_message: '학원 수업 전후에서 작동하는 핵심 심리요인을 도출합니다. (예: 의미형 - 학원 수업 이해로 인한 자신감)'"
+    confidence: 0.89
+    rationale: "S2: 학원 수업 전후 심리요인은 학원 시스템 특화 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R5_unit_difficulty_based_psychological_adjustment"
+    priority: 91
+    description: "단원별 난이도 기반 심리요인 조정"
+    conditions:
+      - field: "unit_difficulty_immersion_correlation"
+        operator: "!="
+        value: null
+      - field: "unit_difficulty_info"
+        operator: "!="
+        value: null
+    action:
+      - "adjust: 'psychological_factor_by_difficulty'"
+      - "generate_description: 'unit_difficulty_based_psychological_adjustment'"
+      - "display_message: '단원별 난이도에 따라 심리요인을 조정합니다. (예: 어려운 단원 - 확인 문제로 성취감 강화, 쉬운 단원 - 빠른 진행으로 리듬감 유지)'"
+    confidence: 0.88
+    rationale: "S2: 단원별 난이도 기반 심리요인 조정은 난이도 기반 루틴 조정의 핵심"
+  
+  - rule_id: "S2_R6_weak_unit_psychological_specialization"
+    priority: 90
+    description: "취약 단원 심리요인 특화"
+    conditions:
+      - field: "weak_units"
+        operator: "!="
+        value: null
+      - field: "weak_unit_routine_effectiveness"
+        operator: "!="
+        value: null
+    action:
+      - "specialize: 'psychological_factor_for_weak_unit'"
+      - "generate_description: 'weak_unit_psychological_specialization'"
+      - "display_message: '취약 단원에서 작동하는 특화 심리요인을 도출합니다. (예: 회복형 - 작은 성공 경험으로 자신감 회복)'"
+    confidence: 0.87
+    rationale: "S2: 취약 단원 심리요인 특화는 취약 단원 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R7_math_learning_style_psychological_mapping"
+    priority: 89
+    description: "수학 학습 스타일별 심리요인 매핑"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+      - field: "math_learning_style_routine_effectiveness"
+        operator: "!="
+        value: null
+    action:
+      - "map: 'psychological_factor_by_math_learning_style'"
+      - "generate_description: 'math_learning_style_psychological_mapping'"
+      - "display_message: '수학 학습 스타일별로 작동하는 심리요인을 매핑합니다. (예: 계산형 - 정확성 확인 시 성취감, 개념형 - 이해 확인 시 만족감)'"
+    confidence: 0.86
+    rationale: "S2: 수학 학습 스타일별 심리요인 매핑은 스타일별 루틴 설계의 핵심"
+  
+  - rule_id: "S2_R8_time_based_psychological_factor_difference"
+    priority: 88
+    description: "시간대별 심리요인 차이 분석"
+    conditions:
+      - field: "time_performance_by_stage"
+        operator: "!="
+        value: null
+      - field: "emotion_logs"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'time_based_psychological_factor_difference'"
+      - "generate_description: 'time_based_psychological_factor_analysis'"
+      - "display_message: '시간대별로 작동하는 심리요인의 차이를 분석합니다. (예: 오후 - 집중력 중심, 저녁 - 성취감 중심)'"
+    confidence: 0.85
+    rationale: "S2: 시간대별 심리요인 차이는 시간대-루틴 매칭의 기준"
+  
+  - rule_id: "S2_R9_emotion_behavior_result_psychological_factor"
+    priority: 87
+    description: "감정-행동-결과 심리요인 도출"
+    conditions:
+      - field: "emotion_behavior_result_correlation"
+        operator: "!="
+        value: null
+    action:
+      - "derive: 'emotion_behavior_result_psychological_factor'"
+      - "generate_description: 'emotion_behavior_result_psychological_factor_derivation'"
+      - "display_message: '감정-행동-결과 간의 상관관계에서 핵심 심리요인을 도출합니다. (예: 성취감 → 필기 강화 → 이해도 상승 루프)'"
+    confidence: 0.84
+    rationale: "S2: 감정-행동-결과 심리요인은 루틴 설계의 핵심 가이드라인"
+  
+  - rule_id: "S2_R10_integrated_psychological_factor"
+    priority: 86
+    description: "통합 심리요인 도출"
+    conditions:
+      - field: "concept_learning_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "type_practice_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "advanced_learning_psychological_factor"
+        operator: "!="
+        value: null
+    action:
+      - "integrate: 'all_psychological_factors'"
+      - "derive: 'integrated_psychological_factor'"
+      - "generate_description: 'integrated_psychological_factor_derivation'"
+      - "display_message: '모든 학습 단계와 맥락을 통합한 핵심 심리요인을 도출합니다. (예: 성취감 중심형 - 모든 단계에서 작은 성공 경험이 동기)'"
+    confidence: 0.83
+    rationale: "S2: 통합 심리요인은 통합 시그너처 루틴 설계의 핵심"
+  
+  # ========== S3: 루틴 제안 룰 ==========
+  
+  - rule_id: "S3_R1_concept_learning_signature_routine_proposal"
+    priority: 95
+    description: "개념 학습 시그너처 루틴 제안"
+    conditions:
+      - field: "concept_learning_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "concept_learning_immersion_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'concept_learning_signature_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'concept_learning_signature_routine_proposal'"
+      - "display_message: '개념 학습 시그너처 루틴을 제안합니다. (예: Warm Focus Loop - 필기 → TTS → 예제 풀이 → 확인 문제, 강화 포인트: 자기질문 직후 성취감 음성 피드백)'"
+    confidence: 0.92
+    rationale: "S3: 개념 학습 시그너처 루틴은 개념 학습 효과성의 핵심"
+  
+  - rule_id: "S3_R2_type_practice_signature_routine_proposal"
+    priority: 94
+    description: "유형 연습 시그너처 루틴 제안"
+    conditions:
+      - field: "type_practice_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "type_practice_immersion_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'type_practice_signature_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'type_practice_signature_routine_proposal'"
+      - "display_message: '유형 연습 시그너처 루틴을 제안합니다. (예: Problem Solving Flow - 문제 읽기 → 풀이 → 검토 → 오답 분석, 강화 포인트: 검토 완료 시 성취감 시각 피드백)'"
+    confidence: 0.91
+    rationale: "S3: 유형 연습 시그너처 루틴은 유형 연습 효과성의 핵심"
+  
+  - rule_id: "S3_R3_advanced_learning_signature_routine_proposal"
+    priority: 93
+    description: "심화 학습 시그너처 루틴 제안"
+    conditions:
+      - field: "advanced_learning_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "advanced_learning_immersion_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'advanced_learning_signature_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'advanced_learning_signature_routine_proposal'"
+      - "display_message: '심화 학습 시그너처 루틴을 제안합니다. (예: Challenge Mastery - 고난도 문제 → 힌트 활용 → 풀이 완성 → 설명 작성, 강화 포인트: 풀이 완성 시 도전 의식 상승)'"
+    confidence: 0.90
+    rationale: "S3: 심화 학습 시그너처 루틴은 심화 학습 효과성의 핵심"
+  
+  - rule_id: "S3_R4_academy_prep_routine_proposal"
+    priority: 92
+    description: "학원 수업 전 예습 루틴 제안"
+    conditions:
+      - field: "academy_prep_effectiveness"
+        operator: "!="
+        value: null
+      - field: "academy_prep_review_psychological_factor"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'academy_prep_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'academy_prep_routine_proposal'"
+      - "display_message: '학원 수업 전 예습 루틴을 제안합니다. (예: Pre-Class Warm-up - 개념 읽기(15분) → 핵심 정리(10분) → 질문 준비(5분), 강화 포인트: 질문 준비 완료 시 자신감 상승)'"
+    confidence: 0.89
+    rationale: "S3: 학원 수업 전 예습 루틴은 학원 시스템 특화 루틴의 핵심"
+  
+  - rule_id: "S3_R5_academy_review_routine_proposal"
+    priority: 91
+    description: "학원 수업 후 복습 루틴 제안"
+    conditions:
+      - field: "academy_review_effectiveness"
+        operator: "!="
+        value: null
+      - field: "academy_prep_review_psychological_factor"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'academy_review_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'academy_review_routine_proposal'"
+      - "display_message: '학원 수업 후 복습 루틴을 제안합니다. (예: Post-Class Reinforcement - 수업 내용 정리(20분) → 예제 재풀이(15분) → 과제 확인(10분), 강화 포인트: 예제 재풀이 완료 시 이해도 상승)'"
+    confidence: 0.88
+    rationale: "S3: 학원 수업 후 복습 루틴은 학원 시스템 특화 루틴의 핵심"
+  
+  - rule_id: "S3_R6_unit_difficulty_based_routine_adjustment"
+    priority: 90
+    description: "단원별 난이도 기반 루틴 조정 제안"
+    conditions:
+      - field: "unit_difficulty_info"
+        operator: "!="
+        value: null
+      - field: "unit_difficulty_immersion_correlation"
+        operator: "!="
+        value: null
+    action:
+      - "adjust: 'routine_by_unit_difficulty'"
+      - "generate_description: 'unit_difficulty_based_routine_adjustment'"
+      - "display_message: '단원별 난이도에 따라 루틴을 조정합니다. (예: 함수 단원(난이도 8) - 확인 문제 빈도 증가, 세부 단계 분할 / 통계 단원(난이도 4) - 빠른 진행 루틴, 핵심만 집중)'"
+    confidence: 0.87
+    rationale: "S3: 단원별 난이도 기반 루틴 조정은 난이도별 맞춤형 루틴의 핵심"
+  
+  - rule_id: "S3_R7_weak_unit_specialized_routine_proposal"
+    priority: 89
+    description: "취약 단원 특화 루틴 제안"
+    conditions:
+      - field: "weak_units"
+        operator: "!="
+        value: null
+      - field: "weak_unit_psychological_specialization"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'weak_unit_specialized_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'weak_unit_specialized_routine_proposal'"
+      - "display_message: '취약 단원 특화 루틴을 제안합니다. (예: Recovery Routine - 작은 단위 문제 → 즉시 확인 → 성취감 강화 → 다음 단계, 강화 포인트: 작은 성공 경험으로 자신감 회복)'"
+    confidence: 0.86
+    rationale: "S3: 취약 단원 특화 루틴은 취약 단원 극복의 핵심"
+  
+  - rule_id: "S3_R8_math_learning_style_based_routine_proposal"
+    priority: 88
+    description: "수학 학습 스타일별 루틴 제안"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+      - field: "math_learning_style_psychological_mapping"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'math_learning_style_based_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'math_learning_style_based_routine_proposal'"
+      - "display_message: '수학 학습 스타일별 루틴을 제안합니다. (예: 계산형 - 반복 연습 중심, 개념형 - 이해 확인 중심, 응용형 - 다양한 문제 유형 중심)'"
+    confidence: 0.85
+    rationale: "S3: 수학 학습 스타일별 루틴은 스타일별 맞춤형 루틴의 핵심"
+  
+  - rule_id: "S3_R9_time_based_routine_proposal"
+    priority: 87
+    description: "시간대별 루틴 제안"
+    conditions:
+      - field: "time_performance_by_stage"
+        operator: "!="
+        value: null
+      - field: "time_based_psychological_factor_difference"
+        operator: "!="
+        value: null
+    action:
+      - "propose: 'time_based_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'time_based_routine_proposal'"
+      - "display_message: '시간대별 루틴을 제안합니다. (예: 오후 2-4시 수학 집중 루틴 - 개념 학습 중심, 저녁 7-9시 유형 연습 루틴 - 문제 풀이 중심)'"
+    confidence: 0.84
+    rationale: "S3: 시간대별 루틴은 시간대-단계 매칭 루틴의 핵심"
+  
+  - rule_id: "S3_R10_integrated_signature_routine_proposal"
+    priority: 86
+    description: "통합 시그너처 루틴 제안"
+    conditions:
+      - field: "integrated_psychological_factor"
+        operator: "!="
+        value: null
+      - field: "concept_learning_signature_routine"
+        operator: "!="
+        value: null
+      - field: "type_practice_signature_routine"
+        operator: "!="
+        value: null
+      - field: "advanced_learning_signature_routine"
+        operator: "!="
+        value: null
+    action:
+      - "integrate: 'all_signature_routines'"
+      - "propose: 'integrated_signature_routine'"
+      - "define: 'routine_name_and_steps'"
+      - "identify: 'reinforcement_points'"
+      - "generate_description: 'integrated_signature_routine_proposal'"
+      - "display_message: '모든 학습 단계와 맥락을 통합한 시그너처 루틴을 제안합니다. (예: Daily Math Mastery - 시간대별/단계별/단원별 루틴 통합, 강화 포인트: 단계별 성취감 누적)'"
+    confidence: 0.83
+    rationale: "S3: 통합 시그너처 루틴은 개인 최적 학습 루틴의 최종 형태"
+  
+  # ========== S4: 정교화 룰 ==========
+  
+  - rule_id: "S4_R1_routine_feasibility_verification"
+    priority: 95
+    description: "루틴 실행 가능성 검증"
+    conditions:
+      - field: "routine_proposed"
+        operator: "=="
+        value: true
+      - field: "routine_feasibility_data"
+        operator: "!="
+        value: null
+    action:
+      - "verify: 'routine_feasibility'"
+      - "check: 'time_allocation'"
+      - "check: 'difficulty_level'"
+      - "check: 'student_acceptance'"
+      - "generate_description: 'routine_feasibility_verification'"
+      - "display_message: '제안된 루틴의 실행 가능성을 검증합니다. (시간 배분, 난이도, 학생 수용성 검사)'"
+    confidence: 0.92
+    rationale: "S4: 루틴 실행 가능성 검증은 현실적인 루틴 제안의 핵심"
+  
+  - rule_id: "S4_R2_routine_effectiveness_measurement"
+    priority: 94
+    description: "루틴 효과성 측정"
+    conditions:
+      - field: "routine_executed"
+        operator: "=="
+        value: true
+      - field: "routine_effectiveness_data"
+        operator: "!="
+        value: null
+    action:
+      - "measure: 'routine_effectiveness'"
+      - "analyze: 'immersion_level'"
+      - "analyze: 'achievement_feeling'"
+      - "analyze: 'performance_improvement'"
+      - "generate_description: 'routine_effectiveness_measurement'"
+      - "display_message: '루틴 실행 후 효과성을 측정합니다. (몰입도, 성취감, 성과 개선 정도)'"
+    confidence: 0.91
+    rationale: "S4: 루틴 효과성 측정은 루틴 정교화의 기준"
+  
+  - rule_id: "S4_R3_routine_adjustment_and_improvement"
+    priority: 93
+    description: "루틴 조정 및 개선"
+    conditions:
+      - field: "routine_effectiveness_measurement"
+        operator: "!="
+        value: null
+      - field: "routine_effectiveness_data"
+        operator: "<"
+        value: 0.7
+    action:
+      - "adjust: 'routine_based_on_effectiveness'"
+      - "improve: 'routine_weak_points'"
+      - "generate_description: 'routine_adjustment_and_improvement'"
+      - "display_message: '루틴 효과성이 낮은 경우 루틴을 조정하고 개선합니다. (효과성 70% 미만 시 조정)'"
+    confidence: 0.90
+    rationale: "S4: 루틴 조정 및 개선은 지속적 루틴 최적화의 핵심"
+  
+  - rule_id: "S4_R4_routine_reinforcement_point_identification"
+    priority: 92
+    description: "루틴 강화 포인트 식별"
+    conditions:
+      - field: "routine_effectiveness_measurement"
+        operator: "!="
+        value: null
+      - field: "routine_effectiveness_data"
+        operator: ">="
+        value: 0.7
+    action:
+      - "identify: 'routine_reinforcement_points'"
+      - "strengthen: 'high_effectiveness_elements'"
+      - "generate_description: 'routine_reinforcement_point_identification'"
+      - "display_message: '루틴 효과성이 높은 경우 강화 포인트를 식별하고 강화합니다. (효과성 70% 이상 시 강화)'"
+    confidence: 0.89
+    rationale: "S4: 루틴 강화 포인트 식별은 루틴 고정화의 핵심"
+  
+  - rule_id: "S4_R5_routine_fixation_and_monitoring"
+    priority: 91
+    description: "루틴 고정 및 모니터링"
+    conditions:
+      - field: "routine_effectiveness_data"
+        operator: ">="
+        value: 0.85
+      - field: "routine_execution_count"
+        operator: ">="
+        value: 5
+    action:
+      - "fix: 'signature_routine'"
+      - "monitor: 'routine_performance'"
+      - "generate_description: 'routine_fixation_and_monitoring'"
+      - "display_message: '루틴 효과성이 85% 이상이고 5회 이상 실행된 경우 시그너처 루틴으로 고정하고 모니터링합니다.'"
+    confidence: 0.88
+    rationale: "S4: 루틴 고정 및 모니터링은 시그너처 루틴 완성의 핵심"
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '시그너처 루틴 발견을 위해 온보딩 정보와 선호동 데이터를 수집하고 분석합니다.'"
+  confidence: 0.5
+  rationale: "기본 동작: 데이터 수집 및 분석 시작"

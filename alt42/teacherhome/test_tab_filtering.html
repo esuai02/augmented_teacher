@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Filtering Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .category-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .tab-section {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .tab-title {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .card-list {
+            margin-left: 20px;
+        }
+        .card-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #e9e9e9;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Plugin Tab Filtering Test</h1>
+        
+        <div class="controls">
+            <button onclick="loadPluginData()">Load Plugin Data</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+        
+        <div id="status" class="status loading" style="display:none;"></div>
+        
+        <div id="results"></div>
+    </div>
+
+    <!-- Load plugin client -->
+    <script src="plugin_settings_client.js"></script>
+    
+    <script>
+        // Initialize plugin client
+        window.ktmPluginClient = new KTMPluginSettingsClient('plugin_settings_api_real.php');
+        
+        // Categories and their tabs (from module files)
+        const categoryTabs = {
+            'quarterly': [
+                { title: '계획관리' },
+                { title: '학부모상담' }
+            ],
+            'weekly': [
+                { title: '계획관리' },
+                { title: '완성도 관리' },
+                { title: '종합진단' },
+                { title: '시험대비 진단' }
+            ],
+            'daily': [
+                { title: '시험대비' },
+                { title: '복습전략' },
+                { title: '학습분석' }
+            ],
+            'realtime': [
+                { title: '모니터링' },
+                { title: '개입관리' },
+                { title: '조정관리' }
+            ],
+            'interaction': [
+                { title: '소통관리' },
+                { title: '피드백' },
+                { title: '적응관리' }
+            ],
+            'bias': [
+                { title: '개념공부' },
+                { title: '문제풀이' },
+                { title: '학습관리' },
+                { title: '시험대비' },
+                { title: '실전연습' },
+                { title: '출결관련' }
+            ],
+            'development': [
+                { title: '컨텐츠 개발' },
+                { title: '앱 개발' },
+                { title: '개발도구' }
+            ]
+        };
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('status').style.display = 'none';
+        }
+        
+        async function loadPluginData() {
+            clearResults();
+            showStatus('Loading plugin data...', 'loading');
+            
+            const resultsDiv = document.getElementById('results');
+            let html = '<h2>Plugin Distribution by Category and Tab</h2>';
+            
+            try {
+                // Load all categories
+                for (const [category, tabs] of Object.entries(categoryTabs)) {
+                    html += `<div class="category-section">`;
+                    html += `<div class="category-title">📁 Category: ${category}</div>`;
+                    
+                    // Load all cards for this category
+                    await window.ktmPluginClient.loadCardSettings(category);
+                    const allCategoryCards = window.ktmPluginClient.getCardSettings(category) || [];
+                    
+                    console.log(`Category ${category} - Total cards: ${allCategoryCards.length}`);
+                    
+                    // Process each tab
+                    for (const tab of tabs) {
+                        // Filter cards for this specific tab
+                        const normalizedTabTitle = tab.title.trim();
+                        const tabCards = allCategoryCards.filter(card => {
+                            const normalizedCardTitle = (card.card_title || '').trim();
+                            return normalizedCardTitle === normalizedTabTitle;
+                        });
+                        
+                        html += `<div class="tab-section">`;
+                        html += `<div class="tab-title">📑 Tab: "${tab.title}" (${tabCards.length} plugins)</div>`;
+                        
+                        if (tabCards.length > 0) {
+                            html += '<div class="card-list">';
+                            tabCards.forEach(card => {
+                                html += `<div class="card-item">`;
+                                html += `${card.plugin_name || card.plugin_id} `;
+                                html += `<small>(card_title: "${card.card_title}")</small>`;
+                                html += `</div>`;
+                            });
+                            html += '</div>';
+                        } else {
+                            html += '<div class="card-list"><em>No plugins for this tab</em></div>';
+                        }
+                        
+                        html += '</div>';
+                    }
+                    
+                    // Check for cards without matching tabs
+                    const unmatchedCards = allCategoryCards.filter(card => {
+                        const normalizedCardTitle = (card.card_title || '').trim();
+                        return !tabs.some(tab => tab.title.trim() === normalizedCardTitle);
+                    });
+                    
+                    if (unmatchedCards.length > 0) {
+                        html += `<div class="tab-section" style="background: #ffe0e0;">`;
+                        html += `<div class="tab-title">⚠️ Cards with unmatched tab titles (${unmatchedCards.length})</div>`;
+                        html += '<div class="card-list">';
+                        unmatchedCards.forEach(card => {
+                            html += `<div class="card-item">`;
+                            html += `${card.plugin_name || card.plugin_id} `;
+                            html += `<small>(card_title: "${card.card_title}")</small>`;
+                            html += `</div>`;
+                        });
+                        html += '</div>';
+                        html += '</div>';
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                resultsDiv.innerHTML = html;
+                showStatus('Plugin data loaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error loading plugin data:', error);
+                showStatus('Error loading plugin data: ' + error.message, 'error');
+            }
+        }
+        
+        // Auto-load on page load
+        window.addEventListener('load', () => {
+            setTimeout(loadPluginData, 500);
+        });
+    </script>
+</body>
+</html>

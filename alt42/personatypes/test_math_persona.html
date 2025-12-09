@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="user-id" content="1">
+    <meta name="user-role" content="teacher">
+    <title>수학 인지관성 도감 테스트</title>
+    
+    <!-- CSS 파일 -->
+    <link rel="stylesheet" href="css/math-persona-system.css">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0e27;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .debug-info {
+            margin-top: 30px;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>수학 인지관성 도감 테스트 페이지</h1>
+        
+        <div class="status" id="status">
+            시스템 준비 중...
+        </div>
+        
+        <div>
+            <button class="test-button" onclick="openLibrary()">📚 도감 열기</button>
+            <button class="test-button" onclick="testAPI()">🔍 API 테스트</button>
+            <button class="test-button" onclick="reloadData()">🔄 데이터 새로고침</button>
+        </div>
+        
+        <div class="debug-info" id="debug">
+            <h3>디버그 정보</h3>
+            <div id="debug-content">
+                콘솔 로그가 여기에 표시됩니다...
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 파일 -->
+    <script src="js/MathPersonaSystem.js"></script>
+    
+    <script>
+        const debugDiv = document.getElementById('debug-content');
+        const statusDiv = document.getElementById('status');
+        
+        // 콘솔 로그 캡처
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addDebugMessage('[LOG] ' + args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addDebugMessage('[ERROR] ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addDebugMessage('[WARN] ' + args.join(' '), 'warn');
+        };
+        
+        function addDebugMessage(message, type) {
+            const time = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'warn' ? '#feca57' : '#48dbfb';
+            debugDiv.innerHTML += `<div style="color: ${color}">[${time}] ${message}</div>`;
+            debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+        
+        // 시스템 초기화 확인
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.mathPersonaSystem) {
+                    statusDiv.textContent = '✅ 시스템 준비 완료';
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    addDebugMessage('MathPersonaSystem 인스턴스 생성됨', 'log');
+                } else {
+                    statusDiv.textContent = '❌ 시스템 초기화 실패';
+                    statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+                    addDebugMessage('MathPersonaSystem 인스턴스를 찾을 수 없음', 'error');
+                }
+            }, 100);
+        });
+        
+        function openLibrary() {
+            if (window.mathPersonaSystem) {
+                addDebugMessage('도감 열기 시도...', 'log');
+                window.mathPersonaSystem.open();
+            } else {
+                alert('시스템이 아직 준비되지 않았습니다.');
+            }
+        }
+        
+        async function testAPI() {
+            addDebugMessage('API 테스트 시작...', 'log');
+            
+            try {
+                const response = await fetch('api/get_math_patterns.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: 1
+                    })
+                });
+                
+                const data = await response.json();
+                addDebugMessage('API 응답: ' + JSON.stringify(data, null, 2), 'log');
+                
+                if (data.success) {
+                    alert(`API 테스트 성공!\n패턴: ${data.patterns.length}개\n카테고리: ${data.categories.length}개`);
+                } else {
+                    alert('API 오류: ' + (data.error || '알 수 없는 오류'));
+                }
+            } catch (error) {
+                addDebugMessage('API 오류: ' + error.message, 'error');
+                alert('API 호출 실패: ' + error.message);
+            }
+        }
+        
+        async function reloadData() {
+            if (window.mathPersonaSystem) {
+                addDebugMessage('데이터 새로고침 시작...', 'log');
+                await window.mathPersonaSystem.loadDataFromDB();
+                alert('데이터 새로고침 완료!');
+            } else {
+                alert('시스템이 아직 준비되지 않았습니다.');
+            }
+        }
+    </script>
+</body>
+</html>

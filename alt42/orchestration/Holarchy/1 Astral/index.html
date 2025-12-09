@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WXSPERTA 홀론 네비게이터</title>
+    <link rel="stylesheet" href="holon-navigator.css">
+</head>
+<body>
+    <!-- Background Effects -->
+    <div class="bg-effect">
+        <div class="bg-blob bg-blob-1"></div>
+        <div class="bg-blob bg-blob-2"></div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Header -->
+    <header>
+        <div>
+            <h1 class="header-title">WXSPERTA 홀론 네비게이터</h1>
+            <div style="display: flex; align-items: center; margin-top: 0.25rem;">
+                <span id="modeBadge" class="mode-badge explore">🔭 WA 탐색 모드</span>
+                <span id="modeDesc" class="mode-desc">전체 홀론 차원 이동</span>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button id="prevBtn" class="btn btn-nav" onclick="handleHistoryNav(-1)">← 이전</button>
+            <span id="historyCounter" class="history-counter">1/1</span>
+            <button id="nextBtn" class="btn btn-nav" onclick="handleHistoryNav(1)" disabled>다음 →</button>
+            <button class="btn btn-reset" onclick="handleReset()">리셋</button>
+        </div>
+    </header>
+
+    <!-- Path -->
+    <div id="pathContainer" class="path-container" style="display: none;">
+        <span class="path-label">경로:</span>
+        <span class="path-root">ROOT</span>
+        <span id="pathContent"></span>
+    </div>
+
+    <!-- Main -->
+    <main>
+        <!-- Tab System -->
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('holon')">📊 홀론 정보</button>
+            <button class="tab-btn" onclick="switchTab('help')">❓ 도움말</button>
+        </div>
+
+        <!-- Tab Content: Holon Info -->
+        <div id="holonTab" class="tab-content active">
+            <div class="info-panel">
+                <!-- Title & Stats -->
+                <div class="panel-card">
+                    <h2 id="holonTitle" class="panel-title">Self-Evolving K-12 EdTech</h2>
+                    <div class="stats-row">
+                        <span id="levelBadge" class="stat-badge level">레벨: 0</span>
+                        <span id="depthBadge" class="stat-badge depth">깊이: 0</span>
+                        <span id="outputBadge" class="stat-badge output">OUTPUT: 0</span>
+                    </div>
+                </div>
+
+                <!-- Selected Node Panel (hidden by default) -->
+                <div id="selectedPanel" class="selected-panel" style="display: none;"></div>
+
+                <!-- Explore Mode Summary (shown by default) -->
+                <div id="explorePanel" class="panel-card" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                    <div class="accordion-controls">
+                        <div class="accordion-title">
+                            <span class="accordion-title-icon">🔭</span>
+                            <h3 class="accordion-title-text">WXSPERTA 홀론 노드</h3>
+                        </div>
+                        <button id="expandAllBtn" class="btn-expand" onclick="toggleAllAccordions()">📂 전체 펼치기</button>
+                    </div>
+                    <div id="accordionList" class="accordion-list"></div>
+                </div>
+
+                <!-- Output Log (hidden by default) -->
+                <div id="outputLogPanel" class="panel-card" style="display: none; background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                    <h3 class="log-title">
+                        <span class="log-icon">📋</span> 고도화 OUTPUT 로그
+                    </h3>
+                    <div id="outputLogList" class="log-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Help -->
+        <div id="helpTab" class="tab-content">
+            <div class="info-panel">
+                <div class="panel-card" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                    <h3 style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 1rem;">📐 6차원 탐색 방향</h3>
+                    <p style="color: #9ca3af; font-size: 0.875rem; margin-bottom: 1rem;">
+                        우측 하단의 휠에서 방향을 선택하여 홀론을 탐색하세요. 각 방향은 사고의 흐름을 나타냅니다.
+                    </p>
+                    <div id="directionGuide" class="direction-guide"></div>
+                </div>
+
+                <div class="panel-card" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                    <h3 style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 1rem;">🎯 사용 방법</h3>
+                    <div style="color: #9ca3af; font-size: 0.875rem; line-height: 1.8;">
+                        <p><strong style="color: #4ECDC4;">1. WA 탐색 모드</strong> - 노드를 선택하지 않은 상태에서 방향을 선택하면 새로운 홀론으로 이동합니다.</p>
+                        <p><strong style="color: #9B59B6;">2. 고도화 모드</strong> - 특정 노드(W,X,S,P,E,R,T,A)를 클릭하면 해당 노드를 고도화하는 모드로 전환됩니다.</p>
+                        <p><strong style="color: #FFEAA7;">3. 방향 선택</strong> - 휠 중앙을 클릭하면 6방향 버튼이 나타납니다.</p>
+                        <p><strong style="color: #FF6B6B;">4. 히스토리</strong> - 상단의 이전/다음 버튼으로 탐색 이력을 이동할 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <div class="panel-card" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08);">
+                    <h3 style="color: white; font-size: 1rem; font-weight: bold; margin-bottom: 1rem;">🔤 WXSPERTA 요소</h3>
+                    <div id="elementGuide" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Template Selector -->
+    <div class="template-selector">
+        <button id="templateBtn" class="template-btn" onclick="toggleTemplateDropdown()">
+            <span>📋</span>
+            <span>홀론 템플릿 보기</span>
+            <span id="templateArrow">▼</span>
+        </button>
+        <div id="templateDropdown" class="template-dropdown">
+            <div class="template-dropdown-title">🎭 홀론 역할 템플릿</div>
+            <div id="templateList"></div>
+        </div>
+    </div>
+
+    <!-- Template Form Overlay Background -->
+    <div id="templateFormOverlay" class="template-form-overlay" onclick="closeTemplateForm()"></div>
+    
+    <!-- Template Form Panel - 중앙 전체 높이 오버레이 -->
+    <div id="templateFormPanel" class="template-form-panel">
+        <div class="template-form-header">
+            <div class="template-form-title">
+                <span id="templateFormIcon">🎭</span>
+                <span id="templateFormTitleText">템플릿 양식</span>
+            </div>
+            <button class="template-form-close" onclick="closeTemplateForm()">×</button>
+        </div>
+        <div id="templateFormContent" class="template-form-content"></div>
+    </div>
+
+    <!-- Wheel Container - Fixed Bottom Right -->
+    <div class="wheel-container">
+        <div id="wheel" class="wheel">
+            <!-- Outer Ring -->
+            <div id="wheelRing" class="wheel-ring"></div>
+
+            <!-- Element Buttons (will be generated by JS) -->
+            <div id="elementButtons"></div>
+
+            <!-- Center Button -->
+            <div id="centerBtn" class="center-btn explore" onclick="toggleDirections()">
+                <span id="centerIcon" class="center-icon" style="color: white;">⬡</span>
+                <span id="centerText" class="center-text" style="color: rgba(255,255,255,0.8);">방향선택</span>
+            </div>
+
+            <!-- Direction Buttons -->
+            <div id="directionContainer" class="direction-container">
+                <!-- L Button (Left Half) -->
+                <div class="dir-btn-half left" onclick="handleDirectionSelect('L')" title="대안: 대안 탐색, 관점 전환, 반대 방향 사고"
+                     style="background: linear-gradient(135deg, rgba(255,234,167,0.2), rgba(255,234,167,0.35)); border: 2px solid #FFEAA7; border-right: 1px solid #FFEAA7; color: #FFEAA7;">
+                    <span style="font-size: 1.25rem; font-weight: bold;">L</span>
+                    <span style="font-size: 10px;">대안</span>
+                </div>
+                <!-- R Button (Right Half) -->
+                <div class="dir-btn-half right" onclick="handleDirectionSelect('R')" title="수렴: 정답 수렴, 기준 정렬, 체계화·구조화"
+                     style="background: linear-gradient(135deg, rgba(150,206,180,0.2), rgba(150,206,180,0.35)); border: 2px solid #96CEB4; border-left: 1px solid #96CEB4; color: #96CEB4;">
+                    <span style="font-size: 1.25rem; font-weight: bold;">R</span>
+                    <span style="font-size: 10px;">수렴</span>
+                </div>
+                <!-- Close Button -->
+                <div class="close-btn" onclick="toggleDirections()">×</div>
+                <!-- U, D, B, F Buttons (will be generated by JS) -->
+                <div id="outerDirButtons"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="holon-navigator.js"></script>
+</body>
+</html>

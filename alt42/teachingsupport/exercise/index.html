@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathTeach Pro - 수학 교사 훈련 시스템</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #252525;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #2a2a2a;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 로딩 화면 */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--bg-secondary);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 메인 레이아웃 */
+        .app-container {
+            display: flex;
+            height: 100vh;
+            background: var(--bg-primary);
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+            transition: width 0.3s ease;
+            position: relative;
+            z-index: 100;
+        }
+
+        /* 사이드바 최소화 시 중앙 토글 버튼 */
+        .sidebar-toggle-center {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 99;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .sidebar-toggle-center:hover {
+            background: var(--accent);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+            padding: 0;
+            border-right: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed .nav-item {
+            display: none;
+        }
+        
+        .sidebar.collapsed .toggle-sidebar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            opacity: 1;
+        }
+        
+        .sidebar.collapsed .toggle-sidebar:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: var(--accent-hover);
+        }
+
+        /* 플로팅 메뉴 버튼 - 제거 (사이드바가 항상 보이므로 불필요) */
+        .floating-menu-btn {
+            display: none !important;
+        }
+
+        .sidebar.expanded {
+            width: 260px;
+        }
+
+        .nav-item {
+            width: 240px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 20px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar.expanded .nav-item {
+            width: 240px;
+            justify-content: flex-start;
+            padding-left: 20px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+        }
+
+        .nav-label {
+            margin-left: 20px;
+            font-size: 14px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .sidebar.expanded .nav-label {
+            opacity: 1;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+        
+
+        .toggle-sidebar:hover {
+            background: var(--accent);
+            opacity: 1;
+        }
+
+        .toggle-sidebar svg {
+            width: 20px;
+            height: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* 사이드바 최소화 시 메인 컨텐츠 여백 */
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 0;
+        }
+
+        .sidebar.collapsed ~ .main-content .content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 메인 콘텐츠 영역 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        /* 헤더 */
+        .header {
+            height: 80px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 3rem;
+            position: relative;
+            z-index: 50;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* 콘텐츠 영역 */
+        .content {
+            flex: 1;
+            padding: 3rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        /* 섹션별 스타일 */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 대시보드 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 진행 상황 */
+        .progress-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 문항 입력 섹션 */
+        .input-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 2rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea.input-field {
+            min-height: 150px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* 전략 결과 */
+        .strategy-result {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid var(--accent);
+            animation: slideUp 0.5s ease;
+        }
+
+        /* 문항 이미지와 결과 레이아웃 */
+        .problem-display-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            height: calc(100vh - 160px);
+        }
+
+        .problem-image-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .problem-image-section img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .problem-text-display {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 18px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .result-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @media (max-width: 1024px) {
+            .problem-display-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .strategy-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .strategy-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+
+        /* 시뮬레이션 섹션 */
+        .simulation-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .participants {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .avatar.teacher {
+            background: var(--success);
+        }
+
+        .participant-info h4 {
+            font-size: 16px;
+            margin-bottom: 0.125rem;
+        }
+
+        .participant-info p {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.student {
+            flex-direction: row;
+        }
+
+        .message.teacher {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.teacher .message-avatar {
+            background: var(--success);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--bg-secondary);
+        }
+
+        .message.teacher .message-content {
+            background: var(--accent);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .chat-input-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+        }
+
+        .chat-tip {
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* 평가 섹션 */
+        .checklist-container {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .checklist-category {
+            margin-bottom: 2rem;
+        }
+
+        .checklist-category h3 {
+            font-size: 20px;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            transform: translateX(4px);
+            background: var(--bg-primary);
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+        }
+
+        /* 모달 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.5s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--error);
+            transform: rotate(90deg);
+        }
+
+        /* 알림 */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 10px 30px var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+
+        /* 학생 페르소나 선택 */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .persona-card {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .persona-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .persona-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .persona-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+        }
+
+        .persona-card.selected {
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .persona-level {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .persona-level.high {
+            background: var(--success);
+            color: white;
+        }
+
+        .persona-level.mid {
+            background: var(--warning);
+            color: white;
+        }
+
+        .persona-level.low {
+            background: var(--error);
+            color: white;
+        }
+
+        /* 페르소나 설명 편집 가능 */
+        .persona-description {
+            outline: none;
+            transition: background-color 0.3s ease;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .persona-description:focus {
+            background: var(--bg-primary);
+            box-shadow: inset 0 0 0 2px var(--accent);
+        }
+
+        .persona-description[contenteditable="true"]:hover {
+            background: var(--bg-tertiary);
+            cursor: text;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .chat-container {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            
+            .sidebar.expanded {
+                width: 200px;
+            }
+            
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .header {
+                padding: 0 1.5rem;
+            }
+        }
+
+        /* 스크롤바 스타일링 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* 툴팁 */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* 이미지 업로드 영역 */
+        .upload-area {
+            background: var(--bg-tertiary);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .upload-placeholder p {
+            margin: 0.5rem 0;
+            color: var(--text-primary);
+        }
+
+        .image-preview {
+            position: relative;
+            max-width: 100%;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--error);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .remove-image:hover {
+            transform: scale(1.1);
+        }
+
+
+        /* 플로팅 액션 버튼 */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        /* 포커스 모드 */
+        .focus-mode .sidebar,
+        .focus-mode .header {
+            opacity: 0.3;
+            transition: opacity 0.5s ease;
+        }
+
+        .focus-mode .sidebar:hover,
+        .focus-mode .header:hover {
+            opacity: 1;
+        }
+
+        /* 데이터 시각화 */
+        .chart-container {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            height: 400px;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+    </style>
+    <!-- MathJax for math rendering -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    MathJax.startup.promise.then(() => {
+                        console.log('MathJax 초기화 완료');
+                    });
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+</head>
+<body>
+    <!-- 로딩 화면 -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <!-- 플로팅 메뉴 버튼 -->
+    <div class="floating-menu-btn" id="floatingMenuBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+    </div>
+
+    <!-- 메인 앱 컨테이너 -->
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="nav-item active" data-section="dashboard">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="nav-label">대시보드</span>
+            </div>
+            <div class="nav-item" data-section="strategy">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                </svg>
+                <span class="nav-label">지도 전략</span>
+            </div>
+            <div class="nav-item" data-section="simulation">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span class="nav-label">수업 시뮬레이션</span>
+            </div>
+            <div class="nav-item" data-section="evaluation">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                <span class="nav-label">자기 평가</span>
+            </div>
+            <div class="nav-item" data-section="progress">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11 7h2v10h-2zm4 0h2v10h-2zm-8 0h2v10H7z"/>
+                </svg>
+                <span class="nav-label">진행 상황</span>
+            </div>
+            <div class="toggle-sidebar" id="toggleSidebar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="toggleIcon">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </div>
+        </nav>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 헤더 -->
+            <header class="header">
+                <h1 class="header-title" id="headerTitle">대시보드</h1>
+                <div class="header-actions">
+                    <button class="btn-icon tooltip" data-tooltip="포커스 모드" id="focusMode">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon tooltip" data-tooltip="알림">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon tooltip" data-tooltip="설정">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 콘텐츠 영역 -->
+            <div class="content">
+                <!-- 대시보드 섹션 -->
+                <section class="section active" id="dashboard">
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">완료한 훈련 세션</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">전체 진행률</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">4.5</div>
+                            <div class="stat-label">평균 학생 만족도</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">마스터한 지도 전략</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h2>이번 주 학습 목표</h2>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">7개 중 5개 완료</p>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3 style="margin-bottom: 1rem;">향상도 추이</h3>
+                        <div class="chart-placeholder">
+                            [차트 영역 - 시간에 따른 세 가지 핵심 역량 향상도 그래프]
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 지도 전략 섹션 -->
+                <section class="section" id="strategy">
+                    <div class="input-section">
+                        <h2 style="margin-bottom: 2rem;">문항/개념 분석 및 지도 전략</h2>
+                        
+                        <div class="input-group">
+                            <label class="input-label">문제 이미지 업로드 (선택사항)</label>
+                            <div class="upload-area" id="uploadArea">
+                                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+                                <div class="upload-placeholder" id="uploadPlaceholder">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="var(--text-secondary)">
+                                        <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                                    </svg>
+                                    <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                    <p style="font-size: 12px; color: var(--text-secondary);">JPG, PNG, GIF (최대 5MB)</p>
+                                </div>
+                                <div class="image-preview" id="imagePreview" style="display: none;">
+                                    <img id="previewImg" src="" alt="Preview">
+                                    <button class="remove-image" id="removeImage">×</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-group" style="display: flex; align-items: center; gap: 1rem;">
+                            <label class="input-label" style="margin-bottom: 0; flex-shrink: 0;">수학 개념 또는 문제</label>
+                            <input type="text" class="input-field" id="conceptInput" placeholder="예: 이차방정식의 판별식 D = b² - 4ac에서 D > 0일 때의 의미를 설명하는 방법" style="margin-bottom: 0;">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">대상 학생 수준</label>
+                            <select class="input-field" id="levelSelect">
+                                <option value="high">상위권 (개념 이해도 높음)</option>
+                                <option value="mid">중위권 (기본 개념 이해)</option>
+                                <option value="low">하위권 (기초 개념 부족)</option>
+                            </select>
+                        </div>
+
+                        <button class="btn-primary" id="analyzeBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+                            </svg>
+                            전략 생성
+                        </button>
+                    </div>
+
+                    <div class="problem-display-container" id="strategyDisplay" style="display: none;">
+                        <div class="problem-image-section">
+                            <div id="strategyProblemDisplay"></div>
+                        </div>
+                        <div class="result-section">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h3 style="margin: 0;">맞춤형 지도 전략</h3>
+                                <button class="btn-icon" id="newStrategyBtn" title="새 전략 생성">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="strategy-card">
+                                <h4 class="strategy-title">1. 피드백 전략</h4>
+                                <p id="strategy1">학생이 판별식의 값만 구하고 의미를 모를 때: "D > 0이 나왔네요. 이게 그래프에서는 어떤 모습일까요?" → 포물선과 x축의 관계로 유도</p>
+                            </div>
+
+                            <div class="strategy-card">
+                                <h4 class="strategy-title">2. 개념 설명 전략</h4>
+                                <p id="strategy2">시각적 표현: 3가지 그래프(D>0, D=0, D<0)를 그려 비교. 비유: "판별식은 이차방정식이 실근을 가질지 판단하는 '신호등' 같은 것"</p>
+                            </div>
+
+                            <div class="strategy-card">
+                                <h4 class="strategy-title">3. 인지적 도전 설계</h4>
+                                <p id="strategy3">먼저 "x² + 2x + 5 = 0을 풀어보세요"라고 제시 → 학생이 근의 공식 적용 시 음수 판별식 발견 → "왜 답이 안 나올까?" 혼란 유도 → 판별식 개념 도입</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 시뮬레이션 섹션 -->
+                <section class="section" id="simulation">
+                    <h2 style="margin-bottom: 2rem;">가상 학생과의 수업 시뮬레이션</h2>
+                    
+                    <!-- 페르소나 선택 -->
+                    <div id="personaSelection">
+                        <!-- 문제 입력 영역 -->
+                        <div class="input-section" style="margin-bottom: 2rem;">
+                            <h3>실습할 문제 입력</h3>
+                            
+                            <div class="input-group">
+                                <label class="input-label">문제 이미지 (선택사항)</label>
+                                <div class="upload-area" id="simulationUploadArea">
+                                    <input type="file" id="simulationImageInput" accept="image/*" style="display: none;">
+                                    <div class="upload-placeholder" id="simulationUploadPlaceholder">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="var(--text-secondary)">
+                                            <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                                        </svg>
+                                        <p>이미지를 드래그하거나 클릭하여 업로드</p>
+                                        <p style="font-size: 12px; color: var(--text-secondary);">JPG, PNG, GIF (최대 5MB)</p>
+                                    </div>
+                                    <div class="image-preview" id="simulationImagePreview" style="display: none;">
+                                        <img id="simulationPreviewImg" src="" alt="Preview">
+                                        <button class="remove-image" id="simulationRemoveImage">×</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group" style="display: flex; align-items: center; gap: 1rem; margin-top: 1rem;">
+                                <label class="input-label" style="margin-bottom: 0; flex-shrink: 0;">수학 문제 (텍스트)</label>
+                                <input type="text" class="input-field" id="simulationProblemText" placeholder="예: x² + 5x + 6 = 0을 풀어보세요" style="margin-bottom: 0;">
+                            </div>
+                        </div>
+
+                        <h3>학생 페르소나 선택</h3>
+                        <div class="persona-grid">
+                            <div class="persona-card" data-persona="curious-high">
+                                <span class="persona-level high">상위권</span>
+                                <h4>호기심 많은 민준</h4>
+                                <p class="persona-description" contenteditable="true">수학적 직관이 뛰어나고 심화 개념에 관심이 많음. 증명과 일반화를 좋아함.</p>
+                            </div>
+                            <div class="persona-card" data-persona="careful-mid">
+                                <span class="persona-level mid">중위권</span>
+                                <h4>신중한 서연</h4>
+                                <p class="persona-description" contenteditable="true">단계적 설명을 선호하며, 충분한 연습이 필요. 실수를 줄이려 노력함.</p>
+                            </div>
+                            <div class="persona-card" data-persona="struggling-low">
+                                <span class="persona-level low">하위권</span>
+                                <h4>기초 부족 지호</h4>
+                                <p class="persona-description" contenteditable="true">기본 개념 이해가 부족하고 자신감이 낮음. 격려와 반복 설명이 필요.</p>
+                            </div>
+                        </div>
+                        <button class="btn-primary" id="startSimulation" style="margin-top: 2rem;">시뮬레이션 시작</button>
+                    </div>
+
+                    <!-- 시뮬레이션 화면 -->
+                    <div class="problem-display-container" id="simulationDisplay" style="display: none;">
+                        <div class="problem-image-section">
+                            <div id="simulationProblemDisplay"></div>
+                        </div>
+                        <div class="result-section">
+                            <h3 style="margin-bottom: 1rem;">수업 시뮬레이션</h3>
+                            <div class="simulation-container" id="simulationArea">
+                                <div class="chat-container">
+                                    <div class="chat-header">
+                                        <div class="participants">
+                                            <div class="participant">
+                                                <div class="avatar">학</div>
+                                                <div class="participant-info">
+                                                    <h4 id="studentName">민준</h4>
+                                                    <p id="studentLevel">상위권 학생</p>
+                                                </div>
+                                            </div>
+                                            <div class="participant">
+                                                <div class="avatar teacher">교</div>
+                                                <div class="participant-info">
+                                                    <h4>교사 (나)</h4>
+                                                    <p>지도 중...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chat-area" id="chatArea">
+                                        <!-- 모든 대화 메시지가 여기에 표시됩니다 -->
+                                    </div>
+                                    <div class="chat-input-container">
+                                        <div class="chat-input">
+                                            <input type="text" class="input-field" id="teacherInput" placeholder="답변을 입력하세요...">
+                                            <button class="btn-primary" id="sendMessage">전송</button>
+                                        </div>
+                                        <div class="chat-tip">
+                                            💡 팁: 학생의 수준을 고려하여 적절한 설명과 질문을 활용하세요.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 자기 평가 섹션 -->
+                <section class="section" id="evaluation">
+                    <h2 style="margin-bottom: 2rem;">MQI 기반 수업 품질 자기 평가</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Mathematical Quality of Instruction (MQI) 기준에 따른 자기 평가</p>
+                    
+                    <div class="checklist-container">
+                        <div class="checklist-category">
+                            <h3>1. 반응적 스캐폴딩 (Responsive Scaffolding)</h3>
+                            <div class="checklist-item" data-item="scaffold1">
+                                <div class="checkbox"></div>
+                                <label>컨틴전시: 학생의 현재 이해 상태에 맞춰 개입했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="scaffold2">
+                                <div class="checkbox"></div>
+                                <label>페이딩: 구체적 도움에서 추상적 힌트로 점진적으로 전환했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="scaffold3">
+                                <div class="checkbox"></div>
+                                <label>책임 이양: 학생이 스스로 설명하고 정당화하도록 유도했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="scaffold4">
+                                <div class="checkbox"></div>
+                                <label>기다림 시간: 질문 후 3초, 응답 후 3초를 기다렸다</label>
+                            </div>
+                        </div>
+
+                        <div class="checklist-category">
+                            <h3>2. 오류 활용 (Error Handling)</h3>
+                            <div class="checklist-item" data-item="error1">
+                                <div class="checkbox"></div>
+                                <label>오류 재구조화: "틀렸다" 대신 관계/정의/표현 오류로 분류했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="error2">
+                                <div class="checkbox"></div>
+                                <label>전문적 주목: 오류의 원인을 즉시 파악하고 적절히 대응했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="error3">
+                                <div class="checkbox"></div>
+                                <label>생산적 활용: 오류를 학습 기회로 전환했다</label>
+                            </div>
+                        </div>
+
+                        <div class="checklist-category">
+                            <h3>3. 인지적 긴장 설계 (Cognitive Tension)</h3>
+                            <div class="checklist-item" data-item="tension1">
+                                <div class="checkbox"></div>
+                                <label>생산적 혼란: 의도적으로 인지적 충돌을 유발했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="tension2">
+                                <div class="checkbox"></div>
+                                <label>호기심 전환: 혼란을 "왜?"라는 질문으로 전환시켰다</label>
+                            </div>
+                            <div class="checklist-item" data-item="tension3">
+                                <div class="checkbox"></div>
+                                <label>해결 경로: 혼란 후 반드시 이해에 도달하도록 안내했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="tension4">
+                                <div class="checkbox"></div>
+                                <label>개념 갈등: 잘못된 선개념을 자극하여 올바른 이해로 전환했다</label>
+                            </div>
+                        </div>
+
+                        <div class="checklist-category">
+                            <h3>4. 개념적 풍부성 (Conceptual Richness)</h3>
+                            <div class="checklist-item" data-item="concept1">
+                                <div class="checkbox"></div>
+                                <label>다중 표현: 시각적, 언어적, 기호적 표현을 통합했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="concept2">
+                                <div class="checkbox"></div>
+                                <label>개념 연결: 새로운 개념을 기존 지식과 연결했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="concept3">
+                                <div class="checkbox"></div>
+                                <label>수학적 정확성: 용어와 표기를 정확하게 사용했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="concept4">
+                                <div class="checkbox"></div>
+                                <label>일반화 유도: 특수한 경우에서 일반적 원리로 확장했다</label>
+                            </div>
+                        </div>
+
+                        <div class="checklist-category">
+                            <h3>5. 메타인지 촉진 (Metacognition)</h3>
+                            <div class="checklist-item" data-item="meta1">
+                                <div class="checkbox"></div>
+                                <label>사고 과정 명시화: 학생이 자신의 사고를 설명하도록 했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="meta2">
+                                <div class="checkbox"></div>
+                                <label>자기 점검: "왜 그렇게 생각했는지" 되돌아보게 했다</label>
+                            </div>
+                            <div class="checklist-item" data-item="meta3">
+                                <div class="checkbox"></div>
+                                <label>전략 평가: 여러 해결 방법을 비교하고 평가하게 했다</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 12px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--accent);">평가 점수</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span id="checkedCount" style="font-size: 24px; font-weight: bold;">0</span>
+                                <span style="color: var(--text-secondary);">/ <span id="totalCount">19</span> 항목</span>
+                            </div>
+                            <div>
+                                <span style="color: var(--text-secondary);">MQI 수준: </span>
+                                <span id="mqiLevel" style="font-size: 18px; font-weight: bold;">-</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar" style="margin-top: 1rem;">
+                            <div class="progress-fill" id="evaluationProgress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="saveEvaluation" style="margin-top: 2rem;">평가 저장</button>
+                </section>
+
+                <!-- 진행 상황 섹션 -->
+                <section class="section" id="progress">
+                    <h2 style="margin-bottom: 2rem;">전체 진행 상황</h2>
+                    
+                    <div class="progress-section">
+                        <h3>피드백 품질 향상</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">75% 완료</p>
+                    </div>
+
+                    <div class="progress-section">
+                        <h3>개념적 설명력 강화</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 60%;"></div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">60% 완료</p>
+                    </div>
+
+                    <div class="progress-section">
+                        <h3>인지적 긴장감 생성</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%;"></div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-top: 0.5rem;">45% 완료</p>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>주차별 활동 기록</h3>
+                        <div class="chart-placeholder">
+                            [주차별 훈련 시간 및 활동 분포 차트]
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 플로팅 액션 버튼 -->
+    <a href="https://claude.ai/public/artifacts/0aea44c0-3e72-4bc1-b8d3-5f9c52774444?fullscreen=true" target="_blank" style="text-decoration: none;">
+        <button class="fab tooltip" data-tooltip="도움말">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z"/>
+            </svg>
+        </button>
+    </a>
+
+    <!-- 알림 -->
+    <div class="notification success" id="notification">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <span id="notificationText">저장되었습니다!</span>
+    </div>
+
+    <script>
+        // DOM 요소들
+        const loadingScreen = document.getElementById('loadingScreen');
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const floatingMenuBtn = document.getElementById('floatingMenuBtn');
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section');
+        const headerTitle = document.getElementById('headerTitle');
+        const focusModeBtn = document.getElementById('focusMode');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+
+        // 초기화
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                loadingScreen.classList.add('hide');
+            }, 1000);
+        });
+
+        // 사이드바 토글
+        toggleSidebar.addEventListener('click', () => {
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (sidebar.classList.contains('collapsed')) {
+                sidebar.classList.remove('collapsed');
+                // X 아이콘으로 변경
+                toggleIcon.innerHTML = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
+            } else {
+                sidebar.classList.add('collapsed');
+                // 메뉴 아이콘으로 변경
+                toggleIcon.innerHTML = '<path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>';
+            }
+        });
+
+        // 플로팅 메뉴 버튼 (열기)
+        floatingMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            const toggleIcon = document.getElementById('toggleIcon');
+            toggleIcon.innerHTML = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
+        });
+
+
+        // 네비게이션
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetSection = item.dataset.section;
+                
+                // 활성 네비게이션 업데이트
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+                
+                // 섹션 전환
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === targetSection) {
+                        section.classList.add('active');
+                    }
+                });
+                
+                // 시뮬레이션 탭 클릭 시 문항 자동 복사
+                if (targetSection === 'simulation' && (strategyProblemText || strategyProblemImage)) {
+                    document.getElementById('simulationProblemText').value = strategyProblemText;
+                    if (strategyProblemImage) {
+                        simulationProblemImage = strategyProblemImage;
+                        simPreviewImg.src = simulationProblemImage;
+                        simUploadPlaceholder.style.display = 'none';
+                        simImagePreview.style.display = 'block';
+                    }
+                }
+                
+                // 지도 전략 탭 클릭 시 입력 섹션 표시
+                if (targetSection === 'strategy') {
+                    const inputSection = document.querySelector('#strategy .input-section');
+                    const strategyDisplay = document.getElementById('strategyDisplay');
+                    // 이미 전략이 생성되어 있으면 결과만 표시
+                    if (strategyDisplay.style.display === 'grid') {
+                        inputSection.style.display = 'none';
+                    } else {
+                        inputSection.style.display = 'block';
+                    }
+                }
+                
+                // 헤더 타이틀 업데이트
+                const titles = {
+                    dashboard: '대시보드',
+                    strategy: '지도 전략',
+                    simulation: '수업 시뮬레이션',
+                    evaluation: '자기 평가',
+                    progress: '진행 상황'
+                };
+                headerTitle.textContent = titles[targetSection];
+            });
+        });
+
+        // 포커스 모드
+        let focusMode = false;
+        focusModeBtn.addEventListener('click', () => {
+            focusMode = !focusMode;
+            document.body.classList.toggle('focus-mode', focusMode);
+            showNotification(focusMode ? '포커스 모드 활성화' : '포커스 모드 해제', 'success');
+        });
+
+        // 알림 표시 함수
+        function showNotification(message, type = 'success') {
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 지도 전략 분석
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const strategyResult = document.getElementById('strategyResult');
+        
+        analyzeBtn.addEventListener('click', () => {
+            const concept = document.getElementById('conceptInput').value;
+            const level = document.getElementById('levelSelect').value;
+            
+            if (!concept) {
+                showNotification('문항이나 개념을 입력해주세요', 'warning');
+                return;
+            }
+            
+            // 로딩 애니메이션
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span> 분석 중...';
+            
+            // 시뮬레이션: 2초 후 결과 표시
+            setTimeout(() => {
+                strategyResult.style.display = 'block';
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg> 전략 생성`;
+                showNotification('지도 전략이 생성되었습니다', 'success');
+            }, 2000);
+        });
+
+        // 시뮬레이션 관련 변수
+        const personaCards = document.querySelectorAll('.persona-card');
+        const startSimulation = document.getElementById('startSimulation');
+        const personaSelection = document.getElementById('personaSelection');
+        const simulationArea = document.getElementById('simulationArea');
+        let selectedPersona = null;
+        let simulationProblemText = '';
+        let simulationProblemImage = null;
+        let conversationHistory = [];
+
+        // 시뮬레이션 이미지 업로드 관련
+        const simUploadArea = document.getElementById('simulationUploadArea');
+        const simImageInput = document.getElementById('simulationImageInput');
+        const simUploadPlaceholder = document.getElementById('simulationUploadPlaceholder');
+        const simImagePreview = document.getElementById('simulationImagePreview');
+        const simPreviewImg = document.getElementById('simulationPreviewImg');
+        const simRemoveImage = document.getElementById('simulationRemoveImage');
+
+        // 시뮬레이션 이미지 업로드 이벤트
+        simUploadArea.addEventListener('click', (e) => {
+            if (e.target.id !== 'simulationRemoveImage') {
+                simImageInput.click();
+            }
+        });
+
+        simUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            simUploadArea.classList.add('dragover');
+        });
+
+        simUploadArea.addEventListener('dragleave', () => {
+            simUploadArea.classList.remove('dragover');
+        });
+
+        simUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            simUploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleSimulationImageUpload(files[0]);
+            }
+        });
+
+        simImageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleSimulationImageUpload(e.target.files[0]);
+            }
+        });
+
+        simRemoveImage.addEventListener('click', (e) => {
+            e.stopPropagation();
+            simulationProblemImage = null;
+            simImagePreview.style.display = 'none';
+            simUploadPlaceholder.style.display = 'block';
+            simImageInput.value = '';
+        });
+
+        function handleSimulationImageUpload(file) {
+            if (file.type.startsWith('image/')) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('파일 크기는 5MB 이하여야 합니다', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    simulationProblemImage = e.target.result;
+                    simPreviewImg.src = simulationProblemImage;
+                    simUploadPlaceholder.style.display = 'none';
+                    simImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                showNotification('이미지 파일만 업로드 가능합니다', 'error');
+            }
+        }
+
+        personaCards.forEach(card => {
+            card.addEventListener('click', () => {
+                personaCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedPersona = card.dataset.persona;
+            });
+        });
+
+        startSimulation.addEventListener('click', async () => {
+            if (!selectedPersona) {
+                showNotification('학생 페르소나를 선택해주세요', 'warning');
+                return;
+            }
+            
+            simulationProblemText = document.getElementById('simulationProblemText').value.trim();
+            
+            // 로딩 표시
+            startSimulation.disabled = true;
+            startSimulation.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span> 준비 중...';
+            
+            try {
+                // 편집된 페르소나 설명 가져오기
+                const personaCard = document.querySelector(`[data-persona="${selectedPersona}"]`);
+                const customDescription = personaCard ? personaCard.querySelector('.persona-description').textContent : '';
+                
+                // API 호출로 초기 학생 메시지 생성
+                const response = await axios.post('./simulation_api.php', {
+                    action: 'start',
+                    problemText: simulationProblemText,
+                    problemImage: simulationProblemImage,
+                    persona: selectedPersona,
+                    customDescription: customDescription
+                });
+                
+                if (response.data.success) {
+                    personaSelection.style.display = 'none';
+                    
+                    // 문항 표시
+                    const problemDisplay = document.getElementById('simulationProblemDisplay');
+                    problemDisplay.innerHTML = '';
+                    if (simulationProblemImage) {
+                        problemDisplay.innerHTML = `<img src="${simulationProblemImage}" alt="문제 이미지">`;
+                    } else if (simulationProblemText) {
+                        problemDisplay.innerHTML = `<div class="problem-text-display">${simulationProblemText}</div>`;
+                    }
+                    
+                    document.getElementById('simulationDisplay').style.display = 'grid';
+                    
+                    // 학생 정보 업데이트
+                    const persona = response.data.persona;
+                    document.getElementById('studentName').textContent = persona.name;
+                    document.getElementById('studentLevel').textContent = persona.level + ' 학생';
+                    
+                    // 초기 메시지 추가
+                    conversationHistory = [];
+                    document.getElementById('chatArea').innerHTML = '';
+                    
+                    addMessageToChat(response.data.message, 'student');
+                    
+                    showNotification('시뮬레이션이 시작되었습니다', 'success');
+                } else {
+                    showNotification(response.data.error || '시뮬레이션 시작 실패', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('시뮬레이션 시작 중 오류가 발생했습니다', 'error');
+            } finally {
+                startSimulation.disabled = false;
+                startSimulation.innerHTML = '시뮬레이션 시작';
+            }
+        });
+
+        // 채팅 기능
+        const sendMessage = document.getElementById('sendMessage');
+        const teacherInput = document.getElementById('teacherInput');
+        const chatArea = document.getElementById('chatArea');
+
+        sendMessage.addEventListener('click', sendChat);
+        teacherInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChat();
+        });
+
+        // 채팅에 메시지 추가 함수
+        function addMessageToChat(message, sender) {
+            const chatArea = document.getElementById('chatArea');
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}`;
+            
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'message-avatar';
+            avatarDiv.textContent = sender === 'student' ? '학' : '교';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.innerHTML = `
+                <p>${message}</p>
+                <div class="message-time">${new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</div>
+            `;
+            
+            msgDiv.appendChild(avatarDiv);
+            msgDiv.appendChild(contentDiv);
+            
+            chatArea.appendChild(msgDiv);
+            
+            // 자동 스크롤 - 부드럽게 하단으로
+            setTimeout(() => {
+                chatArea.scrollTo({
+                    top: chatArea.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
+            
+            // MathJax로 수식 렌더링
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([contentDiv]).catch((e) => console.error('MathJax 렌더링 오류:', e));
+            }
+            
+            // 대화 히스토리에 추가
+            conversationHistory.push({
+                role: sender === 'teacher' ? 'teacher' : 'student',
+                content: message
+            });
+        }
+
+        async function sendChat() {
+            const message = teacherInput.value.trim();
+            if (!message) return;
+            
+            // 교사 메시지 추가
+            addMessageToChat(message, 'teacher');
+            teacherInput.value = '';
+            
+            // 입력 비활성화
+            teacherInput.disabled = true;
+            sendMessage.disabled = true;
+            
+            try {
+                // 편집된 페르소나 설명 가져오기
+                const personaCard = document.querySelector(`[data-persona="${selectedPersona}"]`);
+                const customDescription = personaCard ? personaCard.querySelector('.persona-description').textContent : '';
+                
+                // AI 학생 응답 요청
+                const response = await axios.post('./simulation_api.php', {
+                    action: 'respond',
+                    problemText: simulationProblemText,
+                    problemImage: simulationProblemImage,
+                    message: message,
+                    persona: selectedPersona,
+                    customDescription: customDescription,
+                    history: conversationHistory.slice(0, -1) // 현재 메시지 제외
+                });
+                
+                if (response.data.success) {
+                    // 학생 응답 추가
+                    setTimeout(() => {
+                        addMessageToChat(response.data.message, 'student');
+                    }, 1000);
+                } else {
+                    showNotification(response.data.error || '응답 생성 실패', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('응답 생성 중 오류가 발생했습니다', 'error');
+            } finally {
+                teacherInput.disabled = false;
+                sendMessage.disabled = false;
+                teacherInput.focus();
+            }
+        }
+
+        // 체크리스트 및 MQI 평가
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const checkedCountElement = document.getElementById('checkedCount');
+        const totalCountElement = document.getElementById('totalCount');
+        const mqiLevelElement = document.getElementById('mqiLevel');
+        const evaluationProgressElement = document.getElementById('evaluationProgress');
+        
+        // 총 항목 수 설정
+        totalCountElement.textContent = checklistItems.length;
+        
+        // MQI 수준 계산 함수
+        function calculateMQILevel(percentage) {
+            if (percentage >= 90) return { level: '탁월함', color: '#10b981' };
+            if (percentage >= 75) return { level: '우수함', color: '#6366f1' };
+            if (percentage >= 60) return { level: '양호함', color: '#f59e0b' };
+            if (percentage >= 40) return { level: '보통', color: '#a0a0a0' };
+            return { level: '개선 필요', color: '#ef4444' };
+        }
+        
+        // 체크리스트 업데이트 함수
+        function updateEvaluationScore() {
+            const checkedItems = document.querySelectorAll('.checkbox.checked').length;
+            const totalItems = checklistItems.length;
+            const percentage = Math.round((checkedItems / totalItems) * 100);
+            
+            checkedCountElement.textContent = checkedItems;
+            evaluationProgressElement.style.width = `${percentage}%`;
+            
+            const mqiResult = calculateMQILevel(percentage);
+            mqiLevelElement.textContent = mqiResult.level;
+            mqiLevelElement.style.color = mqiResult.color;
+        }
+        
+        // 체크리스트 클릭 이벤트
+        checklistItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const checkbox = item.querySelector('.checkbox');
+                checkbox.classList.toggle('checked');
+                updateEvaluationScore();
+            });
+        });
+
+        // 평가 저장
+        document.getElementById('saveEvaluation').addEventListener('click', () => {
+            const checkedItems = document.querySelectorAll('.checkbox.checked').length;
+            const totalItems = checklistItems.length;
+            const percentage = Math.round((checkedItems / totalItems) * 100);
+            const mqiResult = calculateMQILevel(percentage);
+            
+            // 카테고리별 점수 계산
+            const categories = document.querySelectorAll('.checklist-category');
+            let categoryScores = [];
+            
+            categories.forEach(category => {
+                const categoryName = category.querySelector('h3').textContent;
+                const categoryItems = category.querySelectorAll('.checklist-item');
+                const categoryChecked = category.querySelectorAll('.checkbox.checked').length;
+                const categoryPercentage = Math.round((categoryChecked / categoryItems.length) * 100);
+                categoryScores.push(`${categoryName}: ${categoryPercentage}%`);
+            });
+            
+            const detailedReport = `
+MQI 평가 결과:
+- 전체 점수: ${percentage}% (${checkedItems}/${totalItems})
+- MQI 수준: ${mqiResult.level}
+
+카테고리별 점수:
+${categoryScores.join('\n')}
+            `.trim();
+            
+            console.log(detailedReport);
+            showNotification(`평가가 저장되었습니다 (MQI 수준: ${mqiResult.level})`, 'success');
+        });
+
+        // 키보드 단축키
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + K: 빠른 검색
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                // 검색 모달 열기 (구현 예정)
+            }
+            
+            // ESC: 포커스 모드 해제
+            if (e.key === 'Escape' && focusMode) {
+                focusModeBtn.click();
+            }
+        });
+
+        // 자동 저장 시뮬레이션
+        let autoSaveInterval = setInterval(() => {
+            // 실제 구현에서는 여기서 데이터를 저장
+            console.log('자동 저장됨');
+        }, 60000); // 1분마다
+
+        // 페이지 벗어날 때 경고
+        window.addEventListener('beforeunload', (e) => {
+            // 실제 구현에서는 저장되지 않은 변경사항이 있을 때만 표시
+            // e.preventDefault();
+            // e.returnValue = '';
+        });
+        // API 설정 (config.php 사용으로 API 키 모달 제거)
+
+        // 이미지 업로드 관련
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const removeImage = document.getElementById('removeImage');
+        let uploadedImage = null;
+
+        // 클릭으로 업로드
+        uploadArea.addEventListener('click', (e) => {
+            if (e.target.id !== 'removeImage') {
+                imageInput.click();
+            }
+        });
+
+        // 드래그 앤 드롭
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleImageUpload(files[0]);
+            }
+        });
+
+        // 파일 선택
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleImageUpload(e.target.files[0]);
+            }
+        });
+
+        // 이미지 제거
+        removeImage.addEventListener('click', (e) => {
+            e.stopPropagation();
+            uploadedImage = null;
+            imagePreview.style.display = 'none';
+            uploadPlaceholder.style.display = 'block';
+            imageInput.value = '';
+        });
+
+        // 이미지 업로드 처리
+        function handleImageUpload(file) {
+            if (file.type.startsWith('image/')) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('파일 크기는 5MB 이하여야 합니다', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedImage = e.target.result;
+                    previewImg.src = uploadedImage;
+                    uploadPlaceholder.style.display = 'none';
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                showNotification('이미지 파일만 업로드 가능합니다', 'error');
+            }
+        }
+
+        // PHP API를 통한 분석 함수
+        async function analyzeWithOpenAI(textContent, imageData, studentLevel) {
+            try {
+                const response = await axios.post('./analyze_api.php', {
+                    text: textContent,
+                    image: imageData,
+                    level: studentLevel
+                });
+
+                if (response.data.success) {
+                    return response.data.analysis;
+                } else {
+                    throw new Error(response.data.error || '분석 실패');
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.response?.data?.error || '분석 중 오류가 발생했습니다', 'error');
+                return null;
+            }
+        }
+
+        // 지도 전략의 문항 저장
+        let strategyProblemText = '';
+        let strategyProblemImage = null;
+
+        // 기존 분석 버튼 이벤트 수정
+        analyzeBtn.removeEventListener('click', analyzeBtn.onclick);
+        analyzeBtn.addEventListener('click', async () => {
+            const concept = document.getElementById('conceptInput').value;
+            const level = document.getElementById('levelSelect').value;
+            
+            // 지도 전략 문항 저장
+            strategyProblemText = concept;
+            strategyProblemImage = uploadedImage;
+            
+            
+            // 로딩 애니메이션
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span> 분석 중...';
+            
+            // 학생 수준 매핑
+            const levelMap = {
+                'high': '상위권',
+                'mid': '중위권',
+                'low': '하위권'
+            };
+
+            // OpenAI API 호출
+            const analysis = await analyzeWithOpenAI(concept, uploadedImage, levelMap[level]);
+            
+            if (analysis) {
+                // 분석 결과를 화면에 표시
+                const strategies = analysis.split(/\d+\.\s+/).filter(s => s.trim());
+                const strategyDisplay = document.getElementById('strategyDisplay');
+                
+                // 문항 표시
+                const problemDisplay = document.getElementById('strategyProblemDisplay');
+                problemDisplay.innerHTML = '';
+                if (strategyProblemImage) {
+                    problemDisplay.innerHTML = `<img src="${strategyProblemImage}" alt="문제 이미지">`;
+                } else if (strategyProblemText) {
+                    problemDisplay.innerHTML = `<div class="problem-text-display">${strategyProblemText}</div>`;
+                }
+                
+                // 전략 업데이트
+                strategies.forEach((strategy, index) => {
+                    const strategyElement = document.getElementById(`strategy${index + 1}`);
+                    if (strategyElement && strategy) {
+                        const parts = strategy.split(':');
+                        if (parts.length > 1) {
+                            strategyElement.textContent = parts[1].trim();
+                            // MathJax로 수식 렌더링
+                            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                                MathJax.typesetPromise([strategyElement]).catch((e) => console.error('MathJax 렌더링 오류:', e));
+                            }
+                        }
+                    }
+                });
+                
+                // 입력 섹션 숨기고 결과만 표시
+                document.querySelector('#strategy .input-section').style.display = 'none';
+                strategyDisplay.style.display = 'grid';
+                showNotification('AI 분석이 완료되었습니다', 'success');
+            }
+            
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg> 전략 생성`;
+        });
+
+        // 페르소나 설명 편집 기능
+        document.querySelectorAll('.persona-description').forEach(desc => {
+            desc.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            desc.addEventListener('blur', (e) => {
+                // 편집된 내용 저장
+                const card = e.target.closest('.persona-card');
+                const persona = card.dataset.persona;
+                const newDescription = e.target.textContent.trim();
+                
+                // 서버로 전송하거나 localStorage에 저장 가능
+                localStorage.setItem(`persona-${persona}`, newDescription);
+                showNotification('페르소나 설명이 업데이트되었습니다', 'success');
+            });
+        });
+
+        // 저장된 페르소나 설명 불러오기
+        document.querySelectorAll('.persona-card').forEach(card => {
+            const persona = card.dataset.persona;
+            const savedDesc = localStorage.getItem(`persona-${persona}`);
+            if (savedDesc) {
+                card.querySelector('.persona-description').textContent = savedDesc;
+            }
+        });
+
+        // 새 전략 생성 버튼
+        document.getElementById('newStrategyBtn').addEventListener('click', () => {
+            document.querySelector('#strategy .input-section').style.display = 'block';
+            document.getElementById('strategyDisplay').style.display = 'none';
+            // 입력 필드 초기화
+            document.getElementById('conceptInput').value = '';
+            uploadedImage = null;
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('uploadPlaceholder').style.display = 'block';
+            strategyProblemText = '';
+            strategyProblemImage = null;
+        });
+        
+    </script>
+</body>
+</html>

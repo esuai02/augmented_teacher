@@ -1,0 +1,43 @@
+[ANALYSIS_INTRO]
+
+{{student_name}}님의 개념 이해도를 분석했습니다.
+
+[UNDERSTANDING_LEVEL]
+
+📊 이해도 분석 결과:
+
+{{understanding_summary}}
+
+[STRENGTH]
+
+✅ 잘 이해하고 있는 개념:
+{{strong_concepts}}
+
+[IMPROVEMENT]
+
+📈 더 보완이 필요한 개념:
+{{weak_concepts}}
+
+[PATTERN_ANALYSIS]
+
+📝 노트 패턴 분석:
+- 평균 필기량: {{avg_stroke_count}}획
+- 노트 상세도: {{note_detail_level}}
+- 개념 연결 표현: {{concept_connection_level}}
+
+[RECOMMENDATION]
+
+{{persona_specific_recommendation}}
+
+[CLOSING]
+
+더 자세한 분석이 필요하시면 말씀해 주세요!
+
+<!--
+파일: templates/N2/concept_understanding.txt
+상황: N2 - 개념 이해도 분석
+변수: student_name, understanding_summary, strong_concepts, weak_concepts,
+      avg_stroke_count, note_detail_level, concept_connection_level,
+      persona_specific_recommendation
+용도: 노트 기반 개념 이해도 분석 결과 제공
+-->

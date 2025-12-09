@@ -1,0 +1,1198 @@
+# Persona-based Response Rules for Agent 02 - Exam Schedule
+# Version: 1.0
+# Purpose: D-Day 기반 시험일정 페르소나 매칭 및 맞춤형 응답 생성
+# Reference: personas.md, Agent02DataContext.php
+
+version: "1.0"
+scenario: "exam_schedule_persona_response"
+description: "D-Day 상황과 학생 유형에 따른 33개 페르소나 식별 및 맞춤형 시험 전략 응답"
+
+# ============================================================
+# SECTION 1: D-DAY 상황 결정 룰
+# ============================================================
+
+dday_situation_rules:
+
+  - rule_id: "DD_001_urgent"
+    priority: 100
+    description: "D-Day 긴급 상황 (D-3 이하)"
+    conditions:
+      - field: "dday"
+        operator: "<="
+        value: 3
+    action:
+      - "set_situation: 'D_URGENT'"
+      - "set_urgency_level: 'critical'"
+      - "set_study_mode: 'intensive'"
+      - "set_study_ratio: '20:80'"
+    rationale: "D-3 이하는 개념보다 문제풀이와 실전 감각에 집중해야 하는 긴급 시기"
+
+  - rule_id: "DD_002_balanced"
+    priority: 90
+    description: "D-Day 균형 상황 (D-4 ~ D-10)"
+    conditions:
+      - AND:
+        - field: "dday"
+          operator: ">="
+          value: 4
+        - field: "dday"
+          operator: "<="
+          value: 10
+    action:
+      - "set_situation: 'D_BALANCED'"
+      - "set_urgency_level: 'high'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '40:60'"
+    rationale: "D-4~10은 개념 정리와 문제풀이를 균형있게 병행하는 시기"
+
+  - rule_id: "DD_003_concept"
+    priority: 80
+    description: "D-Day 개념우선 상황 (D-11 ~ D-30)"
+    conditions:
+      - AND:
+        - field: "dday"
+          operator: ">="
+          value: 11
+        - field: "dday"
+          operator: "<="
+          value: 30
+    action:
+      - "set_situation: 'D_CONCEPT'"
+      - "set_urgency_level: 'moderate'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '60:40'"
+    rationale: "D-11~30은 개념 이해를 탄탄히 하며 점진적으로 문제풀이를 늘려가는 시기"
+
+  - rule_id: "DD_004_foundation"
+    priority: 70
+    description: "D-Day 기초구축 상황 (D-31 이상)"
+    conditions:
+      - field: "dday"
+        operator: ">="
+        value: 31
+    action:
+      - "set_situation: 'D_FOUNDATION'"
+      - "set_urgency_level: 'low'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '70:30'"
+    rationale: "D-31 이상은 기초 개념 확립에 집중하며 장기 학습 습관을 형성하는 시기"
+
+# ============================================================
+# SECTION 2: 학생 유형 식별 룰
+# ============================================================
+
+student_type_identification_rules:
+
+  # === P1: 계획형 (The Planner) ===
+
+  - rule_id: "ST_001_planner"
+    priority: 95
+    description: "계획형 학생(P1) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["계획대로", "일정표", "스케줄", "체크리스트", "진도", "목표", "예정대로", "순서대로"]
+        - field: "study_pattern"
+          operator: "=="
+          value: "structured"
+        - field: "asks_for_schedule"
+          operator: "=="
+          value: true
+    action:
+      - "identify_student_type: 'P1'"
+      - "set_tone: 'Professional'"
+      - "set_exam_strategy: 'structured_sprint'"
+      - "set_student_intervention: 'plan_optimization'"
+    confidence: 0.88
+    rationale: "구조화된 학습 선호와 계획 관련 키워드는 P1의 핵심 신호"
+
+  # === P2: 불안형 (The Anxious) ===
+
+  - rule_id: "ST_002_anxious"
+    priority: 97
+    description: "불안형 학생(P2) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["걱정", "불안", "떨려", "자신없어", "어떡해", "안될것같아", "망할것같아", "무서워", "두려워"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "anxious"
+        - field: "asks_reassurance"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_student_type: 'P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_exam_strategy: 'calm_focus'"
+      - "set_student_intervention: 'anxiety_management'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.92
+    rationale: "불안 관련 키워드와 재확인 요청은 P2의 핵심 위기 신호"
+
+  # === P3: 회피형 (The Avoider) ===
+
+  - rule_id: "ST_003_avoider"
+    priority: 93
+    description: "회피형 학생(P3) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["나중에", "내일부터", "귀찮", "시간없어", "몰라요", "안할래", "별로", "그냥"]
+        - field: "response_pattern"
+          operator: "=="
+          value: "avoidant"
+        - field: "study_delay_frequency"
+          operator: ">="
+          value: 3
+    action:
+      - "identify_student_type: 'P3'"
+      - "set_tone: 'Encouraging'"
+      - "set_exam_strategy: 'habit_building'"
+      - "set_student_intervention: 'motivation_boost'"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.86
+    rationale: "회피적 응답과 미루기 패턴은 P3의 명확한 신호"
+
+  # === P4: 자신감 과잉형 (The Overconfident) ===
+
+  - rule_id: "ST_004_overconfident"
+    priority: 90
+    description: "자신감 과잉형 학생(P4) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["다알아", "쉬워", "걱정마", "괜찮아", "원래잘해", "운이안좋았어", "대충해도", "금방"]
+        - AND:
+          - field: "self_reported_confidence"
+            operator: ">="
+            value: 8
+          - field: "actual_performance"
+            operator: "<="
+            value: 60
+        - field: "underestimates_exam"
+          operator: "=="
+          value: true
+    action:
+      - "identify_student_type: 'P4'"
+      - "set_tone: 'Direct'"
+      - "set_exam_strategy: 'reality_check'"
+      - "set_student_intervention: 'reality_grounding'"
+      - "provide_objective_data: true"
+    confidence: 0.84
+    rationale: "자기 평가와 실제 성적 간 괴리, 낙관적 표현은 P4의 신호"
+
+  # === P5: 혼란형 (The Confused) ===
+
+  - rule_id: "ST_005_confused"
+    priority: 88
+    description: "혼란형 학생(P5) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["뭘해야", "어디서부터", "모르겠어", "복잡해", "헷갈려", "우선순위", "뭐부터"]
+        - field: "shows_confusion"
+          operator: "=="
+          value: true
+        - field: "changes_topic_frequently"
+          operator: "=="
+          value: true
+    action:
+      - "identify_student_type: 'P5'"
+      - "set_tone: 'Calm'"
+      - "set_exam_strategy: 'progressive_build'"
+      - "set_student_intervention: 'clarity_building'"
+      - "provide_clear_structure: true"
+    confidence: 0.85
+    rationale: "방향성 상실 표현과 산만한 질문 패턴은 P5의 핵심 신호"
+
+  # === P6: 외부 의존형 (The Dependent) ===
+
+  - rule_id: "ST_006_dependent"
+    priority: 86
+    description: "외부 의존형 학생(P6) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["선생님이정해", "알려주세요", "시키는대로", "뭐해야해요", "다해줘요", "엄마가", "부모님이"]
+        - field: "needs_external_validation"
+          operator: "=="
+          value: true
+        - field: "makes_own_decisions"
+          operator: "=="
+          value: false
+    action:
+      - "identify_student_type: 'P6'"
+      - "set_tone: 'Supportive'"
+      - "set_exam_strategy: 'external_structure'"
+      - "set_student_intervention: 'independence_training'"
+      - "gradually_transfer_control: true"
+    confidence: 0.83
+    rationale: "의사결정 위임과 외부 지시 의존은 P6의 특징적 신호"
+
+# ============================================================
+# SECTION 3: 페르소나 식별 룰 (D-Day × Student Type)
+# ============================================================
+
+persona_identification_rules:
+
+  # ========== D_URGENT (D-3 이하) 페르소나 ==========
+
+  - rule_id: "PI_DU_P1_urgent_planner"
+    priority: 95
+    description: "긴급 계획형(D_URGENT_P1) - 스프린트 최적화"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'D_URGENT_P1'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'intensive'"
+      - "set_study_ratio: '10:90'"
+      - "set_dday_alert: 'urgent'"
+      - "recommend_next_action: '고빈도 출제 단원 집중 + 실전 모의고사'"
+    confidence: 0.90
+    rationale: "계획형은 긴급 상황에서 명확한 우선순위와 시간배분이 핵심"
+
+  - rule_id: "PI_DU_P2_urgent_anxious"
+    priority: 98
+    description: "긴급 불안형(D_URGENT_P2) - 심리안정 우선"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'D_URGENT_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_study_mode: 'intensive'"
+      - "set_study_ratio: '20:80'"
+      - "set_dday_alert: 'gentle'"
+      - "prioritize_intervention: 'StressManagement'"
+      - "recommend_next_action: '아는 문제 확인 → 자신감 회복 → 선택적 복습'"
+    confidence: 0.95
+    rationale: "긴급 상황의 불안형은 압박이 아닌 안정화가 최우선"
+
+  - rule_id: "PI_DU_P3_urgent_avoider"
+    priority: 96
+    description: "긴급 회피형(D_URGENT_P3) - 최소 필수 집중"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'D_URGENT_P3'"
+      - "set_tone: 'Urgent'"
+      - "set_study_mode: 'final_review'"
+      - "set_study_ratio: '10:90'"
+      - "set_dday_alert: 'strong'"
+      - "prioritize_intervention: 'MotivationBoost'"
+      - "recommend_next_action: 'TOP 5 필수 유형만 집중 + 포기 전략'"
+    confidence: 0.88
+    rationale: "회피형에게 긴급 상황은 현실 직시와 최소 목표 설정이 필요"
+
+  - rule_id: "PI_DU_P4_urgent_overconfident"
+    priority: 94
+    description: "긴급 자신감과잉형(D_URGENT_P4) - 객관적 점검"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P4"
+    action:
+      - "identify_persona: 'D_URGENT_P4'"
+      - "set_tone: 'Direct'"
+      - "set_study_mode: 'intensive'"
+      - "set_study_ratio: '15:85'"
+      - "set_dday_alert: 'strong'"
+      - "recommend_next_action: '실전 모의고사 → 취약점 데이터 제시 → 집중 보완'"
+    confidence: 0.86
+    rationale: "자신감 과잉형은 실전 테스트로 객관적 현실 인식이 필요"
+
+  - rule_id: "PI_DU_P5_urgent_confused"
+    priority: 93
+    description: "긴급 혼란형(D_URGENT_P5) - 명확한 지시"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P5"
+    action:
+      - "identify_persona: 'D_URGENT_P5'"
+      - "set_tone: 'Calm'"
+      - "set_pace: 'normal'"
+      - "set_study_mode: 'final_review'"
+      - "set_study_ratio: '15:85'"
+      - "set_dday_alert: 'moderate'"
+      - "recommend_next_action: '오늘 할 3가지만 명확하게 제시'"
+    confidence: 0.87
+    rationale: "혼란형에게 긴급 상황은 선택지 축소와 명확한 방향 제시가 핵심"
+
+  - rule_id: "PI_DU_P6_urgent_dependent"
+    priority: 91
+    description: "긴급 외부의존형(D_URGENT_P6) - 구체적 가이드"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P6"
+    action:
+      - "identify_persona: 'D_URGENT_P6'"
+      - "set_tone: 'Supportive'"
+      - "set_study_mode: 'intensive'"
+      - "set_study_ratio: '20:80'"
+      - "set_dday_alert: 'moderate'"
+      - "recommend_next_action: '시간대별 상세 계획표 제공 + 체크인 시간 설정'"
+    confidence: 0.84
+    rationale: "외부의존형은 긴급 상황에서 더욱 상세한 외부 구조가 필요"
+
+  # ========== D_BALANCED (D-4~10) 페르소나 ==========
+
+  - rule_id: "PI_DB_P1_balanced_planner"
+    priority: 90
+    description: "균형 계획형(D_BALANCED_P1) - 마무리 점검"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'D_BALANCED_P1'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '30:70'"
+      - "set_dday_alert: 'moderate'"
+      - "recommend_next_action: '계획 대비 진척도 점검 + 남은 범위 우선순위화'"
+    confidence: 0.88
+
+  - rule_id: "PI_DB_P2_balanced_anxious"
+    priority: 93
+    description: "균형 불안형(D_BALANCED_P2) - 안정적 루틴"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'D_BALANCED_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '35:65'"
+      - "set_dday_alert: 'gentle'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "recommend_next_action: '하루 3목표 설정 + 성취감 기록'"
+    confidence: 0.91
+
+  - rule_id: "PI_DB_P3_balanced_avoider"
+    priority: 92
+    description: "균형 회피형(D_BALANCED_P3) - 동기 부여"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'D_BALANCED_P3'"
+      - "set_tone: 'Encouraging'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '40:60'"
+      - "set_dday_alert: 'moderate'"
+      - "recommend_next_action: '매일 30분 필수 + 주간 보상 설정'"
+    confidence: 0.86
+
+  - rule_id: "PI_DB_P4_balanced_overconfident"
+    priority: 89
+    description: "균형 자신감과잉형(D_BALANCED_P4) - 현실적 목표"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P4"
+    action:
+      - "identify_persona: 'D_BALANCED_P4'"
+      - "set_tone: 'Direct'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '35:65'"
+      - "set_dday_alert: 'moderate'"
+      - "recommend_next_action: '주간 모의고사 + 오답 분석 집중'"
+    confidence: 0.85
+
+  - rule_id: "PI_DB_P5_balanced_confused"
+    priority: 88
+    description: "균형 혼란형(D_BALANCED_P5) - 구조화된 계획"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P5"
+    action:
+      - "identify_persona: 'D_BALANCED_P5'"
+      - "set_tone: 'Calm'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '40:60'"
+      - "set_dday_alert: 'gentle'"
+      - "recommend_next_action: '일주일 로드맵 + 일일 체크리스트'"
+    confidence: 0.84
+
+  - rule_id: "PI_DB_P6_balanced_dependent"
+    priority: 87
+    description: "균형 외부의존형(D_BALANCED_P6) - 점진적 자립"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_BALANCED"
+        - field: "student_type"
+          operator: "=="
+          value: "P6"
+    action:
+      - "identify_persona: 'D_BALANCED_P6'"
+      - "set_tone: 'Supportive'"
+      - "set_study_mode: 'balanced'"
+      - "set_study_ratio: '40:60'"
+      - "set_dday_alert: 'gentle'"
+      - "recommend_next_action: '주간 계획 함께 수립 + 일일 자기 점검'"
+    confidence: 0.82
+
+  # ========== D_CONCEPT (D-11~30) 페르소나 ==========
+
+  - rule_id: "PI_DC_P1_concept_planner"
+    priority: 85
+    description: "개념우선 계획형(D_CONCEPT_P1) - 체계적 개념정리"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'D_CONCEPT_P1'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '55:45'"
+      - "set_dday_alert: 'gentle'"
+      - "recommend_next_action: '단원별 개념 정리 → 기본 문제 확인 → 오답노트'"
+    confidence: 0.87
+
+  - rule_id: "PI_DC_P2_concept_anxious"
+    priority: 88
+    description: "개념우선 불안형(D_CONCEPT_P2) - 기초 다지기"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'D_CONCEPT_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '60:40'"
+      - "set_dday_alert: 'none'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "recommend_next_action: '쉬운 개념부터 차근차근 + 성공 경험 축적'"
+    confidence: 0.89
+
+  - rule_id: "PI_DC_P3_concept_avoider"
+    priority: 86
+    description: "개념우선 회피형(D_CONCEPT_P3) - 흥미 유발"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'D_CONCEPT_P3'"
+      - "set_tone: 'Encouraging'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '55:45'"
+      - "set_dday_alert: 'gentle'"
+      - "recommend_next_action: '재미있는 개념 연결 + 짧은 학습 세션'"
+    confidence: 0.84
+
+  - rule_id: "PI_DC_P4_concept_overconfident"
+    priority: 84
+    description: "개념우선 자신감과잉형(D_CONCEPT_P4) - 심층 이해"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P4"
+    action:
+      - "identify_persona: 'D_CONCEPT_P4'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '50:50'"
+      - "set_dday_alert: 'gentle'"
+      - "recommend_next_action: '개념 설명하기 테스트 + 응용 문제 도전'"
+    confidence: 0.83
+
+  - rule_id: "PI_DC_P5_concept_confused"
+    priority: 83
+    description: "개념우선 혼란형(D_CONCEPT_P5) - 기초 체계화"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P5"
+    action:
+      - "identify_persona: 'D_CONCEPT_P5'"
+      - "set_tone: 'Calm'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '65:35'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '개념 마인드맵 + 연결고리 시각화'"
+    confidence: 0.82
+
+  - rule_id: "PI_DC_P6_concept_dependent"
+    priority: 82
+    description: "개념우선 외부의존형(D_CONCEPT_P6) - 가이드 학습"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_CONCEPT"
+        - field: "student_type"
+          operator: "=="
+          value: "P6"
+    action:
+      - "identify_persona: 'D_CONCEPT_P6'"
+      - "set_tone: 'Supportive'"
+      - "set_study_mode: 'concept_first'"
+      - "set_study_ratio: '60:40'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '단계별 학습 가이드 + 자기 점검 질문'"
+    confidence: 0.81
+
+  # ========== D_FOUNDATION (D-31+) 페르소나 ==========
+
+  - rule_id: "PI_DF_P1_foundation_planner"
+    priority: 80
+    description: "기초구축 계획형(D_FOUNDATION_P1) - 장기 로드맵"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P1'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '70:30'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '월간 마스터플랜 수립 + 주간 마일스톤 설정'"
+    confidence: 0.86
+
+  - rule_id: "PI_DF_P2_foundation_anxious"
+    priority: 84
+    description: "기초구축 불안형(D_FOUNDATION_P2) - 안전한 시작"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '75:25'"
+      - "set_dday_alert: 'none'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "recommend_next_action: '시간적 여유 강조 + 작은 목표로 자신감 형성'"
+    confidence: 0.87
+
+  - rule_id: "PI_DF_P3_foundation_avoider"
+    priority: 82
+    description: "기초구축 회피형(D_FOUNDATION_P3) - 습관 형성"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P3'"
+      - "set_tone: 'Encouraging'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '70:30'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '매일 15분 습관 만들기 + 연속 기록'"
+    confidence: 0.83
+
+  - rule_id: "PI_DF_P4_foundation_overconfident"
+    priority: 79
+    description: "기초구축 자신감과잉형(D_FOUNDATION_P4) - 진단 테스트"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P4"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P4'"
+      - "set_tone: 'Professional'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '65:35'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '진단 테스트로 현재 수준 파악 + 갭 분석'"
+    confidence: 0.81
+
+  - rule_id: "PI_DF_P5_foundation_confused"
+    priority: 78
+    description: "기초구축 혼란형(D_FOUNDATION_P5) - 기본 프레임"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P5"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P5'"
+      - "set_tone: 'Calm'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '75:25'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '전체 범위 큰 그림 파악 + 우선순위 정하기'"
+    confidence: 0.80
+
+  - rule_id: "PI_DF_P6_foundation_dependent"
+    priority: 77
+    description: "기초구축 외부의존형(D_FOUNDATION_P6) - 자립 훈련"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_FOUNDATION"
+        - field: "student_type"
+          operator: "=="
+          value: "P6"
+    action:
+      - "identify_persona: 'D_FOUNDATION_P6'"
+      - "set_tone: 'Supportive'"
+      - "set_study_mode: 'foundation'"
+      - "set_study_ratio: '70:30'"
+      - "set_dday_alert: 'none'"
+      - "recommend_next_action: '스스로 계획 세우기 연습 + 주간 피드백'"
+    confidence: 0.79
+
+# ============================================================
+# SECTION 4: 특수 상황 페르소나 식별 룰
+# ============================================================
+
+special_persona_rules:
+
+  # === C: Cold Start (첫 대화/시험정보 없음) ===
+
+  - rule_id: "SP_C_P1_cold_planner"
+    priority: 75
+    description: "첫대화 계획형(C_WELCOME_P1)"
+    conditions:
+      - AND:
+        - field: "is_first_conversation"
+          operator: "=="
+          value: true
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'C_WELCOME_P1'"
+      - "set_tone: 'Professional'"
+      - "request_exam_info: true"
+      - "recommend_next_action: '시험 일정 등록 후 최적 계획 제안'"
+    confidence: 0.85
+
+  - rule_id: "SP_C_P2_cold_anxious"
+    priority: 78
+    description: "첫대화 불안형(C_WELCOME_P2)"
+    conditions:
+      - AND:
+        - field: "is_first_conversation"
+          operator: "=="
+          value: true
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'C_WELCOME_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "request_exam_info: true"
+      - "recommend_next_action: '편안한 분위기 조성 후 시험 정보 수집'"
+    confidence: 0.87
+
+  - rule_id: "SP_C_P3_cold_avoider"
+    priority: 76
+    description: "첫대화 회피형(C_WELCOME_P3)"
+    conditions:
+      - AND:
+        - field: "is_first_conversation"
+          operator: "=="
+          value: true
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'C_WELCOME_P3'"
+      - "set_tone: 'Encouraging'"
+      - "simplify_onboarding: true"
+      - "request_exam_info: true"
+      - "recommend_next_action: '간단한 질문으로 시작 + 부담 없는 정보 수집'"
+    confidence: 0.84
+
+  # === E: Exam Complete (시험 완료 후) ===
+
+  - rule_id: "SP_E_P1_complete_planner"
+    priority: 82
+    description: "시험완료 계획형(E_COMPLETE_P1)"
+    conditions:
+      - AND:
+        - field: "dday"
+          operator: "<"
+          value: 0
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'E_COMPLETE_P1'"
+      - "set_tone: 'Professional'"
+      - "recommend_next_action: '결과 분석 + 다음 시험 계획 수립'"
+    confidence: 0.86
+
+  - rule_id: "SP_E_P2_complete_anxious"
+    priority: 85
+    description: "시험완료 불안형(E_COMPLETE_P2)"
+    conditions:
+      - AND:
+        - field: "dday"
+          operator: "<"
+          value: 0
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'E_COMPLETE_P2'"
+      - "set_tone: 'Warm'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "recommend_next_action: '결과와 관계없이 노력 인정 + 정서적 지지'"
+    confidence: 0.88
+
+  - rule_id: "SP_E_P3_complete_avoider"
+    priority: 83
+    description: "시험완료 회피형(E_COMPLETE_P3)"
+    conditions:
+      - AND:
+        - field: "dday"
+          operator: "<"
+          value: 0
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'E_COMPLETE_P3'"
+      - "set_tone: 'Encouraging'"
+      - "recommend_next_action: '작은 성취 강조 + 다음 목표 동기부여'"
+    confidence: 0.84
+
+  # === Q: Question Mode (질문 응답) ===
+
+  - rule_id: "SP_Q_P1_question_planner"
+    priority: 88
+    description: "질문 계획형(Q_ANSWER_P1)"
+    conditions:
+      - AND:
+        - field: "interaction_type"
+          operator: "=="
+          value: "question"
+        - field: "student_type"
+          operator: "=="
+          value: "P1"
+    action:
+      - "identify_persona: 'Q_ANSWER_P1'"
+      - "set_tone: 'Professional'"
+      - "set_information_depth: 'detailed'"
+      - "recommend_next_action: '체계적 답변 + 관련 학습 자료 연결'"
+    confidence: 0.87
+
+  - rule_id: "SP_Q_P2_question_anxious"
+    priority: 90
+    description: "질문 불안형(Q_ANSWER_P2)"
+    conditions:
+      - AND:
+        - field: "interaction_type"
+          operator: "=="
+          value: "question"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "identify_persona: 'Q_ANSWER_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "set_information_depth: 'moderate'"
+      - "add_reassurance: true"
+      - "recommend_next_action: '안심시키는 설명 + 단계별 이해 확인'"
+    confidence: 0.89
+
+  - rule_id: "SP_Q_P3_question_avoider"
+    priority: 87
+    description: "질문 회피형(Q_ANSWER_P3)"
+    conditions:
+      - AND:
+        - field: "interaction_type"
+          operator: "=="
+          value: "question"
+        - field: "student_type"
+          operator: "=="
+          value: "P3"
+    action:
+      - "identify_persona: 'Q_ANSWER_P3'"
+      - "set_tone: 'Encouraging'"
+      - "set_information_depth: 'surface'"
+      - "recommend_next_action: '간결한 핵심 답변 + 흥미 유발'"
+    confidence: 0.85
+
+# ============================================================
+# SECTION 5: 응답 생성 룰
+# ============================================================
+
+response_generation_rules:
+
+  - rule_id: "RG_001_urgent_response"
+    priority: 95
+    description: "긴급 상황 응답 템플릿"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "D_URGENT"
+    response_templates:
+      D_URGENT_P1:
+        opening: "시험이 {dday}일 남았네요. 지금부터 집중해서 마무리해봐요."
+        body: "남은 시간 동안 {priority_topics}에 집중하면 됩니다. 계획을 조정해서 핵심만 짚어볼게요."
+        closing: "하루하루 체크하면서 같이 달려봐요!"
+      D_URGENT_P2:
+        opening: "{student_name}님, 지금 긴장되시죠? 괜찮아요, 함께 정리해볼게요."
+        body: "이미 알고 있는 것들이 많아요. {known_topics}는 잘 하고 있어요. 몇 가지만 더 점검하면 돼요."
+        closing: "충분히 준비됐어요. 자신감 가지세요."
+      D_URGENT_P3:
+        opening: "시험이 곧이에요. 지금 시작해도 할 수 있는 것들이 있어요."
+        body: "모든 걸 다 할 필요 없어요. {essential_topics} 이것만 확실히 잡아요."
+        closing: "30분만 집중해봐요. 해볼 수 있어요."
+
+  - rule_id: "RG_002_balanced_response"
+    priority: 90
+    description: "균형 상황 응답 템플릿"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "D_BALANCED"
+    response_templates:
+      D_BALANCED_P1:
+        opening: "시험까지 {dday}일, 마무리 단계에요."
+        body: "계획대로 진행하면서 {gap_analysis}를 보완하면 됩니다. 주간 목표를 점검해볼게요."
+        closing: "순조롭게 진행 중이에요. 이 페이스 유지해요."
+      D_BALANCED_P2:
+        opening: "시험까지 아직 시간이 있어요. 천천히 준비해봐요."
+        body: "오늘은 {daily_goal}만 해보면 어떨까요? 하나씩 하다 보면 준비가 돼요."
+        closing: "잘하고 있어요. 불안해하지 않아도 돼요."
+
+  - rule_id: "RG_003_concept_response"
+    priority: 85
+    description: "개념우선 상황 응답 템플릿"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "D_CONCEPT"
+    response_templates:
+      default:
+        opening: "시험까지 {dday}일이에요. 개념 정리하기 좋은 시기예요."
+        body: "{concept_topics} 개념을 탄탄히 잡아두면 문제풀이가 수월해져요."
+        closing: "기초가 튼튼하면 어떤 문제든 풀 수 있어요."
+
+  - rule_id: "RG_004_foundation_response"
+    priority: 80
+    description: "기초구축 상황 응답 템플릿"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "D_FOUNDATION"
+    response_templates:
+      default:
+        opening: "시험까지 {dday}일, 여유있게 준비할 수 있어요."
+        body: "지금부터 차근차근 기초를 다져놓으면 나중에 편해요. 오늘은 {today_topic}부터 시작해볼까요?"
+        closing: "시간이 있으니까 천천히, 하지만 꾸준히 해봐요."
+
+# ============================================================
+# SECTION 6: 톤 및 페이스 조절 룰
+# ============================================================
+
+tone_pace_rules:
+
+  - rule_id: "TP_001_high_anxiety_urgent"
+    priority: 100
+    description: "긴급+불안 조합 - 최대 안정화"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P2"
+    action:
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "reduce_pressure_language: true"
+      - "emphasize_preparation: true"
+      - "avoid_countdown_emphasis: true"
+
+  - rule_id: "TP_002_overconfident_urgent"
+    priority: 95
+    description: "긴급+자신감과잉 - 현실 직시"
+    conditions:
+      - AND:
+        - field: "situation"
+          operator: "=="
+          value: "D_URGENT"
+        - field: "student_type"
+          operator: "=="
+          value: "P4"
+    action:
+      - "set_tone: 'Direct'"
+      - "set_pace: 'normal'"
+      - "provide_objective_data: true"
+      - "emphasize_remaining_gaps: true"
+
+  - rule_id: "TP_003_foundation_any"
+    priority: 70
+    description: "기초구축 상황 - 여유로운 톤"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "D_FOUNDATION"
+    action:
+      - "set_tone: 'Calm'"
+      - "set_pace: 'slow'"
+      - "emphasize_long_term_benefits: true"
+      - "avoid_urgency_language: true"
+
+# ============================================================
+# SECTION 7: 페르소나 전환 감지 룰
+# ============================================================
+
+persona_transition_rules:
+
+  - rule_id: "PT_001_anxiety_spike"
+    priority: 100
+    description: "불안 급증 감지 - 즉시 P2 전환"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["못하겠어", "포기", "무서워", "어떡해", "망했어"]
+        - field: "anxiety_indicator_increase"
+          operator: "=="
+          value: true
+    action:
+      - "reassess_to_type: 'P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'StressManagement'"
+      - "log_transition: 'anxiety_spike'"
+
+  - rule_id: "PT_002_motivation_drop"
+    priority: 90
+    description: "동기 저하 감지 - P3 전환"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["귀찮", "나중에", "안할래", "의미없어"]
+        - field: "response_pattern_change"
+          operator: "=="
+          value: "shorter_disengaged"
+    action:
+      - "reassess_to_type: 'P3'"
+      - "set_tone: 'Encouraging'"
+      - "prioritize_intervention: 'MotivationBoost'"
+      - "log_transition: 'motivation_drop'"
+
+  - rule_id: "PT_003_confusion_increase"
+    priority: 85
+    description: "혼란 증가 감지 - P5 전환"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["뭘해야", "모르겠어", "복잡해", "헷갈려"]
+        - field: "topic_changes_frequent"
+          operator: "=="
+          value: true
+    action:
+      - "reassess_to_type: 'P5'"
+      - "set_tone: 'Calm'"
+      - "provide_clear_structure: true"
+      - "log_transition: 'confusion_increase'"
+
+  - rule_id: "PT_004_positive_engagement"
+    priority: 80
+    description: "긍정적 참여 증가 - P1 전환"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["알겠어", "해볼게", "계획", "다음은", "목표"]
+        - field: "engagement_increase"
+          operator: "=="
+          value: true
+    action:
+      - "reassess_to_type: 'P1'"
+      - "set_tone: 'Professional'"
+      - "log_transition: 'positive_engagement'"
+
+# ============================================================
+# SECTION 8: 에이전트 간 통신 룰
+# ============================================================
+
+inter_agent_rules:
+
+  - rule_id: "IA_001_request_from_orchestrator"
+    priority: 100
+    description: "오케스트레이터 요청 처리"
+    conditions:
+      - field: "request_source"
+        operator: "=="
+        value: "orchestrator"
+    action:
+      - "parse_orchestrator_request"
+      - "prepare_context_response"
+      - "include_persona_recommendation"
+
+  - rule_id: "IA_002_student_info_update"
+    priority: 90
+    description: "학생 정보 업데이트 수신"
+    conditions:
+      - field: "message_type"
+        operator: "=="
+        value: "student_info_update"
+    action:
+      - "update_student_context"
+      - "recalculate_dday"
+      - "reassess_persona_fit"
+
+  - rule_id: "IA_003_exam_schedule_change"
+    priority: 95
+    description: "시험 일정 변경 처리"
+    conditions:
+      - field: "message_type"
+        operator: "=="
+        value: "exam_schedule_change"
+    action:
+      - "update_exam_schedule"
+      - "recalculate_all_ddays"
+      - "adjust_study_recommendations"
+      - "notify_situation_change"
+
+# ============================================================
+# DEFAULT FALLBACK
+# ============================================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "use_balanced_approach"
+    - "set_tone: 'Supportive'"
+    - "set_pace: 'normal'"
+    - "continue_persona_observation"
+    - "request_more_context"
+  message: "학생의 상황을 파악하면서 맞춤형으로 진행할게요. 시험이 언제인지, 어떤 과목인지 알려주시면 더 도움이 될 거예요."
+  confidence: 0.5
+
+# ============================================================
+# METADATA
+# ============================================================
+
+metadata:
+  total_personas: 33
+  base_personas: 24
+  special_personas: 9
+  dday_situations: 4
+  student_types: 6
+  created: "2024-12-03"
+  author: "Agent02 Persona System"
+  reference_files:
+    - "personas.md"
+    - "Agent02DataContext.php"
+    - "Agent02PersonaRuleEngine.php"

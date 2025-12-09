@@ -1,0 +1,632 @@
+/**
+ * Agent Garden CSS
+ * File: alt42/orchestration/agents/agent22_module_improvement/ui/agent_garden.css
+ * 
+ * 에이전트 가든 UI 스타일시트
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.agent-garden__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 40px);
+}
+
+.agent-garden__header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.agent-garden__title {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.agent-garden__subtitle {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.agent-garden__main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* 사이드바 */
+.agent-garden__sidebar {
+    width: 300px;
+    background: #f8f9fa;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.agent-garden__sidebar-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.agent-garden__agent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.agent-garden__agent-item {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.agent-garden__agent-item:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.agent-garden__agent-item--active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.agent-garden__agent-icon {
+    font-size: 2em;
+    flex-shrink: 0;
+}
+
+.agent-garden__agent-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.agent-garden__agent-name {
+    font-weight: 600;
+    font-size: 1em;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.agent-garden__agent-desc {
+    font-size: 0.85em;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* 채팅 영역 */
+.agent-garden__chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.agent-garden__chat-header {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.agent-garden__selected-agent {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.agent-garden__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scroll-behavior: smooth;
+}
+
+.agent-garden__welcome {
+    text-align: center;
+    color: #666;
+    padding: 40px 20px;
+    line-height: 1.8;
+}
+
+.agent-garden__message {
+    display: flex;
+    max-width: 80%;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.agent-garden__message--user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.agent-garden__message--agent,
+.agent-garden__message--system {
+    align-self: flex-start;
+}
+
+.agent-garden__message--error {
+    align-self: center;
+    max-width: 100%;
+}
+
+.agent-garden__message-content {
+    padding: 8px 12px;
+    border-radius: 12px;
+    line-height: 1.4;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    font-size: 0.95em;
+}
+
+.agent-garden__message--user .agent-garden__message-content {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.agent-garden__message--agent .agent-garden__message-content {
+    background: #f0f0f0;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+.agent-garden__message--system .agent-garden__message-content {
+    background: #e3f2fd;
+    color: #1976d2;
+    border-radius: 10px;
+    font-size: 0.9em;
+}
+
+.agent-garden__message--error .agent-garden__message-content {
+    background: #ffebee;
+    color: #c62828;
+    border-radius: 10px;
+    font-size: 0.9em;
+}
+
+.agent-garden__message--loading .agent-garden__message-content {
+    background: #f0f0f0;
+    color: #999;
+    font-style: italic;
+}
+
+/* 입력 영역 */
+.agent-garden__input-area {
+    padding: 20px 30px;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.agent-garden__input {
+    flex: 1;
+    padding: 12px 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: none;
+    transition: border-color 0.3s ease;
+}
+
+.agent-garden__input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.agent-garden__send-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agent-garden__send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.agent-garden__send-btn:active {
+    transform: translateY(0);
+}
+
+/* 스크롤바 스타일 */
+.agent-garden__sidebar::-webkit-scrollbar,
+.agent-garden__messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.agent-garden__sidebar::-webkit-scrollbar-track,
+.agent-garden__messages::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.agent-garden__sidebar::-webkit-scrollbar-thumb,
+.agent-garden__messages::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.agent-garden__sidebar::-webkit-scrollbar-thumb:hover,
+.agent-garden__messages::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .agent-garden__main {
+        flex-direction: column;
+    }
+
+    .agent-garden__sidebar {
+        width: 100%;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .agent-garden__agent-list {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .agent-garden__agent-item {
+        min-width: 200px;
+    }
+
+    .agent-garden__message {
+        max-width: 90%;
+    }
+}
+
+/* 상세 리포트 스타일 - Compact 디자인 */
+.agent-garden__detailed-report {
+    margin-top: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.agent-garden__detailed-report .first-class-strategy-report,
+.agent-garden__detailed-report .onboarding-report {
+    max-width: 100%;
+    margin: 0;
+}
+
+.agent-garden__detailed-report .ob-container {
+    padding: 8px;
+}
+
+.agent-garden__detailed-report .report-header {
+    margin-bottom: 8px;
+    padding: 8px 12px !important;
+}
+
+.agent-garden__detailed-report .report-body {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 0 4px;
+}
+
+.agent-garden__detailed-report .report-body h3 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 4px;
+}
+
+.agent-garden__detailed-report .report-body h4 {
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.agent-garden__detailed-report .report-body p {
+    margin-bottom: 6px;
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+.agent-garden__detailed-report .report-body ul,
+.agent-garden__detailed-report .report-body ol {
+    margin: 0 0 8px 18px;
+    padding: 0;
+}
+
+.agent-garden__detailed-report .report-body li {
+    margin: 3px 0;
+    color: #374151;
+    line-height: 1.4;
+}
+
+.agent-garden__detailed-report .report-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    border: 1px solid #e5e7eb;
+    font-size: 12px;
+}
+
+.agent-garden__detailed-report .report-body th,
+.agent-garden__detailed-report .report-body td {
+    padding: 6px 8px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.agent-garden__detailed-report .report-body th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: #111827;
+}
+
+.agent-garden__detailed-report .ob-title-questions {
+    color: #dc2626;
+}
+
+/* 마크다운 리포트 스타일 */
+.agent-garden__markdown-report {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: #1f2937;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.agent-garden__markdown-report h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #111827;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 4px;
+}
+
+.agent-garden__markdown-report h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 8px 0 4px 0;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 3px;
+}
+
+.agent-garden__markdown-report h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 6px 0 3px 0;
+    color: #374151;
+}
+
+.agent-garden__markdown-report h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 6px 0 2px 0;
+    color: #4b5563;
+}
+
+.agent-garden__markdown-report p {
+    margin: 0 0 4px 0;
+    line-height: 1.5;
+}
+
+.agent-garden__markdown-report ul,
+.agent-garden__markdown-report ol {
+    margin: 4px 0 4px 20px;
+    padding: 0;
+}
+
+.agent-garden__markdown-report li {
+    margin: 2px 0;
+    line-height: 1.4;
+}
+
+.agent-garden__markdown-report strong {
+    font-weight: 600;
+    color: #111827;
+}
+
+.agent-garden__markdown-report em {
+    font-style: italic;
+    color: #4b5563;
+}
+
+.agent-garden__markdown-report code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #dc2626;
+}
+
+.agent-garden__markdown-report table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+    border: 1px solid #e5e7eb;
+}
+
+.agent-garden__markdown-report th,
+.agent-garden__markdown-report td {
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+}
+
+.agent-garden__markdown-report th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: #111827;
+}
+
+.agent-garden__markdown-report a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.agent-garden__markdown-report a:hover {
+    text-decoration: underline;
+}
+
+/* 상세 리포트가 있는 메시지는 전체 너비 사용 */
+.agent-garden__message:has(.agent-garden__detailed-report) {
+    max-width: 100%;
+}
+
+/* 포괄형 질문 스타일 */
+.comprehensive-questions {
+    margin-top: 2rem;
+}
+
+.question-group {
+    margin-bottom: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.question-header {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.question-header:hover {
+    background: #e9ecef;
+}
+
+.question-icon {
+    font-size: 0.8em;
+    color: #667eea;
+    transition: transform 0.3s;
+    display: inline-block;
+    min-width: 12px;
+}
+
+.question-group.expanded .question-icon {
+    transform: rotate(90deg);
+}
+
+.question-title {
+    font-weight: 600;
+    color: #333;
+    flex: 1;
+}
+
+.question-content {
+    padding: 0;
+    background: white;
+}
+
+.question-main,
+.question-sub {
+    padding: 10px 16px 10px 40px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border-top: 1px solid #f0f0f0;
+}
+
+.question-main {
+    font-weight: 500;
+    background: #f8f9fa;
+}
+
+.question-sub {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.question-main:hover,
+.question-sub:hover {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.question-text {
+    display: block;
+}
+
+.question-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 8px 16px;
+}
+
+.question-sub-primary {
+    background: #fff3cd !important;
+    border-left: 3px solid #ffc107;
+    font-weight: 500;
+}
+
+.question-sub-primary:hover {
+    background: #ffe69c !important;
+}
+

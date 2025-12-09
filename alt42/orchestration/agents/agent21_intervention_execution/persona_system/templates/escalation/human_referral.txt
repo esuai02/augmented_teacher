@@ -1,0 +1,24 @@
+[ACKNOWLEDGMENT]
+
+{{student_name}}님, 말씀해 주셔서 감사해요.
+
+[EXPLANATION]
+
+지금 {{student_name}}님의 상황은
+저 혼자서 도와드리기에는 한계가 있어요.
+
+[TRANSITION]
+
+그래서 {{human_contact}}님께 연결해 드리려고 해요.
+{{human_contact}}님은 {{expertise_area}}에 대해
+더 잘 도와주실 수 있는 분이에요.
+
+[REASSURANCE]
+
+이건 {{student_name}}님이 잘못해서가 아니에요.
+더 좋은 도움을 드리고 싶어서예요.
+
+[CONTINUITY]
+
+{{human_contact}}님과 연결된 후에도
+저는 계속 {{student_name}}님 곁에 있을 거예요.

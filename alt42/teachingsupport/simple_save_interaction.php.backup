@@ -1,0 +1,110 @@
+<?php
+include_once("/home/moodle/public_html/moodle/config.php");
+global $DB, $USER;
+require_login();
+
+header('Content-Type: application/json');
+
+// POST 데이터 받기
+$input = json_decode(file_get_contents('php://input'), true);
+
+try {
+    if ($input['action'] === 'create_interaction') {
+        // 간단한 테이블 생성 (테이블이 없는 경우)
+        try {
+            $DB->execute("CREATE TABLE IF NOT EXISTS {$CFG->prefix}ktm_teaching_interactions (
+                id BIGINT(10) NOT NULL AUTO_INCREMENT,
+                userid BIGINT(10) NOT NULL,
+                teacherid BIGINT(10) DEFAULT NULL,
+                problem_type VARCHAR(50) DEFAULT NULL,
+                problem_image LONGTEXT DEFAULT NULL,
+                problem_text LONGTEXT DEFAULT NULL,
+                solution_text LONGTEXT DEFAULT NULL,
+                narration_text LONGTEXT DEFAULT NULL,
+                audio_url VARCHAR(255) DEFAULT NULL,
+                modification_prompt LONGTEXT DEFAULT NULL,
+                webvtt_data LONGTEXT DEFAULT NULL,
+                status VARCHAR(50) DEFAULT 'pending',
+                timecreated BIGINT(10) NOT NULL,
+                timemodified BIGINT(10) NOT NULL,
+                PRIMARY KEY (id),
+                INDEX idx_userid (userid),
+                INDEX idx_teacherid (teacherid),
+                INDEX idx_status (status)
+            )");
+        } catch (Exception $e) {
+            // 테이블 생성 실패해도 계속 진행
+        }
+        
+        // 데이터로 레코드 생성
+        $studentId = (int)($input['studentId'] ?? 0);
+        $teacherId = (int)($input['teacherId'] ?? $USER->id);
+        
+        if ($studentId <= 0) {
+            throw new Exception('유효하지 않은 학생 ID');
+        }
+        
+        $interaction = new stdClass();
+        $interaction->userid = $studentId;
+        $interaction->teacherid = $teacherId;
+        $interaction->problem_type = $input['problemType'] ?? '';
+        $interaction->problem_image = $input['problemImage'] ?? '';
+        $interaction->problem_text = $input['problemText'] ?? '';
+        $interaction->modification_prompt = $input['modificationPrompt'] ?? '';
+        $interaction->status = 'pending';
+        $interaction->timecreated = time();
+        $interaction->timemodified = time();
+        
+        // 디버깅 로그
+        error_log("simple_save_interaction.php - Creating interaction:");
+        error_log("  studentId: $studentId");
+        error_log("  teacherId: $teacherId");
+        error_log("  problemType: " . ($interaction->problem_type ?: 'null'));
+        error_log("  hasImage: " . (!empty($interaction->problem_image) ? 'yes' : 'no'));
+        error_log("  modificationPrompt: " . (!empty($interaction->modification_prompt) ? 'yes' : 'no'));
+        
+        $interaction_id = $DB->insert_record('ktm_teaching_interactions', $interaction);
+        
+        if ($interaction_id) {
+            error_log("  Created with ID: $interaction_id");
+            
+            echo json_encode([
+                'success' => true,
+                'interactionId' => $interaction_id,
+                'debug' => [
+                    'studentId' => $studentId,
+                    'teacherId' => $teacherId,
+                    'table_created' => true,
+                    'savedData' => [
+                        'id' => $interaction_id,
+                        'teacherid' => $teacherId,
+                        'userid' => $studentId,
+                        'problem_type' => $interaction->problem_type,
+                        'has_image' => !empty($interaction->problem_image),
+                        'has_modification' => !empty($interaction->modification_prompt)
+                    ]
+                ]
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'error' => '레코드 삽입 실패'
+            ]);
+        }
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => '지원되지 않는 액션'
+        ]);
+    }
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage(),
+        'debug' => [
+            'input' => $input,
+            'user_id' => $USER->id
+        ]
+    ]);
+}
+?>

@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수학 오답 경향분석 시스템</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #6b7280;
+        }
+        
+        .tabs-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab-button:hover {
+            color: #374151;
+        }
+        
+        .tab-button.active {
+            color: #2563eb;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2563eb;
+        }
+        
+        .filter-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .filter-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .filter-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        select {
+            padding: 4px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .period-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .period-button {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .period-button:hover {
+            background: #e5e7eb;
+        }
+        
+        .period-button.active {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+        }
+        
+        .card h2, .card h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .network-container {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+        
+        .legend-circle.small {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .concept-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .concept-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .concept-rank {
+            font-size: 18px;
+            font-weight: bold;
+            color: #6b7280;
+            width: 24px;
+        }
+        
+        .concept-name {
+            flex: 1;
+            margin-left: 8px;
+        }
+        
+        .concept-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .concept-count {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .progress-bar {
+            width: 80px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #ef4444;
+            border-radius: 4px;
+        }
+        
+        .recommendation-card {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .recommendation-card h3 {
+            color: #92400e;
+        }
+        
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            color: #92400e;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            font-size: 14px;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        th.center {
+            text-align: center;
+        }
+        
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        td.center {
+            text-align: center;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .date-cell {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .difficulty-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .difficulty-badge.hard {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .difficulty-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .difficulty-badge.easy {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .answer-comparison {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .wrong-answer {
+            color: #ef4444;
+            text-decoration: line-through;
+        }
+        
+        .correct-answer {
+            color: #10b981;
+        }
+        
+        .review-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        
+        .review-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .detail-button {
+            color: #2563eb;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .detail-button:hover {
+            color: #1d4ed8;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            max-width: 672px;
+            width: 100%;
+            margin: 16px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #9ca3af;
+            padding: 4px;
+        }
+        
+        .close-button:hover {
+            color: #6b7280;
+        }
+        
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .info-item p:first-child {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+        
+        .info-item p:last-child {
+            font-weight: 500;
+        }
+        
+        .note-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+        }
+        
+        .note-box {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .key-point-box {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 16px;
+        }
+        
+        .button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .button-secondary {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        
+        .button-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        .button-primary {
+            background: #2563eb;
+            border: none;
+            color: white;
+        }
+        
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Icons - simple SVG icons inline */
+        .icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .table-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .table-stats {
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>수학 오답 경향분석 시스템</h1>
+            <p>최근 4주간의 수학 오답 패턴을 분석하여 취약 개념을 시각화합니다</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('network')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 16 12 13 15 10 15 7 12 2 12"></polyline>
+                        <polyline points="22 12 18 7 13 10 10 10 5 7 2 12"></polyline>
+                    </svg>
+                    개념 네트워크
+                </button>
+                <button class="tab-button" onclick="switchTab('errors')">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    오답노트 목록
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-container">
+            <div class="filter-content">
+                <div class="filter-left">
+                    <div class="filter-group">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        <span class="filter-label">필터:</span>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">단원:</label>
+                        <select id="unitSelect" onchange="updateFilters()">
+                            <option value="all">전체</option>
+                            <option value="미분법">미분법</option>
+                            <option value="적분법">적분법</option>
+                            <option value="삼각함수">삼각함수</option>
+                            <option value="벡터">벡터</option>
+                            <option value="확률과 통계">확률과 통계</option>
+                            <option value="수열">수열</option>
+                            <option value="복소수">복소수</option>
+                            <option value="행렬">행렬</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">기간:</label>
+                    <div class="period-buttons">
+                        <button class="period-button" onclick="setPeriod('today')">오늘</button>
+                        <button class="period-button active" onclick="setPeriod('week')">이번주</button>
+                        <button class="period-button" onclick="setPeriod('month')">이번달</button>
+                        <button class="period-button" onclick="setPeriod('3months')">3개월</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Tab Content -->
+        <div id="networkTab" class="tab-content active">
+            <div class="content-grid">
+                <div class="card">
+                    <h2>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 16 12 13 15 10 15 7 12 2 12"></polyline>
+                            <polyline points="22 12 18 7 13 10 10 10 5 7 2 12"></polyline>
+                        </svg>
+                        개념 연결 네트워크
+                    </h2>
+                    <div class="network-container">
+                        <svg id="networkSvg" width="800" height="600"></svg>
+                    </div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-circle" style="background: #3b82f6;"></div>
+                            <span>수학 개념</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle small" style="background: #ef4444;"></div>
+                            <span>어려운 문항</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-circle small" style="background: #f59e0b;"></div>
+                            <span>보통 문항</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-panel">
+                    <div id="nodeDetail" class="card hidden">
+                        <h3>상세정보</h3>
+                        <div id="nodeDetailContent"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="9" y1="3" x2="9" y2="21"></line>
+                                <line x1="9" y1="9" x2="21" y2="9"></line>
+                                <line x1="9" y1="15" x2="21" y2="15"></line>
+                            </svg>
+                            취약 개념 TOP 5
+                        </h3>
+                        <div id="conceptList" class="concept-list"></div>
+                    </div>
+
+                    <div class="recommendation-card">
+                        <h3>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            추천 학습 전략
+                        </h3>
+                        <div id="recommendations" class="recommendation-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Errors Tab Content -->
+        <div id="errorsTab" class="tab-content">
+            <div class="card">
+                <div class="table-header">
+                    <h2 class="table-title">오답노트 목록</h2>
+                    <div id="errorStats" class="table-stats"></div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>문제</th>
+                                <th>단원</th>
+                                <th>개념</th>
+                                <th class="center">난이도</th>
+                                <th class="center">답안</th>
+                                <th class="center">복습</th>
+                                <th class="center">상세</th>
+                            </tr>
+                        </thead>
+                        <tbody id="errorTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Detail Modal -->
+        <div id="errorModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle" class="modal-title"></h3>
+                    <button class="close-button" onclick="closeModal()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <p>날짜</p>
+                            <p id="modalDate"></p>
+                        </div>
+                        <div class="info-item">
+                            <p>단원/개념</p>
+                            <p id="modalUnit"></p>
+                        </div>
+                        <div class="info-item">
+                            <p>내 답안 → 정답</p>
+                            <p id="modalAnswer"></p>
+                        </div>
+                        <div class="info-item">
+                            <p>복습 상태</p>
+                            <p id="modalReview"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="note-section">
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">오답 원인</p>
+                        <div id="modalNote" class="note-box"></div>
+                    </div>
+                    
+                    <div>
+                        <p style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">핵심 포인트</p>
+                        <div id="modalKeyPoint" class="key-point-box"></div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button class="button button-secondary" onclick="closeModal()">닫기</button>
+                        <button class="button button-primary" onclick="markAsReviewed()">복습 완료 표시</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedNode = null;
+        let selectedUnit = 'all';
+        let selectedPeriod = 'week';
+        let analysisData = null;
+        let activeTab = 'network';
+        let selectedError = null;
+        let simulation = null;
+
+        // Sample data
+        const sampleData = {
+            nodes: [
+                // Math concept nodes
+                { id: 'concept1', name: '도함수의 활용', type: 'concept', errorCount: 15, unit: '미분법' },
+                { id: 'concept2', name: '적분의 응용', type: 'concept', errorCount: 12, unit: '적분법' },
+                { id: 'concept3', name: '삼각함수 공식', type: 'concept', errorCount: 8, unit: '삼각함수' },
+                { id: 'concept4', name: '벡터의 내적', type: 'concept', errorCount: 10, unit: '벡터' },
+                { id: 'concept5', name: '확률분포', type: 'concept', errorCount: 7, unit: '확률과 통계' },
+                { id: 'concept6', name: '수열의 극한', type: 'concept', errorCount: 9, unit: '수열' },
+                { id: 'concept7', name: '복소수', type: 'concept', errorCount: 6, unit: '복소수' },
+                { id: 'concept8', name: '행렬과 연산', type: 'concept', errorCount: 11, unit: '행렬' },
+                
+                // Question nodes
+                { id: 'q1', name: '2024 수능 미적분 21번', type: 'question', week: 1, unit: '미분법', difficulty: 'hard' },
+                { id: 'q2', name: '2024 6월 모평 15번', type: 'question', week: 1, unit: '미분법', difficulty: 'medium' },
+                { id: 'q3', name: '2024 9월 모평 22번', type: 'question', week: 2, unit: '적분법', difficulty: 'hard' },
+                { id: 'q4', name: '2023 수능 14번', type: 'question', week: 2, unit: '벡터', difficulty: 'medium' },
+                { id: 'q5', name: '2024 3월 학평 30번', type: 'question', week: 3, unit: '벡터', difficulty: 'hard' },
+                { id: 'q6', name: '2024 수능 확통 28번', type: 'question', week: 3, unit: '확률과 통계', difficulty: 'medium' },
+                { id: 'q7', name: '2024 6월 모평 29번', type: 'question', week: 4, unit: '적분법', difficulty: 'hard' },
+                { id: 'q8', name: '2024 수능 12번', type: 'question', week: 4, unit: '미분법', difficulty: 'medium' },
+            ],
+            links: [
+                // Question-concept connections
+                { source: 'q1', target: 'concept1', strength: 0.9 },
+                { source: 'q1', target: 'concept3', strength: 0.5 },
+                { source: 'q2', target: 'concept1', strength: 0.8 },
+                { source: 'q3', target: 'concept2', strength: 0.9 },
+                { source: 'q3', target: 'concept1', strength: 0.6 },
+                { source: 'q4', target: 'concept4', strength: 0.9 },
+                { source: 'q5', target: 'concept4', strength: 0.7 },
+                { source: 'q5', target: 'concept8', strength: 0.5 },
+                { source: 'q6', target: 'concept5', strength: 0.9 },
+                { source: 'q7', target: 'concept2', strength: 0.8 },
+                { source: 'q7', target: 'concept3', strength: 0.6 },
+                { source: 'q8', target: 'concept1', strength: 0.7 },
+                
+                // Concept-concept connections
+                { source: 'concept1', target: 'concept2', strength: 0.7 },
+                { source: 'concept1', target: 'concept3', strength: 0.5 },
+                { source: 'concept4', target: 'concept8', strength: 0.6 },
+                { source: 'concept3', target: 'concept7', strength: 0.4 },
+            ]
+        };
+
+        // Error notes data
+        const errorNotes = [
+            {
+                id: 'e1',
+                questionId: 'q1',
+                questionName: '2024 수능 미적분 21번',
+                date: '2025-01-31',
+                unit: '미분법',
+                concept: '도함수의 활용',
+                difficulty: 'hard',
+                myAnswer: '②',
+                correctAnswer: '④',
+                reviewed: false,
+                reviewCount: 0,
+                note: '극값 판정에서 이계도함수 조건을 놓침',
+                keyPoint: '변곡점에서의 함수 특성 이해 필요'
+            },
+            {
+                id: 'e2',
+                questionId: 'q2',
+                questionName: '2024 6월 모평 15번',
+                date: '2025-01-30',
+                unit: '미분법',
+                concept: '도함수의 활용',
+                difficulty: 'medium',
+                myAnswer: '③',
+                correctAnswer: '①',
+                reviewed: true,
+                reviewCount: 1,
+                note: '접선의 방정식 계산 실수',
+                keyPoint: '미분계수의 기하학적 의미'
+            },
+            {
+                id: 'e3',
+                questionId: 'q3',
+                questionName: '2024 9월 모평 22번',
+                date: '2025-01-22',
+                unit: '적분법',
+                concept: '적분의 응용',
+                difficulty: 'hard',
+                myAnswer: '⑤',
+                correctAnswer: '③',
+                reviewed: false,
+                reviewCount: 0,
+                note: '치환적분에서 적분구간 변환 오류',
+                keyPoint: '치환적분 시 구간 변환 주의'
+            },
+            {
+                id: 'e4',
+                questionId: 'q4',
+                questionName: '2023 수능 14번',
+                date: '2025-01-15',
+                unit: '벡터',
+                concept: '벡터의 내적',
+                difficulty: 'medium',
+                myAnswer: '①',
+                correctAnswer: '②',
+                reviewed: true,
+                reviewCount: 2,
+                note: '내적의 기하학적 의미 혼동',
+                keyPoint: '내적과 사영의 관계'
+            },
+            {
+                id: 'e5',
+                questionId: 'q6',
+                questionName: '2024 수능 확통 28번',
+                date: '2024-12-29',
+                unit: '확률과 통계',
+                concept: '확률분포',
+                difficulty: 'medium',
+                myAnswer: '④',
+                correctAnswer: '②',
+                reviewed: false,
+                reviewCount: 0,
+                note: '조건부확률 계산에서 표본공간 설정 오류',
+                keyPoint: '조건부확률의 정의 재확인'
+            },
+            {
+                id: 'e6',
+                questionId: 'q8',
+                questionName: '2024 수능 12번',
+                date: '2024-11-15',
+                unit: '미분법',
+                concept: '도함수의 활용',
+                difficulty: 'medium',
+                myAnswer: '⑤',
+                correctAnswer: '③',
+                reviewed: true,
+                reviewCount: 3,
+                note: '증가함수 조건 판별 오류',
+                keyPoint: '도함수의 부호와 함수의 증감'
+            }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderNetwork();
+            updateAnalysisData();
+            updateErrorTable();
+        });
+
+        // Tab switching
+        function switchTab(tab) {
+            activeTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.tab-button').classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            if (tab === 'network') {
+                document.getElementById('networkTab').classList.add('active');
+                renderNetwork();
+            } else {
+                document.getElementById('errorsTab').classList.add('active');
+                updateErrorTable();
+            }
+        }
+
+        // Period selection
+        function setPeriod(period) {
+            selectedPeriod = period;
+            
+            // Update button states
+            document.querySelectorAll('.period-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateFilters();
+        }
+
+        // Update filters
+        function updateFilters() {
+            selectedUnit = document.getElementById('unitSelect').value;
+            
+            if (activeTab === 'network') {
+                renderNetwork();
+                updateAnalysisData();
+            } else {
+                updateErrorTable();
+            }
+        }
+
+        // Get filtered data
+        function getFilteredData() {
+            let filteredNodes = [...sampleData.nodes];
+            let filteredLinks = [...sampleData.links];
+
+            if (selectedUnit !== 'all') {
+                const conceptNodes = filteredNodes.filter(n => n.type === 'concept' && n.unit === selectedUnit);
+                const questionNodes = filteredNodes.filter(n => n.type === 'question' && n.unit === selectedUnit);
+                const validNodeIds = [...conceptNodes, ...questionNodes].map(n => n.id);
+                
+                filteredNodes = [...conceptNodes, ...questionNodes];
+                filteredLinks = filteredLinks.filter(l => 
+                    validNodeIds.includes(l.source) || validNodeIds.includes(l.target) ||
+                    validNodeIds.includes(l.source.id) || validNodeIds.includes(l.target.id)
+                );
+            }
+
+            // Period filtering
+            if (selectedPeriod !== 'all') {
+                const today = new Date('2025-01-31');
+                let recentErrorQuestionIds = [];
+                
+                switch(selectedPeriod) {
+                    case 'today':
+                        const todayStr = today.toISOString().split('T')[0];
+                        recentErrorQuestionIds = errorNotes
+                            .filter(error => error.date === todayStr)
+                            .map(error => error.questionId);
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        recentErrorQuestionIds = errorNotes
+                            .filter(error => new Date(error.date) >= weekAgo)
+                            .map(error => error.questionId);
+                        break;
+                    case 'month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        recentErrorQuestionIds = errorNotes
+                            .filter(error => new Date(error.date) >= monthAgo)
+                            .map(error => error.questionId);
+                        break;
+                    case '3months':
+                        const threeMonthsAgo = new Date(today);
+                        threeMonthsAgo.setMonth(today.getMonth() - 3);
+                        recentErrorQuestionIds = errorNotes
+                            .filter(error => new Date(error.date) >= threeMonthsAgo)
+                            .map(error => error.questionId);
+                        break;
+                }
+                
+                if (recentErrorQuestionIds.length > 0) {
+                    const questionNodes = filteredNodes.filter(n => 
+                        n.type === 'question' && recentErrorQuestionIds.includes(n.id)
+                    );
+                    const questionIds = questionNodes.map(n => n.id);
+                    
+                    // Find connected concepts
+                    const connectedConcepts = new Set();
+                    filteredLinks.forEach(link => {
+                        const sourceId = link.source.id || link.source;
+                        const targetId = link.target.id || link.target;
+                        
+                        if (questionIds.includes(sourceId)) {
+                            const concept = filteredNodes.find(n => n.id === targetId && n.type === 'concept');
+                            if (concept) connectedConcepts.add(concept.id);
+                        }
+                        if (questionIds.includes(targetId)) {
+                            const concept = filteredNodes.find(n => n.id === sourceId && n.type === 'concept');
+                            if (concept) connectedConcepts.add(concept.id);
+                        }
+                    });
+                    
+                    filteredNodes = filteredNodes.filter(n => 
+                        questionIds.includes(n.id) || connectedConcepts.has(n.id)
+                    );
+                    
+                    const validNodeIds = filteredNodes.map(n => n.id);
+                    filteredLinks = filteredLinks.filter(l => {
+                        const sourceId = l.source.id || l.source;
+                        const targetId = l.target.id || l.target;
+                        return validNodeIds.includes(sourceId) && validNodeIds.includes(targetId);
+                    });
+                } else {
+                    filteredNodes = [];
+                    filteredLinks = [];
+                }
+            }
+
+            return { nodes: filteredNodes, links: filteredLinks };
+        }
+
+        // Render network graph
+        function renderNetwork() {
+            const svg = d3.select('#networkSvg');
+            svg.selectAll("*").remove();
+
+            const width = 800;
+            const height = 600;
+            const filteredData = getFilteredData();
+
+            // Stop previous simulation if exists
+            if (simulation) {
+                simulation.stop();
+            }
+
+            simulation = d3.forceSimulation(filteredData.nodes)
+                .force("link", d3.forceLink(filteredData.links)
+                    .id(d => d.id)
+                    .distance(d => d.strength ? 150 * (1 - d.strength) : 100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collision", d3.forceCollide().radius(d => d.type === 'concept' ? 40 : 25));
+
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(filteredData.links)
+                .enter().append("line")
+                .attr("stroke", "#999")
+                .attr("stroke-opacity", d => d.strength || 0.6)
+                .attr("stroke-width", d => (d.strength || 0.5) * 3);
+
+            const node = svg.append("g")
+                .selectAll("g")
+                .data(filteredData.nodes)
+                .enter().append("g")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            node.append("circle")
+                .attr("r", d => d.type === 'concept' ? 25 + d.errorCount : 15)
+                .attr("fill", d => {
+                    if (d.type === 'concept') {
+                        return '#3b82f6';
+                    } else {
+                        const difficultyColors = { 'hard': '#ef4444', 'medium': '#f59e0b', 'easy': '#10b981' };
+                        return difficultyColors[d.difficulty] || '#6b7280';
+                    }
+                })
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .on("click", function(event, d) {
+                    selectedNode = d;
+                    showNodeDetail(d);
+                });
+
+            node.append("text")
+                .text(d => d.type === 'concept' ? d.name : '')
+                .attr("text-anchor", "middle")
+                .attr("dy", ".35em")
+                .attr("fill", "white")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold");
+
+            node.filter(d => d.type === 'question')
+                .append("text")
+                .text((d, i) => {
+                    const questionNodes = filteredData.nodes.filter(n => n.type === 'question');
+                    return questionNodes.indexOf(d) + 1;
+                })
+                .attr("text-anchor", "middle")
+                .attr("dy", ".35em")
+                .attr("fill", "white")
+                .attr("font-size", "10px");
+
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        // Show node detail
+        function showNodeDetail(node) {
+            const detailDiv = document.getElementById('nodeDetail');
+            const contentDiv = document.getElementById('nodeDetailContent');
+            
+            detailDiv.classList.remove('hidden');
+            
+            let html = `
+                <div class="space-y-2">
+                    <p><span class="font-medium">이름:</span> ${node.name}</p>
+                    <p><span class="font-medium">단원:</span> ${node.unit}</p>
+            `;
+            
+            if (node.type === 'concept') {
+                html += `<p><span class="font-medium">오답 횟수:</span> ${node.errorCount}회</p>`;
+            } else {
+                html += `
+                    <p><span class="font-medium">주차:</span> ${node.week}주차</p>
+                    <p><span class="font-medium">난이도:</span> ${node.difficulty}</p>
+                `;
+            }
+            
+            html += '</div>';
+            contentDiv.innerHTML = html;
+        }
+
+        // Update analysis data
+        function updateAnalysisData() {
+            const filteredData = getFilteredData();
+            const conceptStats = filteredData.nodes
+                .filter(n => n.type === 'concept')
+                .map(concept => {
+                    const linkedQuestions = filteredData.links
+                        .filter(l => (l.source.id || l.source) === concept.id || (l.target.id || l.target) === concept.id)
+                        .map(l => {
+                            const otherId = (l.source.id || l.source) === concept.id ? (l.target.id || l.target) : (l.source.id || l.source);
+                            return filteredData.nodes.find(n => n.id === otherId && n.type === 'question');
+                        })
+                        .filter(Boolean);
+                    
+                    return {
+                        ...concept,
+                        linkedQuestions: linkedQuestions.length,
+                        avgStrength: filteredData.links
+                            .filter(l => (l.source.id || l.source) === concept.id || (l.target.id || l.target) === concept.id)
+                            .reduce((sum, l) => sum + (l.strength || 0), 0) / linkedQuestions.length || 0
+                    };
+                })
+                .sort((a, b) => b.linkedQuestions - a.linkedQuestions);
+
+            analysisData = conceptStats;
+            updateConceptList();
+            updateRecommendations();
+        }
+
+        // Update concept list
+        function updateConceptList() {
+            const listDiv = document.getElementById('conceptList');
+            listDiv.innerHTML = '';
+            
+            analysisData.slice(0, 5).forEach((concept, idx) => {
+                const item = document.createElement('div');
+                item.className = 'concept-item';
+                item.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <span class="concept-rank">${idx + 1}</span>
+                        <span class="concept-name">${concept.name}</span>
+                    </div>
+                    <div class="concept-stats">
+                        <span class="concept-count">${concept.linkedQuestions}문항</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(concept.linkedQuestions / 5) * 100}%"></div>
+                        </div>
+                    </div>
+                `;
+                listDiv.appendChild(item);
+            });
+        }
+
+        // Update recommendations
+        function updateRecommendations() {
+            const recDiv = document.getElementById('recommendations');
+            
+            if (analysisData && analysisData.length > 0) {
+                recDiv.innerHTML = `
+                    <p>• <strong>${analysisData[0].name}</strong> 개념을 우선적으로 복습하세요</p>
+                    <p>• 연관된 문제들을 집중적으로 풀어보세요</p>
+                    <p>• 개념 간 연결고리를 이해하며 학습하세요</p>
+                `;
+            } else {
+                recDiv.innerHTML = '<p>선택된 기간에 데이터가 없습니다.</p>';
+            }
+        }
+
+        // Update error table
+        function updateErrorTable() {
+            const tbody = document.getElementById('errorTableBody');
+            const filtered = getFilteredErrors();
+            
+            // Update stats
+            const statsDiv = document.getElementById('errorStats');
+            const reviewedCount = filtered.filter(e => e.reviewed).length;
+            statsDiv.textContent = `총 ${filtered.length}개 | 복습 완료 ${reviewedCount}개`;
+            
+            // Clear table
+            tbody.innerHTML = '';
+            
+            // Add rows
+            filtered.forEach(error => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="date-cell">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #9ca3af;">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ${error.date}
+                        </div>
+                    </td>
+                    <td style="font-weight: 500;">${error.questionName}</td>
+                    <td>${error.unit}</td>
+                    <td>${error.concept}</td>
+                    <td class="center">
+                        <span class="difficulty-badge ${error.difficulty}">
+                            ${error.difficulty === 'hard' ? '상' : error.difficulty === 'medium' ? '중' : '하'}
+                        </span>
+                    </td>
+                    <td class="center">
+                        <div class="answer-comparison">
+                            <span class="wrong-answer">${error.myAnswer}</span>
+                            <span class="correct-answer">${error.correctAnswer}</span>
+                        </div>
+                    </td>
+                    <td class="center">
+                        ${error.reviewed ? `
+                            <div class="review-status">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #10b981;">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                <span class="review-count">${error.reviewCount}회</span>
+                            </div>
+                        ` : `
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #9ca3af;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        `}
+                    </td>
+                    <td class="center">
+                        <button class="detail-button" onclick="showErrorDetail('${error.id}')">보기</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Get filtered errors
+        function getFilteredErrors() {
+            const today = new Date('2025-01-31');
+            let filtered = [...errorNotes];
+            
+            // Period filter
+            if (selectedPeriod !== 'all') {
+                switch(selectedPeriod) {
+                    case 'today':
+                        const todayStr = today.toISOString().split('T')[0];
+                        filtered = filtered.filter(error => error.date === todayStr);
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        filtered = filtered.filter(error => new Date(error.date) >= weekAgo);
+                        break;
+                    case 'month':
+                        const monthAgo = new Date(today);
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        filtered = filtered.filter(error => new Date(error.date) >= monthAgo);
+                        break;
+                    case '3months':
+                        const threeMonthsAgo = new Date(today);
+                        threeMonthsAgo.setMonth(today.getMonth() - 3);
+                        filtered = filtered.filter(error => new Date(error.date) >= threeMonthsAgo);
+                        break;
+                }
+            }
+            
+            // Unit filter
+            if (selectedUnit !== 'all') {
+                filtered = filtered.filter(error => error.unit === selectedUnit);
+            }
+            
+            return filtered;
+        }
+
+        // Show error detail
+        function showErrorDetail(errorId) {
+            const error = errorNotes.find(e => e.id === errorId);
+            if (!error) return;
+            
+            selectedError = error;
+            
+            document.getElementById('modalTitle').textContent = error.questionName;
+            document.getElementById('modalDate').textContent = error.date;
+            document.getElementById('modalUnit').textContent = `${error.unit} - ${error.concept}`;
+            document.getElementById('modalAnswer').innerHTML = `
+                <span class="wrong-answer">${error.myAnswer}</span> → 
+                <span class="correct-answer">${error.correctAnswer}</span>
+            `;
+            document.getElementById('modalReview').textContent = error.reviewed ? 
+                `${error.reviewCount}회 복습 완료` : '미복습';
+            document.getElementById('modalNote').textContent = error.note;
+            document.getElementById('modalKeyPoint').textContent = error.keyPoint;
+            
+            document.getElementById('errorModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('errorModal').classList.add('hidden');
+            selectedError = null;
+        }
+
+        // Mark as reviewed
+        function markAsReviewed() {
+            if (selectedError) {
+                const error = errorNotes.find(e => e.id === selectedError.id);
+                if (error) {
+                    error.reviewed = true;
+                    error.reviewCount = (error.reviewCount || 0) + 1;
+                    updateErrorTable();
+                    closeModal();
+                }
+            }
+        }
+
+        // Click outside modal to close
+        document.getElementById('errorModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

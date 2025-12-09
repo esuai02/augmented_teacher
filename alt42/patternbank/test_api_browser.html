@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI API Browser Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .api-key-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="password"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #444;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .status.pending { background: #e0e0e0; color: #666; }
+        .status.testing { background: #fff3cd; color: #856404; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ffeeba;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #bee5eb;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 OpenAI API 브라우저 테스트</h1>
+        <p class="subtitle">Chat Completions API (GPT-4o-mini) 직접 테스트</p>
+        
+        <div class="warning">
+            ⚠️ <strong>보안 경고:</strong> 이 페이지는 개발/테스트 목적으로만 사용하세요. 
+            프로덕션 환경에서는 API 키를 클라이언트 측에 노출하지 마세요.
+        </div>
+        
+        <div class="info">
+            ℹ️ <strong>사용법:</strong> OpenAI API 키를 입력하고 테스트 버튼을 클릭하세요. 
+            API 키는 <code>sk-proj-</code>로 시작합니다.
+        </div>
+        
+        <div class="api-key-input">
+            <input type="password" id="apiKey" 
+                   placeholder="OpenAI API 키를 입력하세요 (sk-proj-...)" 
+                   value="">
+            <button onclick="saveApiKey()">API 키 저장</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>1. API 연결 테스트 <span id="status1" class="status pending">대기중</span></h3>
+            <button onclick="testConnection()" id="testBtn1">연결 테스트 시작</button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 유사문제 생성 테스트 <span id="status2" class="status pending">대기중</span></h3>
+            <button onclick="testProblemGeneration()" id="testBtn2">문제 생성 테스트</button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 종합 진단 <span id="status3" class="status pending">대기중</span></h3>
+            <button onclick="runFullDiagnostics()" id="testBtn3">종합 진단 실행</button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // API 키 저장/로드
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (apiKey) {
+                localStorage.setItem('openai_api_key', apiKey);
+                alert('API 키가 브라우저에 저장되었습니다.');
+            }
+        }
+        
+        // 페이지 로드시 저장된 API 키 불러오기
+        window.onload = function() {
+            const savedKey = localStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+            }
+        };
+        
+        // 1. API 연결 테스트
+        async function testConnection() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status1');
+            const resultEl = document.getElementById('result1');
+            const btnEl = document.getElementById('testBtn1');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '테스트 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = '연결 테스트 진행 중...\n';
+            btnEl.disabled = true;
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a helpful assistant.'
+                            },
+                            {
+                                role: 'user',
+                                content: '1+1은 무엇인가요? 한 단어로 답해주세요.'
+                            }
+                        ],
+                        max_tokens: 10,
+                        temperature: 0.5
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '성공';
+                    resultEl.textContent = `✅ 연결 성공!\n\n`;
+                    resultEl.textContent += `모델: gpt-4o-mini\n`;
+                    resultEl.textContent += `응답: ${data.choices[0].message.content}\n`;
+                    resultEl.textContent += `\n토큰 사용량:\n`;
+                    resultEl.textContent += `- 프롬프트: ${data.usage.prompt_tokens}\n`;
+                    resultEl.textContent += `- 완료: ${data.usage.completion_tokens}\n`;
+                    resultEl.textContent += `- 총합: ${data.usage.total_tokens}`;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '실패';
+                    resultEl.textContent = `❌ API 오류\n\n`;
+                    resultEl.textContent += `상태 코드: ${response.status}\n`;
+                    resultEl.textContent += `오류 타입: ${data.error?.type || 'unknown'}\n`;
+                    resultEl.textContent += `오류 메시지: ${data.error?.message || 'No message'}\n`;
+                    
+                    if (data.error?.message.includes('Incorrect API key')) {
+                        resultEl.textContent += `\n💡 해결 방법: API 키를 확인하세요.`;
+                    } else if (data.error?.message.includes('quota')) {
+                        resultEl.textContent += `\n💡 해결 방법: OpenAI 계정의 크레딧을 확인하세요.`;
+                    }
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '오류';
+                resultEl.textContent = `❌ 네트워크 오류\n\n${error.message}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+        
+        // 2. 유사문제 생성 테스트
+        async function testProblemGeneration() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status2');
+            const resultEl = document.getElementById('result2');
+            const btnEl = document.getElementById('testBtn2');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '생성 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = '유사문제 생성 중...\n';
+            btnEl.disabled = true;
+            
+            const prompt = `다음 수학 문제를 바탕으로 유사한 문제를 1개 생성해주세요.
+
+원본 문제:
+문제: 다음 수열의 일반항을 구하시오: 3, 6, 12, 24, ...
+해설: 첫째항이 3이고 공비가 2인 등비수열입니다. 따라서 일반항은 a_n = 3 × 2^(n-1)입니다.
+
+다음 형식으로 작성해주세요:
+문제: [문제 내용]
+해설: [풀이 과정과 답]`;
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a helpful math tutor that creates practice problems in Korean.'
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        max_tokens: 1000,
+                        temperature: 0.7
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusEl.className = 'status success';
+                    statusEl.textContent = '성공';
+                    resultEl.textContent = `✅ 문제 생성 성공!\n\n`;
+                    resultEl.textContent += `생성된 문제:\n${data.choices[0].message.content}\n`;
+                    resultEl.textContent += `\n토큰 사용량: ${data.usage.total_tokens}`;
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.textContent = '실패';
+                    resultEl.textContent = `❌ 생성 실패\n\n${data.error?.message || 'Unknown error'}`;
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = '오류';
+                resultEl.textContent = `❌ 오류 발생\n\n${error.message}`;
+            } finally {
+                btnEl.disabled = false;
+            }
+        }
+        
+        // 3. 종합 진단
+        async function runFullDiagnostics() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                alert('API 키를 먼저 입력해주세요.');
+                return;
+            }
+            
+            const statusEl = document.getElementById('status3');
+            const resultEl = document.getElementById('result3');
+            const btnEl = document.getElementById('testBtn3');
+            
+            statusEl.className = 'status testing';
+            statusEl.textContent = '진단 중...';
+            resultEl.style.display = 'block';
+            resultEl.textContent = '종합 진단 시작...\n\n';
+            btnEl.disabled = true;
+            
+            let allPassed = true;
+            
+            // API 키 형식 검사
+            resultEl.textContent += '1. API 키 형식 검사... ';
+            if (apiKey.startsWith('sk-proj-') || apiKey.startsWith('sk-')) {
+                resultEl.textContent += '✅ 정상\n';
+            } else {
+                resultEl.textContent += '❌ 잘못된 형식\n';
+                allPassed = false;
+            }
+            
+            // API 연결 테스트
+            resultEl.textContent += '2. API 연결 테스트... ';
+            try {
+                const response = await fetch('https://api.openai.com/v1/models', {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+                
+                if (response.ok) {
+                    resultEl.textContent += '✅ 연결 성공\n';
+                } else {
+                    const data = await response.json();
+                    resultEl.textContent += `❌ 실패 (${data.error?.message || 'Unknown'})\n`;
+                    allPassed = false;
+                }
+            } catch (error) {
+                resultEl.textContent += `❌ 네트워크 오류\n`;
+                allPassed = false;
+            }
+            
+            // 모델 사용 가능 확인
+            resultEl.textContent += '3. GPT-4o-mini 모델 확인... ';
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [{role: 'user', content: 'test'}],
+                        max_tokens: 1
+                    })
+                });
+                
+                if (response.ok) {
+                    resultEl.textContent += '✅ 사용 가능\n';
+                } else {
+                    resultEl.textContent += '❌ 사용 불가\n';
+                    allPassed = false;
+                }
+            } catch (error) {
+                resultEl.textContent += '❌ 오류\n';
+                allPassed = false;
+            }
+            
+            // 최종 결과
+            resultEl.textContent += '\n━━━━━━━━━━━━━━━━━━━━\n';
+            if (allPassed) {
+                statusEl.className = 'status success';
+                statusEl.textContent = '정상';
+                resultEl.textContent += '✅ 모든 테스트 통과!\n';
+                resultEl.textContent += 'PatternBank가 정상적으로 작동할 준비가 되었습니다.\n';
+                resultEl.textContent += '\n다음 단계:\n';
+                resultEl.textContent += '1. config/api_keys.php 파일에 API 키 저장\n';
+                resultEl.textContent += '2. test_api_simple.php 실행하여 서버 측 테스트\n';
+                resultEl.textContent += '3. PatternBank 시스템 사용 시작';
+            } else {
+                statusEl.className = 'status error';
+                statusEl.textContent = '문제 발견';
+                resultEl.textContent += '❌ 일부 테스트 실패\n';
+                resultEl.textContent += '위의 오류 메시지를 확인하고 문제를 해결하세요.';
+            }
+            
+            btnEl.disabled = false;
+        }
+    </script>
+</body>
+</html>

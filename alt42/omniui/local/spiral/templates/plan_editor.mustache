@@ -1,0 +1,226 @@
+{{!
+    Spiral Schedule Editor Template
+    
+    @template local_spiral/plan_editor
+    @copyright 2024 MathKing
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="spiral-editor">
+    <div class="schedule-header mb-3">
+        <h4>{{student_name}} 학습 스케줄</h4>
+        <div class="schedule-meta">
+            <span class="badge badge-primary">{{total_sessions}} 세션</span>
+            <span class="badge badge-info">{{total_hours}} 시간</span>
+            <span class="badge badge-success">선행 {{preview_ratio}}%</span>
+            <span class="badge badge-warning">복습 {{review_ratio}}%</span>
+            {{#has_conflicts}}
+            <span class="badge badge-danger">충돌 {{conflict_count}}개</span>
+            {{/has_conflicts}}
+        </div>
+    </div>
+    
+    <div class="schedule-calendar">
+        {{#weeks}}
+        <div class="week-container mb-4" data-week="{{week_number}}">
+            <h5>{{week_label}}</h5>
+            <div class="row">
+                {{#days}}
+                <div class="col day-column" data-date="{{date}}">
+                    <div class="day-header">
+                        <strong>{{day_label}}</strong>
+                        <small class="text-muted">{{date_formatted}}</small>
+                    </div>
+                    
+                    <div class="day-sessions droppable" data-date="{{date}}">
+                        {{#sessions}}
+                        <div class="session-card {{session_type}}" 
+                             data-session-id="{{id}}"
+                             data-duration="{{duration}}"
+                             draggable="true">
+                            <div class="session-time">
+                                <i class="fa fa-clock-o"></i> {{time}}
+                                <span class="duration-badge">{{duration}}분</span>
+                            </div>
+                            <div class="session-content">
+                                <div class="unit-name">{{unit_name}}</div>
+                                <div class="session-meta">
+                                    <span class="difficulty-stars">
+                                        {{#difficulty_stars}}★{{/difficulty_stars}}
+                                    </span>
+                                    {{#is_preview}}
+                                    <span class="type-badge preview">선행</span>
+                                    {{/is_preview}}
+                                    {{#is_review}}
+                                    <span class="type-badge review">복습</span>
+                                    {{/is_review}}
+                                </div>
+                            </div>
+                            {{#has_conflict}}
+                            <div class="conflict-indicator" title="{{conflict_detail}}">
+                                <i class="fa fa-exclamation-triangle"></i>
+                            </div>
+                            {{/has_conflict}}
+                        </div>
+                        {{/sessions}}
+                        
+                        {{^sessions}}
+                        <div class="empty-day">
+                            <small class="text-muted">휴식</small>
+                        </div>
+                        {{/sessions}}
+                    </div>
+                    
+                    <div class="day-summary">
+                        <small>총 {{day_total_minutes}}분</small>
+                    </div>
+                </div>
+                {{/days}}
+            </div>
+        </div>
+        {{/weeks}}
+    </div>
+    
+    {{#has_conflicts}}
+    <div class="conflicts-panel mt-4">
+        <h5><i class="fa fa-exclamation-triangle text-danger"></i> 충돌 목록</h5>
+        <div class="list-group">
+            {{#conflicts}}
+            <div class="list-group-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{type_label}}</strong>
+                        <p class="mb-0 text-muted">{{detail}}</p>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary resolve-btn" 
+                            data-conflict-id="{{id}}">
+                        해결
+                    </button>
+                </div>
+            </div>
+            {{/conflicts}}
+        </div>
+    </div>
+    {{/has_conflicts}}
+    
+    <div class="editor-actions mt-4 text-center">
+        <button class="btn btn-secondary" id="reset-btn">
+            <i class="fa fa-undo"></i> 초기화
+        </button>
+        <button class="btn btn-primary" id="save-changes-btn">
+            <i class="fa fa-save"></i> 변경사항 저장
+        </button>
+        <button class="btn btn-success" id="publish-schedule-btn">
+            <i class="fa fa-check"></i> 발행
+        </button>
+    </div>
+</div>
+
+<style>
+.spiral-editor {
+    padding: 20px;
+}
+
+.week-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    background: #f9f9f9;
+}
+
+.day-column {
+    min-height: 200px;
+    border-right: 1px solid #e0e0e0;
+    padding: 10px;
+}
+
+.day-column:last-child {
+    border-right: none;
+}
+
+.day-header {
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.day-sessions {
+    min-height: 150px;
+    padding: 5px;
+}
+
+.session-card {
+    position: relative;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    cursor: move;
+    transition: all 0.3s ease;
+}
+
+.session-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.session-card.preview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.session-card.review {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.session-card.dragging {
+    opacity: 0.5;
+}
+
+.droppable.drag-over {
+    background-color: #e8f5e9;
+    border: 2px dashed #4caf50;
+}
+
+.conflict-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #ff5722;
+    font-size: 1.2em;
+}
+
+.duration-badge {
+    background: rgba(255,255,255,0.3);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.8em;
+}
+
+.difficulty-stars {
+    color: #ffd700;
+    font-size: 0.9em;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    background: rgba(255,255,255,0.3);
+}
+
+.empty-day {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.day-summary {
+    text-align: center;
+    padding: 5px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 10px;
+    font-weight: bold;
+}
+</style>

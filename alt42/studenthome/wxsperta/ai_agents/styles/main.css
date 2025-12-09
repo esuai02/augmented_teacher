@@ -1,0 +1,367 @@
+/* 🌌 마이 궤도 - 우주 테마 스타일 */
+
+:root {
+    /* 우주 색상 팔레트 */
+    --space-dark: #0D1B2A;
+    --space-mid: #1B263B;
+    --nebula: #415A77;
+    --starlight: #778DA9;
+    --moon: #E0E1DD;
+    
+    /* 행성 색상 */
+    --planet-blue: #4FC3F7;
+    --planet-purple: #B388FF;
+    --planet-orange: #FFB74D;
+    --planet-green: #69F0AE;
+    --planet-pink: #F48FB1;
+    
+    /* 카테고리 색상 */
+    --cat-voyage: #7C4DFF;
+    --cat-mission: #FF6D00;
+    --cat-flag: #F50057;
+    --cat-resource: #00E676;
+}
+
+/* 전역 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    color: var(--moon);
+    background: linear-gradient(135deg, var(--space-dark) 0%, var(--space-mid) 50%, #1a1a2e 100%);
+    min-height: 100vh;
+}
+
+/* 별 배경 효과 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, white, transparent),
+        radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 230px 80px, white, transparent),
+        radial-gradient(2px 2px at 300px 150px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(1px 1px at 50px 180px, white, transparent),
+        radial-gradient(2px 2px at 180px 220px, rgba(255,255,255,0.5), transparent);
+    background-repeat: repeat;
+    background-size: 350px 250px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 돌아가기 버튼 */
+.back-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--moon);
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+}
+
+.back-btn:hover {
+    background: rgba(79, 195, 247, 0.15);
+    border-color: var(--planet-blue);
+    transform: translateY(-2px);
+}
+
+/* 헤더 스타일 */
+.orbit-header {
+    text-align: center;
+    padding: 3rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.orbit-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--moon);
+    text-shadow: 0 0 30px rgba(79,195,247,0.3);
+}
+
+.orbit-header p {
+    font-size: 1.1rem;
+    color: var(--starlight);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* 네비게이션 스타일 */
+.category-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.nav-item {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--moon);
+    text-decoration: none;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.nav-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.nav-voyage:hover { 
+    background: rgba(124, 77, 255, 0.2); 
+    border-color: var(--cat-voyage); 
+}
+.nav-mission:hover { 
+    background: rgba(255, 109, 0, 0.2); 
+    border-color: var(--cat-mission); 
+}
+.nav-flag:hover { 
+    background: rgba(245, 0, 87, 0.2); 
+    border-color: var(--cat-flag); 
+}
+.nav-resource:hover { 
+    background: rgba(0, 230, 118, 0.2); 
+    border-color: var(--cat-resource); 
+}
+
+/* 카테고리 섹션 스타일 */
+.category-section {
+    margin-bottom: 3rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.category-section h2 {
+    color: var(--moon);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.section-subtitle {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--starlight);
+}
+
+/* 섹션별 강조색 */
+.section-voyage { border-left: 3px solid var(--cat-voyage); }
+.section-mission { border-left: 3px solid var(--cat-mission); }
+.section-flag { border-left: 3px solid var(--cat-flag); }
+.section-resource { border-left: 3px solid var(--cat-resource); }
+
+/* 카드 그리드 스타일 */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+/* 미션 카드 스타일 */
+.mission-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--planet-blue), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3), 0 0 30px rgba(79,195,247,0.1);
+}
+
+.mission-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.mission-card h3 {
+    color: var(--moon);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.mission-card p {
+    color: var(--starlight);
+    margin-bottom: 1rem;
+    flex-grow: 1;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.card-link {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: rgba(79, 195, 247, 0.15);
+    border: 1px solid rgba(79, 195, 247, 0.3);
+    color: var(--planet-blue);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.card-link:hover {
+    background: rgba(79, 195, 247, 0.25);
+    border-color: var(--planet-blue);
+    transform: translateX(3px);
+}
+
+/* 프로젝트 리스트 스타일 */
+.project-list {
+    margin-top: 1.5rem;
+}
+
+.main-project {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.main-project h3 {
+    color: var(--moon);
+    margin-bottom: 0.5rem;
+}
+
+.main-project p {
+    color: var(--starlight);
+    margin-bottom: 1rem;
+}
+
+.sub-projects {
+    margin-left: 1rem;
+}
+
+.sub-project {
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid var(--planet-blue);
+    padding: 1rem;
+    margin: 0.75rem 0;
+    border-radius: 0 8px 8px 0;
+}
+
+.sub-project h4 {
+    color: var(--moon);
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+}
+
+.sub-project p {
+    color: var(--starlight);
+    font-size: 0.9rem;
+}
+
+/* 푸터 스타일 */
+footer {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--starlight);
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+footer p {
+    font-size: 0.95rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .orbit-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .category-nav {
+        gap: 0.75rem;
+    }
+    
+    .nav-item {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .category-section {
+        padding: 1.5rem;
+    }
+}
+
+/* 애니메이션 */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(79,195,247,0.3); }
+    50% { box-shadow: 0 0 20px rgba(79,195,247,0.5); }
+}
+
+.mission-card:hover .card-icon {
+    animation: float 2s ease-in-out infinite;
+}

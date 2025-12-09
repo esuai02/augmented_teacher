@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 입체도형 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 다면체 (중등수학 1-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다면체_개념">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다면체(개념)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53258&amp;page=1&amp;quizid=86180</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 평면으로 둘러싸인 입체도형인 다면체의 개념을 이해하고, 다면체와 각뿔대, 각기둥, 각뿔 등의 차이점을 구분할 수 있다. 다면체의 구조와 형태를 시각적으로 이해하고 수학적으로 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#각뿔대">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">각뿔대</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53259&amp;page=1&amp;quizid=86181</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 각뿔의 꼭짓점과 밑면 사이를 평행한 평면으로 잘라낸 입체도형인 각뿔대의 개념을 이해하고, 각뿔대의 구조와 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#각기둥_각뿔_각뿔대">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">각기둥, 각뿔, 각뿔대</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53260&amp;page=1&amp;quizid=86182</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 각기둥, 각뿔, 각뿔대의 정의와 특징을 구분하고, 각각의 구조와 성질을 이해할 수 있다. 각 입체도형의 종류와 특징을 시각적으로 구분하고 실생활에서의 적용 예시를 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정다면체">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정다면체</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53261&amp;page=1&amp;quizid=86183</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 모든 면이 합동인 정다각형이고, 각 꼭짓점에 모이는 면의 개수가 같은 다면체인 정다면체의 정의와 특징을 이해한다. 정사면체, 정육면체, 정팔면체, 정십이면체, 정이십면체의 종류와 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정다면체의_각_면의_중심을_꼭짓점으로_하는_입체도형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정다면체의 각 면의 중심을 꼭짓점으로 하는 입체도형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53262&amp;page=1&amp;quizid=86184</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 정다면체의 각 면의 중심을 꼭짓점으로 하는 새로운 입체도형의 개념을 이해하고, 이 도형의 구조와 성질을 파악할 수 있다. 정다면체와의 관계를 이해하고 도형 변환의 원리를 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다면체의_꼭짓점_모서리_면의_개수_사이의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다면체의 꼭짓점, 모서리, 면의 개수 사이의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=9&amp;cmid=53263&amp;page=1&amp;quizid=86185</ar:hasURL>
+    <ar:description xml:lang="ko">다면체(중등) — 오일러의 정리(V - E + F = 2)를 이해하고, 다면체의 꼭짓점, 모서리, 면의 개수 사이의 관계를 파악할 수 있다. 주어진 정보로 나머지 요소를 계산하고 다면체의 구조를 분석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 회전체 (중등수학 1-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#회전체_개념">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">회전체_개념</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=10&amp;cmid=53264&amp;page=1&amp;quizid=86186</ar:hasURL>
+    <ar:description xml:lang="ko">회전체(중등) — 평면도형을 한 직선을 축으로 회전시켜 얻은 입체도형인 회전체의 개념을 이해한다. 원기둥, 원뿔, 구 등 회전체의 종류와 생성 원리를 파악하고, 회전축과 단면의 관계를 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#회전체의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">회전체의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=10&amp;cmid=53265&amp;page=1&amp;quizid=86187</ar:hasURL>
+    <ar:description xml:lang="ko">회전체(중등) — 회전체의 대칭성, 회전축, 단면의 성질을 이해한다. 회전체의 부피와 표면적 계산 공식을 유도하고, 회전축 변환에 따른 변화를 분석할 수 있다. 회전체와 다른 기하학적 도형과의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#회전체의_전개도">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">회전체의 전개도</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=10&amp;cmid=53266&amp;page=1&amp;quizid=86188</ar:hasURL>
+    <ar:description xml:lang="ko">회전체(중등) — 회전체를 평면에 펼쳐 놓은 전개도를 그릴 수 있다. 원기둥, 원뿔의 전개도를 이해하고, 전개도로부터 겉넓이를 계산할 수 있다. 공간적 사고력을 활용하여 입체도형과 평면도형의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 입체도형의 부피와 겉넓이 (중등수학 1-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기둥의_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기둥의 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53267&amp;page=1&amp;quizid=86189</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 기둥의 부피는 밑면의 넓이 × 높이로 계산됨을 이해하고, 직육면체, 원기둥 등 다양한 기둥의 부피를 구할 수 있다. 공식의 유도 과정을 이해하고 단위 변환을 정확히 수행할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기둥의_겉넓이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기둥의 겉넓이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53268&amp;page=1&amp;quizid=86190</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 기둥의 겉넓이는 두 밑면의 넓이와 옆면의 넓이의 합으로 계산됨을 이해한다. 전개도를 이용하여 겉넓이를 구하고, 직육면체, 원기둥 등 다양한 기둥의 겉넓이를 정확히 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#뿔의_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">뿔의 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53269&amp;page=1&amp;quizid=86191</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 뿔의 부피는 밑면의 넓이 × 높이 ÷ 3으로 계산됨을 이해한다. 원뿔, 사각뿔 등 다양한 뿔의 부피를 구하고, 공식의 유도 과정과 기둥과의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#뿔의_겉넓이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">뿔의 겉넓이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53270&amp;page=1&amp;quizid=86192</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 뿔의 겉넓이는 밑면의 넓이와 옆면의 넓이의 합으로 계산됨을 이해한다. 전개도를 이용하여 옆면의 넓이를 구하고, 원뿔, 사각뿔 등 다양한 뿔의 겉넓이를 정확히 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#구의_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">구의 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53271&amp;page=1&amp;quizid=86193</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 구의 부피는 (4/3)πr³으로 계산됨을 이해한다. 구의 부피 공식을 유도하고 적용할 수 있으며, 구와 원기둥, 원뿔의 부피 관계를 파악할 수 있다. 단위 변환을 정확히 수행할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#구의_겉넓이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">구의 겉넓이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53272&amp;page=1&amp;quizid=86194</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 구의 겉넓이는 4πr²으로 계산됨을 이해한다. 구의 겉넓이 공식을 유도하고 적용할 수 있으며, 구와 원기둥의 겉넓이 관계를 파악할 수 있다. 부피와 겉넓이의 관계를 이해하고 문제에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#구_원기둥_원뿔의_부피와_겉넓이의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">구, 원기둥, 원뿔의 부피와 겉넓이의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=67&amp;nch=11&amp;cmid=53273&amp;page=1&amp;quizid=86463</ar:hasURL>
+    <ar:description xml:lang="ko">입체도형의 부피와 겉넓이(중등) — 구, 원기둥, 원뿔의 부피와 겉넓이 사이의 관계를 이해한다. 같은 높이와 밑면 반지름을 가진 경우의 부피 비율을 파악하고, 실생활 문제에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 피타고라스 정리의 입체도형에의 활용 (중등수학 2-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직육면체의_대각선의_길이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직육면체의 대각선의 길이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=72&amp;nch=5&amp;cmid=53525&amp;page=1&amp;quizid=86418</ar:hasURL>
+    <ar:description xml:lang="ko">피타고라스 정리의 입체도형에의 활용(중등) — 직육면체의 대각선의 길이를 피타고라스 정리를 이용하여 구할 수 있다. 입체도형에서 평면을 선택하여 피타고라스 정리를 두 번 적용하는 방법을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정사면체의_높이와_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정사면체의 높이와 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=72&amp;nch=5&amp;cmid=53526&amp;page=1&amp;quizid=86419</ar:hasURL>
+    <ar:description xml:lang="ko">피타고라스 정리의 입체도형에의 활용(중등) — 정사면체의 높이를 피타고라스 정리를 이용하여 구하고, 높이를 이용하여 부피를 계산할 수 있다. 정사면체의 구조를 이해하고 수학적 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정사각뿔의_높이와_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정사각뿔의 높이와 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=72&amp;nch=5&amp;cmid=53527&amp;page=1&amp;quizid=86420</ar:hasURL>
+    <ar:description xml:lang="ko">피타고라스 정리의 입체도형에의 활용(중등) — 정사각뿔의 높이를 피타고라스 정리를 이용하여 구하고, 높이를 이용하여 부피를 계산할 수 있다. 정사각뿔의 구조와 성질을 이해하고 수학적 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원뿔의_높이와_부피">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원뿔의 높이와 부피</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=72&amp;nch=5&amp;cmid=53528&amp;page=1&amp;quizid=86421</ar:hasURL>
+    <ar:description xml:lang="ko">피타고라스 정리의 입체도형에의 활용(중등) — 원뿔의 높이를 피타고라스 정리를 이용하여 구하고, 높이를 이용하여 부피를 계산할 수 있다. 원뿔의 구조와 성질을 이해하고 수학적 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#입체도형에서의_최단_거리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">입체도형에서의 최단 거리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=72&amp;nch=5&amp;cmid=53529&amp;page=1&amp;quizid=86422</ar:hasURL>
+    <ar:description xml:lang="ko">피타고라스 정리의 입체도형에의 활용(중등) — 입체도형의 표면 위의 두 점 사이의 최단 거리를 구할 수 있다. 전개도를 이용하여 평면으로 변환한 후 피타고라스 정리를 적용하는 방법을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 공간도형 (기하와 벡터) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공간도형의_기본_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공간도형의 기본 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48876&amp;page=1&amp;quizid=85012</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 공간도형의 정의와 종류를 이해하고, 다양한 공간도형의 기본적인 성질과 특성을 파악할 수 있다. 점, 직선, 평면의 기본 개념과 공간에서의 위치 관계를 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평면의_결정_조건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평면의 결정 조건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48877&amp;page=1&amp;quizid=85013</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 세 점, 한 점과 직선, 두 평행한 직선 등으로 평면이 결정되는 조건을 이해한다. 결정 조건을 이용해 실제 문제를 해결하고, 평면의 유일성을 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_직선의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 직선의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48878&amp;page=1&amp;quizid=85014</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 평행, 교차, 일치, 스큐(비평면적 교차) 등 두 직선의 다양한 위치 관계를 구별할 수 있다. 공간에서 두 직선의 위치 관계를 판단하고, 각 경우의 성질을 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선과_평면_사이의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선과 평면 사이의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48879&amp;page=1&amp;quizid=85015</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 직선이 평면에 포함되는 조건, 평행하거나 평면을 관통하는 경우를 이해한다. 직선과 평면의 위치 관계를 판단하고, 각 경우의 성질을 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_평면의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 평면의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48880&amp;page=1&amp;quizid=85016</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 평행, 일치, 교차(교선의 존재) 등 두 평면의 위치 관계를 이해한다. 두 평면의 위치 관계를 판단하고, 교선의 성질을 설명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선과_평면의_평행_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선과 평면의 평행 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48881&amp;page=1&amp;quizid=85017</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 직선과 평면이 평행인 조건을 이해하고 식별할 수 있다. 평행 관계의 성질과 정리를 이해하고, 이를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선과_직선_직선과_평면이_이루는_각">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선과 직선, 직선과 평면이 이루는 각</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=48882&amp;page=1&amp;quizid=85018</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 두 벡터 또는 직선과 평면 사이의 각을 계산하는 방법을 이해한다. 공간에서 각의 정의와 측정 방법을 파악하고, 각을 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선과_평면의_수직_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선과 평면의 수직 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49225&amp;page=1&amp;quizid=85019</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 직선이 평면에 수직인 조건과 그 성질을 이해한다. 수직 관계의 판정과 성질을 파악하고, 이를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼수선의_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼수선의 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49226&amp;page=1&amp;quizid=85020</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 삼수선의 정리와 그 적용을 이해한다. 평면 위의 한 점에서 평면에 수직인 직선과 평면 위의 직선이 이루는 관계를 파악하고, 정리를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이면각">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이면각</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49227&amp;page=1&amp;quizid=85021</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 이면각의 정의와 계산 방법을 이해한다. 두 평면이 이루는 각을 구하는 방법을 파악하고, 이면각을 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_평면의_수직에_대한_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 평면의 수직에 대한 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49228&amp;page=1&amp;quizid=85022</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 두 평면이 수직인 조건과 그 결과를 이해한다. 두 평면의 수직 관계를 판정하고, 수직 관계의 성질을 파악하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정사영">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정사영</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49229&amp;page=1&amp;quizid=85023</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 정사영의 정의와 구하는 방법을 이해한다. 평면에 대한 점, 직선, 도형의 정사영을 구하고, 정사영의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정사영의_길이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정사영의 길이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49230&amp;page=1&amp;quizid=85024</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 직선 또는 선분의 정사영 길이를 계산하는 방법을 이해한다. 정사영의 길이와 원래 길이의 관계를 파악하고, 각도를 이용하여 정사영의 길이를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정사영의_넓이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정사영의 넓이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=5&amp;cmid=49231&amp;page=1&amp;quizid=85025</ar:hasURL>
+    <ar:description xml:lang="ko">공간도형(고등) — 도형의 평면에 대한 정사영 넓이를 계산하는 방법을 이해한다. 정사영의 넓이와 원래 넓이의 관계를 파악하고, 각도를 이용하여 정사영의 넓이를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#각뿔대">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#각기둥_각뿔_각뿔대"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#각기둥_각뿔_각뿔대">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정다면체"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정다면체">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정다면체의_각_면의_중심을_꼭짓점으로_하는_입체도형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정다면체의_각_면의_중심을_꼭짓점으로_하는_입체도형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다면체의_꼭짓점_모서리_면의_개수_사이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다면체의_꼭짓점_모서리_면의_개수_사이의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#회전체_개념"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#회전체_개념">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#회전체의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#회전체의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#회전체의_전개도"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#회전체의_전개도">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기둥의_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기둥의_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기둥의_겉넓이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기둥의_겉넓이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#뿔의_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#뿔의_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#뿔의_겉넓이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#뿔의_겉넓이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#구의_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#구의_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#구의_겉넓이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#구의_겉넓이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#구_원기둥_원뿔의_부피와_겉넓이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#구_원기둥_원뿔의_부피와_겉넓이의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직육면체의_대각선의_길이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직육면체의_대각선의_길이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정사면체의_높이와_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정사면체의_높이와_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정사각뿔의_높이와_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정사각뿔의_높이와_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원뿔의_높이와_부피"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원뿔의_높이와_부피">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#입체도형에서의_최단_거리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#입체도형에서의_최단_거리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공간도형의_기본_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공간도형의_기본_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평면의_결정_조건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평면의_결정_조건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_직선의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_직선의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선과_평면_사이의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선과_평면_사이의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_평면의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_평면의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선과_평면의_평행_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선과_평면의_평행_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선과_직선_직선과_평면이_이루는_각"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선과_직선_직선과_평면이_이루는_각">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선과_평면의_수직_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선과_평면의_수직_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼수선의_정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼수선의_정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이면각"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이면각">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_평면의_수직에_대한_정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_평면의_수직에_대한_정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정사영"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정사영">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정사영의_길이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정사영의_길이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정사영의_넓이"/>
+  </rdf:Description>
+</rdf:RDF>
+

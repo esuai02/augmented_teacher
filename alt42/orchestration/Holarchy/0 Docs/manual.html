@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holarchy System Manual</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Dark Mode (default class) */
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --border-color: #e2e8f0;
+        }
+
+        :root.dark {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-yellow: #d29922;
+            --accent-red: #f85149;
+            --accent-purple: #bc8cff;
+            --border-color: #30363d;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-blue);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle-icon {
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        :root.dark .theme-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        :root.dark .header {
+            background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--bg-tertiary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Navigation */
+        .nav {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            z-index: 100;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-blue);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard Back Link */
+        .dashboard-back {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-back:hover {
+            border-color: var(--accent-blue);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h4 {
+            margin: 0 0 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .code-block code {
+            color: var(--accent-green);
+        }
+
+        .code-block .comment {
+            color: var(--text-secondary);
+        }
+
+        /* Command table */
+        .command-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .command-table th,
+        .command-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .command-table th {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .command-table td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            white-space: nowrap;
+        }
+
+        .command-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-blue { background: rgba(88, 166, 255, 0.15); color: var(--accent-blue); }
+        .tag-green { background: rgba(63, 185, 80, 0.15); color: var(--accent-green); }
+        .tag-yellow { background: rgba(210, 153, 34, 0.15); color: var(--accent-yellow); }
+        .tag-purple { background: rgba(188, 140, 255, 0.15); color: var(--accent-purple); }
+
+        /* Alert boxes */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent-blue);
+        }
+
+        .alert-warning {
+            background: rgba(210, 153, 34, 0.1);
+            border-color: var(--accent-yellow);
+        }
+
+        .alert-success {
+            background: rgba(63, 185, 80, 0.1);
+            border-color: var(--accent-green);
+        }
+
+        /* Architecture diagram */
+        .architecture {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .architecture pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            text-align: left;
+            display: inline-block;
+        }
+
+        /* Pipeline steps */
+        .pipeline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .pipeline-step {
+            flex: 1;
+            min-width: 150px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pipeline-step::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+
+        .pipeline-step:last-child::after {
+            display: none;
+        }
+
+        .pipeline-step .step-num {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            font-size: 0.8rem;
+            line-height: 24px;
+            margin-bottom: 0.5rem;
+        }
+
+        .pipeline-step .step-title {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-inner {
+                gap: 1rem;
+            }
+            
+            .pipeline-step::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Back Link -->
+    <a href="dashboard.html" class="dashboard-back" title="Dashboard로 돌아가기">
+        ← Dashboard
+    </a>
+
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="다크/라이트 모드 전환">
+        <span class="theme-toggle-icon" id="theme-icon">☀️</span>
+        <span id="theme-label">Light</span>
+    </button>
+
+    <header class="header">
+        <h1>🌀 Holarchy System</h1>
+        <p class="subtitle">AI PM 기반 회의 자동화 및 프로젝트 오케스트레이션 시스템</p>
+        <span class="version-badge">v3.0 - Enterprise Brain | CLI v2.0 Self-Healing</span>
+    </header>
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#overview">개요</a>
+            <a href="#architecture">아키텍처</a>
+            <a href="#cli">CLI 명령어</a>
+            <a href="#brain">Brain Engine</a>
+            <a href="#rag">Vector RAG</a>
+            <a href="#review">리뷰 시스템</a>
+            <a href="#issues">이슈 트래커</a>
+            <a href="#chunk">Chunk Engine</a>
+            <a href="#meta">Meta Research</a>
+            <a href="#health">Health Check</a>
+            <a href="#attach">첨부파일</a>
+            <a href="#rules">규칙</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <section id="overview">
+            <h2>📋 시스템 개요</h2>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🎯</div>
+                    <h4>목적</h4>
+                    <p>전국 규모 수학 학원 자동화 시스템을 위한 문서 오케스트레이션</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧠</div>
+                    <h4>핵심 철학</h4>
+                    <p>무지성의 꿈 - 관찰하고, 흐르게 하고, 반복한다</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    <h4>문서 구조</h4>
+                    <p>WXSPERTA 8가지 지능 블록 기반 Holon 문서</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <h4>자동화</h4>
+                    <p>90% 완성도 원칙, W 기반 중요도 판단</p>
+                </div>
+            </div>
+
+            <h3>WXSPERTA 프레임워크</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>슬롯</th>
+                        <th>이름</th>
+                        <th>역할</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>W</td>
+                        <td>Worldview / Will</td>
+                        <td>세계관, 의지, 의도, 목표 - 문서의 존재 이유</td>
+                    </tr>
+                    <tr>
+                        <td>X</td>
+                        <td>eXperience / Context</td>
+                        <td>현재 상황, 문제, 배경</td>
+                    </tr>
+                    <tr>
+                        <td>S</td>
+                        <td>Structure</td>
+                        <td>핵심 구성요소, 변수, 제약조건</td>
+                    </tr>
+                    <tr>
+                        <td>P</td>
+                        <td>Process</td>
+                        <td>실행 절차, 워크플로우</td>
+                    </tr>
+                    <tr>
+                        <td>E</td>
+                        <td>Execution</td>
+                        <td>실제 행동, 역할, 일정</td>
+                    </tr>
+                    <tr>
+                        <td>R</td>
+                        <td>Reflection</td>
+                        <td>회고, 피드백, 교훈</td>
+                    </tr>
+                    <tr>
+                        <td>T</td>
+                        <td>Transmission</td>
+                        <td>전파, 다른 문서와의 연결</td>
+                    </tr>
+                    <tr>
+                        <td>A</td>
+                        <td>Adaptation</td>
+                        <td>미래 확장, 다음 단계</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Architecture Section -->
+        <section id="architecture">
+            <h2>🏗️ 시스템 아키텍처</h2>
+            
+            <div class="architecture">
+                <pre>
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│                    🏥 Health Check Engine                           │
+│                    (8개 영역 정기 진단)                             │
+│                            │                                        │
+├────────────────────────────┼────────────────────────────────────────┤
+│                            ▼                                        │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐            │
+│  │   Chunk     │    │    Meta     │    │  Validate   │            │
+│  │   Engine    │◄──►│  Research   │◄──►│   Engine    │            │
+│  │ (중요도)    │    │  (정제)     │    │ (90%원칙)   │            │
+│  └─────────────┘    └─────────────┘    └─────────────┘            │
+│         │                  │                  │                     │
+│         └──────────────────┼──────────────────┘                     │
+│                            ▼                                        │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │                    Holon Documents                            │  │
+│  │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐     │  │
+│  │  │strategy│ │feature │ │meeting │ │decision│ │  task  │     │  │
+│  │  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘     │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+
+            <h3>5단계 하위 정보 처리 파이프라인</h3>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-num">1</div>
+                    <div class="step-title">신호 감지</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">2</div>
+                    <div class="step-title">의미 분석</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">3</div>
+                    <div class="step-title">프로젝트 진화</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">4</div>
+                    <div class="step-title">메타 검증</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">5</div>
+                    <div class="step-title">사람 승인</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLI Section -->
+        <section id="cli">
+            <h2>💻 CLI 명령어</h2>
+            
+            <div class="alert alert-info">
+                <strong>사용법:</strong> PowerShell에서 holons 폴더로 이동 후 명령어 실행
+            </div>
+
+            <div class="code-block">
+                <code><span class="comment"># 폴더 이동</span><br>
+cd "C:\1 Project\Holarchy\0 Docs\holons"<br><br>
+<span class="comment"># 명령어 실행</span><br>
+python _cli.py &lt;명령어&gt;<br><br>
+<span class="comment"># 도움말</span><br>
+python _cli.py help</code>
+            </div>
+
+            <h3>⚡ Self-Healing 핵심 명령어 (v2.0)</h3>
+            <div class="alert alert-success">
+                <strong>Self-Healing 철학:</strong> 모든 검사는 "기록만, 중단 없음" - 시스템은 절대 멈추지 않으며, 수정은 항상 선택사항입니다.
+            </div>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>명령어</th>
+                        <th>설명</th>
+                        <th>태그</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>check</td>
+                        <td>문서 검사 (Self-Healing 모드, 기록만 수행)</td>
+                        <td><span class="tag tag-green">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>risk</td>
+                        <td>위험도 점수 확인 (참고용)</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>suggest</td>
+                        <td>자동 수정 추천 보기 (선택사항)</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                    <tr>
+                        <td>report</td>
+                        <td>현재 이슈 리포트 보기</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># Self-Healing 워크플로우</span><br>
+python _cli.py check      <span class="comment"># 1. 문서 검사</span><br>
+python _cli.py risk       <span class="comment"># 2. 위험도 확인</span><br>
+python _cli.py suggest    <span class="comment"># 3. 수정 추천 확인</span><br>
+python _cli.py report     <span class="comment"># 4. 이슈 리포트</span></code>
+            </div>
+
+            <h3>📋 문서 관리</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>명령어</th>
+                        <th>설명</th>
+                        <th>태그</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>validate</td>
+                        <td>검증 실행 (→ check로 리다이렉트)</td>
+                        <td><span class="tag tag-blue">레거시</span></td>
+                    </tr>
+                    <tr>
+                        <td>link</td>
+                        <td>양방향 링크 동기화</td>
+                        <td><span class="tag tag-blue">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>create &lt;type&gt; "제목"</td>
+                        <td>새 Holon 생성 (strategy, structure, feature, meeting, decision, task)</td>
+                        <td><span class="tag tag-purple">생성</span></td>
+                    </tr>
+                    <tr>
+                        <td>spawn &lt;meeting_id&gt;</td>
+                        <td>Meeting에서 Decision/Task 자동 생성</td>
+                        <td><span class="tag tag-yellow">PM</span></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>시스템 상태 확인</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 새 문서 생성 예시</span><br>
+python _cli.py create strategy "신규 전략" --parent hte-root --module M00_Astral<br>
+python _cli.py create feature "로그인 기능" -p parent-doc-001<br>
+python _cli.py create meeting "팀 회의"</code>
+            </div>
+
+            <h3>🚀 자동화 명령어</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>place</td>
+                        <td>문서 → HTE 모듈 자동 배치 (내용 분석 → M00~M21 자동 선택)</td>
+                        <td><span class="tag tag-purple">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>place -f &lt;파일&gt;</td>
+                        <td>파일에서 읽어서 자동 배치</td>
+                        <td><span class="tag tag-purple">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>place -t "내용"</td>
+                        <td>텍스트로 직접 자동 배치</td>
+                        <td><span class="tag tag-purple">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>meeting</td>
+                        <td>회의록 자동 파싱 & Holon 생성</td>
+                        <td><span class="tag tag-yellow">PM</span></td>
+                    </tr>
+                    <tr>
+                        <td>meeting -f &lt;파일&gt;</td>
+                        <td>회의록 파일에서 읽어서 파싱</td>
+                        <td><span class="tag tag-yellow">PM</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 자동 배치 (하이브리드 방식)</span><br>
+python _cli.py place                      <span class="comment"># 대화형 입력</span><br>
+python _cli.py place -f "문서.md"          <span class="comment"># 파일에서 읽기</span><br>
+python _cli.py place -t "내용" --parent hte-doc-001<br><br>
+<span class="comment"># 회의록 자동 파싱</span><br>
+python _cli.py meeting                    <span class="comment"># 대화형 입력</span><br>
+python _cli.py meeting -f "회의록.txt"     <span class="comment"># 파일에서 읽기</span><br>
+python _cli.py meeting --no-spawn          <span class="comment"># Decision/Task 생성 안함</span></code>
+            </div>
+
+            <h3>🧠 Working Memory (Chunk Engine)</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>chunk generate</td>
+                        <td>W 기반 중요도로 Active Chunk 생성</td>
+                        <td><span class="tag tag-purple">분석</span></td>
+                    </tr>
+                    <tr>
+                        <td>chunk show</td>
+                        <td>현재 Active Chunk 표시</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🧠 Memory Engine (뇌의 장기기억 원리)</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>memory report</td>
+                        <td>전체 메모리 상태 리포트</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>memory score</td>
+                        <td>M-score 기반 문서 순위</td>
+                        <td><span class="tag tag-purple">분석</span></td>
+                    </tr>
+                    <tr>
+                        <td>memory layer</td>
+                        <td>레이어별 문서 분포 (LTM/Working Memory)</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>memory prune</td>
+                        <td>시냅스 가지치기 (망각 시뮬레이션)</td>
+                        <td><span class="tag tag-yellow">유지보수</span></td>
+                    </tr>
+                    <tr>
+                        <td>memory save</td>
+                        <td>메모리 상태 JSON 저장</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 메모리 엔진 워크플로우</span><br>
+python _cli.py memory report              <span class="comment"># 전체 상태</span><br>
+python _cli.py memory score               <span class="comment"># M-score 순위</span><br>
+python _cli.py memory layer               <span class="comment"># 레이어별 분포</span><br>
+python _cli.py memory prune               <span class="comment"># 시뮬레이션</span><br>
+python _cli.py memory prune --execute     <span class="comment"># 실제 실행</span></code>
+            </div>
+
+            <h3>🎯 Mission Propagation (미션 전파)</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>mission tree</td>
+                        <td>미션 트리 시각화</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>mission preview</td>
+                        <td>전파 시뮬레이션 (변경 없음)</td>
+                        <td><span class="tag tag-purple">분석</span></td>
+                    </tr>
+                    <tr>
+                        <td>mission propagate</td>
+                        <td>미션 전파 (시뮬레이션)</td>
+                        <td><span class="tag tag-yellow">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>mission propagate --execute</td>
+                        <td>실제 미션 전파 실행</td>
+                        <td><span class="tag tag-green">실행</span></td>
+                    </tr>
+                    <tr>
+                        <td>mission save</td>
+                        <td>미션 리포트 저장</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-info">
+                <strong>Mission Propagation:</strong> ROOT 미션 "전국 규모 수학학원 자동화"가 모든 하위 문서의 W.will.drive에 자동 전파됩니다.
+            </div>
+
+            <h3>🏷️ Auto-Tagger v3 (멀티레이어 태깅)</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>tag all</td>
+                        <td>전체 문서 자동 태깅</td>
+                        <td><span class="tag tag-purple">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>tag file -f &lt;파일&gt;</td>
+                        <td>단일 파일 태깅</td>
+                        <td><span class="tag tag-purple">자동화</span></td>
+                    </tr>
+                    <tr>
+                        <td>tag show</td>
+                        <td>태그 확인 (저장 안함)</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 자동 태깅</span><br>
+python _cli.py tag all                    <span class="comment"># 전체 문서</span><br>
+python _cli.py tag file -f "문서.md"       <span class="comment"># 단일 파일</span><br>
+python _cli.py tag show                   <span class="comment"># 미리보기</span><br>
+python _cli.py tag all --dry-run          <span class="comment"># 저장 없이 확인</span></code>
+            </div>
+
+            <h3>🔬 Meta Research</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>meta analyze</td>
+                        <td>프로젝트 간 관계 분석, 유사도 매트릭스</td>
+                        <td><span class="tag tag-purple">분석</span></td>
+                    </tr>
+                    <tr>
+                        <td>meta report</td>
+                        <td>정제 제안 리포트 생성</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🏥 Health Check</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>health check</td>
+                        <td>8개 영역 건강 점검</td>
+                        <td><span class="tag tag-green">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>health report</td>
+                        <td>건강 점검 리포트 저장</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Brain Engine Section -->
+        <section id="brain">
+            <h2>🧠 Brain Engine (Enterprise Memory v2.0)</h2>
+            
+            <p>인간의 장기기억처럼 중요한 정보만 오래 유지하는 기업 기억 시스템</p>
+
+            <h3>4대 가중치 (Score 계산)</h3>
+            <div class="alert alert-info">
+                <strong>Score = WR×Recency + WP×Popularity + WV×Relevance + WM×Importance</strong>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>R - Recency <span class="tag tag-blue">최근성</span></h4>
+                    <p>최근 문서일수록 높은 점수</p>
+                </div>
+                <div class="card">
+                    <h4>P - Popularity <span class="tag tag-green">조회수</span></h4>
+                    <p>자주 접근된 문서</p>
+                </div>
+                <div class="card">
+                    <h4>V - Relevance <span class="tag tag-purple">상관도</span></h4>
+                    <p>검색 쿼리와의 의미적 거리</p>
+                </div>
+                <div class="card">
+                    <h4>M - Importance <span class="tag tag-yellow">중요도</span></h4>
+                    <p>조직적 가치 (리뷰 반영)</p>
+                </div>
+            </div>
+
+            <h3>5가지 메모리 프리셋</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>⚡ fast_fresh</td>
+                        <td>최신 문서 중심 (R=0.5, P=0.1, V=0.3, M=0.1)</td>
+                    </tr>
+                    <tr>
+                        <td>📚 wisdom</td>
+                        <td>중요도 중심 (R=0.1, P=0.1, V=0.3, M=0.5)</td>
+                    </tr>
+                    <tr>
+                        <td>⚖️ balanced</td>
+                        <td>균형 모드 (R=0.25, P=0.25, V=0.25, M=0.25)</td>
+                    </tr>
+                    <tr>
+                        <td>🔍 pattern</td>
+                        <td>핵심 규칙 탐색 (R=0.0, P=0.1, V=0.4, M=0.5)</td>
+                    </tr>
+                    <tr>
+                        <td>📈 trend</td>
+                        <td>트렌드 분석 (R=0.4, P=0.4, V=0.2, M=0.0)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Brain CLI 명령어</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>명령어</th>
+                        <th>설명</th>
+                        <th>태그</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>brain search</td>
+                        <td>4대 가중치 기반 검색</td>
+                        <td><span class="tag tag-purple">검색</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain search -q "쿼리"</td>
+                        <td>특정 쿼리로 검색</td>
+                        <td><span class="tag tag-purple">검색</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain profile</td>
+                        <td>프로필 목록 보기</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain profile --set &lt;name&gt;</td>
+                        <td>프로필 변경</td>
+                        <td><span class="tag tag-yellow">설정</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain weights</td>
+                        <td>현재 가중치 확인</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain weights --wr/wp/wv/wm</td>
+                        <td>가중치 직접 설정</td>
+                        <td><span class="tag tag-yellow">설정</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain layer</td>
+                        <td>WM/LTM/Archive 레이어 요약</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain eval --id &lt;ID&gt;</td>
+                        <td>문서 평가 (0~5점)</td>
+                        <td><span class="tag tag-green">평가</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain access --id &lt;ID&gt;</td>
+                        <td>문서 접근 기록</td>
+                        <td><span class="tag tag-blue">기록</span></td>
+                    </tr>
+                    <tr>
+                        <td>brain save</td>
+                        <td>리포트 저장</td>
+                        <td><span class="tag tag-yellow">리포트</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 프로필 설정</span><br>
+python _cli.py brain profile --set wisdom<br><br>
+<span class="comment"># 검색</span><br>
+python _cli.py brain search -q "학생 진단"<br><br>
+<span class="comment"># 가중치 직접 조정</span><br>
+python _cli.py brain weights --wr 0.3 --wm 0.5<br><br>
+<span class="comment"># 레이어 요약</span><br>
+python _cli.py brain layer<br><br>
+<span class="comment"># 문서 평가</span><br>
+python _cli.py brain eval --id hte-doc-001 --accuracy 5 --importance 4</code>
+            </div>
+        </section>
+
+        <!-- Vector RAG Section -->
+        <section id="rag">
+            <h2>🔍 Vector RAG (W 기반 의미 검색)</h2>
+            
+            <p>단순 키워드 매칭이 아닌 W(Worldview) 필드 기반 벡터 임베딩으로 의미적 유사도 검색</p>
+
+            <h3>작동 원리</h3>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="step-num">1</div>
+                    <div class="step-title">W.will.drive 추출</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">2</div>
+                    <div class="step-title">벡터 임베딩</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">3</div>
+                    <div class="step-title">코사인 유사도</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">4</div>
+                    <div class="step-title">그래프 확장</div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>로컬 모델:</strong> sentence-transformers (paraphrase-multilingual-MiniLM-L12-v2) - 한국어 지원
+            </div>
+
+            <div class="code-block">
+                <code><span class="comment"># 인덱싱 (W.will.drive 벡터화)</span><br>
+python _cli.py rag index<br><br>
+<span class="comment"># 의미적 검색</span><br>
+python _cli.py rag search -q "전국 수학학원 자동화" -k 10<br><br>
+<span class="comment"># 하이브리드 검색 (벡터 + 링크 그래프)</span><br>
+python _cli.py rag hybrid -q "AI 튜터 학생 진단" -k 10</code>
+            </div>
+        </section>
+
+        <!-- Review System Section -->
+        <section id="review">
+            <h2>📝 자연어 리뷰 시스템</h2>
+            
+            <p>사용자가 간단히 한 줄만 입력하면 시스템이 자동으로 점수를 보정</p>
+
+            <h3>리뷰 분류 카테고리</h3>
+            <div class="card-grid">
+                <div class="card" style="border-left: 4px solid var(--accent-green);">
+                    <h4>👍 POSITIVE</h4>
+                    <p>키워드: 좋, 정확, 중요, 핵심, 유용</p>
+                    <p style="color: var(--accent-green);">→ importance↑ relevance↑ accuracy↑</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-red);">
+                    <h4>👎 NEGATIVE</h4>
+                    <p>키워드: 헷갈, 틀림, 애매, 관련없</p>
+                    <p style="color: var(--accent-red);">→ importance↓ relevance↓ accuracy↓</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                    <h4>📝 ACTIONABLE</h4>
+                    <p>키워드: 다시, 보완, 수정, 정리</p>
+                    <p style="color: var(--accent-blue);">→ strategic_value↑ reusability↑</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+                <code><span class="comment"># 단일 리뷰</span><br>
+python _cli.py review hte-doc-001 "중요하고 정확함"<br><br>
+<span class="comment"># 대화형 배치 모드</span><br>
+python _cli.py review --batch</code>
+            </div>
+        </section>
+
+        <!-- Issue Tracker Section -->
+        <section id="issues">
+            <h2>🔍 이슈 트래커</h2>
+            
+            <p>코드/문서에서 미완성 지점을 자동 탐지하고 편리하게 리뷰</p>
+
+            <h3>이슈 카테고리</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>📝 placeholder</td>
+                        <td>[...], TBD, 미정 등의 placeholder</td>
+                    </tr>
+                    <tr>
+                        <td>⚙️ hardcoded</td>
+                        <td>하드코딩된 설정값</td>
+                    </tr>
+                    <tr>
+                        <td>🔗 api_gap</td>
+                        <td>API-Dashboard 연동 미비</td>
+                    </tr>
+                    <tr>
+                        <td>⚠️ error_handling</td>
+                        <td>에러 처리 미흡 (except: pass)</td>
+                    </tr>
+                    <tr>
+                        <td>🔄 integration</td>
+                        <td>기능 간 연동 미비</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>이슈 CLI 명령어</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>명령어</th>
+                        <th>설명</th>
+                        <th>태그</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>issues scan</td>
+                        <td>전체 스캔 (모든 이슈 탐지)</td>
+                        <td><span class="tag tag-purple">분석</span></td>
+                    </tr>
+                    <tr>
+                        <td>issues list</td>
+                        <td>이슈 목록 (필터 가능)</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>issues review</td>
+                        <td>대화형 리뷰 모드</td>
+                        <td><span class="tag tag-green">리뷰</span></td>
+                    </tr>
+                    <tr>
+                        <td>issues show --id &lt;ID&gt;</td>
+                        <td>이슈 상세 보기</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                    <tr>
+                        <td>issues update --id &lt;ID&gt;</td>
+                        <td>이슈 상태 변경</td>
+                        <td><span class="tag tag-yellow">수정</span></td>
+                    </tr>
+                    <tr>
+                        <td>issues summary</td>
+                        <td>이슈 요약 통계</td>
+                        <td><span class="tag tag-blue">정보</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>필터 옵션</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>--category / -c</td>
+                        <td>placeholder, hardcoded, api_gap, error_handling, integration</td>
+                    </tr>
+                    <tr>
+                        <td>--status / -s</td>
+                        <td>open, resolved, wontfix, deferred</td>
+                    </tr>
+                    <tr>
+                        <td>--severity</td>
+                        <td>critical, high, medium, low</td>
+                    </tr>
+                    <tr>
+                        <td>--snippet</td>
+                        <td>코드 스니펫 함께 표시</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <code><span class="comment"># 전체 스캔</span><br>
+python _cli.py issues scan<br><br>
+<span class="comment"># 목록 (필터 가능)</span><br>
+python _cli.py issues list --category placeholder --severity high<br>
+python _cli.py issues list --status open --snippet<br><br>
+<span class="comment"># 상세 보기</span><br>
+python _cli.py issues show --id PLA-xxx<br><br>
+<span class="comment"># 대화형 리뷰 (하나씩 선택)</span><br>
+python _cli.py issues review<br><br>
+<span class="comment"># 상태 변경</span><br>
+python _cli.py issues update --id PLA-xxx --set-status resolved --note "수정 완료"<br><br>
+<span class="comment"># 요약 통계</span><br>
+python _cli.py issues summary</code>
+            </div>
+        </section>
+
+        <!-- Chunk Engine Section -->
+        <section id="chunk">
+            <h2>🧠 Chunk Engine</h2>
+            
+            <p>인간의 작업기억(Working Memory)을 모방한 시스템. W(의지)와의 공명도로 중요도를 판단합니다.</p>
+
+            <h3>Salience Score 계산</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Will 공명도 <span class="tag tag-purple">40%</span></h4>
+                    <p>Root W.will.drive 키워드와의 매칭</p>
+                </div>
+                <div class="card">
+                    <h4>Goal 연관성 <span class="tag tag-blue">30%</span></h4>
+                    <p>KPI/OKR 영향도</p>
+                </div>
+                <div class="card">
+                    <h4>Intention 정합성 <span class="tag tag-green">20%</span></h4>
+                    <p>제약사항 준수 여부</p>
+                </div>
+                <div class="card">
+                    <h4>최근성 <span class="tag tag-yellow">10%</span></h4>
+                    <p>수정일 기준</p>
+                </div>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>핵심:</strong> 회사의 의지(W)에 부합하는 것만 머릿속에 올라옴. 항상 Top-7만 유지.
+            </div>
+        </section>
+
+        <!-- Meta Research Section -->
+        <section id="meta">
+            <h2>🔬 Meta-Research Engine</h2>
+            
+            <p>AI가 직접 연구하고, 그 연구 과정을 다시 AI가 검토·정제하는 2계층 연구 시스템</p>
+
+            <h3>분석 모듈</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🔗</div>
+                    <h4>Similarity Analyzer</h4>
+                    <p>프로젝트 간 유사도 분석<br>중복 임계값: 60%</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📐</div>
+                    <h4>Drift Analyzer</h4>
+                    <p>상위 헌법과의 alignment 분석<br>Drift 임계값: 30%</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔍</div>
+                    <h4>Quality Inspector</h4>
+                    <p>연구 프로세스 품질 검사<br>W→X→P 흐름 검증</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h4>Refinement Engine</h4>
+                    <p>정제/통합 제안 생성<br>merge, split, redirect</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Health Check Section -->
+        <section id="health">
+            <h2>🏥 Health Check Engine</h2>
+            
+            <p>복잡도 증가 → 구조 붕괴 위험을 정기적으로 안정화하는 진단 시스템</p>
+
+            <h3>8개 점검 영역</h3>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>영역</th>
+                        <th>점검 내용</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>상위 구조 안정성</td>
+                        <td>헌법 경직성, Drift 패턴</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>프로젝트 폭발</td>
+                        <td>프로젝트 수, 고유사도 쌍</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>링크 구조 붕괴</td>
+                        <td>Orphan, 허브, 양방향 링크</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>연구 프로세스</td>
+                        <td>WXSPERTA 완성도, 플레이스홀더</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>메타 연구 엔진</td>
+                        <td>매트릭스, Weekly 리포트</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>문서 질</td>
+                        <td>W 구조, will 필드</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>자동화 안정성</td>
+                        <td>스크립트, Hook, Chunk</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>사람 개입</td>
+                        <td>리포트 접근성, 승인 대기</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>건강도 해석</h3>
+            <div class="card-grid">
+                <div class="card" style="border-left: 4px solid var(--accent-green);">
+                    <h4>🟢 ≥ 80%</h4>
+                    <p>양호 - 시스템 안정</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-yellow);">
+                    <h4>🟡 60-79%</h4>
+                    <p>주의 - 일부 조치 필요</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-red);">
+                    <h4>🔴 < 60%</h4>
+                    <p>위험 - 즉시 조치 필요</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attachments Section -->
+        <section id="attach">
+            <h2>📎 첨부파일 관리</h2>
+            
+            <p>각 Holon에 관련 파일(이미지, 문서, 데이터 등)을 첨부하고 관리</p>
+
+            <h3>첨부파일 타입</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🖼️</div>
+                    <h4>image</h4>
+                    <p>jpg, png, gif, svg, webp 등</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📄</div>
+                    <h4>document</h4>
+                    <p>pdf, doc, docx, ppt, pptx, xls, xlsx, hwp 등</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h4>data</h4>
+                    <p>csv, json, xml, yaml 등</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💻</div>
+                    <h4>code</h4>
+                    <p>py, js, ts, html, css 등</p>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>저장 위치:</strong> 첨부파일은 <code>_attachments/&lt;holon_id&gt;/</code> 폴더에 복사됩니다
+            </div>
+
+            <div class="code-block">
+                <code><span class="comment"># 첨부파일 추가</span><br>
+python _cli.py attach add --holon hte-doc-001 --file "설계도.png" --desc "시스템 구조"<br><br>
+<span class="comment"># 원본 경로 그대로 사용 (복사 안함)</span><br>
+python _cli.py attach add --holon hte-doc-001 --file "C:/docs/spec.pdf" --no-copy<br><br>
+<span class="comment"># 첨부파일 목록</span><br>
+python _cli.py attach list --holon hte-doc-001<br><br>
+<span class="comment"># 첨부파일 제거</span><br>
+python _cli.py attach remove --holon hte-doc-001 --file "설계도.png"<br><br>
+<span class="comment"># 모든 홀론에 attachments 필드 동기화</span><br>
+python _cli.py attach sync</code>
+            </div>
+        </section>
+
+        <!-- Rules Section -->
+        <section id="rules">
+            <h2>📜 핵심 규칙</h2>
+
+            <h3>🚨 문서 입력 규칙 (강제)</h3>
+            <div class="alert alert-warning" style="border-color: var(--accent-red); background: rgba(239, 68, 68, 0.1);">
+                <strong>모든 문서 입력은 반드시 아래 2가지 중 하나로만 처리됩니다.</strong><br>
+                예외 없음 - 이 규칙을 벗어나는 문서는 시스템에 존재할 수 없습니다.
+            </div>
+
+            <h4>⚠️ Step 0: 유사 내용 체크 (필수)</h4>
+            <div class="alert alert-info">
+                <strong>Cursor AI에게 직접 비교 요청</strong><br>
+                문서 입력 시, Cursor AI가 기존 Holon들과 의미적 중복 여부를 자연어로 판단합니다.<br>
+                별도의 임베딩 모델 없이 LLM이 맥락을 이해하여 더 정확한 비교가 가능합니다.
+            </div>
+
+            <div class="pipeline" style="margin: 1rem 0;">
+                <div class="pipeline-step">
+                    <div class="step-num">1</div>
+                    <div class="step-title">AI에 비교 요청</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">2</div>
+                    <div class="step-title">유사 문서 분석</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">3</div>
+                    <div class="step-title">이유와 함께 알림</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-num">4</div>
+                    <div class="step-title">사용자 결정</div>
+                </div>
+            </div>
+
+            <h5>🤖 Cursor AI 비교 프롬프트</h5>
+            <div class="code-block">
+                <code><span class="comment"># 새 문서 입력 시 Cursor AI에게 요청</span><br><br>
+다음 [입력 내용]과 유사한 기존 Holon이 있는지 확인해주세요.<br><br>
+[입력 내용]<br>
+(새로 추가할 문서 내용 또는 W.will.drive)<br><br>
+[기존 Holon 목록 - W.will.drive]<br>
+- feature-2025-001: 학생 진단 리포트 자동 생성<br>
+- feature-2025-002: 시선 추적 AI 분석<br>
+- strategy-2025-001: PM 시스템 구축<br>
+...<br><br>
+유사한 문서가 있으면:<br>
+1. 어떤 문서와 유사한지<br>
+2. 왜 유사한지 (공통점)<br>
+3. 어떻게 처리할지 제안 (병합/갱신/신규/첨부)</code>
+            </div>
+
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>AI 판단</th>
+                        <th>상태</th>
+                        <th>동작</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: var(--accent-green);">유사 문서 없음</td>
+                        <td>🟢 신규</td>
+                        <td>바로 생성 진행</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--accent-yellow);">부분 유사</td>
+                        <td>🟡 관련</td>
+                        <td>AI가 관계 설명 → 사용자 확인 후 진행</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--accent-red);">내용 중복</td>
+                        <td>🔴 중복</td>
+                        <td><strong>반드시</strong> 사용자 확인 필요 → 처리 방법 선택</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h5>📋 유사 문서 발견 시 선택지</h5>
+            <div class="code-block">
+                <code><span class="comment"># Cursor AI가 유사 문서를 발견하면 다음 중 선택</span><br><br>
+[1] 기존 문서에 병합 (merge) - 내용 통합<br>
+[2] 기존 문서 갱신 (update) - 최신 내용으로 대체<br>
+[3] 신규 문서로 생성 (create) - 별개 문서로 생성<br>
+[4] 기존 문서의 첨부파일로 추가 (attach)<br>
+[5] 취소 (cancel)</code>
+            </div>
+
+            <div class="alert alert-success">
+                <strong>💡 장점:</strong> Cursor AI는 단순 키워드 매칭이 아닌 <strong>의미적 맥락</strong>을 이해하므로,<br>
+                "학생 진단 시스템" ↔ "학습자 분석 도구"처럼 표현이 달라도 동일한 의도를 파악합니다.
+            </div>
+
+            <h4 style="margin-top: 1.5rem;">Step 1~2: 홀론 또는 첨부파일 선택</h4>
+
+            <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="card" style="border-left: 4px solid var(--accent-blue);">
+                    <div class="card-icon">📄</div>
+                    <h4>Option 1: 홀론으로 변환</h4>
+                    <p>문서가 독립적인 의미와 목적(W)을 가진 경우</p>
+                    <ul style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                        <li>새로운 Holon 문서로 생성</li>
+                        <li>WXSPERTA 구조 적용</li>
+                        <li>holon_id 부여</li>
+                        <li>링크 그래프에 연결</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 1rem; font-size: 0.8rem;">
+                        <code>python _cli.py place -f "문서.md"<br>python _cli.py create &lt;type&gt; "제목"</code>
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-green);">
+                    <div class="card-icon">📎</div>
+                    <h4>Option 2: 홀론의 첨부파일로 변환</h4>
+                    <p>문서가 기존 홀론을 보조/지원하는 경우</p>
+                    <ul style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">
+                        <li>기존 Holon에 첨부</li>
+                        <li>_attachments/ 폴더에 저장</li>
+                        <li>Holon의 attachments 필드에 등록</li>
+                        <li>독립적 holon_id 없음</li>
+                    </ul>
+                    <div class="code-block" style="margin-top: 1rem; font-size: 0.8rem;">
+                        <code>python _cli.py attach add \<br>  --holon &lt;ID&gt; --file "문서.pdf"</code>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="margin-top: 1.5rem;">판단 기준</h4>
+            <table class="command-table">
+                <thead>
+                    <tr>
+                        <th>질문</th>
+                        <th>예 → 홀론</th>
+                        <th>아니오 → 첨부파일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>독립적인 의지(W)가 있는가?</td>
+                        <td>✅ 새 Holon 생성</td>
+                        <td>📎 기존 Holon에 첨부</td>
+                    </tr>
+                    <tr>
+                        <td>다른 문서에서 참조될 필요가 있는가?</td>
+                        <td>✅ 새 Holon 생성</td>
+                        <td>📎 기존 Holon에 첨부</td>
+                    </tr>
+                    <tr>
+                        <td>WXSPERTA 구조로 표현 가능한가?</td>
+                        <td>✅ 새 Holon 생성</td>
+                        <td>📎 기존 Holon에 첨부</td>
+                    </tr>
+                    <tr>
+                        <td>보조 자료(이미지, PDF, 데이터)인가?</td>
+                        <td>📎 기존 Holon에 첨부</td>
+                        <td>✅ 새 Holon 생성</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>90% 완성도 원칙</h3>
+            <div class="alert alert-warning">
+                문서 완성도를 100%가 아니라 90%로 고정. 나머지 10%는 현실 세계의 불확실성을 위한 버퍼.
+            </div>
+
+            <h4>왜 90%인가?</h4>
+            <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                <li>현실 세계의 불확실성 수용</li>
+                <li>AI 무한 루프 방지 (채울 수 없는 부분 인정)</li>
+                <li>팀 온보딩 부담 감소</li>
+                <li>자연스러운 성장/적응 가능</li>
+            </ul>
+
+            <h3>문서 작성 규칙</h3>
+            <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                <li>모든 문서는 Holon JSON으로 시작</li>
+                <li>holon_id는 시스템 내 유일</li>
+                <li>모든 WXSPERTA 슬롯에 will 필드 필수</li>
+                <li>W는 5개 섹션 포함 (worldview/will/intention/goal/activation)</li>
+                <li>links.parent가 있으면 해당 문서의 children에도 존재</li>
+            </ul>
+
+            <h3>권장 주기</h3>
+            <table class="command-table">
+                <tbody>
+                    <tr>
+                        <td>health check</td>
+                        <td>주 1회</td>
+                    </tr>
+                    <tr>
+                        <td>meta report</td>
+                        <td>주 1회</td>
+                    </tr>
+                    <tr>
+                        <td>chunk generate</td>
+                        <td>매일 또는 필요시</td>
+                    </tr>
+                    <tr>
+                        <td>validate</td>
+                        <td>커밋 전 자동 (pre-commit hook)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <footer>
+        <p>Holarchy System v3.0 | Enterprise Brain 🧠 | CLI v2.0 Self-Healing</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+            "완벽하게 하기 전에, 반복부터 해" | "W(의지)에 공명하는 것만 기억한다" | "기록만, 중단 없음"
+        </p>
+        <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
+            Last Updated: 2025-12-02
+        </p>
+    </footer>
+
+    <script>
+        // 테마 초기화 (기본: 라이트)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('holarchy-theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                updateThemeUI('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeUI('light');
+            }
+        }
+
+        // 테마 토글
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            const theme = isDark ? 'dark' : 'light';
+            localStorage.setItem('holarchy-theme', theme);
+            updateThemeUI(theme);
+        }
+
+        // UI 업데이트
+        function updateThemeUI(theme) {
+            const icon = document.getElementById('theme-icon');
+            const label = document.getElementById('theme-label');
+            if (theme === 'dark') {
+                icon.textContent = '🌙';
+                label.textContent = 'Dark';
+            } else {
+                icon.textContent = '☀️';
+                label.textContent = 'Light';
+            }
+        }
+
+        // 페이지 로드 시 테마 초기화
+        initTheme();
+    </script>
+</body>
+</html>
+

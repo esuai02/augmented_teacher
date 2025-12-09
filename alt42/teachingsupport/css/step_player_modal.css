@@ -1,0 +1,877 @@
+/**
+ * Step Player Modal Styles
+ *
+ * Visual styling for step-by-step TTS audio playback modal.
+ * Implements circular navigation from reference screenshot (20251122_010757.png).
+ *
+ * @file step_player_modal.css
+ * @requires step_player_modal.php (HTML structure from Task 6)
+ * @version 1.0
+ * @created 2025-11-22
+ */
+
+/* ==========================================================================
+   CSS Custom Properties (Variables)
+   ========================================================================== */
+
+:root {
+    /* Colors - Based on screenshot gradient */
+    --step-modal-overlay-start: rgba(99, 102, 241, 0.92);  /* Indigo */
+    --step-modal-overlay-end: rgba(139, 92, 246, 0.92);    /* Purple */
+    --step-modal-card-bg: #ffffff;
+    --step-modal-text-primary: #1f2937;
+    --step-modal-text-secondary: #6b7280;
+    --step-modal-text-muted: #9ca3af;
+    --step-modal-accent: #6366f1;                          /* Primary indigo */
+    --step-modal-accent-hover: #4f46e5;
+    --step-modal-circle-active: #6366f1;                   /* Filled active dot */
+    --step-modal-circle-inactive: #d1d5db;                 /* Outlined inactive dot */
+    --step-modal-border: #e5e7eb;
+    --step-modal-hover-bg: #f3f4f6;
+
+    /* Spacing */
+    --step-modal-padding: 24px;
+    --step-modal-padding-sm: 16px;
+    --step-modal-gap: 16px;
+    --step-modal-gap-sm: 12px;
+    --step-modal-gap-xs: 8px;
+
+    /* Sizing */
+    --step-modal-radius: 16px;
+    --step-modal-radius-sm: 8px;
+    --step-modal-circle-size: 12px;
+    --step-modal-circle-size-mobile: 10px;
+    --step-modal-close-size: 32px;
+
+    /* Shadows */
+    --step-modal-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                         0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --step-modal-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    /* Transitions */
+    --step-modal-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --step-modal-transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Typography */
+    --step-modal-font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+                              "Malgun Gothic", "맑은 고딕", "Noto Sans KR",
+                              "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* ==========================================================================
+   Modal Backdrop & Container
+   ========================================================================== */
+
+.step-modal {
+    /* Position & sizing */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+
+    /* Background gradient (matching screenshot) */
+    background: linear-gradient(135deg,
+        var(--step-modal-overlay-start) 0%,
+        var(--step-modal-overlay-end) 100%);
+
+    /* Flexbox centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    /* Typography */
+    font-family: var(--step-modal-font-family);
+
+    /* Initial state (hidden) */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.step-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.step-modal[aria-hidden="true"] {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* ==========================================================================
+   Modal Card
+   ========================================================================== */
+
+.step-modal__card {
+    background: var(--step-modal-card-bg);
+    border-radius: var(--step-modal-radius);
+    box-shadow: var(--step-modal-shadow);
+
+    /* Sizing */
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    /* Spacing */
+    padding: var(--step-modal-padding);
+
+    /* Animation */
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.step-modal.active .step-modal__card {
+    transform: scale(1) translateY(0);
+}
+
+/* Custom scrollbar */
+.step-modal__card::-webkit-scrollbar {
+    width: 8px;
+}
+
+.step-modal__card::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.step-modal__card::-webkit-scrollbar-thumb {
+    background: var(--step-modal-circle-inactive);
+    border-radius: 4px;
+}
+
+.step-modal__card::-webkit-scrollbar-thumb:hover {
+    background: var(--step-modal-text-secondary);
+}
+
+/* ==========================================================================
+   Header & Controls
+   ========================================================================== */
+
+.step-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--step-modal-gap);
+    margin-bottom: var(--step-modal-gap);
+    flex-wrap: wrap;
+}
+
+.step-modal__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--step-modal-text-primary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.step-modal__indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--step-modal-gap-xs);
+    font-size: 0.875rem;
+    color: var(--step-modal-text-secondary);
+    padding: 4px 12px;
+    background: var(--step-modal-hover-bg);
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+/* Header Controls Group */
+.step-modal__header-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--step-modal-gap-sm);
+}
+
+/* Speed Selector */
+.step-modal__speed {
+    padding: 6px 12px;
+    border: 1px solid var(--step-modal-border);
+    border-radius: var(--step-modal-radius-sm);
+    background: var(--step-modal-card-bg);
+    color: var(--step-modal-text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--step-modal-transition-fast);
+}
+
+.step-modal__speed:hover {
+    border-color: var(--step-modal-accent);
+    background: var(--step-modal-hover-bg);
+}
+
+.step-modal__speed:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+    border-color: var(--step-modal-accent);
+}
+
+/* Auto-play Toggle */
+.step-modal__auto-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--step-modal-gap-xs);
+    cursor: pointer;
+    user-select: none;
+}
+
+.step-modal__auto-checkbox {
+    /* Hide default checkbox */
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.step-modal__auto-label {
+    font-size: 0.875rem;
+    color: var(--step-modal-text-secondary);
+    font-weight: 500;
+}
+
+/* Custom toggle switch */
+.step-modal__auto-toggle::before {
+    content: '';
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    background: var(--step-modal-circle-inactive);
+    border-radius: 11px;
+    position: relative;
+    transition: var(--step-modal-transition);
+}
+
+.step-modal__auto-toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: var(--step-modal-transition);
+    box-shadow: var(--step-modal-shadow-sm);
+}
+
+.step-modal__auto-checkbox:checked + .step-modal__auto-toggle::before {
+    background: var(--step-modal-accent);
+}
+
+.step-modal__auto-checkbox:checked + .step-modal__auto-toggle::after {
+    transform: translateX(18px);
+}
+
+.step-modal__auto-checkbox:focus + .step-modal__auto-toggle {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+    border-radius: 12px;
+}
+
+/* Close Button */
+.step-modal__close {
+    width: var(--step-modal-close-size);
+    height: var(--step-modal-close-size);
+    border: none;
+    background: var(--step-modal-hover-bg);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--step-modal-text-secondary);
+    font-size: 1.25rem;
+    font-weight: 300;
+    line-height: 1;
+    transition: var(--step-modal-transition-fast);
+    flex-shrink: 0;
+}
+
+.step-modal__close:hover {
+    background: var(--step-modal-accent);
+    color: white;
+    transform: scale(1.1);
+}
+
+.step-modal__close:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Audio Player
+   ========================================================================== */
+
+.step-modal__audio {
+    margin-bottom: var(--step-modal-gap);
+}
+
+.step-modal__player {
+    display: flex;
+    flex-direction: column;
+    gap: var(--step-modal-gap-sm);
+}
+
+/* Play/Pause Button */
+.step-modal__play-btn {
+    width: 56px;
+    height: 56px;
+    border: none;
+    background: var(--step-modal-accent);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    transition: var(--step-modal-transition-fast);
+    box-shadow: var(--step-modal-shadow-sm);
+    margin: 0 auto;
+}
+
+.step-modal__play-btn:hover {
+    background: var(--step-modal-accent-hover);
+    transform: scale(1.05);
+    box-shadow: var(--step-modal-shadow);
+}
+
+.step-modal__play-btn:active {
+    transform: scale(0.95);
+}
+
+.step-modal__play-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.step-modal__play-btn:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 4px;
+}
+
+/* Progress Bar */
+.step-modal__progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--step-modal-gap-xs);
+}
+
+.step-modal__progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--step-modal-border);
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.step-modal__progress-fill {
+    height: 100%;
+    background: var(--step-modal-accent);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+.step-modal__time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--step-modal-text-muted);
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   Text Display
+   ========================================================================== */
+
+.step-modal__content {
+    margin-bottom: var(--step-modal-gap);
+}
+
+.step-modal__text {
+    padding: var(--step-modal-padding);
+    background: var(--step-modal-hover-bg);
+    border-radius: var(--step-modal-radius-sm);
+    border-left: 4px solid var(--step-modal-accent);
+
+    /* Typography */
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--step-modal-text-primary);
+
+    /* Scrollable */
+    max-height: 200px;
+    overflow-y: auto;
+
+    /* Preserve formatting */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.step-modal__text:empty {
+    display: none;
+}
+
+/* Custom scrollbar for text */
+.step-modal__text::-webkit-scrollbar {
+    width: 6px;
+}
+
+.step-modal__text::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.step-modal__text::-webkit-scrollbar-thumb {
+    background: var(--step-modal-circle-inactive);
+    border-radius: 3px;
+}
+
+/* ==========================================================================
+   Circular Navigation (Screenshot Reference - CRITICAL)
+   ========================================================================== */
+
+.step-modal__nav-circles {
+    padding: var(--step-modal-gap) 0;
+    border-top: 1px solid var(--step-modal-border);
+    border-bottom: 1px solid var(--step-modal-border);
+    margin-bottom: var(--step-modal-gap);
+}
+
+.step-modal__circles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-height: 32px;
+}
+
+/* Individual Circle Button */
+.step-modal__circle {
+    /* Size & shape */
+    width: var(--step-modal-circle-size);
+    height: var(--step-modal-circle-size);
+    border-radius: 50%;
+
+    /* Remove button styles */
+    padding: 0;
+    border: none;
+    margin: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    /* Inactive state (outlined - from screenshot) */
+    background: transparent;
+    box-shadow: 0 0 0 2px var(--step-modal-circle-inactive);
+
+    /* Transition */
+    transition: var(--step-modal-transition-fast);
+    position: relative;
+}
+
+/* Hover state */
+.step-modal__circle:hover:not(.step-modal__circle--active) {
+    box-shadow: 0 0 0 2px var(--step-modal-accent);
+    transform: scale(1.15);
+}
+
+/* Active state (filled - from screenshot) */
+.step-modal__circle--active {
+    background: var(--step-modal-accent);
+    box-shadow: 0 0 0 2px var(--step-modal-accent);
+    transform: scale(1.25);
+}
+
+/* Focus state (accessibility) */
+.step-modal__circle:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 4px;
+}
+
+/* Disabled state */
+.step-modal__circle:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Ripple effect on click */
+.step-modal__circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--step-modal-accent);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.step-modal__circle:active::after {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0.3;
+}
+
+/* ==========================================================================
+   Navigation Buttons
+   ========================================================================== */
+
+.step-modal__navigation {
+    margin-bottom: var(--step-modal-gap);
+}
+
+.step-modal__nav-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--step-modal-gap-sm);
+}
+
+/* Previous/Next Buttons */
+.step-modal__prev,
+.step-modal__next {
+    flex: 1;
+    max-width: 200px;
+    padding: 12px 24px;
+    border: 2px solid var(--step-modal-accent);
+    border-radius: var(--step-modal-radius-sm);
+    background: white;
+    color: var(--step-modal-accent);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--step-modal-transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--step-modal-gap-xs);
+}
+
+.step-modal__prev:hover,
+.step-modal__next:hover {
+    background: var(--step-modal-accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--step-modal-shadow-sm);
+}
+
+.step-modal__prev:active,
+.step-modal__next:active {
+    transform: translateY(0);
+}
+
+.step-modal__prev:disabled,
+.step-modal__next:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    background: var(--step-modal-hover-bg);
+    border-color: var(--step-modal-border);
+    color: var(--step-modal-text-muted);
+}
+
+.step-modal__prev:focus,
+.step-modal__next:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.step-modal__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--step-modal-gap);
+    padding-top: var(--step-modal-gap);
+    border-top: 1px solid var(--step-modal-border);
+    flex-wrap: wrap;
+}
+
+.step-modal__progress-text {
+    font-size: 0.875rem;
+    color: var(--step-modal-text-secondary);
+    font-weight: 500;
+}
+
+.step-modal__footer-controls {
+    display: flex;
+    gap: var(--step-modal-gap-xs);
+}
+
+/* Replay/Reset Buttons */
+.step-modal__replay,
+.step-modal__reset {
+    padding: 8px 16px;
+    border: 1px solid var(--step-modal-border);
+    border-radius: var(--step-modal-radius-sm);
+    background: white;
+    color: var(--step-modal-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--step-modal-transition-fast);
+}
+
+.step-modal__replay:hover,
+.step-modal__reset:hover {
+    border-color: var(--step-modal-accent);
+    color: var(--step-modal-accent);
+    background: var(--step-modal-hover-bg);
+}
+
+.step-modal__replay:focus,
+.step-modal__reset:focus {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Accessibility & States
+   ========================================================================== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .step-modal__card {
+        border: 2px solid currentColor;
+    }
+
+    .step-modal__circle {
+        box-shadow: 0 0 0 3px currentColor;
+    }
+
+    .step-modal__circle--active {
+        background: currentColor;
+    }
+
+    button:focus {
+        outline-width: 4px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .step-modal__circle::after {
+        display: none;
+    }
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus visible (for better keyboard navigation) */
+*:focus-visible {
+    outline: 3px solid var(--step-modal-accent);
+    outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    .step-modal__card {
+        max-width: 90%;
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+    .step-modal {
+        padding: 12px;
+    }
+
+    .step-modal__card {
+        padding: var(--step-modal-padding-sm);
+        max-height: 95vh;
+        border-radius: 12px;
+    }
+
+    .step-modal__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--step-modal-gap-sm);
+    }
+
+    .step-modal__header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .step-modal__title {
+        font-size: 1.125rem;
+    }
+
+    .step-modal__circles {
+        gap: var(--step-modal-gap-xs);
+    }
+
+    .step-modal__circle {
+        width: var(--step-modal-circle-size-mobile);
+        height: var(--step-modal-circle-size-mobile);
+    }
+
+    .step-modal__nav-buttons {
+        flex-direction: column;
+        gap: var(--step-modal-gap-xs);
+        width: 100%;
+    }
+
+    .step-modal__prev,
+    .step-modal__next {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .step-modal__footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--step-modal-gap-sm);
+    }
+
+    .step-modal__footer-controls {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .step-modal__play-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+
+    .step-modal__text {
+        max-height: 150px;
+        padding: var(--step-modal-padding-sm);
+        font-size: 0.9375rem;
+    }
+}
+
+/* Small mobile (< 480px) */
+@media (max-width: 480px) {
+    .step-modal__card {
+        padding: 12px;
+    }
+
+    .step-modal__title {
+        font-size: 1rem;
+    }
+
+    .step-modal__indicator {
+        font-size: 0.8125rem;
+        padding: 3px 10px;
+    }
+
+    .step-modal__circle {
+        width: 8px;
+        height: 8px;
+    }
+
+    .step-modal__text {
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Scale in animation */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Pulse animation for active circle */
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 2px var(--step-modal-accent);
+    }
+    50% {
+        box-shadow: 0 0 0 4px var(--step-modal-accent);
+    }
+}
+
+.step-modal__circle--active {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .step-modal__circle--active {
+        animation: none;
+    }
+}
+
+/* Loading spinner for future use */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.step-modal__loading {
+    animation: spin 1s linear infinite;
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .step-modal {
+        display: none;
+    }
+}

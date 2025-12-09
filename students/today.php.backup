@@ -1,0 +1,1625 @@
+<?php 
+include_once("/home/moodle/public_html/moodle/config.php"); 
+global $DB, $USER;
+require_login();
+
+// Get parameters
+$studentid = $_GET["id"]; 
+$tbegin = $_GET["tb"]; 
+$maxtime = time() - $tbegin; 
+
+if($studentid == NULL) $studentid = $USER->id;
+
+// Check user role and permissions
+$userrole = $DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22'"); 
+$role = $userrole->data;
+
+if($USER->id != $studentid && $role === 'student') {
+    echo '<br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;다른 사용자의 정보에 접근하실 수 없습니다.';
+    exit;
+}
+ 
+// Get user data
+$timecreated = time();
+$username = $DB->get_record_sql("SELECT id, hideinput, lastname, firstname, timezone FROM mdl_user WHERE id='$studentid' ORDER BY id DESC LIMIT 1");
+$studentname = $username->firstname.$username->lastname;
+$tabtitle = "주간평가 - ".$username->lastname;
+
+// Time variables
+$timestart2 = time() - $tbegin;
+$adayAgo = time() - 43200;
+$aweekAgo = time() - 604800;
+$timestart3 = time() - 86400 * 14;
+  
+// Log access for students
+if($role === 'student') {
+    $DB->execute("INSERT INTO {abessi_missionlog} (userid,page,timecreated) VALUES('$studentid','today','$timecreated')");
+}
+
+// Get quiz attempts
+$quizattempts = $DB->get_records_sql("SELECT *, mdl_quiz_attempts.timestart AS timestart, mdl_quiz_attempts.timefinish AS timefinish, mdl_quiz_attempts.maxgrade AS maxgrade, mdl_quiz_attempts.sumgrades AS sumgrades, mdl_quiz.sumgrades AS tgrades FROM mdl_quiz LEFT JOIN mdl_quiz_attempts ON mdl_quiz.id=mdl_quiz_attempts.quiz WHERE mdl_quiz_attempts.timemodified > '$timestart2' AND mdl_quiz_attempts.userid='$studentid' ORDER BY mdl_quiz_attempts.id DESC LIMIT 200");
+$quizresult = json_decode(json_encode($quizattempts), True);
+
+$nquiz = count($quizresult);
+$quizlist = '<hr>';
+$todayGrade = 0; 
+$ntodayquiz = 0; 
+$weekGrade = 0; 
+$nweekquiz = 0;
+$totalquizgrade1 = 0;
+$totalmaxgrade1 = 0;
+$nmaxgrade1 = 0; 
+$totalquizgrade2 = 0;
+$totalmaxgrade2 = 0;
+$nmaxgrade2 = 0; 
+$totalquizgrade3 = 0;
+$totalmaxgrade3 = 0;
+$nmaxgrade3 = 0;
+
+$quizlist00 = '';
+$quizlist11 = '';
+$quizlist12 = '';
+$quizlist21 = '';
+$quizlist22 = '';
+$quizlist31 = '';
+$quizlist32 = '';
+$gptprep = '';
+$eventtext = '';
+$reducetime = 0;
+$nweekquizall = 0;
+
+foreach($quizresult as $value) {
+    $comment = '';
+    $qnum = substr_count($value['layout'],',')+1-substr_count($value['layout'],',0');
+    $quizgrade = round($value['sumgrades']/$value['tgrades']*100,0);
+
+    if($quizgrade > 79.99) {
+        $imgstatus = '<img loading="lazy" src="https://mathking.kr/Contents/Moodle/Visual%20arts/greendot.png" width="15">';
+    } elseif($quizgrade > 69.99) {
+        $imgstatus = '<img loading="lazy" src="https://mathking.kr/Contents/Moodle/Visual%20arts/bluedot.png" width="15">';
+    } else {
+        $imgstatus = '<img loading="lazy" src="https://mathking.kr/Contents/Moodle/Visual%20arts/reddot.png" width="15">';
+    }
+    
+    $quizid = $value['quiz'];
+    $moduleid = $DB->get_record_sql("SELECT id FROM mdl_course_modules where instance='$quizid'"); 
+    $quizmoduleid = $moduleid->id;
+    
+    if(strpos($value['name'], 'ifmin') !== false) {
+        $quiztitle0 = substr($value['name'], 0, strpos($value['name'], '{'));
+    } else {
+        $quiztitle0 = $value['name'];
+    }
+    
+    $quiztitle = iconv_substr($quiztitle0, 0, 30, "utf-8");
+    $quizinstruction = '<b>'.$quiztitle0.' </b><br><br> '.$value['instruction'].'<hr>'.$value['comment'];
+    
+    if($value['maxgrade'] == NULL) {
+        $comment = '&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivism.php?id='.$studentid.'&attemptid='.$value['id'].'" target="_blank"><b style="color:blue">분석</b></a>';
+    } elseif(strpos($value['comment'], '최선을 다한 결과') !== false) {
+        $comment = '&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivism.php?id='.$studentid.'&attemptid='.$value['id'].'" target="_blank"><b style="color:green">완료</b></a>';
+    } elseif($value['comment'] == NULL) {
+        $comment = '&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivism.php?id='.$studentid.'&attemptid='.$value['id'].'" target="_blank"><b style="color:grey">완료</b></a>';
+    } else {
+        $comment = '&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivism.php?id='.$studentid.'&attemptid='.$value['id'].'" target="_blank"><b style="color:red">완료</b></a>';
+    }
+    
+    $attemptid = $value['id'];
+    $modifyquiz = '';
+
+    if($value['state'] === 'inprogress' && $role === 'student') {
+        $modifyquiz = '<span onclick="addquiztime(\''.$attemptid.'\')"><img loading="lazy" src=https://mathking.kr/Contents/IMAGES/addtime.png width=25></span>'; 
+    } elseif($value['state'] === 'inprogress' && $role !== 'student') {
+        $modifyquiz = '<span onclick="deletequiz(\''.$attemptid.'\')"><img loading="lazy" src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1641497146.png width=15></span> <span onclick="addquiztime(\''.$attemptid.'\')"><img loading="lazy" src=https://mathking.kr/Contents/IMAGES/addtime.png width=25></span>';
+    } elseif($role !== 'student') {
+        $modifyquiz = '<span onclick="deletequiz(\''.$attemptid.'\')"><img loading="lazy" src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1641497146.png width=15></span>';
+    }
+    
+    $quizstart = date("H:i", $value['timestart']);
+    $timefinish = date("m/d | H:i", $value['timefinish']);
+    $addtime = '<b style="color:blue;">'.$value['addtime'].'</b>분+';
+    if($value['addtime'] > 720) $addtime = '<b style="color:blue;">'.round($value['addtime']/1440).'일+</b>';
+    if($value['modified'] === 'addtime') $timefinish = date("m/d", $value['timefinish']).' | '.$addtime;
+
+    $maxgrade = $value['maxgrade'];
+    
+    if($value['review'] == 3) {  // 워밍업 활동
+        $quizlist00 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a></td><td>'.$quizgrade.'점</td><td>'.$value['state'].'</td><td>'.$timefinish.'</td></tr>';
+    } elseif(strpos($quiztitle, '내신') != false) {   
+        if($value['timestart'] > $adayAgo || $value['timefinish'] > $adayAgo) {
+            if($quizgrade > 89.99) {
+                $reducetime = $reducetime + 30; 
+                $eventtext .= '<tr><td>퀴즈성공 30분</td></tr>';
+            } elseif($quizgrade > 79.99) {
+                $reducetime = $reducetime + 10; 
+                $eventtext .= '<tr><td>퀴즈노력 10분</td></tr>';
+            }
+            $quizlist11 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            if($quizgrade > 79.99) $ntodayquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade1 = $totalmaxgrade1 + $value['maxgrade'];
+                $nmaxgrade1++;
+                $totalquizgrade1 = $totalquizgrade1 + $quizgrade;
+            }
+            $gptprep .= $quiztitle.'('.$quizgrade.'점.) &';
+        } else {
+            $quizlist12 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            $weekGrade = $weekGrade + $quizgrade;
+            $nweekquizall++;
+            if($quizgrade > 79.99) $nweekquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade1 = $totalmaxgrade1 + $value['maxgrade'];
+                $nmaxgrade1++;
+                $totalquizgrade1 = $totalquizgrade1 + $quizgrade;
+            }
+        }
+    } elseif(strpos($quiztitle, '수능') != false) {
+        if($value['timestart'] > $adayAgo || $value['timefinish'] > $adayAgo) {
+            if($quizgrade > 89.99) {
+                $reducetime = $reducetime + 30; 
+                $eventtext .= '<tr><td>퀴즈성공 30분</td></tr>';
+            } elseif($quizgrade > 79.99) {
+                $reducetime = $reducetime + 10; 
+                $eventtext .= '<tr><td>퀴즈노력 10분</td></tr>';
+            }
+            $quizlist21 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            if($quizgrade > 79.99) $ntodayquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade2 = $totalmaxgrade2 + $value['maxgrade'];
+                $nmaxgrade2++;
+                $totalquizgrade2 = $totalquizgrade2 + $quizgrade;
+            }
+            $gptprep .= $quiztitle.'('.$quizgrade.'점.) &';
+        } else {
+            $quizlist22 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            $weekGrade = $weekGrade + $quizgrade;
+            $nweekquizall++;
+            if($quizgrade > 79.99) $nweekquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade2 = $totalmaxgrade2 + $value['maxgrade'];
+                $nmaxgrade2++;
+                $totalquizgrade2 = $totalquizgrade2 + $quizgrade;
+            }
+        }
+    } else {  // 기타
+        if($value['timestart'] > $adayAgo || $value['timefinish'] > $adayAgo) {
+            if($quizgrade > 89.99) {
+                $reducetime = $reducetime + 30; 
+                $eventtext .= '<tr><td>퀴즈성공 30분</td></tr>';
+            } elseif($quizgrade > 79.99) {
+                $reducetime = $reducetime + 10; 
+                $eventtext .= '<tr><td>퀴즈노력 10분</td></tr>';
+            }
+            $quizlist31 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            if($quizgrade > 79.99) $ntodayquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade3 = $totalmaxgrade3 + $value['maxgrade'];
+                $nmaxgrade3++;
+                $totalquizgrade3 = $totalquizgrade3 + $quizgrade;
+            }
+            $gptprep .= $quiztitle.'('.$quizgrade.'점.) &';
+        } else {
+            $quizlist32 .= '<tr><td>'.$imgstatus.'</td><td><a href="https://mathking.kr/moodle/mod/quiz/view.php?id='.$quizmoduleid.'" target="_blank">'.$quiztitle.'</a> ('.$value['attempt'].'회)</td><td>'.$quizgrade.'점</td><td><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$value['id'].'&studentid='.$studentid.'" target="_blank">'.$value['state'].'</a></td><td>'.$timefinish.'</td><td>'.$comment.'</td><td>'.$modifyquiz.'</td></tr>';
+            $todayGrade = $todayGrade + $quizgrade;
+            $weekGrade = $weekGrade + $quizgrade;
+            $nweekquizall++;
+            if($quizgrade > 79.99) $nweekquiz++;
+            if($value['maxgrade'] != NULL) {
+                $totalmaxgrade3 = $totalmaxgrade3 + $value['maxgrade'];
+                $nmaxgrade3++;
+                $totalquizgrade3 = $totalquizgrade3 + $quizgrade;
+            }
+        }
+    }
+}
+
+// Get today's goals and other data
+$timeday = time() - 86400;
+$todaylog = $DB->get_records_sql("SELECT * FROM mdl_abessi_today WHERE userid='$studentid' AND timecreated > '$timeday' ORDER BY id DESC");
+$todayresult = json_decode(json_encode($todaylog), True);
+
+$goalhistory = '';
+foreach($todayresult as $tvalue) {
+    if($tvalue['type'] === '오늘목표') {
+        $todaygoal = '<hr><span style="font-size:14pt; color:blue;">오늘목표 : '.$tvalue['text'].'</span><hr>';
+    } elseif($tvalue['type'] === '내일목표') {
+        $tomorrowgoal = '<span style="font-size:11pt;  color:grey;"><br>내일목표 : '.$tvalue['text'].'</span>';
+    } elseif($tvalue['type'] === '주간목표') {
+        $weekgoal = '<hr><span style="font-size:14pt;  color:blue;"><b>주간목표 : '.$tvalue['text'].'</b></span><hr>';
+    }
+}
+
+// Get study activities
+try {
+    $fixnotes = $DB->get_records_sql("SELECT *, TIME_TO_SEC(TIMEDIFF(NOW(),FROM_UNIXTIME(timecreated))) as timestart FROM mdl_abessi_fixnotes WHERE userid='$studentid' AND timecreated > '$timestart2' ORDER BY id DESC LIMIT 300");
+    $fixresult = json_decode(json_encode($fixnotes), True);
+} catch (Exception $e) {
+    // Handle table not existing or other errors
+    $fixresult = array();
+}
+
+// Initialize activity lists
+$audiolist = '';
+$fixlist = '';
+$qcreatelist = '';
+$preplist = '';
+$revisionlist = '';
+$whiteboardlist = '';
+$naudiotime = 0;
+$nfixtime = 0;
+$nqcreatetime = 0;
+$npreptime = 0;
+$nwhiteboardtime = 0;
+$nrevision = 0;
+
+if(!empty($fixresult)) {
+    foreach($fixresult as $fvalue) {
+        $timeday = date("H:i", $fvalue['timecreated']);
+        $timeago = round($fvalue['timestart']/3600, 1).'시간전';
+        if($fvalue['timestart'] < 7200) $timeago = round($fvalue['timestart']/60).'분전';
+    
+    if($fvalue['mtype'] === 'audio') {
+        $audiolist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['timespent'].'초</td><td>'.$timeago.'</td></tr>';
+        $naudiotime = $naudiotime + $fvalue['timespent'];
+    } elseif($fvalue['mtype'] === 'fix') {
+        $fixlist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['timespent'].'초</td><td>'.$timeago.'</td></tr>';
+        $nfixtime = $nfixtime + $fvalue['timespent'];
+    } elseif($fvalue['mtype'] === 'qcreate') {
+        $qcreatelist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['timespent'].'초</td><td>'.$timeago.'</td></tr>';
+        $nqcreatetime = $nqcreatetime + $fvalue['timespent'];
+    } elseif($fvalue['mtype'] === 'whiteboard') {
+        $whiteboardlist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['timespent'].'초</td><td>'.$timeago.'</td></tr>';
+        $nwhiteboardtime = $nwhiteboardtime + $fvalue['timespent'];
+    } elseif($fvalue['mtype'] === 'prep') {
+        $preplist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['timespent'].'초</td><td>'.$timeago.'</td></tr>';
+        $npreptime = $npreptime + $fvalue['timespent'];
+    } elseif($fvalue['mtype'] === 'revision') {
+        $revisionlist .= '<tr><td>'.$timeday.'</td><td><a href="'.$fvalue['url'].'" target="_blank">'.$fvalue['contentstitle'].'</a></td><td>'.$fvalue['nrevision'].'회</td><td>'.$timeago.'</td></tr>';
+        $nrevision++;
+    }
+    }
+}
+
+// Convert times to minutes
+$naudiotime = round($naudiotime/60);
+$nfixtime = round($nfixtime/60);
+$nqcreatetime = round($nqcreatetime/60);
+$npreptime = round($npreptime/60);
+$nwhiteboardtime = round($nwhiteboardtime/60);
+
+// Calculate average grades
+if($nmaxgrade1 > 0) $avggrade1 = round($totalquizgrade1/$nmaxgrade1, 0);
+else $avggrade1 = 0;
+
+if($nmaxgrade2 > 0) $avggrade2 = round($totalquizgrade2/$nmaxgrade2, 0);
+else $avggrade2 = 0;
+
+if($nmaxgrade3 > 0) $avggrade3 = round($totalquizgrade3/$nmaxgrade3, 0);
+else $avggrade3 = 0;
+
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title><?php echo $tabtitle; ?></title>
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <link rel="icon" href="https://granicus.com/wp-content/uploads/image/png/icon-granicus-300x300.png" type="image/x-icon"/>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3383FF;
+            --secondary-color: #E05D22;
+            --accent-color: #0082D8;
+            --success-color: #059669;
+            --warning-color: #ea580c;
+            --info-color: #0891b2;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-hover: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', '맑은 고딕', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav-top {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2563eb 100%);
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+        
+        .nav-menu li {
+            margin: 0 20px;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-menu a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* View Switcher */
+        .view-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .view-info {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .view-switcher {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 30px;
+            padding: 4px;
+            box-shadow: var(--shadow);
+        }
+        
+        .view-btn {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .view-btn:hover {
+            color: var(--text-primary);
+        }
+        
+        .view-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(51, 131, 255, 0.3);
+        }
+        
+        .view-btn i {
+            font-size: 16px;
+        }
+        
+        /* Tab View Styles */
+        .tab-container {
+            display: none;
+        }
+        
+        .tab-container.active {
+            display: block;
+        }
+        
+        .tab-nav {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 8px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(0,0,0,0.03);
+        }
+        
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 8px rgba(51, 131, 255, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Scroll View Styles */
+        .scroll-container {
+            display: none;
+        }
+        
+        .scroll-container.active {
+            display: block;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 0;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #dc2626 100%);
+            color: white;
+            padding: 16px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-header.quiz {
+            background: linear-gradient(135deg, #E05D22 0%, #dc2626 100%);
+        }
+        
+        .section-header.exam {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+        
+        .section-header.sat {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+        }
+        
+        .section-header.activities {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        }
+        
+        .section-header.goals {
+            background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+        }
+        
+        .card-body {
+            padding: 20px 24px;
+        }
+        
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            margin: 0;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: var(--bg-color);
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .data-table td {
+            padding: 12px 8px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .data-table a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        
+        /* Stats Box */
+        .stats-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: var(--bg-color);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Goals Section */
+        .goals-section {
+            background: rgba(51, 131, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(51, 131, 255, 0.2);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content-container {
+                padding: 15px;
+            }
+            
+            .nav-menu li {
+                margin: 0 10px;
+            }
+            
+            .nav-menu a {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+            
+            .tab-nav {
+                padding: 5px;
+            }
+            
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            
+            .section-header {
+                font-size: 16px;
+                padding: 14px 20px;
+            }
+            
+            .view-controls {
+                justify-content: center;
+            }
+            
+            .stats-box {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+        
+        /* Status Indicators */
+        .status-success {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .status-warning {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+        
+        .status-info {
+            color: var(--info-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-top">
+        <div class="content-container">
+            <ul class="nav-menu">
+                <li><a href="index.php?id=<?php echo $studentid; ?>">홈</a></li>
+                <li><a href="roadmap.php?id=<?php echo $studentid; ?>">로드맵</a></li>
+                <li><a href="edittoday.php?id=<?php echo $studentid; ?>">목표입력</a></li>
+                <li><a href="today.php?id=<?php echo $studentid; ?>&tb=604800">주간평가</a></li>
+                <li><a href="schedule.php?id=<?php echo $studentid; ?>">스케줄</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-container">
+        <!-- View Controls -->
+        <div class="view-controls">
+            <div class="view-info">
+                <?php 
+                $period = round($tbegin/86400);
+                echo "최근 ".$period."일간 학습 현황";
+                ?>
+            </div>
+            <div class="view-switcher">
+                <button class="view-btn active" onclick="switchView('tab')">
+                    <i class="fas fa-folder"></i> 탭 뷰
+                </button>
+                <button class="view-btn" onclick="switchView('scroll')">
+                    <i class="fas fa-stream"></i> 스크롤 뷰
+                </button>
+            </div>
+        </div>
+        
+        <!-- Goals Section -->
+        <?php if(isset($weekgoal) || isset($todaygoal) || isset($tomorrowgoal)): ?>
+        <div class="goals-section">
+            <?php 
+            if(isset($weekgoal)) echo $weekgoal;
+            if(isset($todaygoal)) echo $todaygoal;
+            if(isset($tomorrowgoal)) echo $tomorrowgoal;
+            ?>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Stats Overview -->
+        <div class="stats-box">
+            <div class="stat-item">
+                <div class="stat-value"><?php echo $nquiz; ?></div>
+                <div class="stat-label">전체 퀴즈</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value"><?php echo $ntodayquiz; ?></div>
+                <div class="stat-label">오늘 완료</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value"><?php echo round(($ntodayquiz + $nweekquiz > 0) ? ($todayGrade + $weekGrade) / ($ntodayquiz + $nweekquiz) : 0); ?>점</div>
+                <div class="stat-label">평균 점수</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value"><?php echo $naudiotime + $nfixtime + $nqcreatetime + $npreptime + $nwhiteboardtime; ?>분</div>
+                <div class="stat-label">총 학습시간</div>
+            </div>
+        </div>
+        
+        <!-- Tab View Container -->
+        <div id="tabView" class="tab-container active">
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="openTab('warmup')">워밍업</button>
+                <button class="tab-btn" onclick="openTab('exam')">내신</button>
+                <button class="tab-btn" onclick="openTab('sat')">수능</button>
+                <button class="tab-btn" onclick="openTab('other')">기타</button>
+                <button class="tab-btn" onclick="openTab('activities')">학습활동</button>
+            </div>
+            
+            <!-- 워밍업 Tab -->
+            <div id="warmup" class="tab-content active">
+                <div class="card">
+                    <div class="section-header quiz">
+                        <span>워밍업 활동</span>
+                        <span>총 <?php echo substr_count($quizlist00, '<tr>'); ?>개</span>
+                    </div>
+                    <div class="card-body">
+                        <?php if($quizlist00): ?>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">상태</th>
+                                        <th width="40%">퀴즈명</th>
+                                        <th width="15%">점수</th>
+                                        <th width="15%">진행상태</th>
+                                        <th width="20%">완료시간</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo $quizlist00; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <i class="fas fa-clipboard-list"></i>
+                                <p>워밍업 활동이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 내신 Tab -->
+            <div id="exam" class="tab-content">
+                <div class="card">
+                    <div class="section-header exam">
+                        <span>내신 퀴즈 - 오늘</span>
+                        <span>평균: <?php echo $avggrade1; ?>점</span>
+                    </div>
+                    <div class="card-body">
+                        <?php if($quizlist11): ?>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">상태</th>
+                                        <th width="30%">퀴즈명</th>
+                                        <th width="10%">점수</th>
+                                        <th width="15%">진행상태</th>
+                                        <th width="15%">완료시간</th>
+                                        <th width="15%">분석</th>
+                                        <th width="10%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo $quizlist11; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <i class="fas fa-file-alt"></i>
+                                <p>오늘 완료한 내신 퀴즈가 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <?php if($quizlist12): ?>
+                <div class="card">
+                    <div class="section-header exam">
+                        <span>내신 퀴즈 - 이전</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist12; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- 수능 Tab -->
+            <div id="sat" class="tab-content">
+                <div class="card">
+                    <div class="section-header sat">
+                        <span>수능 퀴즈 - 오늘</span>
+                        <span>평균: <?php echo $avggrade2; ?>점</span>
+                    </div>
+                    <div class="card-body">
+                        <?php if($quizlist21): ?>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">상태</th>
+                                        <th width="30%">퀴즈명</th>
+                                        <th width="10%">점수</th>
+                                        <th width="15%">진행상태</th>
+                                        <th width="15%">완료시간</th>
+                                        <th width="15%">분석</th>
+                                        <th width="10%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo $quizlist21; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <i class="fas fa-graduation-cap"></i>
+                                <p>오늘 완료한 수능 퀴즈가 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <?php if($quizlist22): ?>
+                <div class="card">
+                    <div class="section-header sat">
+                        <span>수능 퀴즈 - 이전</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist22; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- 기타 Tab -->
+            <div id="other" class="tab-content">
+                <div class="card">
+                    <div class="section-header">
+                        <span>기타 퀴즈 - 오늘</span>
+                        <span>평균: <?php echo $avggrade3; ?>점</span>
+                    </div>
+                    <div class="card-body">
+                        <?php if($quizlist31): ?>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th width="5%">상태</th>
+                                        <th width="30%">퀴즈명</th>
+                                        <th width="10%">점수</th>
+                                        <th width="15%">진행상태</th>
+                                        <th width="15%">완료시간</th>
+                                        <th width="15%">분석</th>
+                                        <th width="10%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo $quizlist31; ?>
+                                </tbody>
+                            </table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <i class="fas fa-question-circle"></i>
+                                <p>오늘 완료한 기타 퀴즈가 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <?php if($quizlist32): ?>
+                <div class="card">
+                    <div class="section-header">
+                        <span>기타 퀴즈 - 이전</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist32; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- 학습활동 Tab -->
+            <div id="activities" class="tab-content">
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <div class="stat-value"><?php echo $naudiotime; ?>분</div>
+                        <div class="stat-label">오디오 학습</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><?php echo $nfixtime; ?>분</div>
+                        <div class="stat-label">오답노트</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><?php echo $nqcreatetime; ?>분</div>
+                        <div class="stat-label">문제 만들기</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value"><?php echo $nwhiteboardtime; ?>분</div>
+                        <div class="stat-label">화이트보드</div>
+                    </div>
+                </div>
+                
+                <?php if($audiolist): ?>
+                <div class="card">
+                    <div class="section-header activities">
+                        <span>오디오 학습 기록</span>
+                        <span><?php echo $naudiotime; ?>분</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">시간</th>
+                                    <th width="50%">내용</th>
+                                    <th width="15%">학습시간</th>
+                                    <th width="20%">경과시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $audiolist; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if($fixlist): ?>
+                <div class="card">
+                    <div class="section-header activities">
+                        <span>오답노트 기록</span>
+                        <span><?php echo $nfixtime; ?>분</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">시간</th>
+                                    <th width="50%">내용</th>
+                                    <th width="15%">학습시간</th>
+                                    <th width="20%">경과시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $fixlist; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if($qcreatelist): ?>
+                <div class="card">
+                    <div class="section-header activities">
+                        <span>문제 만들기 기록</span>
+                        <span><?php echo $nqcreatetime; ?>분</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">시간</th>
+                                    <th width="50%">내용</th>
+                                    <th width="15%">학습시간</th>
+                                    <th width="20%">경과시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $qcreatelist; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+                
+                <?php if($whiteboardlist): ?>
+                <div class="card">
+                    <div class="section-header activities">
+                        <span>화이트보드 기록</span>
+                        <span><?php echo $nwhiteboardtime; ?>분</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">시간</th>
+                                    <th width="50%">내용</th>
+                                    <th width="15%">학습시간</th>
+                                    <th width="20%">경과시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $whiteboardlist; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <!-- Scroll View Container -->
+        <div id="scrollView" class="scroll-container">
+            <!-- 워밍업 Section -->
+            <?php if($quizlist00): ?>
+            <div class="card">
+                <div class="section-header quiz">
+                    <span>워밍업 활동</span>
+                    <span>총 <?php echo substr_count($quizlist00, '<tr>'); ?>개</span>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="10%">상태</th>
+                                <th width="40%">퀴즈명</th>
+                                <th width="15%">점수</th>
+                                <th width="15%">진행상태</th>
+                                <th width="20%">완료시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $quizlist00; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <!-- 내신 Section -->
+            <div class="card">
+                <div class="section-header exam">
+                    <span>내신 퀴즈</span>
+                    <span>평균: <?php echo $avggrade1; ?>점</span>
+                </div>
+                <div class="card-body">
+                    <?php if($quizlist11 || $quizlist12): ?>
+                        <?php if($quizlist11): ?>
+                        <h4>오늘 완료</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist11; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                        
+                        <?php if($quizlist12): ?>
+                        <h4 style="margin-top: 20px;">이전 기록</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist12; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <i class="fas fa-file-alt"></i>
+                            <p>내신 퀴즈 기록이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- 수능 Section -->
+            <div class="card">
+                <div class="section-header sat">
+                    <span>수능 퀴즈</span>
+                    <span>평균: <?php echo $avggrade2; ?>점</span>
+                </div>
+                <div class="card-body">
+                    <?php if($quizlist21 || $quizlist22): ?>
+                        <?php if($quizlist21): ?>
+                        <h4>오늘 완료</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist21; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                        
+                        <?php if($quizlist22): ?>
+                        <h4 style="margin-top: 20px;">이전 기록</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist22; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <i class="fas fa-graduation-cap"></i>
+                            <p>수능 퀴즈 기록이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- 기타 Section -->
+            <div class="card">
+                <div class="section-header">
+                    <span>기타 퀴즈</span>
+                    <span>평균: <?php echo $avggrade3; ?>점</span>
+                </div>
+                <div class="card-body">
+                    <?php if($quizlist31 || $quizlist32): ?>
+                        <?php if($quizlist31): ?>
+                        <h4>오늘 완료</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist31; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                        
+                        <?php if($quizlist32): ?>
+                        <h4 style="margin-top: 20px;">이전 기록</h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th width="5%">상태</th>
+                                    <th width="30%">퀴즈명</th>
+                                    <th width="10%">점수</th>
+                                    <th width="15%">진행상태</th>
+                                    <th width="15%">완료시간</th>
+                                    <th width="15%">분석</th>
+                                    <th width="10%">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php echo $quizlist32; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <i class="fas fa-question-circle"></i>
+                            <p>기타 퀴즈 기록이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <!-- 학습활동 Section -->
+            <div class="card">
+                <div class="section-header activities">
+                    <span>학습활동 요약</span>
+                    <span>총 <?php echo $naudiotime + $nfixtime + $nqcreatetime + $npreptime + $nwhiteboardtime; ?>분</span>
+                </div>
+                <div class="card-body">
+                    <div class="stats-box">
+                        <div class="stat-item">
+                            <div class="stat-value"><?php echo $naudiotime; ?>분</div>
+                            <div class="stat-label">오디오 학습</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><?php echo $nfixtime; ?>분</div>
+                            <div class="stat-label">오답노트</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><?php echo $nqcreatetime; ?>분</div>
+                            <div class="stat-label">문제 만들기</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><?php echo $nwhiteboardtime; ?>분</div>
+                            <div class="stat-label">화이트보드</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <?php if($audiolist): ?>
+            <div class="card">
+                <div class="section-header activities">
+                    <span>오디오 학습 기록</span>
+                    <span><?php echo $naudiotime; ?>분</span>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="15%">시간</th>
+                                <th width="50%">내용</th>
+                                <th width="15%">학습시간</th>
+                                <th width="20%">경과시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $audiolist; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <?php if($fixlist): ?>
+            <div class="card">
+                <div class="section-header activities">
+                    <span>오답노트 기록</span>
+                    <span><?php echo $nfixtime; ?>분</span>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="15%">시간</th>
+                                <th width="50%">내용</th>
+                                <th width="15%">학습시간</th>
+                                <th width="20%">경과시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $fixlist; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <?php if($qcreatelist): ?>
+            <div class="card">
+                <div class="section-header activities">
+                    <span>문제 만들기 기록</span>
+                    <span><?php echo $nqcreatetime; ?>분</span>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="15%">시간</th>
+                                <th width="50%">내용</th>
+                                <th width="15%">학습시간</th>
+                                <th width="20%">경과시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $qcreatelist; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <?php if($whiteboardlist): ?>
+            <div class="card">
+                <div class="section-header activities">
+                    <span>화이트보드 기록</span>
+                    <span><?php echo $nwhiteboardtime; ?>분</span>
+                </div>
+                <div class="card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th width="15%">시간</th>
+                                <th width="50%">내용</th>
+                                <th width="15%">학습시간</th>
+                                <th width="20%">경과시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $whiteboardlist; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+<!-- Core JS Files -->
+<script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+<script src="../assets/js/core/popper.min.js"></script>
+<script src="../assets/js/core/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// View Switching Functions
+function switchView(viewType) {
+    const tabView = document.getElementById('tabView');
+    const scrollView = document.getElementById('scrollView');
+    const viewBtns = document.querySelectorAll('.view-btn');
+    
+    // Remove active class from all buttons
+    viewBtns.forEach(btn => btn.classList.remove('active'));
+    
+    if(viewType === 'tab') {
+        tabView.classList.add('active');
+        scrollView.classList.remove('active');
+        viewBtns[0].classList.add('active');
+        // Save preference
+        localStorage.setItem('todayPreferredView', 'tab');
+    } else {
+        tabView.classList.remove('active');
+        scrollView.classList.add('active');
+        viewBtns[1].classList.add('active');
+        // Save preference
+        localStorage.setItem('todayPreferredView', 'scroll');
+    }
+}
+
+// Tab Switching Functions
+function openTab(tabName) {
+    const tabContents = document.querySelectorAll('.tab-content');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    
+    // Hide all tab contents
+    tabContents.forEach(content => content.classList.remove('active'));
+    
+    // Remove active class from all buttons
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to clicked button
+    const activeBtn = Array.from(tabBtns).find(btn => 
+        btn.textContent.includes(getTabTitle(tabName))
+    );
+    if(activeBtn) activeBtn.classList.add('active');
+    
+    // Save last active tab
+    localStorage.setItem('todayActiveTab', tabName);
+}
+
+function getTabTitle(tabName) {
+    const titles = {
+        'warmup': '워밍업',
+        'exam': '내신',
+        'sat': '수능',
+        'other': '기타',
+        'activities': '학습활동'
+    };
+    return titles[tabName] || tabName;
+}
+
+// Quiz Management Functions
+function deletequiz(attemptid) {
+    Swal.fire({
+        title: '퀴즈를 삭제하시겠습니까?',
+        text: "이 작업은 되돌릴 수 없습니다!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '삭제',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "check.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "eventid": 6,
+                    "attemptid": attemptid
+                },
+                success: function(data) {
+                    Swal.fire('삭제됨!', '퀴즈가 삭제되었습니다.', 'success')
+                    .then(() => location.reload());
+                }
+            });
+        }
+    });
+}
+
+function addquiztime(attemptid) {
+    Swal.fire({
+        title: '시간을 추가하시겠습니까?',
+        text: "퀴즈 시간이 10분 연장됩니다.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '추가',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "check.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "eventid": 5,
+                    "attemptid": attemptid
+                },
+                success: function(data) {
+                    Swal.fire('추가됨!', '퀴즈 시간이 연장되었습니다.', 'success')
+                    .then(() => location.reload());
+                }
+            });
+        }
+    });
+}
+
+// Load user preferences on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Load preferred view
+    const preferredView = localStorage.getItem('todayPreferredView');
+    if(preferredView) {
+        switchView(preferredView);
+    }
+    
+    // Load last active tab
+    const activeTab = localStorage.getItem('todayActiveTab');
+    if(activeTab) {
+        openTab(activeTab);
+    }
+    
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+    // Add loading animation
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+
+// Tab navigation with keyboard
+document.addEventListener('keydown', function(e) {
+    if(document.getElementById('tabView').classList.contains('active')) {
+        const tabs = ['warmup', 'exam', 'sat', 'other', 'activities'];
+        const currentTab = localStorage.getItem('todayActiveTab') || 'warmup';
+        const currentIndex = tabs.indexOf(currentTab);
+        
+        if(e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
+            openTab(tabs[currentIndex + 1]);
+        } else if(e.key === 'ArrowLeft' && currentIndex > 0) {
+            openTab(tabs[currentIndex - 1]);
+        }
+    }
+});
+</script>
+
+<?php
+$pagetype = 'todaystudy';
+include("../LLM/postit.php");
+?>
+</body>
+</html>

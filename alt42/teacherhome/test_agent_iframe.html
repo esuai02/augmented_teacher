@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>에이전트 iframe 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #1976D2;
+        }
+        .agent-card {
+            display: inline-block;
+            padding: 15px;
+            margin: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+            text-align: center;
+        }
+        .agent-card:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .agent-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .agent-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .agent-description {
+            font-size: 12px;
+            color: #666;
+        }
+        .status {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 에이전트 iframe 슬라이딩 패널 테스트</h1>
+    
+    <div class="test-section">
+        <h2>테스트 시나리오</h2>
+        <p>에이전트 플러그인을 클릭하면 agent_url을 읽어와서 우측에서 슬라이드로 iframe이 나타나는지 테스트합니다.</p>
+        <div id="status" class="status" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>에이전트 카드 시뮬레이션</h2>
+        <p>아래 카드들을 클릭하여 테스트하세요:</p>
+        
+        <div class="agent-card" onclick="testAgent1()">
+            <div class="agent-icon">🤖</div>
+            <div class="agent-title">AI 학습 도우미</div>
+            <div class="agent-description">agent_url이 있는 에이전트</div>
+        </div>
+        
+        <div class="agent-card" onclick="testAgent2()">
+            <div class="agent-icon">📊</div>
+            <div class="agent-title">성적 분석 에이전트</div>
+            <div class="agent-description">외부 URL 에이전트</div>
+        </div>
+        
+        <div class="agent-card" onclick="testAgent3()">
+            <div class="agent-icon">💬</div>
+            <div class="agent-title">대화형 튜터</div>
+            <div class="agent-description">URL 없는 에이전트 (채팅 폴백)</div>
+        </div>
+        
+        <div class="agent-card" onclick="testAgent4()">
+            <div class="agent-icon">📝</div>
+            <div class="agent-title">학습 계획 생성기</div>
+            <div class="agent-description">상대 경로 파일</div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>직접 테스트</h2>
+        <button class="test-button" onclick="testDirectCall()">openAgentPanelWithIframe 직접 호출</button>
+        <button class="test-button" onclick="testExecutePlugin()">executePluginAction 호출</button>
+        <button class="test-button" onclick="checkFunctions()">함수 존재 확인</button>
+    </div>
+    
+    <!-- 메인 페이지의 스크립트와 스타일 로드 -->
+    <link rel="stylesheet" href="styles.css">
+    <script src="plugin_settings_client.js"></script>
+    <script src="script.js"></script>
+    
+    <script>
+        function showStatus(message, isSuccess = true) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + (isSuccess ? 'success' : 'error');
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+        
+        // 테스트 케이스 1: agent_url이 있는 에이전트
+        function testAgent1() {
+            const config = {
+                plugin_name: 'AI 학습 도우미',
+                agent_url: 'https://mathking.kr/moodle/local/augmented_teacher/alt42/studenthome/index.php',
+                agent_type: 'api',
+                agent_config: {
+                    title: 'AI 튜터',
+                    description: '학습을 도와드립니다'
+                }
+            };
+            
+            console.log('Testing Agent 1:', config);
+            showStatus('에이전트 1 실행 중...');
+            
+            if (typeof executePluginAction === 'function') {
+                executePluginAction('agent', config);
+                showStatus('✅ 에이전트 1 실행됨 - iframe 패널이 열려야 합니다');
+            } else {
+                showStatus('❌ executePluginAction 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // 테스트 케이스 2: 외부 URL 에이전트
+        function testAgent2() {
+            const config = {
+                plugin_name: '성적 분석 에이전트',
+                agent_url: 'https://www.google.com',
+                agent_type: 'api'
+            };
+            
+            console.log('Testing Agent 2:', config);
+            showStatus('에이전트 2 실행 중...');
+            
+            if (typeof executePluginAction === 'function') {
+                executePluginAction('agent', config);
+                showStatus('✅ 에이전트 2 실행됨 - Google이 iframe에 로드되어야 합니다');
+            } else {
+                showStatus('❌ executePluginAction 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // 테스트 케이스 3: URL 없는 에이전트 (채팅 폴백)
+        function testAgent3() {
+            const config = {
+                plugin_name: '대화형 튜터',
+                agent_type: 'javascript',
+                agent_prompt: '학생의 질문에 답변해드립니다',
+                agent_config: {
+                    title: '대화형 튜터',
+                    description: '질문과 답변'
+                }
+            };
+            
+            console.log('Testing Agent 3:', config);
+            showStatus('에이전트 3 실행 중...');
+            
+            if (typeof executePluginAction === 'function') {
+                executePluginAction('agent', config);
+                showStatus('✅ 에이전트 3 실행됨 - 채팅 패널이 열려야 합니다 (URL 없음)');
+            } else {
+                showStatus('❌ executePluginAction 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // 테스트 케이스 4: 상대 경로 파일
+        function testAgent4() {
+            const config = {
+                plugin_name: '학습 계획 생성기',
+                agent_url: 'weekly/weekly_report.html',
+                agent_type: 'custom'
+            };
+            
+            console.log('Testing Agent 4:', config);
+            showStatus('에이전트 4 실행 중...');
+            
+            if (typeof executePluginAction === 'function') {
+                executePluginAction('agent', config);
+                showStatus('✅ 에이전트 4 실행됨 - 상대 경로 파일이 iframe에 로드되어야 합니다');
+            } else {
+                showStatus('❌ executePluginAction 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // 직접 호출 테스트
+        function testDirectCall() {
+            console.log('Testing direct call to openAgentPanelWithIframe');
+            
+            if (typeof openAgentPanelWithIframe === 'function') {
+                openAgentPanelWithIframe({
+                    url: 'https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/omniui_teacher_api.php',
+                    title: '직접 호출 테스트'
+                });
+                showStatus('✅ openAgentPanelWithIframe 직접 호출 성공');
+            } else {
+                showStatus('❌ openAgentPanelWithIframe 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // executePluginAction 호출 테스트
+        function testExecutePlugin() {
+            console.log('Testing executePluginAction with agent type');
+            
+            if (typeof executePluginAction === 'function') {
+                const testConfig = {
+                    plugin_name: 'executePluginAction 테스트',
+                    agent_url: 'test_content.html',
+                    agent_type: 'custom'
+                };
+                
+                executePluginAction('agent', testConfig);
+                showStatus('✅ executePluginAction 호출 성공');
+            } else {
+                showStatus('❌ executePluginAction 함수를 찾을 수 없습니다', false);
+            }
+        }
+        
+        // 함수 존재 확인
+        function checkFunctions() {
+            const functionsToCheck = [
+                'executePluginAction',
+                'openAgentPanel',
+                'closeAgentPanel',
+                'openAgentPanelWithIframe',
+                'openChatPanelWithAgent'
+            ];
+            
+            let allFound = true;
+            let results = [];
+            
+            functionsToCheck.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    results.push(`✅ ${funcName}`);
+                } else {
+                    results.push(`❌ ${funcName}`);
+                    allFound = false;
+                }
+            });
+            
+            const message = results.join('\n');
+            console.log('Function check results:\n' + message);
+            
+            if (allFound) {
+                showStatus('모든 함수가 정상적으로 로드되었습니다!');
+            } else {
+                showStatus('일부 함수가 로드되지 않았습니다. 콘솔을 확인하세요.', false);
+            }
+        }
+        
+        // 페이지 로드 시 자동 확인
+        window.addEventListener('load', () => {
+            console.log('Test page loaded. Checking environment...');
+            checkFunctions();
+        });
+    </script>
+</body>
+</html>

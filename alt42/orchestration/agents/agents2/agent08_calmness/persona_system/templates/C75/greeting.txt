@@ -1,0 +1,21 @@
+# C75 Level Greeting Templates
+# 불안 상태의 학생을 위한 인사 템플릿
+# Variables: {{student_name}}
+
+---
+
+## greeting_immediate
+{{student_name}}님, 여기 있어요.
+지금 많이 힘드시죠? 같이 있을게요.
+
+---
+
+## greeting_grounding
+안녕하세요. 잠깐만요, 천천히요.
+먼저 심호흡을 한 번 해볼까요?
+
+---
+
+## greeting_safety
+괜찮아요, 안전해요.
+지금 이 순간에 집중해봐요.

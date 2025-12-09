@@ -1,0 +1,524 @@
+/**
+ * AI 튜터 스타일시트
+ * 최소 기능적 UI 디자인
+ * 
+ * @package    local_augmented_teacher
+ * @subpackage AItutor
+ * @version    1.0
+ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.tutor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 헤더 */
+.tutor-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.tutor-header h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.tutor-header .subtitle {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+/* 메인 영역 */
+.tutor-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 입력 영역 */
+.input-section {
+    width: 100%;
+}
+
+.input-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input-card h2 {
+    margin-bottom: 20px;
+    color: #667eea;
+    font-size: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.content-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.content-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* 이미지 업로드 영역 */
+.image-upload-area {
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.image-upload-area:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.image-upload-area.drag-over {
+    border-color: #667eea;
+    background-color: #f0f2ff;
+}
+
+.upload-placeholder {
+    color: #999;
+}
+
+.upload-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* 분석 버튼 */
+.analyze-button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.analyze-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.analyze-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-icon {
+    margin-right: 8px;
+}
+
+/* 결과 영역 */
+.result-section {
+    width: 100%;
+}
+
+.result-card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.result-card h3 {
+    margin-bottom: 20px;
+    color: #667eea;
+    font-size: 18px;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 10px;
+}
+
+/* 로딩 표시 */
+.loading-indicator {
+    text-align: center;
+    padding: 40px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 질문 카드 */
+.question-card {
+    background: #f8f9ff;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #667eea;
+}
+
+.question-card.comprehensive {
+    border-left-color: #667eea;
+}
+
+.question-card.detailed {
+    border-left-color: #48bb78;
+}
+
+.question-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.question-id,
+.question-category {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.question-type {
+    background: #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.question-body h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.focus-areas,
+.suggestions {
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.focus-areas ul,
+.suggestions ul,
+.suggestions ol {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+/* 룰 카드 */
+.rule-card {
+    background: #fff5f5;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border-left: 4px solid #f56565;
+}
+
+.rule-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.rule-id {
+    background: #f56565;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.rule-priority {
+    background: #fed7d7;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.rule-body h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.rule-conditions,
+.rule-actions,
+.rule-rationale {
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.rule-conditions pre {
+    margin-top: 8px;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+}
+
+.rule-actions ul {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+/* 온톨로지 섹션 */
+.ontology-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f0fff4;
+    border-radius: 4px;
+    border-left: 4px solid #48bb78;
+}
+
+.ontology-section h4 {
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.will-core {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.will-item {
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.intent-content {
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+.intent-priority ul {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.ontology-node {
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+}
+
+.node-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.node-id {
+    background: #48bb78;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.node-class {
+    background: #c6f6d5;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.node-stage {
+    background: #bee3f8;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.node-body pre {
+    margin-top: 10px;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+}
+
+/* 라이브 튜터링 */
+.tutoring-chat {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    background: #f7fafc;
+    border-radius: 4px;
+}
+
+.tutoring-message {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 4px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tutoring-message.teacher {
+    background: #e6fffa;
+    border-left: 4px solid #38b2ac;
+}
+
+.tutoring-message.student {
+    background: #fff5f5;
+    border-left: 4px solid #fc8181;
+}
+
+.tutoring-message.suggestion {
+    background: #fffaf0;
+    border-left: 4px solid #f6ad55;
+}
+
+.tutoring-message.question {
+    background: #ebf8ff;
+    border-left: 4px solid #4299e1;
+}
+
+.tutoring-message.contents {
+    background: #f0fff4;
+    border-left: 4px solid #48bb78;
+}
+
+.tutoring-message.next-step {
+    background: #faf5ff;
+    border-left: 4px solid #9f7aea;
+}
+
+.message-content {
+    color: #2d3748;
+}
+
+.message-content ul {
+    margin-top: 8px;
+    margin-left: 20px;
+}
+
+.message-content li {
+    margin-bottom: 4px;
+}
+
+/* 상호작용 입력 영역 */
+.tutoring-input-area {
+    margin-top: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+    border: 2px solid #e2e8f0;
+}
+
+.tutoring-input-area textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 10px;
+}
+
+.tutoring-input-area textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.tutoring-input-area button {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tutoring-input-area button:hover {
+    background: #5568d3;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .tutor-container {
+        padding: 10px;
+    }
+
+    .tutor-header {
+        padding: 20px;
+    }
+
+    .input-card,
+    .result-card {
+        padding: 15px;
+    }
+}
+

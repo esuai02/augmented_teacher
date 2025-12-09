@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 지수와 로그 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 단항식의 계산 (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_1">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(1)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53290&amp;page=1&amp;quizid=86207</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 같은 밑의 거듭제곱을 곱할 때 지수를 더하는 지수법칙 a^m × a^n = a^(m+n)을 이해하고 적용할 수 있다. 지수법칙을 활용하여 단항식을 간단히 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(2)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53291&amp;page=1&amp;quizid=86208</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 같은 밑의 거듭제곱을 나눌 때 지수를 빼는 지수법칙 a^m ÷ a^n = a^(m-n)을 이해하고 적용할 수 있다. 지수법칙을 활용하여 단항식을 간단히 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_3">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(3)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53292&amp;page=1&amp;quizid=86209</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 거듭제곱의 거듭제곱일 때 지수를 곱하는 지수법칙 (a^m)^n = a^(mn)을 이해하고 적용할 수 있다. 지수법칙을 활용하여 단항식을 간단히 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#자릿수_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">자릿수 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53293&amp;page=1&amp;quizid=86210</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 상용로그를 이용하여 큰 수의 자릿수를 구할 수 있다. 지수와 로그의 관계를 이해하고 실생활 문제에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식의_곱셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식의 곱셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53294&amp;page=1&amp;quizid=86211</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 지수법칙을 활용하여 단항식의 곱셈을 수행할 수 있다. 계수는 곱하고, 같은 문자는 지수법칙을 적용하여 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식의_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식의 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53295&amp;page=1&amp;quizid=86212</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산(중등) — 지수법칙을 활용하여 단항식의 나눗셈을 수행할 수 있다. 계수는 나누고, 같은 문자는 지수법칙을 적용하여 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 지수 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거듭제곱_지수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거듭제곱</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49022&amp;page=1&amp;quizid=84675</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 거듭제곱의 의미를 이해하고 a^n의 형태로 표현할 수 있다. 지수가 양의 정수일 때의 계산을 수행할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_지수가_양의_정수일_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙-지수가 양의 정수일 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49023&amp;page=1&amp;quizid=84676</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 지수가 양의 정수일 때의 지수법칙을 이해하고 적용할 수 있다. 같은 밑의 거듭제곱의 곱셈, 나눗셈, 거듭제곱의 거듭제곱을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거듭제곱근">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거듭제곱근</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49024&amp;page=1&amp;quizid=84677</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — n제곱근의 의미를 이해하고 ⁿ√a의 형태로 표현할 수 있다. 거듭제곱과 거듭제곱근의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ⁿ√a의_정의">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">ⁿ√a의 정의</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49025&amp;page=1&amp;quizid=84678</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — ⁿ√a의 정의를 이해하고, n이 홀수일 때와 짝수일 때의 차이를 파악할 수 있다. 거듭제곱근의 존재 조건을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거듭제곱근의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거듭제곱근의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49026&amp;page=1&amp;quizid=84679</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 거듭제곱근의 성질을 이해하고 적용할 수 있다. ⁿ√(ab) = ⁿ√a × ⁿ√b, ⁿ√(a/b) = ⁿ√a / ⁿ√b 등의 성질을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#a^0과_a^-ⁿ의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">a^0과 a^-ⁿ의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49027&amp;page=1&amp;quizid=84680</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — a^0 = 1 (a≠0)과 a^(-n) = 1/a^n의 성질을 이해하고 적용할 수 있다. 지수가 0 또는 음수일 때의 계산을 수행할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_지수가_정수일_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙-지수가 정수일 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49028&amp;page=1&amp;quizid=84681</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 지수가 정수일 때의 지수법칙을 이해하고 적용할 수 있다. 양의 정수, 0, 음의 정수 모두에 대해 지수법칙이 성립함을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#a^m_n의_정의">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">a^m/n의 정의</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49029&amp;page=1&amp;quizid=84682</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 지수가 유리수일 때 a^(m/n) = ⁿ√(a^m) = (ⁿ√a)^m의 정의를 이해하고 적용할 수 있다. 분수 지수를 거듭제곱근으로 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_지수가_유리수일_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙-지수가 유리수일 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49030&amp;page=1&amp;quizid=84683</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 지수가 유리수일 때의 지수법칙을 이해하고 적용할 수 있다. 분수 지수를 포함한 거듭제곱의 곱셈, 나눗셈, 거듭제곱을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙_지수가_실수일_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙-지수가 실수일 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=1&amp;cmid=49031&amp;page=1&amp;quizid=84684</ar:hasURL>
+    <ar:description xml:lang="ko">지수(수학1) — 지수가 실수일 때의 지수법칙을 이해하고 적용할 수 있다. 무리수 지수를 포함한 거듭제곱의 계산 원리를 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 로그 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그의_정의">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그의 정의</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49032&amp;page=1&amp;quizid=84685</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 로그의 정의를 이해하고 a^x = b (a&gt;0, a≠1, b&gt;0)일 때 x = log_a b로 표현할 수 있다. 지수와 로그의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그의_밑과_진수의_조건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그의 밑과 진수의 조건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49033&amp;page=1&amp;quizid=84686</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 로그의 밑과 진수의 조건을 이해할 수 있다. 밑은 양수이고 1이 아니며, 진수는 양수여야 함을 이해하고 이를 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그의_성질_1">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그의 성질(1)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49034&amp;page=1&amp;quizid=84687</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 로그의 기본 성질을 이해하고 적용할 수 있다. log_a 1 = 0, log_a a = 1, log_a a^x = x 등의 성질을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그의_밑의_변환_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그의 밑의 변환 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49035&amp;page=1&amp;quizid=86042</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 로그의 밑의 변환 공식 log_a b = log_c b / log_c a를 이해하고 적용할 수 있다. 다양한 밑의 로그를 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그의_성질_2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그의 성질(2)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49036&amp;page=1&amp;quizid=86041</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 로그의 연산 성질을 이해하고 적용할 수 있다. log_a (MN) = log_a M + log_a N, log_a (M/N) = log_a M - log_a N, log_a M^n = n log_a M 등을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#상용로그">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">상용로그</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49037&amp;page=1&amp;quizid=86040</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 상용로그의 정의를 이해하고 log_10 x = log x로 표현할 수 있다. 상용로그의 의미와 활용을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#상용로그표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">상용로그표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49038&amp;page=1&amp;quizid=86039</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 상용로그표를 이용하여 상용로그의 값을 구할 수 있다. 상용로그표의 읽는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">상용로그의 정수 부분과 소수 부분</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49039&amp;page=1&amp;quizid=86038</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 상용로그의 정수 부분과 소수 부분을 구분할 수 있다. 정수 부분은 자릿수와 관련이 있고, 소수 부분은 수의 배열과 관련이 있음을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">상용로그의 정수 부분과 소수 부분의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=2&amp;cmid=49040&amp;page=1&amp;quizid=86037</ar:hasURL>
+    <ar:description xml:lang="ko">로그(수학1) — 상용로그의 정수 부분과 소수 부분의 성질을 이해하고 적용할 수 있다. 정수 부분은 자릿수를 결정하고, 소수 부분은 수의 배열을 결정함을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 지수함수 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48670&amp;page=1&amp;quizid=84819</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수함수의 정의를 이해하고 y = a^x (a&gt;0, a≠1)의 형태로 표현할 수 있다. 지수함수의 일반적인 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48671&amp;page=1&amp;quizid=84820</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수함수의 그래프를 그릴 수 있고, a&gt;1일 때와 0&lt;a&lt;1일 때의 그래프의 차이를 이해할 수 있다. 지수함수 그래프의 특징을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48672&amp;page=1&amp;quizid=84821</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수함수의 성질을 이해하고 적용할 수 있다. 정의역, 치역, 단조성, 점근선 등의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_그래프의_평행이동과_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 그래프의 평행이동과 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48673&amp;page=1&amp;quizid=84822</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수함수의 그래프를 평행이동하거나 대칭이동할 수 있다. y = a^(x-p) + q 형태의 지수함수의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_최대_최소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 최대·최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48674&amp;page=1&amp;quizid=84823</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 주어진 구간에서 지수함수의 최댓값과 최솟값을 구할 수 있다. 지수함수의 단조성을 이용하여 최대·최소를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_특별한_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 특별한 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48675&amp;page=1&amp;quizid=84824</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수함수의 특별한 성질을 이해하고 적용할 수 있다. a^x × a^y = a^(x+y), (a^x)^y = a^(xy) 등의 성질을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48676&amp;page=1&amp;quizid=84825</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수방정식을 풀 수 있다. 같은 밑으로 변형하거나 치환을 이용하여 지수방정식을 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수부등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수부등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=3&amp;cmid=48677&amp;page=1&amp;quizid=84826</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수(수학1) — 지수부등식을 풀 수 있다. 지수함수의 단조성을 이용하여 부등식을 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 로그함수 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48678&amp;page=1&amp;quizid=84827</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그함수의 정의를 이해하고 y = log_a x (a&gt;0, a≠1, x&gt;0)의 형태로 표현할 수 있다. 로그함수의 일반적인 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48679&amp;page=1&amp;quizid=84828</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그함수의 그래프를 그릴 수 있고, a&gt;1일 때와 0&lt;a&lt;1일 때의 그래프의 차이를 이해할 수 있다. 로그함수 그래프의 특징을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48680&amp;page=1&amp;quizid=84829</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그함수의 성질을 이해하고 적용할 수 있다. 정의역, 치역, 단조성, 점근선 등의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_그래프의_평행이동과_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 그래프의 평행이동과 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48681&amp;page=1&amp;quizid=84830</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그함수의 그래프를 평행이동하거나 대칭이동할 수 있다. y = log_a (x-p) + q 형태의 로그함수의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_최대_최소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 최대·최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48682&amp;page=1&amp;quizid=84831</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 주어진 구간에서 로그함수의 최댓값과 최솟값을 구할 수 있다. 로그함수의 단조성을 이용하여 최대·최소를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_특별한_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 특별한 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48683&amp;page=1&amp;quizid=84832</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그함수의 특별한 성질을 이해하고 적용할 수 있다. log_a (xy) = log_a x + log_a y, log_a (x/y) = log_a x - log_a y 등의 성질을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48684&amp;page=1&amp;quizid=84833</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그방정식을 풀 수 있다. 로그의 성질을 이용하여 로그방정식을 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그부등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그부등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=4&amp;cmid=48685&amp;page=1&amp;quizid=84834</ar:hasURL>
+    <ar:description xml:lang="ko">로그함수(수학1) — 로그부등식을 풀 수 있다. 로그함수의 단조성을 이용하여 부등식을 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- precedes 관계: 동일 단원 내 순서 -->
+  <!-- 1단계 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_1">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_3"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_3">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#자릿수_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#자릿수_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식의_곱셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식의_곱셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <!-- 2단계 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거듭제곱_지수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_양의_정수일_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_지수가_양의_정수일_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#거듭제곱근"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거듭제곱근">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#ⁿ√a의_정의"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#ⁿ√a의_정의">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#거듭제곱근의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거듭제곱근의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#a^0과_a^-ⁿ의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a^0과_a^-ⁿ의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_정수일_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_지수가_정수일_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#a^m_n의_정의"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a^m_n의_정의">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_유리수일_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙_지수가_유리수일_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_실수일_때"/>
+  </rdf:Description>
+
+  <!-- 3단계 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_정의">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그의_밑과_진수의_조건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_밑과_진수의_조건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그의_성질_1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_성질_1">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그의_밑의_변환_공식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_밑의_변환_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그의_성질_2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_성질_2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#상용로그"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#상용로그">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#상용로그표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#상용로그표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분의_성질"/>
+  </rdf:Description>
+
+  <!-- 4단계 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_그래프의_평행이동과_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_그래프의_평행이동과_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_최대_최소"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_최대_최소">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_특별한_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_특별한_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수부등식"/>
+  </rdf:Description>
+
+  <!-- 5단계 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_그래프의_평행이동과_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_그래프의_평행이동과_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_최대_최소"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_최대_최소">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_특별한_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_특별한_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그부등식"/>
+  </rdf:Description>
+
+  <!-- dependsOn 관계: 선행 학습 필요 -->
+  <!-- 2단계는 1단계에 의존 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거듭제곱_지수">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#지수법칙_1"/>
+  </rdf:Description>
+
+  <!-- 3단계는 2단계에 의존 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그의_정의">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_실수일_때"/>
+  </rdf:Description>
+
+  <!-- 4단계는 2단계에 의존 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#지수법칙_지수가_실수일_때"/>
+  </rdf:Description>
+
+  <!-- 5단계는 3단계에 의존 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#상용로그의_정수_부분과_소수_부분의_성질"/>
+  </rdf:Description>
+
+</rdf:RDF>
+

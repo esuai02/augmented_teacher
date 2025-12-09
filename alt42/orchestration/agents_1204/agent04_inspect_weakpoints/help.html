@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent04 Inspect Weakpoints - 진행 상황</title>
+    <style>
+        :root {
+            --primary: #e74c3c;
+            --primary-dark: #c0392b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2rem;
+        }
+
+        .header h1 .emoji {
+            font-size: 2.5rem;
+        }
+
+        .header .subtitle {
+            color: var(--gray);
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        .header .meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--light);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .progress-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .progress-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .progress-card .label {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .progress-card.complete { border-bottom: 4px solid var(--success); }
+        .progress-card.progress { border-bottom: 4px solid var(--warning); }
+        .progress-card.pending { border-bottom: 4px solid var(--gray); }
+        .progress-card.new { border-bottom: 4px solid var(--info); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: 20px;
+            background: var(--dark);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header .icon {
+            font-size: 1.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .card-header .badge {
+            margin-left: auto;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success { background: var(--success); }
+        .badge-warning { background: var(--warning); }
+        .badge-info { background: var(--info); }
+        .badge-new { background: #9b59b6; }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .file-item:hover {
+            background: var(--light);
+            transform: translateX(5px);
+        }
+
+        .file-item .icon {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        .file-item .name {
+            flex: 1;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .file-item .desc {
+            color: var(--gray);
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .file-item .status {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .status-complete { background: #d4edda; color: #155724; }
+        .status-progress { background: #fff3cd; color: #856404; }
+        .status-pending { background: #e2e3e5; color: #383d41; }
+        .status-new { background: #d1ecf1; color: #0c5460; }
+
+        .file-item a {
+            color: var(--info);
+            text-decoration: none;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: white;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .highlight-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .highlight-card .card-header {
+            background: rgba(0,0,0,0.2);
+        }
+
+        .highlight-card .file-item {
+            color: white;
+        }
+
+        .highlight-card .file-item .name {
+            color: white;
+        }
+
+        .highlight-card .file-item .desc {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .highlight-card .file-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quick-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .quick-link.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--light);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .timeline-item.pending::before {
+            background: var(--gray);
+        }
+
+        .timeline-item .date {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .timeline-item .content {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .progress-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span class="emoji">🔍</span>
+                Agent04 Inspect Weakpoints
+            </h1>
+            <p class="subtitle">학생의 취약점을 분석하고 인지관성 패턴을 감지하여 맞춤형 피드백을 제공하는 에이전트</p>
+            <div class="meta">
+                <span class="meta-item">📁 위치: agents/agent04_inspect_weakpoints</span>
+                <span class="meta-item">🔄 최종 업데이트: 2025-12-03</span>
+                <span class="meta-item">📊 버전: 2.0.0</span>
+            </div>
+        </div>
+
+        <div class="progress-overview">
+            <div class="progress-card new">
+                <div class="icon">🧠</div>
+                <div class="value">60</div>
+                <div class="label">인지관성 페르소나</div>
+            </div>
+            <div class="progress-card complete">
+                <div class="icon">📂</div>
+                <div class="value">7</div>
+                <div class="label">주요 폴더</div>
+            </div>
+            <div class="progress-card complete">
+                <div class="icon">📄</div>
+                <div class="value">50+</div>
+                <div class="label">전체 파일</div>
+            </div>
+            <div class="progress-card progress">
+                <div class="icon">⚙️</div>
+                <div class="value">75%</div>
+                <div class="label">구현 진행률</div>
+            </div>
+        </div>
+
+        <h3 class="section-title">🌟 최근 업데이트 - 인지관성 페르소나 시스템</h3>
+
+        <div class="grid">
+            <div class="card highlight-card">
+                <div class="card-header">
+                    <span class="icon">🧠</span>
+                    <h2>persona_system/ (NEW)</h2>
+                    <span class="badge badge-new">신규 구현</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">⚙️</span>
+                            <span class="name">config.php</span>
+                            <span class="desc">60개 페르소나 + 8개 카테고리 정의</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔧</span>
+                            <span class="name">Agent04PersonaEngine.php</span>
+                            <span class="desc">인지관성 분석 엔진 (~710줄)</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔌</span>
+                            <span class="name">api.php</span>
+                            <span class="desc">15개 REST API 엔드포인트</span>
+                            <span class="status status-complete">완료</span>
+                            <a href="persona_system/api.php?action=help" target="_blank">API 문서</a>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🧪</span>
+                            <span class="name">test.php</span>
+                            <span class="desc">12개 테스트 케이스</span>
+                            <span class="status status-complete">완료</span>
+                            <a href="persona_system/test.php" target="_blank">테스트</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📊</span>
+                    <h2>인지관성 8개 카테고리</h2>
+                    <span class="badge badge-info">60개 패턴</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">🌊</span>
+                            <span class="name">인지 과부하</span>
+                            <span class="desc">ID 1-10 (충동적 풀이, 정보 과다 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">💪</span>
+                            <span class="name">자신감 왜곡</span>
+                            <span class="desc">ID 11-20 (과신, 자기 과소평가 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">⚠️</span>
+                            <span class="name">실수 패턴</span>
+                            <span class="desc">ID 21-30 (부호 실수, 단위 혼동 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🧭</span>
+                            <span class="name">접근 전략 오류</span>
+                            <span class="desc">ID 31-40 (문제 분해 실패, 공식 암기 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📚</span>
+                            <span class="name">학습 습관</span>
+                            <span class="desc">ID 41-45 (표면적 학습, 피드백 무시 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">⏱️</span>
+                            <span class="name">시간/압박 관리</span>
+                            <span class="desc">ID 46-50 (시간 압박, 조급함 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">✅</span>
+                            <span class="name">검증/확인 부재</span>
+                            <span class="desc">ID 51-55 (검토 생략, 답안 확인 미흡 등)</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔮</span>
+                            <span class="name">기타 장애</span>
+                            <span class="desc">ID 56-60 (수학 불안, 메타인지 부족 등)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">📁 폴더 구조</h3>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🔌</span>
+                    <h2>api/</h2>
+                    <span class="badge badge-success">구현됨</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">check_db.php</span>
+                            <span class="desc">DB 연결 확인</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">get_activity.php</span>
+                            <span class="desc">활동 조회 API</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">save_activity.php</span>
+                            <span class="desc">활동 저장 API</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📖</span>
+                    <h2>ontology/</h2>
+                    <span class="badge badge-success">문서화 완료</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">01-07_ontology_*.md</span>
+                            <span class="desc">온톨로지 스펙 문서 (7개)</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔧</span>
+                            <span class="name">OntologyEngine.php</span>
+                            <span class="desc">온톨로지 엔진</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔧</span>
+                            <span class="name">OntologyActionHandler.php</span>
+                            <span class="desc">액션 핸들러</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🧪</span>
+                            <span class="name">test_ontology.php</span>
+                            <span class="desc">온톨로지 테스트</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📋</span>
+                    <h2>rules/</h2>
+                    <span class="badge badge-success">정의됨</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">rules.yaml</span>
+                            <span class="desc">규칙 정의 파일</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">mission.md</span>
+                            <span class="desc">에이전트 미션</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">questions.md</span>
+                            <span class="desc">질문 패턴</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">actions.md</span>
+                            <span class="desc">액션 정의</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🔧</span>
+                            <span class="name">rule_evaluator.php</span>
+                            <span class="desc">규칙 평가기</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📚</span>
+                    <h2>functions/</h2>
+                    <span class="badge badge-success">8개 기능</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">개념이해.md</span>
+                            <span class="desc">개념 이해 기능</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">문제풀이.md</span>
+                            <span class="desc">문제 풀이 기능</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">유형학습.md</span>
+                            <span class="desc">유형별 학습</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">오답노트.md</span>
+                            <span class="desc">오답 관리</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">복습활동.md</span>
+                            <span class="desc">복습 활동</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">질의응답.md</span>
+                            <span class="desc">Q&A 기능</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">포모도르.md</span>
+                            <span class="desc">시간 관리</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">귀가검사.md</span>
+                            <span class="desc">귀가 전 점검</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">🎨</span>
+                    <h2>ui/</h2>
+                    <span class="badge badge-warning">UI 컴포넌트</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">activity_panel.js</span>
+                            <span class="desc">활동 패널 JS</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🎨</span>
+                            <span class="name">activity_panel.css</span>
+                            <span class="desc">활동 패널 스타일</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">activity_categories.js</span>
+                            <span class="desc">카테고리 관리</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🧪</span>
+                            <span class="name">test_panel.html</span>
+                            <span class="desc">UI 테스트 페이지</span>
+                            <span class="status status-complete">완료</span>
+                            <a href="ui/test_panel.html" target="_blank">열기</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="icon">📝</span>
+                    <h2>루트 파일</h2>
+                    <span class="badge badge-info">문서 및 설정</span>
+                </div>
+                <div class="card-body">
+                    <ul class="file-list">
+                        <li class="file-item">
+                            <span class="icon">📖</span>
+                            <span class="name">README.md</span>
+                            <span class="desc">에이전트 개요</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">🧪</span>
+                            <span class="name">TESTING.md</span>
+                            <span class="desc">테스트 가이드</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📊</span>
+                            <span class="name">TEST_REPORT.md</span>
+                            <span class="desc">테스트 리포트</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">agent04_problem_activity.md</span>
+                            <span class="desc">문제 활동 정의</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                        <li class="file-item">
+                            <span class="icon">📄</span>
+                            <span class="name">*목표 지식.md</span>
+                            <span class="desc">목표 관련 지식 (5개)</span>
+                            <span class="status status-complete">완료</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">🚀 빠른 링크</h3>
+
+        <div class="quick-links">
+            <a href="persona_system/test.php" class="quick-link primary" target="_blank">
+                🧠 페르소나 테스트
+            </a>
+            <a href="persona_system/api.php?action=health" class="quick-link" target="_blank">
+                💓 API 헬스체크
+            </a>
+            <a href="persona_system/api.php?action=help" class="quick-link" target="_blank">
+                📖 API 문서
+            </a>
+            <a href="persona_system/api.php?action=get_all" class="quick-link" target="_blank">
+                📋 전체 페르소나
+            </a>
+            <a href="persona_system/api.php?action=get_categories" class="quick-link" target="_blank">
+                🏷️ 카테고리
+            </a>
+            <a href="ontology/test_ontology.php" class="quick-link" target="_blank">
+                🔬 온톨로지 테스트
+            </a>
+            <a href="ui/test_panel.html" class="quick-link" target="_blank">
+                🎨 UI 테스트
+            </a>
+            <a href="rules/dataindex.html" class="quick-link" target="_blank">
+                📊 데이터 인덱스
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Agent04 Inspect Weakpoints | 하이페리얼 테크놀로지스 | 2025</p>
+            <p>서버 URL: https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/agent04_inspect_weakpoints/</p>
+        </div>
+    </div>
+</body>
+</html>

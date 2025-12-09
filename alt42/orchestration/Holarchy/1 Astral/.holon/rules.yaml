@@ -1,0 +1,185 @@
+# Rules - Agent 의사결정 규칙
+# 단순 반복구조: 위험체크 → 질문실행 → 상태업데이트 → 반복
+
+#═══════════════════════════════════════════════════════════════
+# 1. 위험 체크 (항상 먼저 실행)
+#═══════════════════════════════════════════════════════════════
+risk_check:
+  before_any_action: true
+  
+  levels:
+    safe:
+      threshold: 0.8  # 모든 진단 파라미터 >= 0.8
+      action: "자동 진행"
+      color: "#22c55e"  # green
+      
+    caution:
+      threshold: 0.6  # 하나 이상 0.6~0.8
+      action: "경고 표시 후 진행"
+      color: "#eab308"  # yellow
+      
+    danger:
+      threshold: 0.4  # 하나 이상 0.4~0.6
+      action: "사람 확인 필수"
+      color: "#f97316"  # orange
+      
+    critical:
+      threshold: 0.0  # 하나 이상 < 0.4
+      action: "즉시 중단, 사람 개입 대기"
+      color: "#ef4444"  # red
+
+  # AI가 위험 제거 확인하는 조건
+  risk_cleared_conditions:
+    - "모든 진단 파라미터 >= caution threshold"
+    - "사람이 명시적으로 승인"
+    - "자동 복구 로직 성공"
+
+#═══════════════════════════════════════════════════════════════
+# 2. 상황 전이 규칙
+#═══════════════════════════════════════════════════════════════
+transitions:
+  init_to_develop:
+    from: init
+    to: develop
+    requires:
+      - goal_defined
+      - resources_ready
+      - risk_level_safe_or_caution
+    
+  develop_to_review:
+    from: develop
+    to: review
+    triggers:
+      - milestone_reached
+      - risk_detected
+      - human_input_needed
+    
+  review_to_develop:
+    from: review
+    to: develop
+    requires:
+      - human_approved
+      - risk_cleared
+    
+  develop_to_complete:
+    from: develop
+    to: complete
+    requires:
+      - all_tasks_done
+      - risk_level_safe
+    
+  any_to_blocked:
+    from: "*"
+    to: blocked
+    triggers:
+      - critical_risk
+      - dependency_failed
+      - system_error
+    
+  blocked_to_review:
+    from: blocked
+    to: review
+    requires:
+      - cause_identified
+      - solution_proposed
+
+#═══════════════════════════════════════════════════════════════
+# 3. 복잡도 분리 기준
+#═══════════════════════════════════════════════════════════════
+split_threshold:
+  lines: 100              # 파일 100줄 초과 시 분리
+  situations: 10          # 상황 10개 초과 시 분리
+  questions_per_situation: 15  # 상황당 질문 15개 초과 시 분리
+  holons: 20              # 홀론 20개 초과 시 계층 분리
+  
+  split_action: |
+    1. 상위 파일을 인덱스로 변환
+    2. _splits/ 폴더에 하위 파일 생성
+    3. includes 배열에 경로 추가
+    4. 사람에게 분리 결과 리뷰 요청
+
+#═══════════════════════════════════════════════════════════════
+# 4. 진단 파라미터 계산 규칙
+#═══════════════════════════════════════════════════════════════
+diagnostics:
+  SEI:  # 학습 효과 지수
+    formula: "avg((current_skill - prev_skill) / learning_time)"
+    healthy_range: [0.7, 1.0]
+    layer: "인지/콘텐츠"
+    
+  EC:   # 몰입 지속 지수
+    formula: "1 - (dropout_rate + long_gap_sessions) / 2"
+    healthy_range: [0.6, 1.0]
+    layer: "정서/동기"
+    
+  ES:   # 정서 안전 지수
+    formula: "1 - (high_stress_ratio + negative_emotion_flags) / 2"
+    healthy_range: [0.7, 1.0]
+    layer: "정서/심리"
+    
+  BV:   # 지점 편차 지수 (낮을수록 좋음)
+    formula: "var(branch_SEI_scores)"
+    healthy_range: [0.0, 0.3]
+    layer: "운영/조직"
+    
+  GR:   # 일반화 신뢰성
+    formula: "correlation(predicted_outcome, actual_outcome)"
+    healthy_range: [0.7, 1.0]
+    layer: "메타/정책"
+
+#═══════════════════════════════════════════════════════════════
+# 5. 홀론 생성 규칙
+#═══════════════════════════════════════════════════════════════
+holon_creation:
+  trigger: "새로운 목적/도메인 식별"
+  
+  steps:
+    1_draft: "AI가 WXSPERTA 8슬롯 초안 생성"
+    2_review: "사람에게 검증 요청 (필수)"
+    3_approve: "사람 승인 후 확정"
+    4_register: "시스템에 홀론 등록"
+    5_link: "상위/하위 홀론 연결"
+  
+  human_verification: required  # 절대 생략 불가
+
+#═══════════════════════════════════════════════════════════════
+# 6. 사람 개입 인터페이스 규칙
+#═══════════════════════════════════════════════════════════════
+human_interface:
+  when_needed:
+    - risk_level >= danger
+    - new_holon_creation
+    - strategy_decision
+    - split_review
+  
+  requirements:
+    - "모든 관련 정보를 가독성 있게 제공"
+    - "선택지를 명확히 제시"
+    - "위험 수준과 근거 표시"
+    - "예상 결과 미리보기"
+  
+  response_timeout: 24h  # 24시간 무응답 시 에스컬레이션
+
+#═══════════════════════════════════════════════════════════════
+# 7. 반복 루프 구조
+#═══════════════════════════════════════════════════════════════
+main_loop:
+  sequence:
+    1: "context.md 읽기 (현재 상황)"
+    2: "risk_check 실행"
+    3: "위험 시 → human_interface 생성, 확인 대기"
+    4: "위험 제거 확인"
+    5: "questions.md 해당 상황 질문 실행"
+    6: "결과 → context.md 업데이트"
+    7: "transitions 규칙에 따라 상황 전이"
+    8: "홀론 확장 필요 시 → holon_creation (사람 검증)"
+    9: "LOOP 반복"
+  
+  interval: "event_driven"  # 이벤트 기반 또는 주기적
+
+#═══════════════════════════════════════════════════════════════
+# _splits (복잡도 증가 시 분리)
+#═══════════════════════════════════════════════════════════════
+_splits:
+  includes: []
+

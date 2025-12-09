@@ -1,0 +1,82 @@
+# Task: 진도 미달 (Lagging)
+
+id: "task_lagging"
+version: "1.0.0"
+
+# 목표
+goal: "진도 미달 학생에게 시각화 리포트 + 집중 지시문 제공"
+
+# KPI
+kpi:
+  - "progress_rate"
+  - "time_on_task"
+  - "gap_from_avg"
+
+# 트리거 조건 (DSL)
+triggers:
+  - "cond.progress.below_avg15"
+  - "cond.progress.declining_trend"
+
+# 사전조건
+preconditions:
+  - "evidence.window.duration_min >= 30"
+  - "evidence.metrics.progress_delta IS NOT NULL"
+
+# 사후조건
+postconditions:
+  - "report.generated == true"
+  - "directive.priority >= 0.7"
+
+# 컨텍스트 태그
+context_tags:
+  - "curriculum"
+  - "progress"
+  - "intervention"
+
+# 템플릿 우선순위
+templates:
+  - id: "report_lagging"
+    type: "report"
+    priority: 1.0
+    params:
+      chart: "progress_vs_avg"
+      lookback_days: 7
+
+  - id: "directive_focus"
+    type: "directive"
+    priority: 0.9
+    params:
+      mode: "now_or_next"
+      minutes: 20
+
+  - id: "directive_lower_difficulty"
+    type: "directive"
+    priority: 0.7
+    params:
+      adjustment: -1
+      reason: "progress_recovery"
+
+# 규칙 참조
+rules:
+  - "rule.curriculum.lagging_report"
+  - "rule.curriculum.focus_directive"
+
+# 페르소나 연관도
+persona_relevance:
+  P_avoidant: 1.0
+  P_struggling: 0.95
+  P_inconsistent: 0.8
+  P_motivated: 0.5
+  P_advanced: 0.2
+
+# 예상 효과
+expected_outcomes:
+  - "increased_focus"
+  - "difficulty_adjustment"
+  - "progress_recovery"
+
+# 메타데이터
+metadata:
+  created: "2025-10-29"
+  author: "system"
+  tags: ["core", "intervention", "progress"]

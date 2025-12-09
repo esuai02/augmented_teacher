@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grid Inspection Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .inspection-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 800px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #2563eb;
+        }
+        
+        .info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="inspection-container">
+        <h1>Grid Display Inspection Tool</h1>
+        
+        <div class="controls">
+            <button onclick="loadPage('selectmode.php?userid=123')">Load selectmode.php</button>
+            <button onclick="loadPage('test-modes.php')">Load test-modes.php</button>
+            <button onclick="loadPage('test-grid-fix.php')">Load test-grid-fix.php</button>
+            <button onclick="inspectGrid()">Inspect Grid</button>
+        </div>
+        
+        <iframe id="testFrame" src="test-grid-fix.php"></iframe>
+        
+        <div id="info" class="info">Click "Inspect Grid" to analyze the loaded page</div>
+    </div>
+    
+    <script>
+        function loadPage(url) {
+            document.getElementById('testFrame').src = url;
+            document.getElementById('info').textContent = 'Loading ' + url + '...';
+        }
+        
+        function inspectGrid() {
+            const iframe = document.getElementById('testFrame');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            let info = 'Grid Inspection Results:\n\n';
+            
+            // Check for grids
+            const grids = iframeDoc.querySelectorAll('.modes-grid, #teacherModeGrid, #studentModeGrid, .test-grid');
+            info += `Found ${grids.length} grid(s)\n\n`;
+            
+            grids.forEach((grid, index) => {
+                const cards = grid.querySelectorAll('.mode-card, .test-card');
+                const style = iframe.contentWindow.getComputedStyle(grid);
+                
+                info += `Grid ${index + 1}:\n`;
+                info += `  ID: ${grid.id || 'none'}\n`;
+                info += `  Class: ${grid.className}\n`;
+                info += `  Display: ${style.display}\n`;
+                info += `  Grid Template Columns: ${style.gridTemplateColumns}\n`;
+                info += `  Number of Cards: ${cards.length}\n`;
+                
+                if (cards.length > 0) {
+                    info += `  Card Details:\n`;
+                    cards.forEach((card, cardIndex) => {
+                        const title = card.querySelector('.mode-title, .title');
+                        info += `    Card ${cardIndex + 1}: ${title ? title.textContent : 'No title'}\n`;
+                    });
+                }
+                info += '\n';
+            });
+            
+            // Check for any error messages
+            const consoleErrors = iframeDoc.querySelectorAll('.error, .warning');
+            if (consoleErrors.length > 0) {
+                info += 'Errors/Warnings found:\n';
+                consoleErrors.forEach(err => {
+                    info += `  ${err.textContent}\n`;
+                });
+            }
+            
+            document.getElementById('info').textContent = info;
+        }
+        
+        // Auto-inspect after iframe loads
+        document.getElementById('testFrame').onload = function() {
+            setTimeout(inspectGrid, 500);
+        };
+    </script>
+</body>
+</html>

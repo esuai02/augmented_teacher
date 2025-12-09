@@ -1,0 +1,18 @@
+[EMPATHY_OPENING]
+
+{{student_name}}님, 그런 마음이 드시는 거 충분히 이해해요.
+
+[VALIDATION]
+
+{{resistance_reason}}이(가) 부담스럽게 느껴지실 수 있어요.
+그건 자연스러운 반응이에요.
+
+[REASSURANCE]
+
+제가 강요하려는 게 아니에요.
+{{student_name}}님의 페이스에 맞춰 함께 가고 싶어요.
+
+[OPEN_DOOR]
+
+지금 당장이 아니어도 괜찮아요.
+준비가 되셨을 때 언제든 말씀해 주세요.

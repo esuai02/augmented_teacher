@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>모듈 로딩 디버그</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .module-status {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .module-status.success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .module-status.error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .module-status.loading {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        .module-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-item {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log-area {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .log-error { color: #f48771; }
+        .log-success { color: #89d185; }
+        .log-warning { color: #dcdcaa; }
+        .log-info { color: #9cdcfe; }
+    </style>
+</head>
+<body>
+    <h1>모듈 로딩 디버그</h1>
+    
+    <div class="debug-section">
+        <h2>1. 모듈 로더 상태</h2>
+        <button onclick="checkModuleLoader()">모듈 로더 확인</button>
+        <button onclick="checkAllModules()">모든 모듈 확인</button>
+        <button onclick="initializeAllModules()">모든 모듈 초기화</button>
+        <button onclick="clearLog()">로그 지우기</button>
+        <div id="moduleLoaderStatus" style="margin-top: 10px;"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. 개별 모듈 상태</h2>
+        <div class="status-grid" id="moduleStatusGrid">
+            <!-- 모듈 상태가 여기에 표시됩니다 -->
+        </div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. 실시간 로그</h2>
+        <div class="log-area" id="logArea"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>4. 데이터베이스 연결 테스트</h2>
+        <button onclick="testDatabaseConnection()">DB 연결 테스트</button>
+        <button onclick="testModuleAPI()">모듈 API 테스트</button>
+        <div id="dbStatus" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- 모듈 로더 -->
+    <script src="module_loader.js"></script>
+    
+    <!-- 모든 모듈 로드 -->
+    <script src="quarterly/quarterly.js"></script>
+    <script src="weekly/weekly.js"></script>
+    <script src="daily/daily.js"></script>
+    <script src="realtime/realtime.js"></script>
+    <script src="interaction/interaction.js"></script>
+    <script src="bias/bias.js"></script>
+    <script src="development/development.js"></script>
+    <script src="consultation/consultation.js"></script>
+    
+    <script>
+        const logArea = document.getElementById('logArea');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toISOString().substr(11, 8);
+            const className = `log-${type}`;
+            logArea.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+            
+            // 콘솔에도 출력
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            logArea.innerHTML = '';
+            log('로그 클리어됨', 'info');
+        }
+        
+        // 모듈 로더 확인
+        function checkModuleLoader() {
+            const status = document.getElementById('moduleLoaderStatus');
+            
+            if (window.moduleLoader) {
+                status.innerHTML = '<div class="module-status success">✓ 모듈 로더가 정상적으로 로드되었습니다.</div>';
+                log('모듈 로더 확인됨', 'success');
+                
+                // 모듈 로더 메서드 확인
+                const methods = ['fetchModuleData', 'createModule', 'clearCache'];
+                methods.forEach(method => {
+                    if (window.moduleLoader[method]) {
+                        log(`  - ${method}: ✓`, 'success');
+                    } else {
+                        log(`  - ${method}: ✗`, 'error');
+                    }
+                });
+            } else {
+                status.innerHTML = '<div class="module-status error">✗ 모듈 로더를 찾을 수 없습니다.</div>';
+                log('모듈 로더를 찾을 수 없음', 'error');
+            }
+        }
+        
+        // 모든 모듈 확인
+        async function checkAllModules() {
+            const modules = [
+                { name: 'quarterly', title: '분기활동' },
+                { name: 'weekly', title: '주간활동' },
+                { name: 'daily', title: '오늘활동' },
+                { name: 'realtime', title: '실시간 관리' },
+                { name: 'interaction', title: '상호작용 관리' },
+                { name: 'bias', title: '인지관성 개선' },
+                { name: 'development', title: '컨텐츠 및 앱개발' },
+                { name: 'consultation', title: '상담관리' }
+            ];
+            
+            const grid = document.getElementById('moduleStatusGrid');
+            grid.innerHTML = '';
+            
+            for (const moduleInfo of modules) {
+                const moduleName = moduleInfo.name + 'Module';
+                const module = window[moduleName];
+                
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'module-status loading';
+                statusDiv.innerHTML = `
+                    <div class="module-title">${moduleInfo.title} (${moduleName})</div>
+                    <div class="status-item">확인 중...</div>
+                `;
+                grid.appendChild(statusDiv);
+                
+                if (module) {
+                    log(`${moduleName} 확인 중...`, 'info');
+                    
+                    let statusHTML = '';
+                    let statusClass = 'success';
+                    
+                    // 기본 체크
+                    statusHTML += `<div class="status-item">✓ 모듈 로드됨</div>`;
+                    
+                    // getData 메서드 확인
+                    if (module.getData) {
+                        try {
+                            const data = module.getData();
+                            if (data) {
+                                statusHTML += `<div class="status-item">✓ getData() 작동</div>`;
+                                statusHTML += `<div class="status-item">- 제목: ${data.title || '없음'}</div>`;
+                                statusHTML += `<div class="status-item">- 탭 수: ${data.tabs ? data.tabs.length : 0}</div>`;
+                                
+                                if (!data.tabs || data.tabs.length === 0) {
+                                    statusHTML += `<div class="status-item">⚠️ 탭 데이터 없음</div>`;
+                                    statusClass = 'error';
+                                }
+                            } else {
+                                statusHTML += `<div class="status-item">✗ getData()가 null 반환</div>`;
+                                statusClass = 'error';
+                            }
+                        } catch (error) {
+                            statusHTML += `<div class="status-item">✗ getData() 오류: ${error.message}</div>`;
+                            statusClass = 'error';
+                            log(`${moduleName} getData() 오류: ${error.message}`, 'error');
+                        }
+                    } else {
+                        statusHTML += `<div class="status-item">✗ getData() 메서드 없음</div>`;
+                        statusClass = 'error';
+                    }
+                    
+                    // initialize 메서드 확인
+                    if (module.initialize) {
+                        statusHTML += `<div class="status-item">✓ initialize() 메서드 있음</div>`;
+                    } else {
+                        statusHTML += `<div class="status-item">⚠️ initialize() 메서드 없음</div>`;
+                    }
+                    
+                    statusDiv.className = `module-status ${statusClass}`;
+                    statusDiv.innerHTML = `
+                        <div class="module-title">${moduleInfo.title} (${moduleName})</div>
+                        ${statusHTML}
+                    `;
+                    
+                    log(`${moduleName}: ${statusClass === 'success' ? '정상' : '문제 있음'}`, statusClass === 'success' ? 'success' : 'error');
+                } else {
+                    statusDiv.className = 'module-status error';
+                    statusDiv.innerHTML = `
+                        <div class="module-title">${moduleInfo.title} (${moduleName})</div>
+                        <div class="status-item">✗ 모듈을 찾을 수 없습니다</div>
+                    `;
+                    log(`${moduleName}: 찾을 수 없음`, 'error');
+                }
+            }
+        }
+        
+        // 모든 모듈 초기화
+        async function initializeAllModules() {
+            const modules = [
+                'quarterlyModule', 'weeklyModule', 'dailyModule', 
+                'realtimeModule', 'interactionModule', 'biasModule',
+                'developmentModule', 'consultationModule'
+            ];
+            
+            log('모든 모듈 초기화 시작...', 'info');
+            
+            for (const moduleName of modules) {
+                const module = window[moduleName];
+                if (module && module.initialize) {
+                    try {
+                        log(`${moduleName} 초기화 중...`, 'info');
+                        await module.initialize();
+                        log(`${moduleName} 초기화 성공`, 'success');
+                    } catch (error) {
+                        log(`${moduleName} 초기화 실패: ${error.message}`, 'error');
+                    }
+                } else if (module) {
+                    log(`${moduleName}: initialize 메서드 없음`, 'warning');
+                } else {
+                    log(`${moduleName}: 모듈을 찾을 수 없음`, 'error');
+                }
+            }
+            
+            log('모든 모듈 초기화 완료', 'info');
+            
+            // 초기화 후 상태 재확인
+            setTimeout(() => {
+                checkAllModules();
+            }, 1000);
+        }
+        
+        // 데이터베이스 연결 테스트
+        async function testDatabaseConnection() {
+            const status = document.getElementById('dbStatus');
+            status.innerHTML = '<div class="module-status loading">데이터베이스 연결 테스트 중...</div>';
+            
+            try {
+                const response = await fetch('module_data_api.php?action=getAllCategories');
+                const data = await response.json();
+                
+                if (data.success) {
+                    status.innerHTML = `<div class="module-status success">✓ 데이터베이스 연결 성공 (카테고리 수: ${data.data.length})</div>`;
+                    log(`DB 연결 성공, 카테고리: ${data.data.map(c => c.title).join(', ')}`, 'success');
+                } else {
+                    status.innerHTML = `<div class="module-status error">✗ 데이터베이스 오류: ${data.error}</div>`;
+                    log(`DB 오류: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                status.innerHTML = `<div class="module-status error">✗ API 호출 실패: ${error.message}</div>`;
+                log(`API 호출 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        // 모듈 API 테스트
+        async function testModuleAPI() {
+            log('모듈 API 테스트 시작...', 'info');
+            
+            try {
+                // quarterly 모듈 데이터 테스트
+                const response = await fetch('module_data_api.php?action=getModuleData&category=quarterly');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('API 응답:', 'info');
+                    log(JSON.stringify(data.data, null, 2), 'info');
+                } else {
+                    log(`API 오류: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log(`API 호출 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        // 페이지 로드 시 자동 확인
+        window.addEventListener('DOMContentLoaded', () => {
+            log('디버그 페이지 로드됨', 'info');
+            
+            // 초기 확인
+            setTimeout(() => {
+                checkModuleLoader();
+                checkAllModules();
+            }, 500);
+        });
+        
+        // 오류 캐치
+        window.addEventListener('error', (event) => {
+            log(`전역 오류: ${event.message} (${event.filename}:${event.lineno})`, 'error');
+        });
+    </script>
+</body>
+</html>

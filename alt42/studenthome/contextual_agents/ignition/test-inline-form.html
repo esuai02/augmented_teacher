@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inline Goal Form Test</title>
+    <link rel="stylesheet" href="inline-goal-form.css">
+    <style>
+        body {
+            background: #0a0e27;
+            color: white;
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            padding: 20px;
+        } 
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .goal-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        .goal-section.empty {
+            border-color: rgba(255, 100, 100, 0.5);
+            background: rgba(255, 50, 50, 0.1);
+        }
+        
+        .input-button {
+            padding: 12px 24px;
+            margin-top: 15px;
+            background: rgba(74, 158, 255, 0.2);
+            border: 1px solid #4a9eff;
+            color: #4a9eff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+        
+        .input-button:hover {
+            background: rgba(74, 158, 255, 0.4);
+            transform: scale(1.05);
+        }
+        
+        h2 {
+            color: #4a9eff;
+            margin-bottom: 15px;
+        }
+        
+        .test-results {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .test-results h3 {
+            color: #00ff00;
+            margin-bottom: 10px;
+        }
+        
+        .test-result {
+            margin: 5px 0;
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        
+        .test-result.pass {
+            border-left: 3px solid #00ff00;
+        }
+        
+        .test-result.fail {
+            border-left: 3px solid #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Inline Goal Form Component Test</h1>
+        
+        <div class="goal-section empty" data-goal-type="term">
+            <h2>분기 목표</h2>
+            <p id="term-placeholder">분기 목표가 설정되지 않았습니다.</p>
+            <button class="input-button" onclick="goalForm.showForm('term')">분기 목표 입력하기</button>
+            <div id="term-form-wrapper" class="form-wrapper"></div>
+        </div>
+        
+        <div class="goal-section empty" data-goal-type="weekly">
+            <h2>주간 목표</h2>
+            <p id="weekly-placeholder">주간 목표가 설정되지 않았습니다.</p>
+            <button class="input-button" onclick="goalForm.showForm('weekly')">주간 목표 입력하기</button>
+            <div id="weekly-form-wrapper" class="form-wrapper"></div>
+        </div>
+        
+        <div class="goal-section empty" data-goal-type="today">
+            <h2>오늘 목표</h2>
+            <p id="today-placeholder">오늘 목표가 설정되지 않았습니다.</p>
+            <button class="input-button" onclick="goalForm.showForm('today')">오늘 목표 입력하기</button>
+            <div id="today-form-wrapper" class="form-wrapper"></div>
+        </div>
+        
+        <div class="test-results">
+            <h3>Test Results</h3>
+            <div id="test-output"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Mock global variables
+        window.studentId = 1;
+        window.goalsCompleted = {
+            term: false,
+            weekly: false,
+            today: false
+        };
+        
+        // Mock save_goal.php endpoint
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            if (url === 'save_goal.php') {
+                return Promise.resolve({
+                    json: () => Promise.resolve({
+                        success: true,
+                        message: '목표가 저장되었습니다.',
+                        text: options.body.get('text')
+                    })
+                });
+            }
+            return originalFetch(url, options);
+        };
+        
+        // Test functions
+        function runTests() {
+            const results = [];
+            
+            // Test 1: Form creation
+            try {
+                goalForm.showForm('term');
+                const form = document.querySelector('#term-form-wrapper .inline-form');
+                results.push({
+                    test: 'Form Creation',
+                    pass: form !== null,
+                    message: form ? 'Form created successfully' : 'Form creation failed'
+                });
+            } catch (e) {
+                results.push({
+                    test: 'Form Creation',
+                    pass: false,
+                    message: 'Error: ' + e.message
+                });
+            }
+            
+            // Test 2: Form animation
+            setTimeout(() => {
+                const wrapper = document.getElementById('term-form-wrapper');
+                results.push({
+                    test: 'Form Animation',
+                    pass: wrapper.classList.contains('expanded'),
+                    message: wrapper.classList.contains('expanded') ? 'Animation applied' : 'Animation not applied'
+                });
+                
+                // Test 3: Section active state
+                const section = document.querySelector('[data-goal-type="term"]');
+                results.push({
+                    test: 'Section Active State',
+                    pass: section.classList.contains('active'),
+                    message: section.classList.contains('active') ? 'Section activated' : 'Section not activated'
+                });
+                
+                // Test 4: Keyboard navigation
+                const textarea = document.getElementById('term-textarea');
+                if (textarea) {
+                    const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', shiftKey: false });
+                    textarea.value = 'Test goal';
+                    textarea.dispatchEvent(enterEvent);
+                    
+                    setTimeout(() => {
+                        results.push({
+                            test: 'Enter Key Save',
+                            pass: true,
+                            message: 'Enter key handler attached'
+                        });
+                        
+                        // Test 5: ESC key
+                        const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                        document.dispatchEvent(escEvent);
+                        
+                        setTimeout(() => {
+                            const formHidden = !document.getElementById('term-form-wrapper').classList.contains('expanded');
+                            results.push({
+                                test: 'ESC Key Close',
+                                pass: formHidden,
+                                message: formHidden ? 'ESC key closes form' : 'ESC key not working'
+                            });
+                            
+                            displayResults(results);
+                        }, 500);
+                    }, 100);
+                }
+            }, 300);
+        }
+        
+        function displayResults(results) {
+            const output = document.getElementById('test-output');
+            output.innerHTML = '';
+            
+            let passCount = 0;
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = `test-result ${result.pass ? 'pass' : 'fail'}`;
+                div.innerHTML = `
+                    <strong>${result.test}:</strong> 
+                    ${result.pass ? '✓' : '✗'} ${result.message}
+                `;
+                output.appendChild(div);
+                if (result.pass) passCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.style.marginTop = '20px';
+            summary.style.fontSize = '1.2em';
+            summary.innerHTML = `<strong>Summary:</strong> ${passCount}/${results.length} tests passed`;
+            output.appendChild(summary);
+        }
+    </script>
+    
+    <script src="inline-goal-form.js"></script>
+    
+    <script>
+        // Run tests after component loads
+        setTimeout(runTests, 1000);
+    </script>
+</body>
+</html>

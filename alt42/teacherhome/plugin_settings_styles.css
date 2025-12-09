@@ -1,0 +1,403 @@
+/**
+ * KTM 코파일럿 플러그인 설정 UI 스타일
+ * 작성일: 2024-12-31
+ * 설명: teacherhome/index.html에서 사용하는 플러그인 설정 UI의 스타일
+ */
+
+/* 플러그인 설정 UI 컨테이너 */
+.plugin-settings-ui {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px 0;
+    max-width: 600px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* 플러그인 타입 선택 */
+.plugin-type-selector {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    color: #374151;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.plugin-type-selector:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.plugin-type-selector:hover {
+    border-color: #9ca3af;
+}
+
+/* 플러그인 설정 폼 */
+.plugin-settings-form {
+    margin-top: 20px;
+}
+
+.plugin-config-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.plugin-config-form h3 {
+    margin: 0 0 10px 0;
+    color: #1f2937;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plugin-description {
+    margin: 0 0 20px 0;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-left: 4px solid #3b82f6;
+}
+
+/* 폼 필드 */
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.form-field label[for] {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* 입력 필드 */
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #374151;
+    transition: border-color 0.2s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover {
+    border-color: #9ca3af;
+}
+
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* 체크박스 */
+.form-field input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* 저장 버튼 */
+.save-button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+}
+
+.save-button:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.save-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.save-button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 메시지 알림 */
+.message-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.3s ease;
+}
+
+.message-notification.message-info {
+    background: #3b82f6;
+}
+
+.message-notification.message-success {
+    background: #10b981;
+}
+
+.message-notification.message-warning {
+    background: #f59e0b;
+}
+
+.message-notification.message-error {
+    background: #ef4444;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .plugin-settings-ui {
+        margin: 10px 0;
+        padding: 16px;
+        max-width: 100%;
+    }
+    
+    .plugin-type-selector,
+    .form-input,
+    .form-textarea,
+    .form-select {
+        font-size: 16px; /* iOS 줌 방지 */
+    }
+    
+    .save-button {
+        width: 100%;
+        align-self: stretch;
+    }
+    
+    .message-notification {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .plugin-settings-ui {
+        background: #1f2937;
+        color: #f9fafb;
+    }
+    
+    .plugin-type-selector,
+    .form-input,
+    .form-textarea,
+    .form-select {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+    }
+    
+    .plugin-type-selector:focus,
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+    
+    .plugin-config-form h3 {
+        color: #f9fafb;
+    }
+    
+    .plugin-description {
+        background: #374151;
+        color: #d1d5db;
+        border-left-color: #60a5fa;
+    }
+    
+    .form-field label {
+        color: #f3f4f6;
+    }
+}
+
+/* 플러그인 카드 스타일 (카드별 설정용) */
+.plugin-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.plugin-card .plugin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.plugin-card .plugin-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.plugin-card .plugin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.plugin-card .action-button {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.plugin-card .action-button:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.plugin-card .action-button.delete {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.plugin-card .action-button.delete:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+/* 로딩 상태 */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #3b82f6;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 에러 상태 */
+.error {
+    border-color: #ef4444 !important;
+    background: #fef2f2 !important;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* 성공 상태 */
+.success {
+    border-color: #10b981 !important;
+    background: #f0fdfa !important;
+}
+
+/* 툴팁 */
+.tooltip {
+    position: relative;
+    cursor: help;
+}
+
+.tooltip::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+}
+
+.tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+} 

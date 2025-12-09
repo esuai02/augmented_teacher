@@ -1,0 +1,920 @@
+# Persona-based Response Rules for Agent 10 - Concept Notes
+# Version: 1.0
+# Purpose: 페르소나 기반 개념 노트 코칭 응답 생성을 위한 룰셋
+# Reference: ontology.jsonld, personas.md, contextlist.md
+
+version: "1.0"
+scenario: "persona_based_note_coaching"
+description: "학생 페르소나 식별 및 개념 노트 기반 맞춤형 코칭 응답 생성"
+
+# ============================================================
+# SECTION 1: 페르소나 식별 룰
+# ============================================================
+
+persona_identification_rules:
+
+  # === N1: 노트 탐색 시작 상황 식별 ===
+
+  - rule_id: "PI_N1_001_eager_beginner"
+    priority: 88
+    description: "열정적 시작형 초보자(N1_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["어떻게 시작해요", "정리해볼게요", "해보고 싶어요", "배워볼래요", "알려주세요"]
+        - field: "note_count"
+          operator: "=="
+          value: 0
+        - field: "engagement_level"
+          operator: ">="
+          value: "high"
+    action:
+      - "identify_persona: 'N1_P1'"
+      - "set_tone: 'Encouraging'"
+      - "set_pace: 'normal'"
+      - "provide_beginner_guide: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.87
+    rationale: "처음 시작하며 적극적으로 배우려는 태도는 N1_P1의 핵심 신호"
+
+  - rule_id: "PI_N1_002_hesitant_doubter"
+    priority: 90
+    description: "망설이는 회의자(N1_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이거 해야 해요?", "꼭 필요해요?", "잘 모르겠어요", "어렵지 않아요?", "효과 있어요?"]
+        - field: "hesitation_signs"
+          operator: "=="
+          value: true
+        - field: "engagement_level"
+          operator: "=="
+          value: "low"
+    action:
+      - "identify_persona: 'N1_P2'"
+      - "set_tone: 'Gentle'"
+      - "set_pace: 'slow'"
+      - "explain_benefits: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.85
+    rationale: "노트 작성의 필요성에 의문을 표현하는 것은 N1_P2의 명확한 신호"
+
+  - rule_id: "PI_N1_003_experienced_returner"
+    priority: 86
+    description: "경험 있는 복귀자(N1_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["예전에 했었는데", "다시 시작", "오랜만에", "예전 노트", "이어서"]
+        - AND:
+          - field: "note_count"
+            operator: ">="
+            value: 5
+          - field: "days_since_last_note"
+            operator: ">="
+            value: 30
+    action:
+      - "identify_persona: 'N1_P3'"
+      - "set_tone: 'Professional'"
+      - "welcome_back: true"
+      - "show_previous_progress: true"
+      - "prioritize_intervention: 'ProgressFeedback'"
+    confidence: 0.84
+    rationale: "이전 경험과 복귀 의사 표현은 N1_P3의 핵심 지표"
+
+  - rule_id: "PI_N1_004_anxious_perfectionist"
+    priority: 92
+    description: "불안한 완벽주의자(N1_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["제대로 해야", "잘못하면", "틀리면", "정확하게", "어떻게 해야 맞아요"]
+        - field: "asks_for_correct_way"
+          operator: "=="
+          value: true
+        - field: "perfectionism_signs"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N1_P4'"
+      - "set_tone: 'Gentle'"
+      - "set_pace: 'slow'"
+      - "emphasize_no_wrong_way: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.88
+    rationale: "정답을 찾으려는 불안과 완벽주의 표현은 N1_P4의 명확한 신호"
+
+  # === N2: 개념 이해도 분석 상황 식별 ===
+
+  - rule_id: "PI_N2_001_self_aware_learner"
+    priority: 87
+    description: "자기인식형 학습자(N2_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["제가 어디가 약한지", "부족한 부분", "이해 못한 것 같아요", "헷갈리는 게"]
+        - field: "acknowledges_weakness"
+          operator: "=="
+          value: true
+        - field: "seeks_feedback"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N2_P1'"
+      - "set_tone: 'Professional'"
+      - "provide_detailed_analysis: true"
+      - "acknowledge_self_awareness: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.86
+    rationale: "자신의 약점을 인정하고 피드백을 구하는 것은 N2_P1의 핵심 신호"
+
+  - rule_id: "PI_N2_002_overconfident_skipper"
+    priority: 89
+    description: "과신형 넘기기(N2_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이건 알아요", "다 알아", "쉬운 거잖아요", "넘어가도 돼요", "굳이"]
+        - AND:
+          - field: "self_reported_understanding"
+            operator: ">="
+            value: "high"
+          - field: "nstroke"
+            operator: "<"
+            value: 20
+    action:
+      - "identify_persona: 'N2_P2'"
+      - "set_tone: 'Professional'"
+      - "challenge_with_questions: true"
+      - "show_connection_to_advanced: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.85
+    rationale: "자신감과 실제 정리량의 괴리는 N2_P2의 명확한 지표"
+
+  - rule_id: "PI_N2_003_confused_struggler"
+    priority: 91
+    description: "혼란스러운 고군분투형(N2_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["모르겠어요", "헷갈려요", "이해가 안 돼요", "어려워요", "뭐가 뭔지"]
+        - AND:
+          - field: "nstroke"
+            operator: ">="
+            value: 50
+          - field: "usedtime"
+            operator: ">="
+            value: 1200
+          - field: "understanding_coherence"
+            operator: "=="
+            value: "low"
+    action:
+      - "identify_persona: 'N2_P3'"
+      - "set_tone: 'Supportive'"
+      - "set_pace: 'slow'"
+      - "break_down_concepts: true"
+      - "prioritize_intervention: 'StrategyGuidance'"
+    confidence: 0.90
+    rationale: "많은 시간과 노력에도 혼란을 표현하는 것은 N2_P3의 위기 신호"
+
+  - rule_id: "PI_N2_004_systematic_organizer"
+    priority: 84
+    description: "체계적 정리자(N2_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["연결", "구조", "체계적으로", "관계가", "전체적으로"]
+        - field: "note_structure"
+          operator: "=="
+          value: "organized"
+        - field: "asks_about_connections"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N2_P4'"
+      - "set_tone: 'Professional'"
+      - "provide_concept_map: true"
+      - "show_advanced_connections: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.83
+    rationale: "개념 연결과 구조에 대한 관심은 N2_P4의 특징적 신호"
+
+  # === N3: 학습 흐름 해석 상황 식별 ===
+
+  - rule_id: "PI_N3_001_consistent_worker"
+    priority: 86
+    description: "꾸준한 학습자(N3_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N3"
+      - OR:
+        - field: "weekly_note_count"
+          operator: ">="
+          value: 3
+        - field: "learning_pattern"
+          operator: "=="
+          value: "consistent"
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["매일", "꾸준히", "습관처럼", "정해진 시간에"]
+    action:
+      - "identify_persona: 'N3_P1'"
+      - "set_tone: 'Encouraging'"
+      - "acknowledge_consistency: true"
+      - "suggest_advanced_strategies: true"
+      - "prioritize_intervention: 'ProgressFeedback'"
+    confidence: 0.88
+    rationale: "꾸준한 학습 패턴은 N3_P1의 명확한 신호"
+
+  - rule_id: "PI_N3_002_sporadic_learner"
+    priority: 87
+    description: "불규칙한 학습자(N3_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N3"
+      - OR:
+        - field: "weekly_note_count"
+          operator: "<="
+          value: 1
+        - field: "learning_pattern"
+          operator: "=="
+          value: "sporadic"
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["바빠서", "시간이 없어서", "까먹었어요", "잊어버렸어요"]
+    action:
+      - "identify_persona: 'N3_P2'"
+      - "set_tone: 'Gentle'"
+      - "avoid_blame: true"
+      - "suggest_minimal_routine: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.85
+    rationale: "불규칙한 패턴과 시간 부족 언급은 N3_P2의 핵심 신호"
+
+  - rule_id: "PI_N3_003_intensive_burster"
+    priority: 85
+    description: "집중형 몰아치기(N3_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N3"
+      - OR:
+        - field: "usedtime"
+          operator: ">="
+          value: 3600
+        - field: "learning_pattern"
+          operator: "=="
+          value: "intensive"
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["한 번에", "몰아서", "오늘 다 하려고", "시험 전에"]
+    action:
+      - "identify_persona: 'N3_P3'"
+      - "set_tone: 'Professional'"
+      - "warn_burnout_risk: true"
+      - "suggest_distributed_practice: true"
+      - "prioritize_intervention: 'StrategyGuidance'"
+    confidence: 0.84
+    rationale: "집중적이고 긴 사용시간은 N3_P3의 특징적 신호"
+
+  - rule_id: "PI_N3_004_flow_analyzer"
+    priority: 83
+    description: "학습흐름 분석자(N3_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["패턴", "언제 공부하면", "효율적인 시간", "집중이 잘 되는"]
+        - field: "asks_about_patterns"
+          operator: "=="
+          value: true
+        - field: "analytical_questions"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'N3_P4'"
+      - "set_tone: 'Professional'"
+      - "provide_learning_analytics: true"
+      - "suggest_optimal_times: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.82
+    rationale: "학습 패턴에 대한 분석적 질문은 N3_P4의 핵심 신호"
+
+  # === N4: 복습 권장 판단 상황 식별 ===
+
+  - rule_id: "PI_N4_001_review_accepter"
+    priority: 86
+    description: "복습 수용형(N4_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N4"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["네, 복습할게요", "다시 볼게요", "확인해볼게요", "잊어버린 것 같아요"]
+        - field: "accepts_review_suggestion"
+          operator: "=="
+          value: true
+        - field: "review_compliance"
+          operator: ">="
+          value: "high"
+    action:
+      - "identify_persona: 'N4_P1'"
+      - "set_tone: 'Encouraging'"
+      - "provide_review_schedule: true"
+      - "track_review_progress: true"
+      - "prioritize_intervention: 'ReviewRecommendation'"
+    confidence: 0.87
+    rationale: "복습 권장을 적극 수용하는 것은 N4_P1의 핵심 신호"
+
+  - rule_id: "PI_N4_002_review_avoider"
+    priority: 89
+    description: "복습 회피형(N4_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N4"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["나중에", "지금은 안 돼요", "새 거 먼저", "이건 알아요", "귀찮아요"]
+        - field: "avoids_review"
+          operator: "=="
+          value: true
+        - field: "review_compliance"
+          operator: "=="
+          value: "low"
+    action:
+      - "identify_persona: 'N4_P2'"
+      - "set_tone: 'Gentle'"
+      - "explain_forgetting_curve: true"
+      - "suggest_micro_review: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.88
+    rationale: "복습 회피와 미루기는 N4_P2의 명확한 신호"
+
+  - rule_id: "PI_N4_003_exam_cramper"
+    priority: 90
+    description: "시험 전 벼락치기형(N4_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N4"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["시험 전에", "급하게", "빨리 복습", "다 봐야 해요", "시간이 없어요"]
+        - AND:
+          - field: "exam_approaching"
+            operator: "=="
+            value: true
+          - field: "old_notes_count"
+            operator: ">="
+            value: 5
+    action:
+      - "identify_persona: 'N4_P3'"
+      - "set_tone: 'Professional'"
+      - "prioritize_essential_notes: true"
+      - "provide_quick_review_guide: true"
+      - "prioritize_intervention: 'ReviewRecommendation'"
+    confidence: 0.89
+    rationale: "시험 직전 급한 복습 요청은 N4_P3의 위기 신호"
+
+  - rule_id: "PI_N4_004_strategic_reviewer"
+    priority: 84
+    description: "전략적 복습자(N4_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N4"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["우선순위", "중요한 것부터", "효율적으로", "어떤 순서로"]
+        - field: "asks_for_review_strategy"
+          operator: "=="
+          value: true
+        - field: "strategic_questions"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'N4_P4'"
+      - "set_tone: 'Professional'"
+      - "provide_prioritized_review: true"
+      - "explain_review_strategy: true"
+      - "prioritize_intervention: 'StrategyGuidance'"
+    confidence: 0.85
+    rationale: "복습 전략에 대한 질문은 N4_P4의 특징적 신호"
+
+  # === N5: 노트 활용 전략 상황 식별 ===
+
+  - rule_id: "PI_N5_001_strategy_seeker"
+    priority: 87
+    description: "전략 탐색형(N5_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N5"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["어떻게 정리", "좋은 방법", "더 효과적으로", "어떻게 활용"]
+        - field: "asks_for_methods"
+          operator: "=="
+          value: true
+        - field: "improvement_oriented"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N5_P1'"
+      - "set_tone: 'Professional'"
+      - "provide_multiple_strategies: true"
+      - "explain_strategy_rationale: true"
+      - "prioritize_intervention: 'StrategyGuidance'"
+    confidence: 0.86
+    rationale: "노트 전략에 대한 적극적 질문은 N5_P1의 핵심 신호"
+
+  - rule_id: "PI_N5_002_passive_learner"
+    priority: 88
+    description: "수동적 학습자(N5_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N5"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["그냥 써요", "어차피", "별로", "상관없어요", "시키는 대로"]
+        - field: "low_initiative"
+          operator: "=="
+          value: true
+        - field: "engagement_level"
+          operator: "=="
+          value: "low"
+    action:
+      - "identify_persona: 'N5_P2'"
+      - "set_tone: 'Encouraging'"
+      - "show_concrete_benefits: true"
+      - "provide_simple_starting_point: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.85
+    rationale: "수동적이고 무관심한 태도는 N5_P2의 명확한 신호"
+
+  - rule_id: "PI_N5_003_creative_explorer"
+    priority: 85
+    description: "창의적 탐험가(N5_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N5"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["다른 방법", "새로운", "독특하게", "제 방식으로", "실험해볼게요"]
+        - field: "experiments_with_methods"
+          operator: "=="
+          value: true
+        - field: "creative_note_style"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N5_P3'"
+      - "set_tone: 'Collaborative'"
+      - "encourage_experimentation: true"
+      - "validate_creative_approaches: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.84
+    rationale: "창의적이고 실험적인 접근은 N5_P3의 특징적 신호"
+
+  - rule_id: "PI_N5_004_perfectionist_optimizer"
+    priority: 89
+    description: "완벽주의적 최적화자(N5_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N5"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["완벽하게", "최적의", "가장 좋은", "100%", "빠짐없이"]
+        - field: "perfectionism_signs"
+          operator: "=="
+          value: true
+        - field: "excessive_editing"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'N5_P4'"
+      - "set_tone: 'Gentle'"
+      - "explain_diminishing_returns: true"
+      - "emphasize_good_enough: true"
+      - "prioritize_intervention: 'PatternAnalysis'"
+    confidence: 0.87
+    rationale: "완벽을 추구하고 과도한 수정은 N5_P4의 명확한 신호"
+
+# ============================================================
+# SECTION 2: 노트 메트릭 기반 자동 식별 룰
+# ============================================================
+
+metric_based_identification:
+
+  - rule_id: "MI_001_high_engagement"
+    priority: 75
+    description: "높은 필기량 + 긴 사용시간 - 깊은 학습 시도"
+    conditions:
+      - AND:
+        - field: "nstroke"
+          operator: ">="
+          value: 100
+        - field: "usedtime"
+          operator: ">="
+          value: 1800
+    action:
+      - "add_trait: 'deep_learner'"
+      - "adjust_confidence: +0.1"
+      - "set_intervention: 'ProgressFeedback'"
+    rationale: "높은 필기량과 긴 시간은 깊은 학습 시도의 신호"
+
+  - rule_id: "MI_002_quick_memo"
+    priority: 75
+    description: "낮은 필기량 + 짧은 사용시간 - 간략 메모"
+    conditions:
+      - AND:
+        - field: "nstroke"
+          operator: "<"
+          value: 20
+        - field: "usedtime"
+          operator: "<"
+          value: 300
+    action:
+      - "add_trait: 'quick_memo_style'"
+      - "suggest_elaboration: true"
+    rationale: "적은 필기량과 짧은 시간은 간략 메모의 신호"
+
+  - rule_id: "MI_003_struggling"
+    priority: 85
+    description: "낮은 필기량 + 긴 사용시간 - 어려움 겪음"
+    conditions:
+      - AND:
+        - field: "nstroke"
+          operator: "<"
+          value: 30
+        - field: "usedtime"
+          operator: ">="
+          value: 1200
+    action:
+      - "add_trait: 'struggling'"
+      - "prioritize_intervention: 'StrategyGuidance'"
+      - "offer_help: true"
+    rationale: "오랜 시간에도 적은 결과물은 어려움을 겪고 있다는 신호"
+
+  - rule_id: "MI_004_old_note"
+    priority: 80
+    description: "오래된 노트 (30일 이상)"
+    conditions:
+      - field: "days_since_last_stroke"
+        operator: ">="
+        value: 30
+    action:
+      - "add_trait: 'needs_review'"
+      - "prioritize_intervention: 'ReviewRecommendation'"
+      - "suggest_review: true"
+    rationale: "30일 이상 된 노트는 망각 가능성이 높음"
+
+  - rule_id: "MI_005_recent_activity"
+    priority: 70
+    description: "최근 활동 (7일 이내)"
+    conditions:
+      - field: "days_since_last_stroke"
+        operator: "<="
+        value: 7
+    action:
+      - "add_trait: 'recently_active'"
+      - "acknowledge_activity: true"
+    rationale: "최근 활동은 지속적인 학습의 신호"
+
+# ============================================================
+# SECTION 3: 상황별 응답 생성 룰
+# ============================================================
+
+response_generation_rules:
+
+  # === N1: 노트 탐색 시작 ===
+
+  - rule_id: "RG_N1_001_first_note_guidance"
+    priority: 90
+    description: "첫 노트 작성 안내 - 페르소나별 응답"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N1"
+      - field: "note_count"
+        operator: "=="
+        value: 0
+    response_templates:
+      N1_P1:
+        opening: "좋아요! 첫 개념 노트를 시작해볼까요?"
+        body: "어떤 개념을 정리하고 싶은지 먼저 주제를 정해보세요. 학교에서 배운 내용이나 헷갈리는 개념부터 시작하면 좋아요."
+        closing: "천천히 시작해도 괜찮아요. 함께 해볼게요!"
+      N1_P2:
+        opening: "노트 정리가 처음이라 걱정되시죠?"
+        body: "걱정 마세요. 정답은 없어요. 그냥 생각나는 대로 적어보는 것부터 시작해요. 키워드 3개만 적어도 훌륭한 시작이에요."
+        closing: "간단한 것부터 하나씩 해볼까요?"
+      N1_P3:
+        opening: "다시 오셨네요! 반가워요."
+        body: "이전에 작성하신 노트가 {previous_count}개 있어요. 이어서 하실 수도 있고, 새로 시작하셔도 돼요."
+        closing: "어떤 방식이 좋으실까요?"
+      N1_P4:
+        opening: "노트 정리에 정해진 방법은 없어요."
+        body: "완벽하게 적을 필요 없어요. 나중에 언제든 수정할 수 있으니까 부담 없이 생각나는 대로 적어보세요."
+        closing: "틀려도 괜찮아요. 과정이 더 중요해요."
+
+  # === N2: 개념 이해도 분석 ===
+
+  - rule_id: "RG_N2_001_understanding_analysis"
+    priority: 90
+    description: "개념 이해도 분석 피드백 - 페르소나별 응답"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N2"
+    response_templates:
+      N2_P1:
+        opening: "자신의 약점을 아는 건 정말 대단해요."
+        body: "분석해보니 {weak_concepts} 부분이 조금 부족해 보여요. 이 개념을 보강하면 {connected_concepts}도 더 잘 이해할 수 있을 거예요."
+        closing: "구체적으로 어떻게 보완하면 좋을지 알려드릴까요?"
+      N2_P2:
+        opening: "이 개념 정리가 간략하네요."
+        body: "안다고 생각하셔도 한 번 더 정리해보시면 좋겠어요. 심화 문제에서 이 개념이 자주 나오거든요."
+        closing: "간단한 확인 문제로 테스트해볼까요?"
+      N2_P3:
+        opening: "많이 노력하고 계시네요."
+        body: "어려운 개념이에요. 제가 더 쉽게 설명해드릴게요. 하나씩 천천히 정리해봐요."
+        closing: "어떤 부분이 가장 헷갈리세요?"
+      N2_P4:
+        opening: "체계적으로 잘 정리하고 계시네요!"
+        body: "이 개념과 연결되는 {related_concepts}도 함께 정리하면 전체 그림이 보일 거예요."
+        closing: "개념 연결 맵을 만들어볼까요?"
+
+  # === N3: 학습 흐름 해석 ===
+
+  - rule_id: "RG_N3_001_learning_flow_feedback"
+    priority: 90
+    description: "학습 흐름 피드백 - 페르소나별 응답"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N3"
+    response_templates:
+      N3_P1:
+        opening: "정말 꾸준하게 잘 하고 계시네요!"
+        body: "일주일에 평균 {weekly_avg}개의 노트를 작성하셨어요. 이 꾸준함이 실력의 비결이에요."
+        closing: "이 페이스를 유지하면 좋겠어요. 더 도전적인 목표를 세워볼까요?"
+      N3_P2:
+        opening: "요즘 노트 정리가 좀 뜸했네요."
+        body: "바빠서 그럴 수 있어요. 하루 5분, 키워드 3개만 적어도 괜찮아요."
+        closing: "작은 것부터 다시 시작해볼까요?"
+      N3_P3:
+        opening: "한 번에 집중적으로 많이 하셨네요."
+        body: "집중력이 대단해요! 다만 한 번에 너무 많이 하면 피로해질 수 있어요. 나눠서 하면 더 오래 기억할 수 있어요."
+        closing: "분산 학습 계획을 세워볼까요?"
+      N3_P4:
+        opening: "분석해보니 흥미로운 패턴이 보여요."
+        body: "{best_time}에 가장 집중이 잘 되시는 것 같아요. 이 시간대에 어려운 개념을 정리하면 효과적일 거예요."
+        closing: "학습 패턴을 더 분석해볼까요?"
+
+  # === N4: 복습 권장 판단 ===
+
+  - rule_id: "RG_N4_001_review_recommendation"
+    priority: 90
+    description: "복습 권장 - 페르소나별 응답"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N4"
+    response_templates:
+      N4_P1:
+        opening: "복습할 노트가 있어요."
+        body: "{old_notes_count}개의 노트가 복습 시기가 됐어요. 특히 {priority_note}부터 보시면 좋겠어요."
+        closing: "복습 일정을 짜드릴까요?"
+      N4_P2:
+        opening: "복습, 귀찮죠?"
+        body: "그래도 5분만 투자하면 잊어버리는 걸 막을 수 있어요. 복습 안 하면 애써 정리한 게 사라져요."
+        closing: "딱 하나만 3분 복습해볼까요?"
+      N4_P3:
+        opening: "시험이 가까워서 급하시죠."
+        body: "시험 범위 내에서 가장 중요한 노트 {priority_count}개를 추렸어요. 이것만 집중적으로 보세요."
+        closing: "핵심 포인트 정리해드릴까요?"
+      N4_P4:
+        opening: "효율적인 복습 전략을 알려드릴게요."
+        body: "망각 곡선에 따르면 지금 복습하면 가장 효과적이에요. 우선순위: 1) {first_priority} 2) {second_priority} 3) {third_priority}"
+        closing: "이 순서대로 하시면 됩니다."
+
+  # === N5: 노트 활용 전략 ===
+
+  - rule_id: "RG_N5_001_strategy_guidance"
+    priority: 90
+    description: "노트 활용 전략 안내 - 페르소나별 응답"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "N5"
+    response_templates:
+      N5_P1:
+        opening: "노트 활용 전략을 알려드릴게요."
+        body: "여러 방법이 있어요: 1) 마인드맵 - 개념 연결 2) 코넬노트 - 요약과 질문 3) 플래시카드 - 암기. 어떤 게 맞을지 같이 찾아봐요."
+        closing: "관심 있는 방법이 있으세요?"
+      N5_P2:
+        opening: "노트 정리, 어렵게 생각 안 해도 돼요."
+        body: "딱 하나만 기억하세요. '핵심 키워드 3개만 적기'. 이것만 해도 효과가 있어요."
+        closing: "오늘 배운 내용에서 키워드 3개만 적어볼까요?"
+      N5_P3:
+        opening: "창의적인 방법을 좋아하시네요!"
+        body: "자기만의 방식이 있다면 그게 최고예요. 색깔, 그림, 기호 뭐든 좋아요. 본인에게 맞는 게 가장 효과적이에요."
+        closing: "실험해보고 효과 있으면 알려주세요!"
+      N5_P4:
+        opening: "완벽한 노트를 원하시는 거 알아요."
+        body: "하지만 70% 완성도로도 충분해요. 완벽을 추구하다 보면 정작 학습 시간이 줄어들어요."
+        closing: "일단 적고, 나중에 보완하는 것도 방법이에요."
+
+# ============================================================
+# SECTION 4: 톤 및 페이스 조절 룰
+# ============================================================
+
+tone_pace_rules:
+
+  - rule_id: "TP_001_struggling_student"
+    priority: 100
+    description: "어려움을 겪는 학생 - 톤/페이스 조절"
+    conditions:
+      - OR:
+        - field: "persona_id"
+          operator: "contains_any"
+          value: ["N2_P3", "N1_P4"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "frustrated"
+    action:
+      - "set_tone: 'Supportive'"
+      - "set_pace: 'slow'"
+      - "reduce_information_density"
+      - "add_encouragement"
+    message_modifications:
+      opening: "괜찮아요. 어려운 건 당연해요."
+      transitions: "하나씩 천천히 해볼까요?"
+      closing: "조금씩 나아지고 있어요. 잘하고 있어요."
+
+  - rule_id: "TP_002_analytical_student"
+    priority: 80
+    description: "분석적인 학생 - 상세 정보 제공"
+    conditions:
+      - OR:
+        - field: "persona_id"
+          operator: "contains_any"
+          value: ["N2_P4", "N3_P4", "N4_P4", "N5_P1"]
+        - field: "asks_detailed_questions"
+          operator: "=="
+          value: true
+    action:
+      - "set_tone: 'Professional'"
+      - "set_pace: 'normal'"
+      - "increase_information_density"
+      - "include_data_analysis"
+    message_modifications:
+      opening: "데이터를 분석해봤어요."
+      transitions: "구체적으로 살펴보면..."
+      closing: "더 궁금한 부분이 있으면 알려주세요."
+
+  - rule_id: "TP_003_low_motivation"
+    priority: 90
+    description: "동기 부족 학생 - 격려 중심"
+    conditions:
+      - OR:
+        - field: "persona_id"
+          operator: "contains_any"
+          value: ["N1_P2", "N3_P2", "N4_P2", "N5_P2"]
+        - field: "engagement_level"
+          operator: "=="
+          value: "low"
+    action:
+      - "set_tone: 'Encouraging'"
+      - "highlight_benefits"
+      - "make_tasks_small"
+      - "celebrate_small_wins"
+    message_modifications:
+      opening: "작은 것부터 시작해봐요."
+      transitions: "이것만 하면 돼요."
+      closing: "조금만 해도 큰 변화가 있을 거예요."
+
+# ============================================================
+# SECTION 5: 개입 유형별 액션
+# ============================================================
+
+intervention_actions:
+
+  InformationProvision:
+    description: "정보 제공"
+    actions:
+      - "provide_concept_explanation"
+      - "show_note_metrics"
+      - "explain_learning_strategy"
+
+  ReviewRecommendation:
+    description: "복습 권장"
+    actions:
+      - "identify_old_notes"
+      - "create_review_schedule"
+      - "send_review_reminder"
+
+  StrategyGuidance:
+    description: "전략 안내"
+    actions:
+      - "analyze_current_method"
+      - "suggest_improvements"
+      - "provide_templates"
+
+  MotivationBoost:
+    description: "동기 부여"
+    actions:
+      - "show_progress"
+      - "celebrate_achievements"
+      - "set_achievable_goals"
+
+  PatternAnalysis:
+    description: "패턴 분석"
+    actions:
+      - "analyze_learning_patterns"
+      - "identify_optimal_times"
+      - "show_trend_data"
+
+  ProgressFeedback:
+    description: "진행 피드백"
+    actions:
+      - "show_completion_rate"
+      - "compare_with_past"
+      - "project_future_progress"
+
+# ============================================================
+# DEFAULT FALLBACK
+# ============================================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "use_supportive_tone"
+    - "maintain_encouraging_environment"
+    - "continue_observation"
+  message: "노트 정리를 도와드릴게요. 무엇이 필요하신가요?"
+  confidence: 0.5
+
+# ============================================================
+# 파일 정보
+# ============================================================
+
+# 파일 경로: agent10_concept_notes/persona_system/rules.yaml
+#
+# 관련 DB 테이블:
+# - local_augteacher_notes: 개념 노트 데이터
+#   - nstroke (int): 필기 획 수
+#   - tlaststroke (bigint): 마지막 필기 타임스탬프
+#   - usedtime (int): 사용 시간(초)
+# - at_agent_persona_state: 페르소나 상태 저장
+# - at_agent_messages: 에이전트 메시지 로그

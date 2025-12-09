@@ -1,0 +1,205 @@
+<?php 
+
+require_once("/home/moodle/public_html/moodle/config_abessi.php"); 
+ 
+global $DB,$USER;
+
+$studentid=$_GET["id"]; 
+if($studentid==NULL)$studentid=$USER->id;
+//if($USER->id==NULL)header('Location: https://mathking.kr/moodle/login/index.php');
+if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')$url = "https://";   
+else $url = "http://";   
+$url.= $_SERVER['HTTP_HOST'];   
+$url.= $_SERVER['REQUEST_URI'];    
+if(strpos($url, 'tbegin')!= false)$tbegin=required_param('tbegin', PARAM_INT); 
+else $tbegin=time();
+$username= $DB->get_record_sql("SELECT lastname, firstname FROM mdl_user WHERE id='$studentid' ");
+ 
+$tbegin= $_GET["tb"]; 
+$tfixed=$_GET["tf"]; 
+if($tfixed==NULL)$tfixed=time();
+$initialT=$tfixed-43200;
+$finalT=$tfixed+43200;
+
+$checkgoal= $DB->get_record_sql("SELECT * FROM  mdl_abessi_today WHERE userid='$studentid' AND (type LIKE '오늘목표' OR type LIKE '검사요청' ) ORDER BY id DESC LIMIT 1");
+$tgoal=$checkgoal->timecreated;
+
+$jd = cal_to_jd(CAL_GREGORIAN,date("m"),date("d"),date("Y"));
+$nday=jddayofweek($jd,0); if($nday==0)$nday=7;
+ 
+$schedule=$DB->get_record_sql("SELECT id,editnew, start1,start2,start3,start4,start5,start6,start7,duration1,duration2,duration3,duration4,duration5,duration6,duration7 FROM mdl_abessi_schedule where userid='$studentid'  ORDER BY id DESC LIMIT 1 ");
+	 
+if($nday==1){$tstart=$schedule->start1; $hours=$schedule->duration1;} 
+if($nday==2){$tstart=$schedule->start2; $hours=$schedule->duration2;} 
+if($nday==3){$tstart=$schedule->start3; $hours=$schedule->duration3;} 
+if($nday==4){$tstart=$schedule->start4; $hours=$schedule->duration4;} 
+if($nday==5){$tstart=$schedule->start5; $hours=$schedule->duration5;} 
+if($nday==6){$tstart=$schedule->start6; $hours=$schedule->duration6;} 
+if($nday==7){$tstart=$schedule->start7; $hours=$schedule->duration7;} 
+ 
+$tcomplete0=$tgoal+$hours*3600;
+$tcomplete=date("h:i ", $tcomplete0);
+$timestart=date("h:i ", $tgoal);
+
+$activitylog=$DB->get_records_sql("SELECT * FROM mdl_logstore_standard_log WHERE  userid='$studentid' AND  component NOT LIKE 'core' AND timecreated > '$initialT' AND   timecreated < '$finalT'  AND courseid NOT LIKE '239' ORDER BY id DESC ");  
+$result = json_decode(json_encode($activitylog), True);
+//include("../teachers/shortcuts.php");
+$timeline=NULL; 
+unset($value);
+$n10=0;  
+foreach( $result  as $value)
+{
+$tdiff=$value['timecreated']-$tprev;
+ 
+if($tdiff>600 && $tdiff<43200) // 5분이상 부터 측정
+	{
+	$n10++;   
+	}
+
+$mark='';
+$timecreated= date("h시i분 ", $value['timecreated']); 
+
+if($value['action']==='loggedin') $timeline.='<li><div class="timeline-badge success"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title">로그인</h4></div>
+<div class="timeline-body"><p>'.$timecreated.'</p></div></div></li>';
+
+if($value['component']==='mod_quiz' &&  $value['action']==='started'  )
+{
+$attemptid=$value['objectid'];
+$atmptinfo=$DB->get_record_sql("SELECT * FROM mdl_quiz_attempts WHERE id='$attemptid' ORDER BY id DESC ");  
+$quizid=$atmptinfo->quiz;
+$quizinfo=$DB->get_record_sql("SELECT * FROM mdl_quiz WHERE id='$quizid' ORDER BY id DESC ");  
+$quiztitle=$quizinfo->name;
+
+ $timeline.='<li><div class="timeline-badge  primary"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title"><b style="color:red;">'.$quiztitle.' 시작 </b></h4> '.$timecreated.' </div></div></li>';
+
+}
+if($value['component']==='mod_quiz' &&  $value['action']==='reviewed'  )
+{
+$attemptid=$value['objectid'];
+ $timeline.='<li><div class="timeline-badge  primary"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title"><a href="https://mathking.kr/moodle/mod/quiz/review.php?attempt='.$attemptid.'&studentid='.$studentid.'"target="_blank">퀴즈검토</a></h4> '.$timecreated.' </div></div></li>';
+}
+if($value['component']==='mod_quiz' && $value['action']==='viewed' && $value['target']==='attempt')
+{
+
+ $timeline.='<li class="timeline-inverted"><div class="timeline-badge info"></div><div class="timeline-panel"><div class="timeline-body"><h4 class="timeline-title">제출'.$mark.'</h4> '.$timecreated.'</div></div></li>';
+ 
+} 
+if($value['component']==='mod_quiz' && $value['action']==='submitted') 
+{
+$timeline.='<li><div class="timeline-badge warning"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title">시험종료'.$mark.'</h4></div><div class="timeline-body"><p> '.$timecreated.'</p></div></div></li>';
+}
+if($value['component']==='mod_icontent' && $value['action']==='viewed' ) 
+{
+$timeline.='<li class="timeline-inverted"><div class="timeline-badge light"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title"> 개념공부'.$mark.'</h4>  '.$timecreated.' </div></div></li>';
+ 
+}
+if($value['component']==='mod_hotquestion' ) 
+{
+ $timeline.='<li class="timeline-inverted"><div class="timeline-badge info"></div><div class="timeline-panel"><div class="timeline-body"><h4 class="timeline-title">노트필기 활동'.$mark.'</h4> '.$timecreated.'</div></div></li>';
+  
+}
+if($value['action']==='loggedout')
+{
+ $timeline.='<li><div class="timeline-badge success"></div><div class="timeline-panel"><div class="timeline-heading"><h4 class="timeline-title">로그아웃'.$mark.'</h4></div><div class="timeline-body"><p> '.$timecreated.' 이번 주 공부시간 : </p></div></div></li>';
+ 
+}
+$tprev=$value['timecreated'];
+}
+ 
+$amonthago=time()-604800*4;
+ $quizattempts = $DB->get_records_sql("SELECT *, mdl_quiz_attempts.timestart AS timestart, mdl_quiz_attempts.timefinish AS timefinish, mdl_quiz_attempts.maxgrade AS maxgrade, mdl_quiz_attempts.sumgrades AS sumgrades, mdl_quiz.sumgrades AS tgrades FROM mdl_quiz  LEFT JOIN mdl_quiz_attempts ON  mdl_quiz.id=mdl_quiz_attempts.quiz  
+WHERE  mdl_quiz_attempts.timefinish > '$amonthago' AND mdl_quiz_attempts.userid='$studentid' ORDER BY  mdl_quiz_attempts.id DESC ");
+$quizresult = json_decode(json_encode($quizattempts), True);
+
+$quizlist='<hr>';
+ 
+unset($value2); 	
+foreach($quizresult as $value2) 
+	{
+	$comment='';
+	$qnum=substr_count($value2['layout'],',')+1-substr_count($value2['layout'],',0');   //if($role!=='student')
+	$quizgrade=round($value2['sumgrades']/$value2['tgrades']*100,0);
+	if(strpos($value2['name'], 'ifmin')!== false)$quiztitle=substr($value2['name'], 0, strpos($value2['name'], '{'));
+	else $quiztitle=$value2['name'];
+	if($quizgrade>85)
+		{
+		$imgstatus='<img src="https://mathking.kr/Contents/Moodle/Visual%20arts/greendot.png" width="15">';
+		}
+	else continue;
+  
+ 	if($qnum>9)  //$todayGrade  $ntodayquiz  $weekGrade  $nweekquiz
+		{
+		$quizlist.='<tr><td valign=top> '.$imgstatus.'&nbsp;'.date("m/d",$value2['timestart']).' </td><td valign=top> '.substr($quiztitle,0,60).'</a>  ('.$value2['attempt'].get_string('trial', 'local_augmented_teacher').')  </td><td valign=top><span class="" style="color: rgb(239, 69, 64);"> '.$quizgrade.'점</span></td><td valign=top> 통과 !</td></tr>';
+		} 
+	}
+$tabtitle=$username->lastname.'H';
+if($tstart==NULL || $hours==NULL)$beginendtext='오늘은 수업이 없는 날입니다. 시간표를 클릭하시면 주간 일정을 확인하실 수 있습니다.';
+else $beginendtext='시작 ('.$timestart.') | 귀가시간 ('.$tcomplete.') ';
+
+
+echo '
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>'.$tabtitle.'</title>
+	<meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+	<link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon"/>
+	 
+	<script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+	<script>
+		WebFont.load({
+			google: {"families":["Montserrat:100,200,300,400,500,600,700,800,900"]},
+			custom: {"families":["Flaticon", "LineAwesome"], urls: ["../assets/css/fonts.css"]},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/ready.min.css">
+	<!-- CSS Just for demo purpose, don"t include it in your project -->
+	<link rel="stylesheet" href="../assets/css/demo.css">
+</head>
+<body>
+	<div class="wrapper">
+			<div class="content">
+				<div class="container-fluid"> <br>
+					<h4 align=center class="page-title">'.$username->firstname.$username->lastname.'의 <a href="https://mathking.kr/moodle/local/augmented_teacher/students/timelineWeek.php?id='.$studentid.'&tb=604800">학습목표</a> | <a href="https://mathking.kr/moodle/local/augmented_teacher/students/timeline.php?id='.$studentid.'&tb=43200"><b><u>오늘활동</b></u> </a> |  <a href="https://mathking.kr/moodle/local/augmented_teacher/students/flowhistorym.php?studentid='.$studentid.'">  메타인지  </a> |<a href="https://mathking.kr/moodle/local/augmented_teacher/students/p_schedule.php?id='.$studentid.'&eid=1">시간표</a></h4>
+					<h4 align=center class="page-title">'.$beginendtext.'</h4>
+					<table align=center>'. $quizlist.'</td></table>
+					<div class="row">
+						<div class="col-md-12">
+							<ul class="timeline">';
+
+echo $timeline; // <a href="https://mathking.kr/moodle/local/augmented_teacher/students/timelineWhiteboard.php?id='.$studentid.'&tb=604800">  풀이노트  </a> |
+ 
+echo '
+
+ </ul>
+						</div>
+					</div>
+				</div>
+			</div>		
+	</div>
+	<!--   Core JS Files   -->
+	<script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="../assets/js/core/popper.min.js"></script>
+	<script src="../assets/js/core/bootstrap.min.js"></script>
+	<!-- jQuery UI -->
+	<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+	<!-- Bootstrap Toggle -->
+	<script src="../assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+	<!-- jQuery Scrollbar -->
+	<script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+	<!-- Ready Pro JS -->
+	<script src="../assets/js/ready.min.js"></script>
+	<!-- Ready Pro DEMO methods, don"t include it in your project! -->
+	<script src="../assets/js/setting-demo.js"></script>
+</body>
+</html>';
+
+?>

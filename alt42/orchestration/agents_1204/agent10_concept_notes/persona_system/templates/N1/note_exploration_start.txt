@@ -1,0 +1,32 @@
+[GREETING]
+
+{{student_name}}님, 개념노트 탐색을 시작해 볼까요?
+
+[OVERVIEW]
+
+현재 {{student_name}}님의 노트 현황입니다:
+- 총 노트 수: {{total_notes}}개
+- 최근 작성: {{last_note_date}}
+- 가장 많이 사용한 주제: {{top_topic}}
+
+[GUIDANCE]
+
+{{persona_specific_guidance}}
+
+[OPTIONS]
+
+다음 중 원하시는 것을 선택해 주세요:
+1. 최근 작성한 노트 분석하기
+2. 특정 개념 노트 찾기
+3. 전체 노트 패턴 분석하기
+
+[ENCOURAGEMENT]
+
+{{encouragement_message}}
+
+<!--
+파일: templates/N1/note_exploration_start.txt
+상황: N1 - 노트 탐색 시작
+변수: student_name, total_notes, last_note_date, top_topic, persona_specific_guidance, encouragement_message
+용도: 개념노트 시스템 첫 접근 시 탐색 안내
+-->

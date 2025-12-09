@@ -1,0 +1,76 @@
+# Task: 균형 잡힌 진도 (Balanced Progress)
+
+id: "task_balanced_progress"
+version: "1.0.0"
+
+# 목표
+goal: "전체 커리큘럼에서 균형 잡힌 진도를 유지하도록 지원"
+
+# KPI
+kpi:
+  - "progress_rate"
+  - "curriculum_coverage"
+  - "balance_index"
+
+# 트리거 조건 (DSL)
+triggers:
+  - "cond.progress.imbalanced_units"
+  - "cond.progress.weekly_review"
+
+# 사전조건
+preconditions:
+  - "evidence.window.duration_days >= 7"
+  - "evidence.metrics.curriculum_coverage IS NOT NULL"
+
+# 사후조건
+postconditions:
+  - "report.generated == true"
+  - "directive.priority >= 0.5"
+
+# 컨텍스트 태그
+context_tags:
+  - "curriculum"
+  - "progress"
+  - "balance"
+
+# 템플릿 우선순위
+templates:
+  - id: "report_balance"
+    type: "report"
+    priority: 1.0
+    params:
+      chart: "unit_coverage"
+      lookback_days: 14
+
+  - id: "directive_balance_focus"
+    type: "directive"
+    priority: 0.8
+    params:
+      mode: "suggest_weak_units"
+      priority_units: 3
+
+# 규칙 참조
+rules:
+  - "rule.curriculum.balance_report"
+  - "rule.curriculum.balance_directive"
+
+# 페르소나 연관도
+persona_relevance:
+  P_consistent: 0.9
+  P_self_directed: 0.8
+  P_motivated: 0.7
+  P_avoidant: 0.6
+  P_struggling: 0.5
+
+# 예상 효과
+expected_outcomes:
+  - "curriculum_alignment"
+  - "gap_reduction"
+  - "steady_progress"
+
+# 메타데이터
+metadata:
+  created: "2025-12-08"
+  author: "system"
+  tags: ["core", "balance", "curriculum"]
+

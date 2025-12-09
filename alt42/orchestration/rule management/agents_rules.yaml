@@ -1,0 +1,1053 @@
+# 🎼 Agents Orchestration Rules
+# 최고수준 선생님 사고체계 기반 90% 수준 달성을 위한 협업 룰
+
+version: "2.0"
+description: "22개 에이전트의 완전한 협업을 위한 orchestration 룰"
+target_level: 90  # 현직 선생님 수준의 90%
+current_level: 65.3
+last_updated: "2025-01-27"
+
+# ============================================================================
+# 1. 에이전트 기본 정보 및 역할 정의
+# ============================================================================
+
+agents:
+  # Phase 1: 초기화 및 분석 그룹
+  - agent_id: "agent01_onboarding"
+    name: "온보딩"
+    category: "foundation"
+    base_priority: 95
+    description: "학생 초기 프로필 수집 및 분석"
+    capabilities:
+      - student_profile_collection
+      - mbti_analysis
+      - learning_style_identification
+      - academy_info_collection
+    dependencies: []
+    outputs:
+      - student_profile
+      - learning_preferences
+      - academy_info
+    sync_rules:
+      - when: "profile_updated"
+        notify: ["agent02_exam_schedule", "agent07_interaction_targeting", "agent09_learning_management"]
+        priority: "high"
+    
+  - agent_id: "agent14_current_position"
+    name: "현재 위치"
+    category: "foundation"
+    base_priority: 90
+    description: "현재 학습 상태 및 진도 파악"
+    capabilities:
+      - progress_tracking
+      - position_analysis
+      - risk_assessment
+    dependencies: ["agent01_onboarding"]
+    outputs:
+      - current_unit
+      - progress_rate
+      - risk_score
+    sync_rules:
+      - when: "position_updated"
+        notify: ["agent02_exam_schedule", "agent09_learning_management", "agent17_remaining_activities"]
+        priority: "high"
+    
+  - agent_id: "agent03_goals_analysis"
+    name: "목표 분석"
+    category: "foundation"
+    base_priority: 88
+    description: "학습 목표 설정 및 분석"
+    capabilities:
+      - goal_setting
+      - goal_analysis
+      - goal_alignment
+    dependencies: ["agent01_onboarding"]
+    outputs:
+      - goals
+      - goal_achievement_rate
+    sync_rules:
+      - when: "goals_updated"
+        notify: ["agent02_exam_schedule", "agent09_learning_management"]
+        priority: "medium"
+  
+  # Phase 2: 계획 수립 그룹
+  - agent_id: "agent02_exam_schedule"
+    name: "시험 일정"
+    category: "planning"
+    base_priority: 92
+    description: "시험 대비 계획 수립"
+    capabilities:
+      - exam_schedule_planning
+      - d_day_calculation
+      - study_strategy_planning
+      - unit_priority_setting
+    dependencies: ["agent01_onboarding", "agent14_current_position", "agent03_goals_analysis"]
+    outputs:
+      - exam_preparation_plan
+      - study_schedule
+      - unit_priority_list
+    sync_rules:
+      - when: "plan_created"
+        notify: ["agent09_learning_management", "agent17_remaining_activities", "agent07_interaction_targeting"]
+        priority: "critical"
+    
+  - agent_id: "agent17_remaining_activities"
+    name: "잔여 활동"
+    category: "planning"
+    base_priority: 85
+    description: "활동 우선순위 조정 및 관리"
+    capabilities:
+      - activity_prioritization
+      - resource_allocation
+      - bottleneck_identification
+    dependencies: ["agent02_exam_schedule", "agent14_current_position"]
+    outputs:
+      - activity_priority_list
+      - resource_allocation_plan
+    sync_rules:
+      - when: "priority_updated"
+        notify: ["agent09_learning_management", "agent20_intervention_preparation"]
+        priority: "high"
+    
+  - agent_id: "agent09_learning_management"
+    name: "학습 관리"
+    category: "planning"
+    base_priority: 87
+    description: "학습 계획 관리 및 추적"
+    capabilities:
+      - plan_management
+      - completion_tracking
+      - plan_adjustment
+    dependencies: ["agent02_exam_schedule", "agent17_remaining_activities"]
+    outputs:
+      - learning_plan
+      - completion_status
+    sync_rules:
+      - when: "plan_updated"
+        notify: ["agent14_current_position", "agent04_inspect_weakpoints"]
+        priority: "high"
+  
+  # Phase 3: 실행 모니터링 그룹
+  - agent_id: "agent04_inspect_weakpoints"
+    name: "취약점 검사"
+    category: "execution"
+    base_priority: 83
+    description: "학습 활동 취약점 분석"
+    capabilities:
+      - weak_point_analysis
+      - activity_pattern_recognition
+      - performance_tracking
+    dependencies: ["agent09_learning_management"]
+    outputs:
+      - weak_point_patterns
+      - performance_metrics
+    sync_rules:
+      - when: "performance_updated"
+        notify: ["agent11_problem_notes", "agent15_problem_redefinition"]
+        priority: "medium"
+    
+  - agent_id: "agent10_concept_notes"
+    name: "개념 노트"
+    category: "execution"
+    base_priority: 80
+    description: "개념 학습 분석"
+    capabilities:
+      - concept_understanding_analysis
+      - note_pattern_analysis
+      - concept_mastery_assessment
+    dependencies: ["agent09_learning_management"]
+    outputs:
+      - concept_understanding_level
+      - concept_mastery_status
+    sync_rules:
+      - when: "concept_updated"
+        notify: ["agent15_problem_redefinition", "agent07_interaction_targeting"]
+        priority: "medium"
+    
+  - agent_id: "agent11_problem_notes"
+    name: "문제 노트"
+    category: "execution"
+    base_priority: 82
+    description: "문제 풀이 및 오답 분석"
+    capabilities:
+      - error_analysis
+      - problem_pattern_recognition
+      - error_classification
+    dependencies: ["agent04_inspect_weakpoints"]
+    outputs:
+      - error_patterns
+      - error_classification
+      - improvement_suggestions
+    sync_rules:
+      - when: "error_detected"
+        notify: ["agent15_problem_redefinition", "agent07_interaction_targeting", "agent08_calmness"]
+        priority: "high"
+  
+  # Phase 4: 정서 및 동기 관리 그룹
+  - agent_id: "agent05_learning_emotion"
+    name: "학습 감정"
+    category: "emotion"
+    base_priority: 88
+    description: "학습 감정 상태 파악 및 관리"
+    capabilities:
+      - emotion_detection
+      - emotion_analysis
+      - emotion_trend_tracking
+    dependencies: []
+    outputs:
+      - emotion_state
+      - emotion_confidence
+      - emotion_trend
+    sync_rules:
+      - when: "emotion_changed"
+        notify: ["agent07_interaction_targeting", "agent20_intervention_preparation", "agent21_intervention_execution"]
+        priority: "critical"
+    
+  - agent_id: "agent08_calmness"
+    name: "침착도"
+    category: "emotion"
+    base_priority: 85
+    description: "침착도 측정 및 관리"
+    capabilities:
+      - calmness_measurement
+      - error_cause_analysis
+      - calmness_improvement
+    dependencies: ["agent11_problem_notes"]
+    outputs:
+      - calmness_score
+      - error_cause_analysis
+    sync_rules:
+      - when: "calmness_low"
+        notify: ["agent12_rest_routine", "agent07_interaction_targeting"]
+        priority: "high"
+    
+  - agent_id: "agent12_rest_routine"
+    name: "휴식 루틴"
+    category: "emotion"
+    base_priority: 80
+    description: "휴식 패턴 관리 및 피로도 모니터링"
+    capabilities:
+      - rest_pattern_analysis
+      - fatigue_monitoring
+      - rest_recommendation
+    dependencies: ["agent05_learning_emotion", "agent08_calmness"]
+    outputs:
+      - rest_recommendations
+      - fatigue_level
+    sync_rules:
+      - when: "fatigue_high"
+        notify: ["agent13_learning_dropout", "agent07_interaction_targeting"]
+        priority: "high"
+  
+  # Phase 5: 상호작용 준비 및 실행 그룹
+  - agent_id: "agent07_interaction_targeting"
+    name: "상호작용 타게팅"
+    category: "interaction"
+    base_priority: 90
+    description: "상호작용 타겟 결정 및 우선순위 설정"
+    capabilities:
+      - situation_identification
+      - targeting_decision
+      - priority_calculation
+    dependencies: ["agent05_learning_emotion", "agent14_current_position"]
+    outputs:
+      - interaction_target
+      - interaction_priority
+      - interaction_timing
+    sync_rules:
+      - when: "target_determined"
+        notify: ["agent16_interaction_preparation"]
+        priority: "critical"
+    
+  - agent_id: "agent16_interaction_preparation"
+    name: "상호작용 준비"
+    category: "interaction"
+    base_priority: 88
+    description: "상호작용 준비 및 세계관 선택"
+    capabilities:
+      - world_selection
+      - storytelling_preparation
+      - interaction_context_preparation
+    dependencies: ["agent07_interaction_targeting"]
+    outputs:
+      - selected_world
+      - interaction_context
+    sync_rules:
+      - when: "preparation_complete"
+        notify: ["agent19_interaction_content"]
+        priority: "critical"
+    
+  - agent_id: "agent19_interaction_content"
+    name: "상호작용 컨텐츠"
+    category: "interaction"
+    base_priority: 86
+    description: "맞춤형 상호작용 컨텐츠 생성"
+    capabilities:
+      - content_generation
+      - template_selection
+      - content_packaging
+    dependencies: ["agent16_interaction_preparation"]
+    outputs:
+      - interaction_content
+      - content_type
+    sync_rules:
+      - when: "content_ready"
+        notify: ["agent20_intervention_preparation"]
+        priority: "critical"
+    
+  - agent_id: "agent20_intervention_preparation"
+    name: "개입 준비"
+    category: "interaction"
+    base_priority: 87
+    description: "개입 위치 및 타이밍 결정"
+    capabilities:
+      - intervention_location_selection
+      - timing_optimization
+      - intervention_method_selection
+    dependencies: ["agent19_interaction_content"]
+    outputs:
+      - intervention_plan
+      - intervention_timing
+    sync_rules:
+      - when: "intervention_ready"
+        notify: ["agent21_intervention_execution"]
+        priority: "critical"
+    
+  - agent_id: "agent21_intervention_execution"
+    name: "개입 실행"
+    category: "interaction"
+    base_priority: 89
+    description: "개입 실행 및 메시지 전달"
+    capabilities:
+      - intervention_execution
+      - message_delivery
+      - priority_adjustment
+    dependencies: ["agent20_intervention_preparation"]
+    outputs:
+      - intervention_result
+      - student_response
+    sync_rules:
+      - when: "intervention_complete"
+        notify: ["agent05_learning_emotion", "agent14_current_position"]
+        priority: "high"
+  
+  # Phase 6: 특수 상황 대응 그룹
+  - agent_id: "agent13_learning_dropout"
+    name: "학습 이탈"
+    category: "special"
+    base_priority: 91
+    description: "학습 이탈 조짐 감지 및 대응"
+    capabilities:
+      - dropout_detection
+      - dropout_prevention
+      - re_engagement_strategy
+    dependencies: ["agent05_learning_emotion", "agent12_rest_routine"]
+    outputs:
+      - dropout_risk_score
+      - prevention_strategy
+    sync_rules:
+      - when: "dropout_risk_detected"
+        notify: ["agent07_interaction_targeting", "agent20_intervention_preparation"]
+        priority: "critical"
+    
+  - agent_id: "agent15_problem_redefinition"
+    name: "문제 재정의"
+    category: "special"
+    base_priority: 84
+    description: "문제의 근본 원인 분석 및 재정의"
+    capabilities:
+      - root_cause_analysis
+      - problem_redefinition
+      - solution_strategy_generation
+    dependencies: ["agent11_problem_notes", "agent10_concept_notes"]
+    outputs:
+      - redefined_problem
+      - solution_strategy
+    sync_rules:
+      - when: "problem_redefined"
+        notify: ["agent07_interaction_targeting", "agent09_learning_management"]
+        priority: "high"
+    
+  - agent_id: "agent06_teacher_feedback"
+    name: "교사 피드백"
+    category: "special"
+    base_priority: 83
+    description: "교사 피드백 통합 및 분석"
+    capabilities:
+      - feedback_integration
+      - feedback_analysis
+      - persona_matching
+    dependencies: []
+    outputs:
+      - integrated_feedback
+      - feedback_priority
+    sync_rules:
+      - when: "feedback_received"
+        notify: ["agent09_learning_management", "agent07_interaction_targeting"]
+        priority: "medium"
+  
+  # Phase 7: 지속적 개선 그룹
+  - agent_id: "agent22_module_improvement"
+    name: "모듈 개선"
+    category: "improvement"
+    base_priority: 75
+    description: "시스템 성능 분석 및 개선 제안"
+    capabilities:
+      - performance_analysis
+      - vulnerability_detection
+      - improvement_proposal
+      - auto_upgrade
+    dependencies: ["*"]  # 모든 에이전트로부터 데이터 수집
+    outputs:
+      - improvement_report
+      - upgrade_recommendations
+    sync_rules:
+      - when: "improvement_identified"
+        notify: ["*"]  # 모든 에이전트에 피드백
+        priority: "low"  # 백그라운드 실행
+    
+  - agent_id: "agent18_signature_routine"
+    name: "시그너처 루틴"
+    category: "improvement"
+    base_priority: 78
+    description: "개인화된 학습 루틴 학습 및 적용"
+    capabilities:
+      - routine_learning
+      - pattern_recognition
+      - routine_optimization
+    dependencies: ["agent01_onboarding", "agent04_inspect_weakpoints"]
+    outputs:
+      - signature_routine
+      - routine_effectiveness
+    sync_rules:
+      - when: "routine_updated"
+        notify: ["agent09_learning_management", "agent07_interaction_targeting"]
+        priority: "low"
+
+# ============================================================================
+# 2. 협업 룰 (Collaboration Rules)
+# ============================================================================
+
+collaboration_rules:
+  # 규칙 1: 학생 프로필 변경 시 연쇄 반응
+  - rule_id: "COLLAB_001"
+    name: "학생 프로필 변경 전파"
+    trigger:
+      agent: "agent01_onboarding"
+      event: "profile_updated"
+    actions:
+      - agent: "agent02_exam_schedule"
+        action: "refresh_student_profile"
+        priority: "high"
+        delay: 0
+      - agent: "agent07_interaction_targeting"
+        action: "update_targeting_strategy"
+        priority: "medium"
+        delay: 100  # ms
+      - agent: "agent09_learning_management"
+        action: "adjust_learning_plan"
+        priority: "medium"
+        delay: 200
+    
+  # 규칙 2: 학습 이탈 감지 시 긴급 대응
+  - rule_id: "COLLAB_002"
+    name: "학습 이탈 긴급 대응"
+    trigger:
+      agent: "agent13_learning_dropout"
+      event: "dropout_risk_detected"
+      condition:
+        risk_score: ">="
+        risk_threshold: 0.7
+    actions:
+      - agent: "agent05_learning_emotion"
+        action: "check_emotion_state"
+        priority: "critical"
+        delay: 0
+      - agent: "agent07_interaction_targeting"
+        action: "prioritize_intervention"
+        priority: "critical"
+        delay: 0
+      - agent: "agent20_intervention_preparation"
+        action: "prepare_urgent_intervention"
+        priority: "critical"
+        delay: 50
+      - agent: "agent21_intervention_execution"
+        action: "execute_intervention"
+        priority: "critical"
+        delay: 100
+    
+  # 규칙 3: 시험 계획 수립 시 종합 협업
+  - rule_id: "COLLAB_003"
+    name: "시험 계획 수립 협업"
+    trigger:
+      agent: "agent02_exam_schedule"
+      event: "exam_plan_created"
+    actions:
+      - agent: "agent01_onboarding"
+        action: "get_student_profile"
+        priority: "high"
+        delay: 0
+      - agent: "agent14_current_position"
+        action: "get_current_progress"
+        priority: "high"
+        delay: 0
+      - agent: "agent03_goals_analysis"
+        action: "get_goals"
+        priority: "high"
+        delay: 0
+      - agent: "agent17_remaining_activities"
+        action: "adjust_activity_priority"
+        priority: "high"
+        delay: 200
+      - agent: "agent09_learning_management"
+        action: "update_learning_plan"
+        priority: "high"
+        delay: 300
+    
+  # 규칙 4: 감정 상태 변화 시 즉시 반응
+  - rule_id: "COLLAB_004"
+    name: "감정 상태 변화 대응"
+    trigger:
+      agent: "agent05_learning_emotion"
+      event: "emotion_changed"
+      condition:
+        emotion_type: ["frustrated", "anxious", "discouraged"]
+    actions:
+      - agent: "agent07_interaction_targeting"
+        action: "prioritize_emotion_support"
+        priority: "critical"
+        delay: 0
+      - agent: "agent12_rest_routine"
+        action: "suggest_rest"
+        priority: "high"
+        delay: 100
+      - agent: "agent20_intervention_preparation"
+        action: "prepare_emotion_intervention"
+        priority: "high"
+        delay: 200
+    
+  # 규칙 5: 오답 패턴 감지 시 분석 연쇄
+  - rule_id: "COLLAB_005"
+    name: "오답 패턴 분석 연쇄"
+    trigger:
+      agent: "agent11_problem_notes"
+      event: "error_pattern_detected"
+    actions:
+      - agent: "agent15_problem_redefinition"
+        action: "analyze_root_cause"
+        priority: "high"
+        delay: 0
+      - agent: "agent08_calmness"
+        action: "check_calmness"
+        priority: "medium"
+        delay: 100
+      - agent: "agent10_concept_notes"
+        action: "check_concept_understanding"
+        priority: "medium"
+        delay: 200
+      - agent: "agent07_interaction_targeting"
+        action: "plan_remedial_interaction"
+        priority: "high"
+        delay: 300
+
+# ============================================================================
+# 3. 우선순위 결정 룰 (Priority Rules)
+# ============================================================================
+
+priority_rules:
+  # 긴급 상황 우선순위
+  - rule_id: "PRIORITY_001"
+    name: "긴급 상황 최우선"
+    conditions:
+      - event_type: "student_request"
+        priority: 100
+      - event_type: "dropout_risk"
+        risk_score: ">= 0.8"
+        priority: 95
+      - event_type: "emotion_crisis"
+        emotion: ["frustrated", "anxious"]
+        priority: 90
+    
+  # 중요 상황 우선순위
+  - rule_id: "PRIORITY_002"
+    name: "중요 상황 우선"
+    conditions:
+      - event_type: "exam_preparation"
+        d_day: "<= 7"
+        priority: 85
+      - event_type: "plan_update"
+        completion_rate: "< 0.7"
+        priority: 80
+      - event_type: "error_pattern"
+        error_count: ">= 3"
+        priority: 75
+    
+  # 일반 상황 우선순위
+  - rule_id: "PRIORITY_003"
+    name: "일반 상황 처리"
+    conditions:
+      - event_type: "routine_update"
+        priority: 60
+      - event_type: "improvement_suggestion"
+        priority: 50
+      - event_type: "data_sync"
+        priority: 40
+
+# ============================================================================
+# 4. 충돌 해결 룰 (Conflict Resolution Rules)
+# ============================================================================
+
+conflict_resolution:
+  # 우선순위 충돌 해결
+  - rule_id: "CONFLICT_001"
+    name: "우선순위 기반 해결"
+    conflict_type: "priority_conflict"
+    resolution:
+      method: "highest_priority_wins"
+      fallback: "consensus_mechanism"
+    
+  # 권한 충돌 해결
+  - rule_id: "CONFLICT_002"
+    name: "권한 계층 기반 해결"
+    conflict_type: "authority_conflict"
+    resolution:
+      authority_hierarchy:
+        - agent: "agent01_onboarding"
+          level: 10
+          scope: "student_profile"
+        - agent: "agent02_exam_schedule"
+          level: 9
+          scope: "exam_plan"
+        - agent: "agent14_current_position"
+          level: 8
+          scope: "current_state"
+        - agent: "agent09_learning_management"
+          level: 7
+          scope: "learning_plan"
+      method: "highest_authority_wins"
+    
+  # 전략 충돌 해결
+  - rule_id: "CONFLICT_003"
+    name: "상황 적합성 기반 해결"
+    conflict_type: "strategy_conflict"
+    resolution:
+      method: "best_fit_strategy"
+      evaluation_criteria:
+        - context_match_score
+        - historical_success_rate
+        - student_preference_score
+      fallback: "weighted_average"
+
+# ============================================================================
+# 5. 데이터 동기화 룰 (Data Synchronization Rules)
+# ============================================================================
+
+data_sync_rules:
+  # 실시간 동기화 (critical 데이터)
+  - rule_id: "SYNC_001"
+    name: "실시간 동기화"
+    sync_type: "realtime"
+    conditions:
+      - data_type: "emotion_state"
+        sync_delay: 0
+      - data_type: "dropout_risk"
+        sync_delay: 0
+      - data_type: "student_request"
+        sync_delay: 0
+    
+  # 빠른 동기화 (high priority 데이터)
+  - rule_id: "SYNC_002"
+    name: "빠른 동기화"
+    sync_type: "fast"
+    conditions:
+      - data_type: "student_profile"
+        sync_delay: 100
+      - data_type: "current_position"
+        sync_delay: 100
+      - data_type: "exam_plan"
+        sync_delay: 200
+    
+  # 일반 동기화 (medium priority 데이터)
+  - rule_id: "SYNC_003"
+    name: "일반 동기화"
+    sync_type: "normal"
+    conditions:
+      - data_type: "learning_plan"
+        sync_delay: 500
+      - data_type: "routine_update"
+        sync_delay: 1000
+      - data_type: "improvement_suggestion"
+        sync_delay: 2000
+
+# ============================================================================
+# 6. 성능 모니터링 룰 (Performance Monitoring Rules)
+# ============================================================================
+
+performance_monitoring:
+  # 에이전트 개별 성능 모니터링
+  - rule_id: "PERF_001"
+    name: "에이전트 성능 추적"
+    metrics:
+      - metric: "execution_success_rate"
+        target: 0.95
+        alert_threshold: 0.85
+      - metric: "response_time_avg"
+        target: 500  # ms
+        alert_threshold: 1000
+      - metric: "accuracy"
+        target: 0.90
+        alert_threshold: 0.75
+    
+  # 협업 성능 모니터링
+  - rule_id: "PERF_002"
+    name: "협업 성능 추적"
+    metrics:
+      - metric: "data_sync_rate"
+        target: 0.98
+        alert_threshold: 0.90
+      - metric: "conflict_resolution_time"
+        target: 100  # ms
+        alert_threshold: 300
+      - metric: "agent_coordination_score"
+        target: 0.90
+        alert_threshold: 0.75
+    
+  # 전체 시스템 성능 모니터링
+  - rule_id: "PERF_003"
+    name: "시스템 성능 추적"
+    metrics:
+      - metric: "student_satisfaction"
+        target: 0.90
+        alert_threshold: 0.75
+      - metric: "learning_outcome_improvement"
+        target: 0.20  # +20%
+        alert_threshold: 0.10
+      - metric: "teacher_level_score"
+        target: 90
+        alert_threshold: 75
+
+# ============================================================================
+# 7. 평가 및 개선 룰 (Evaluation and Improvement Rules)
+# ============================================================================
+
+evaluation_rules:
+  # 일일 평가
+  - rule_id: "EVAL_001"
+    name: "일일 평가"
+    frequency: "daily"
+    time: "end_of_learning_session"
+    criteria:
+      - structure_integrity: 12
+      - logic_coherence: 12
+      - data_connectivity: 10
+      - operational_verifiability: 12
+      - upgrade_readiness: 8
+    target_score: 48.6  # 90% of 54
+    alert_threshold: 45.0  # 83% of 54
+    
+  # 주간 평가
+  - rule_id: "EVAL_002"
+    name: "주간 평가"
+    frequency: "weekly"
+    time: "sunday"
+    criteria:
+      - agent_performance_avg
+      - collaboration_score
+      - system_health_score
+    target_score: 90
+    alert_threshold: 80
+    
+  # 월간 평가
+  - rule_id: "EVAL_003"
+    name: "월간 평가"
+    frequency: "monthly"
+    time: "end_of_month"
+    criteria:
+      - learning_outcome_improvement
+      - student_satisfaction
+      - teacher_level_score
+    target_score: 90
+    alert_threshold: 85
+
+# ============================================================================
+# 8. 개선 사이클 룰 (Improvement Cycle Rules)
+# ============================================================================
+
+improvement_cycle:
+  # 자동 개선 트리거
+  - rule_id: "IMPROVE_001"
+    name: "성능 저하 감지 시 개선"
+    trigger:
+      condition: "performance_below_threshold"
+      threshold: 0.75
+    actions:
+      - agent: "agent22_module_improvement"
+        action: "analyze_vulnerability"
+        priority: "high"
+      - agent: "agent22_module_improvement"
+        action: "generate_improvement_proposal"
+        priority: "high"
+      - agent: "agent22_module_improvement"
+        action: "apply_improvements"
+        priority: "medium"
+    
+  # 주기적 개선
+  - rule_id: "IMPROVE_002"
+    name: "주기적 개선 실행"
+    trigger:
+      frequency: "weekly"
+    actions:
+      - agent: "agent22_module_improvement"
+        action: "routine_analysis"
+        priority: "low"
+      - agent: "agent22_module_improvement"
+        action: "optimization_suggestions"
+        priority: "low"
+
+# ============================================================================
+# 9. 수학 교과 특화 룰 (Math Subject Specific Rules)
+# ============================================================================
+
+math_specific_rules:
+  # 단원 연계성 기반 의사결정
+  - rule_id: "MATH_001"
+    name: "단원 연계성 고려"
+    description: "수학 단원 간 선후관계 및 연계성 반영"
+    data_source: "math_unit_relations.yaml"
+    apply_to:
+      - "agent02_exam_schedule"
+      - "agent09_learning_management"
+      - "agent17_remaining_activities"
+    rules:
+      - condition: "unit_prerequisites_not_met"
+        action: "adjust_learning_order"
+        priority: "high"
+      - condition: "related_units_detected"
+        action: "suggest_simultaneous_learning"
+        priority: "medium"
+    
+  # 단원별 난이도 기반 전략
+  - rule_id: "MATH_002"
+    name: "난이도 기반 전략 조정"
+    description: "단원별 난이도에 따른 학습 전략 차별화"
+    data_source: "math_unit_relations.yaml"
+    apply_to:
+      - "agent02_exam_schedule"
+      - "agent09_learning_management"
+      - "agent12_rest_routine"
+    rules:
+      - condition: "unit_difficulty >= 8"
+        action: "increase_study_time"
+        multiplier: 1.5
+      - condition: "unit_difficulty <= 4"
+        action: "reduce_study_time"
+        multiplier: 0.8
+    
+  # 계산 실수 vs 개념 오류 차별화
+  - rule_id: "MATH_003"
+    name: "오류 유형별 차별화 전략"
+    description: "계산 실수와 개념 오류를 구분하여 차별화된 대응"
+    apply_to:
+      - "agent11_problem_notes"
+      - "agent15_problem_redefinition"
+      - "agent07_interaction_targeting"
+    rules:
+      - condition: "error_type == 'calculation_error'"
+        action: "recommend_practice_repetition"
+        strategy: "반복 연습 모듈"
+      - condition: "error_type == 'concept_error'"
+        action: "recommend_concept_relearning"
+        strategy: "개념 재학습 모듈"
+
+# ============================================================================
+# 10. 90% 수준 달성 전략 (90% Level Achievement Strategy)
+# ============================================================================
+
+achievement_strategy:
+  current_level: 65.3
+  target_level: 90
+  gap: 24.7
+  
+  phases:
+    # Phase 1: 구조적 개선
+    - phase_id: "PHASE_1"
+      name: "구조적 개선"
+      target_improvement: 9.7
+      target_level: 75
+      duration: "2주"
+      focus_areas:
+        - "논리적 일관성 개선"
+        - "기본 룰과 시나리오 룰 역할 재정의"
+        - "중복 기능 제거"
+      success_criteria:
+        - logic_coherence_score: ">= 12"
+        - structure_integrity_score: ">= 12"
+    
+    # Phase 2: 협업 강화
+    - phase_id: "PHASE_2"
+      name: "협업 강화"
+      target_improvement: 7
+      target_level: 82
+      duration: "2주"
+      focus_areas:
+        - "데이터 동기화율 향상 (85% → 98%)"
+        - "충돌 해결 시간 단축 (150ms → 100ms)"
+        - "에이전트 조정 점수 향상 (72% → 90%)"
+      success_criteria:
+        - data_sync_rate: ">= 0.98"
+        - conflict_resolution_time: "<= 100ms"
+        - agent_coordination_score: ">= 0.90"
+    
+    # Phase 3: 수학 특화 통합
+    - phase_id: "PHASE_3"
+      name: "수학 특화 통합"
+      target_improvement: 4
+      target_level: 86
+      duration: "2주"
+      focus_areas:
+        - "단원 연계성 DB 활용"
+        - "단원별 난이도 기반 의사결정"
+        - "계산 실수 vs 개념 오류 차별화"
+      success_criteria:
+        - math_specific_rules_applied: ">= 80%"
+        - unit_relation_usage: ">= 90%"
+        - error_classification_accuracy: ">= 85%"
+    
+    # Phase 4: 최적화 및 미세조정
+    - phase_id: "PHASE_4"
+      name: "최적화 및 미세조정"
+      target_improvement: 4
+      target_level: 90
+      duration: "2주"
+      focus_areas:
+        - "성능 최적화"
+        - "정확도 향상"
+        - "사용자 만족도 향상"
+      success_criteria:
+        - teacher_level_score: ">= 90"
+        - student_satisfaction: ">= 0.90"
+        - learning_outcome_improvement: ">= 0.20"
+
+# ============================================================================
+# 11. 반복평가 체크리스트 (Iterative Evaluation Checklist)
+# ============================================================================
+
+evaluation_checklist:
+  # 구조적 완성도 체크리스트
+  structure_checklist:
+    - item: "모든 룰에 rule_id와 description 존재"
+      weight: 2
+      current_status: "✅"
+    - item: "Priority 중복 없음"
+      weight: 2
+      current_status: "✅"
+    - item: "모든 룰에 최소 1개 이상의 condition 정의"
+      weight: 2
+      current_status: "✅"
+    - item: "모든 룰에 action 블록 존재"
+      weight: 2
+      current_status: "✅"
+    - item: "0~1 범위 내 confidence 값 정의"
+      weight: 2
+      current_status: "✅"
+    - item: "룰별 rationale 존재"
+      weight: 2
+      current_status: "✅"
+  
+  # 논리적 일관성 체크리스트
+  logic_checklist:
+    - item: "동일 의미의 필드명 일관성"
+      weight: 2
+      current_status: "✅"
+    - item: "비교 연산자 표준화"
+      weight: 2
+      current_status: "✅"
+    - item: "Action 타입 일관성"
+      weight: 2
+      current_status: "✅"
+    - item: "중복 의미 룰 없음"
+      weight: 2
+      current_status: "⚠️"
+      note: "기본 룰과 시나리오 룰 간 중복 존재, 역할 재정의 필요"
+    - item: "Default Rule 존재"
+      weight: 2
+      current_status: "✅"
+    - item: "시나리오 위계 구조 유지"
+      weight: 2
+      current_status: "✅"
+  
+  # 데이터 연결성 체크리스트
+  data_checklist:
+    - item: "입력 필드 정의 명확"
+      weight: 2
+      current_status: "✅"
+    - item: "출력 Action 경로 명확"
+      weight: 2
+      current_status: "✅"
+    - item: "Null 체크 포함"
+      weight: 2
+      current_status: "✅"
+    - item: "데이터 스키마 충돌 없음"
+      weight: 2
+      current_status: "✅"
+    - item: "Derived Description 생성"
+      weight: 2
+      current_status: "✅"
+  
+  # 실행 검증 가능성 체크리스트
+  execution_checklist:
+    - item: "Display Message 명확성"
+      weight: 2
+      current_status: "✅"
+    - item: "Priority 흐름 자연성"
+      weight: 2
+      current_status: "✅"
+    - item: "룰 간 충돌 최소화"
+      weight: 2
+      current_status: "✅"
+    - item: "Default Rule 동작 검증"
+      weight: 2
+      current_status: "✅"
+    - item: "Confidence 분포 균형"
+      weight: 2
+      current_status: "✅"
+    - item: "로그 추적 가능성"
+      weight: 2
+      current_status: "✅"
+  
+  # 자가 업그레이드 가능성 체크리스트
+  upgrade_checklist:
+    - item: "단계 구조 유지"
+      weight: 2
+      current_status: "✅"
+    - item: "상하위 룰 연결성"
+      weight: 2
+      current_status: "✅"
+    - item: "자가 평가 가능"
+      weight: 2
+      current_status: "✅"
+    - item: "Agent 22 연계성"
+      weight: 2
+      current_status: "✅"
+
+# ============================================================================
+# 12. 메타데이터 (Metadata)
+# ============================================================================
+
+metadata:
+  version: "2.0"
+  created_date: "2025-01-27"
+  last_updated: "2025-01-27"
+  author: "Claude Code"
+  description: "22개 에이전트의 완전한 협업을 위한 orchestration 룰"
+  target_completion: "2025-03-31"
+  evaluation_schedule:
+    daily: true
+    weekly: true
+    monthly: true
+    quarterly: true
+  maintenance_schedule:
+    weekly_review: true
+    monthly_optimization: true
+    quarterly_major_update: true
+

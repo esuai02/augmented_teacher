@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plugin Click Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .console-log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #4a9eff;
+        }
+        .error-entry {
+            border-left-color: #ff4444;
+            color: #ff6b6b;
+        }
+        .success-entry {
+            border-left-color: #44ff44;
+            color: #6bff6b;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .test-card {
+            display: inline-block;
+            padding: 20px;
+            margin: 10px;
+            background: #f0f4f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 150px;
+        }
+        .test-card:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Plugin Click 디버깅</h1>
+        
+        <h2>1. 함수 존재 여부 확인</h2>
+        <button onclick="checkFunctions()">함수 확인</button>
+        <button onclick="clearLog()">로그 지우기</button>
+        
+        <h2>2. 테스트 카드 클릭</h2>
+        <div>
+            <div class="test-card" onclick="testDirectClick()">
+                <strong>직접 클릭 테스트</strong>
+                <p>onclick 직접 호출</p>
+            </div>
+            
+            <div class="test-card" id="eventListenerCard">
+                <strong>이벤트 리스너 테스트</strong>
+                <p>addEventListener 사용</p>
+            </div>
+            
+            <div class="test-card" onclick="testExecutePlugin()">
+                <strong>executePluginAction 테스트</strong>
+                <p>플러그인 실행 함수 호출</p>
+            </div>
+        </div>
+        
+        <h2>3. 실제 플러그인 카드 시뮬레이션</h2>
+        <div id="simulatedCards"></div>
+        
+        <h2>콘솔 로그</h2>
+        <div id="consoleLog" class="console-log"></div>
+    </div>
+    
+    <!-- Main page scripts -->
+    <script src="plugin_settings_client.js"></script>
+    
+    <script>
+        // 로그 출력 함수
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('consoleLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            if (type === 'error') entry.className += ' error-entry';
+            if (type === 'success') entry.className += ' success-entry';
+            
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            
+            // 실제 콘솔에도 출력
+            console.log(message);
+        }
+        
+        function clearLog() {
+            document.getElementById('consoleLog').innerHTML = '';
+            log('로그가 지워졌습니다.');
+        }
+        
+        // 함수 존재 여부 확인
+        function checkFunctions() {
+            log('=== 함수 존재 여부 확인 ===');
+            
+            // window 객체에서 함수 확인
+            const functionsToCheck = [
+                'executePluginAction',
+                'openAgentPanel',
+                'closeAgentPanel',
+                'showMessagePopup',
+                'openAgentPopup'
+            ];
+            
+            functionsToCheck.forEach(funcName => {
+                if (typeof window[funcName] === 'function') {
+                    log(`✅ window.${funcName} 존재`, 'success');
+                } else {
+                    log(`❌ window.${funcName} 없음`, 'error');
+                }
+            });
+            
+            // 전역 스코프에서 확인
+            if (typeof executePluginAction === 'function') {
+                log('✅ executePluginAction 전역 함수로 존재', 'success');
+            } else {
+                log('❌ executePluginAction 전역 함수로 없음', 'error');
+            }
+        }
+        
+        // 직접 클릭 테스트
+        function testDirectClick() {
+            log('직접 클릭 테스트 실행됨');
+            try {
+                log('클릭 이벤트가 정상적으로 작동합니다!', 'success');
+            } catch (e) {
+                log(`에러 발생: ${e.message}`, 'error');
+            }
+        }
+        
+        // executePluginAction 테스트
+        function testExecutePlugin() {
+            log('executePluginAction 테스트 시작');
+            
+            try {
+                // executePluginAction이 정의되어 있는지 확인
+                if (typeof executePluginAction !== 'function') {
+                    log('executePluginAction 함수가 정의되지 않았습니다. script.js를 로드합니다.', 'error');
+                    
+                    // script.js 동적 로드 시도
+                    const script = document.createElement('script');
+                    script.src = 'script.js';
+                    script.onload = () => {
+                        log('script.js 로드 완료', 'success');
+                        // 다시 시도
+                        if (typeof executePluginAction === 'function') {
+                            callExecutePlugin();
+                        }
+                    };
+                    script.onerror = () => {
+                        log('script.js 로드 실패', 'error');
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    callExecutePlugin();
+                }
+            } catch (e) {
+                log(`에러 발생: ${e.message}`, 'error');
+                log(`스택: ${e.stack}`, 'error');
+            }
+        }
+        
+        function callExecutePlugin() {
+            const testConfig = {
+                internal_url: 'test_content.html',
+                plugin_name: '테스트 플러그인'
+            };
+            
+            log(`executePluginAction('internal_link', ${JSON.stringify(testConfig)}) 호출`);
+            
+            try {
+                executePluginAction('internal_link', testConfig);
+                log('executePluginAction 호출 성공!', 'success');
+            } catch (e) {
+                log(`executePluginAction 호출 중 에러: ${e.message}`, 'error');
+            }
+        }
+        
+        // 이벤트 리스너 테스트
+        document.getElementById('eventListenerCard').addEventListener('click', function() {
+            log('addEventListener로 등록된 클릭 이벤트 실행됨', 'success');
+        });
+        
+        // 실제 플러그인 카드 시뮬레이션
+        function createSimulatedCards() {
+            const container = document.getElementById('simulatedCards');
+            
+            // executePluginAction을 인라인으로 정의
+            const inlineFunction = `
+                <script>
+                    // 인라인 executePluginAction 정의
+                    if (typeof executePluginAction === 'undefined') {
+                        window.executePluginAction = function(pluginId, config) {
+                            console.log('인라인 executePluginAction 호출됨:', pluginId, config);
+                            document.getElementById('consoleLog').innerHTML += '<div class="log-entry success-entry">[' + new Date().toLocaleTimeString() + '] 인라인 executePluginAction 실행됨!</div>';
+                            
+                            // openAgentPanel 시뮬레이션
+                            if (typeof openAgentPanel === 'function') {
+                                openAgentPanel(config.internal_url || config.url, config.plugin_name);
+                            } else {
+                                alert('openAgentPanel 함수가 없습니다. 실제 환경에서는 슬라이딩 패널이 열립니다.');
+                            }
+                        };
+                    }
+                </script>
+            `;
+            
+            container.innerHTML = inlineFunction + `
+                <div class="test-card" onclick="executePluginAction('internal_link', {'internal_url': 'test.html', 'plugin_name': '시뮬레이션 테스트'})">
+                    <strong>시뮬레이션 카드 1</strong>
+                    <p>인라인 onclick</p>
+                </div>
+                
+                <div class="test-card" onclick="window.executePluginAction && window.executePluginAction('default_card', {'url': 'test2.html', 'plugin_name': '기본 카드 테스트'})">
+                    <strong>시뮬레이션 카드 2</strong>
+                    <p>window.executePluginAction 체크</p>
+                </div>
+            `;
+        }
+        
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', function() {
+            log('페이지 로드 완료');
+            checkFunctions();
+            createSimulatedCards();
+            
+            // ktmPluginClient 확인
+            if (window.ktmPluginClient) {
+                log('✅ ktmPluginClient 초기화됨', 'success');
+            } else {
+                log('❌ ktmPluginClient 없음', 'error');
+            }
+        });
+        
+        // 전역 에러 캐치
+        window.addEventListener('error', function(e) {
+            log(`전역 에러: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`, 'error');
+        });
+    </script>
+</body>
+</html>

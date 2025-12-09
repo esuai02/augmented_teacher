@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주간 리포트 예시</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .report-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #764ba2;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .week-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        .metric {
+            display: inline-block;
+            margin: 10px 20px 10px 0;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <h1>📊 주간 학습 리포트</h1>
+        
+        <div class="week-summary">
+            <h2>이번 주 요약</h2>
+            <div class="metric">
+                <div class="metric-value">15</div>
+                <div class="metric-label">완료된 과제</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">92%</div>
+                <div class="metric-label">평균 정답률</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">8.5시간</div>
+                <div class="metric-label">총 학습 시간</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">+15%</div>
+                <div class="metric-label">성장률</div>
+            </div>
+        </div>
+        
+        <h3>일별 학습 현황</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>날짜</th>
+                    <th>학습 시간</th>
+                    <th>완료 과제</th>
+                    <th>정답률</th>
+                    <th>주요 학습 내용</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>월요일</td>
+                    <td>1시간 30분</td>
+                    <td>3개</td>
+                    <td>88%</td>
+                    <td>수학 방정식</td>
+                </tr>
+                <tr>
+                    <td>화요일</td>
+                    <td>2시간</td>
+                    <td>4개</td>
+                    <td>95%</td>
+                    <td>영어 문법</td>
+                </tr>
+                <tr>
+                    <td>수요일</td>
+                    <td>1시간 45분</td>
+                    <td>3개</td>
+                    <td>90%</td>
+                    <td>과학 실험</td>
+                </tr>
+                <tr>
+                    <td>목요일</td>
+                    <td>1시간 15분</td>
+                    <td>2개</td>
+                    <td>92%</td>
+                    <td>역사 정리</td>
+                </tr>
+                <tr>
+                    <td>금요일</td>
+                    <td>2시간</td>
+                    <td>3개</td>
+                    <td>94%</td>
+                    <td>종합 복습</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="chart-container">
+            <h3>📈 주간 성과 그래프</h3>
+            <p style="text-align: center; color: #666;">
+                [여기에 실제 차트가 표시될 수 있습니다]
+            </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="window.print()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">
+                🖨️ 인쇄하기
+            </button>
+        </div>
+    </div>
+</body>
+</html>

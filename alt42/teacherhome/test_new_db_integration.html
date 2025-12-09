@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새 DB 구조 통합 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 100px;
+            font-family: monospace;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .agent-config {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>새 DB 구조 통합 테스트</h1>
+    
+    <div class="container">
+        <h2>1. API 연결 테스트</h2>
+        <button onclick="testConnection()">API 연결 확인</button>
+        <button onclick="testPluginTypes()">플러그인 타입 조회</button>
+        <div id="connectionResult" class="result"></div>
+    </div>
+    
+    <div class="container">
+        <h2>2. 플러그인 저장 테스트</h2>
+        
+        <div class="form-group">
+            <label>플러그인 타입:</label>
+            <select id="pluginType" onchange="showPluginForm()">
+                <option value="">선택하세요</option>
+                <option value="internal_link">내부 링크</option>
+                <option value="external_link">외부 링크</option>
+                <option value="send_message">메시지 발송</option>
+                <option value="agent">에이전트</option>
+            </select>
+        </div>
+        
+        <div id="pluginForm" style="display: none;">
+            <div class="form-group">
+                <label>플러그인 이름:</label>
+                <input type="text" id="pluginName" placeholder="플러그인 이름">
+            </div>
+            
+            <div class="form-group">
+                <label>카드 설명:</label>
+                <input type="text" id="cardDescription" placeholder="카드 설명">
+            </div>
+            
+            <!-- 플러그인별 필드 -->
+            <div id="internalLinkFields" style="display: none;">
+                <label>내부 URL:</label>
+                <input type="text" id="internalUrl" placeholder="/path/to/page">
+                <label><input type="checkbox" id="internalNewTab"> 새 탭에서 열기</label>
+            </div>
+            
+            <div id="externalLinkFields" style="display: none;">
+                <label>외부 URL:</label>
+                <input type="text" id="externalUrl" placeholder="https://example.com">
+                <label><input type="checkbox" id="externalNewTab" checked> 새 탭에서 열기</label>
+            </div>
+            
+            <div id="messageFields" style="display: none;">
+                <label>메시지 내용:</label>
+                <textarea id="messageContent" placeholder="메시지 내용"></textarea>
+                <label>메시지 타입:</label>
+                <select id="messageType">
+                    <option value="info">정보</option>
+                    <option value="success">성공</option>
+                    <option value="warning">경고</option>
+                    <option value="error">오류</option>
+                </select>
+            </div>
+            
+            <div id="agentFields" style="display: none;">
+                <label>에이전트 타입:</label>
+                <select id="agentType">
+                    <option value="php">PHP</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="api">API</option>
+                    <option value="custom">사용자 정의</option>
+                </select>
+                
+                <label>에이전트 설명:</label>
+                <input type="text" id="agentDescription" placeholder="에이전트 설명">
+                
+                <label>에이전트 코드:</label>
+                <textarea id="agentCode" placeholder="에이전트 코드"></textarea>
+                
+                <label>에이전트 URL (API 타입용):</label>
+                <input type="text" id="agentUrl" placeholder="https://api.example.com">
+                
+                <div class="agent-config">
+                    <h4>에이전트 UI 설정</h4>
+                    <label>카드 제목:</label>
+                    <input type="text" id="agentConfigTitle" placeholder="카드 제목">
+                    
+                    <label>카드 설명:</label>
+                    <input type="text" id="agentConfigDescription" placeholder="카드 설명">
+                    
+                    <label>실행 액션:</label>
+                    <input type="text" id="agentConfigAction" placeholder="액션 이름">
+                </div>
+            </div>
+            
+            <button onclick="savePlugin()">플러그인 저장</button>
+        </div>
+        
+        <div id="saveResult" class="result"></div>
+    </div>
+    
+    <div class="container">
+        <h2>3. 저장된 플러그인 조회</h2>
+        <button onclick="loadPlugins()">플러그인 목록 불러오기</button>
+        <div id="pluginList" class="result"></div>
+    </div>
+    
+    <div class="container">
+        <h2>4. DB 정보</h2>
+        <button onclick="toggleDBInfo()">DB 정보보기</button>
+        <a href="db_structure_info.php" target="_blank" style="margin-left: 10px; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">상세 DB 구조 보기</a>
+        <div id="dbInfo" class="result" style="display: none;">
+            <h3>테이블: mdl_alt42DB_card_plugin_settings</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">필드명</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">데이터 타입</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">설명</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">기본값</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>id</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT AUTO_INCREMENT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Primary Key</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>user_id</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT NOT NULL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">사용자 ID</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>category</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(50) NOT NULL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">카테고리</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>card_title</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(255) NOT NULL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">카드 제목</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">card_index</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">카드 인덱스</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>plugin_id</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(50) NOT NULL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">플러그인 ID</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr style="background: #e3f2fd;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>공통 필드</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">plugin_name</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(255)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">플러그인 이름</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">card_description</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">카드 설명</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr style="background: #fff3cd;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>internal_link 전용</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">internal_url</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(500)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">내부 URL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr style="background: #fff3cd;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>external_link 전용</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">external_url</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(500)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">외부 URL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">open_new_tab</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TINYINT(1)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">새 탭에서 열기</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>send_message 전용</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">message_content</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">메시지 내용</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">message_type</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(50)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">메시지 타입 (success, info, warning, error)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr style="background: #f8d7da;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>agent 전용</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_type</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(50)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 타입 (php, javascript, api, custom)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_code</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">PHP 코드 또는 에이전트 로직</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_url</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(500)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 URL</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_prompt</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 프롬프트</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_parameters</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 파라미터 (JSON)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_description</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 설명</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_config_title</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(255)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 설정 제목</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_config_description</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 설정 설명</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><s>agent_config_details</s></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: #999;">사용하지 않음</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">agent_config_action</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(100)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">에이전트 액션</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr style="background: #e2e3e5;">
+                        <td colspan="4" style="border: 1px solid #ddd; padding: 8px;"><strong>시스템 필드</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">extra_config</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">추가 설정</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">is_active</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TINYINT(1)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">활성화 여부</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">display_order</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">표시 순서</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">timecreated</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT UNSIGNED</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">생성 시간 (Unix timestamp)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">timemodified</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">INT UNSIGNED</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">수정 시간 (Unix timestamp)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">0</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 style="margin-top: 30px;">테이블: mdl_alt42DB_plugin_types</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">필드명</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">데이터 타입</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">설명</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">기본값</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>plugin_id</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(50)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Primary Key - 플러그인 ID</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">plugin_title</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(255)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">플러그인 제목</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">-</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">plugin_icon</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">VARCHAR(10)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">플러그인 아이콘</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">plugin_description</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TEXT</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">플러그인 설명</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">NULL</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">is_active</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">TINYINT(1)</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">활성화 여부</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="plugin_settings_client.js"></script>
+    <script>
+        // 전역 클라이언트 인스턴스
+        const client = new KTMPluginSettingsClient();
+        const userId = 1;
+        const category = 'test_category';
+        const cardTitle = '테스트 카드';
+        
+        // API 연결 테스트
+        async function testConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            try {
+                const response = await fetch('plugin_settings_api_real.php?action=test');
+                const text = await response.text();
+                resultDiv.innerHTML = `<span class="success">✓ API 연결 성공</span>\nResponse: ${text}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ API 연결 실패</span>\n${error.message}`;
+            }
+        }
+        
+        // 플러그인 타입 조회
+        async function testPluginTypes() {
+            const resultDiv = document.getElementById('connectionResult');
+            try {
+                await client.loadPluginTypes();
+                const types = client.getPluginTypes();
+                resultDiv.innerHTML = `<span class="success">✓ 플러그인 타입 조회 성공</span>\n${JSON.stringify(types, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ 플러그인 타입 조회 실패</span>\n${error.message}`;
+            }
+        }
+        
+        // 플러그인 폼 표시
+        function showPluginForm() {
+            const pluginType = document.getElementById('pluginType').value;
+            const form = document.getElementById('pluginForm');
+            
+            // 모든 필드 숨기기
+            document.getElementById('internalLinkFields').style.display = 'none';
+            document.getElementById('externalLinkFields').style.display = 'none';
+            document.getElementById('messageFields').style.display = 'none';
+            document.getElementById('agentFields').style.display = 'none';
+            
+            if (pluginType) {
+                form.style.display = 'block';
+                
+                // 플러그인 타입별 필드 표시
+                switch (pluginType) {
+                    case 'internal_link':
+                        document.getElementById('internalLinkFields').style.display = 'block';
+                        break;
+                    case 'external_link':
+                        document.getElementById('externalLinkFields').style.display = 'block';
+                        break;
+                    case 'send_message':
+                        document.getElementById('messageFields').style.display = 'block';
+                        break;
+                    case 'agent':
+                        document.getElementById('agentFields').style.display = 'block';
+                        break;
+                }
+            } else {
+                form.style.display = 'none';
+            }
+        }
+        
+        // 플러그인 저장
+        async function savePlugin() {
+            const resultDiv = document.getElementById('saveResult');
+            const pluginType = document.getElementById('pluginType').value;
+            
+            const config = {
+                plugin_name: document.getElementById('pluginName').value,
+                card_description: document.getElementById('cardDescription').value
+            };
+            
+            // 플러그인 타입별 설정
+            switch (pluginType) {
+                case 'internal_link':
+                    config.internal_url = document.getElementById('internalUrl').value;
+                    config.open_new_tab = document.getElementById('internalNewTab').checked;
+                    break;
+                case 'external_link':
+                    config.external_url = document.getElementById('externalUrl').value;
+                    config.open_new_tab = document.getElementById('externalNewTab').checked;
+                    break;
+                case 'send_message':
+                    config.message_content = document.getElementById('messageContent').value;
+                    config.message_type = document.getElementById('messageType').value;
+                    break;
+                case 'agent':
+                    config.agent_type = document.getElementById('agentType').value;
+                    config.agent_description = document.getElementById('agentDescription').value;
+                    config.agent_code = document.getElementById('agentCode').value;
+                    config.agent_url = document.getElementById('agentUrl').value;
+                    config.agent_config = {
+                        title: document.getElementById('agentConfigTitle').value,
+                        description: document.getElementById('agentConfigDescription').value,
+                        action: document.getElementById('agentConfigAction').value
+                    };
+                    break;
+            }
+            
+            try {
+                const result = await client.saveCardSetting(
+                    category, 
+                    cardTitle, 
+                    0, 
+                    pluginType, 
+                    config
+                );
+                
+                resultDiv.innerHTML = `<span class="success">✓ 저장 성공</span>\n${JSON.stringify(result, null, 2)}`;
+                
+                // 저장 후 목록 갱신
+                loadPlugins();
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ 저장 실패</span>\n${error.message}`;
+            }
+        }
+        
+        // 플러그인 목록 불러오기
+        async function loadPlugins() {
+            const resultDiv = document.getElementById('pluginList');
+            try {
+                await client.loadCardSettings(category);
+                const settings = client.getCardSettings(category);
+                
+                let html = '<span class="success">✓ 조회 성공</span>\n\n';
+                
+                for (const [title, cards] of Object.entries(settings)) {
+                    html += `<strong>${title}</strong>\n`;
+                    cards.forEach((card, index) => {
+                        html += `  ${index + 1}. ${card.plugin_id} - ${card.plugin_config.plugin_name || '이름 없음'}\n`;
+                        html += `     설정: ${JSON.stringify(card.plugin_config, null, 6).replace(/\n/g, '\n     ')}\n`;
+                    });
+                    html += '\n';
+                }
+                
+                resultDiv.innerHTML = html;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ 조회 실패</span>\n${error.message}`;
+            }
+        }
+        
+        // DB 정보 토글
+        function toggleDBInfo() {
+            const dbInfoDiv = document.getElementById('dbInfo');
+            if (dbInfoDiv.style.display === 'none') {
+                dbInfoDiv.style.display = 'block';
+                // 스크롤 다운
+                dbInfoDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                dbInfoDiv.style.display = 'none';
+            }
+        }
+        
+        // 페이지 로드 시 초기화
+        window.onload = async function() {
+            // 사용자 ID 설정
+            client.setUserId(userId);
+            
+            // 플러그인 타입 로드
+            try {
+                await client.loadPluginTypes();
+                console.log('플러그인 타입 로드 완료');
+            } catch (error) {
+                console.error('플러그인 타입 로드 실패:', error);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+{
+  "@context": {
+    "@vocab": "https://mathking.kr/ontology/agent20#",
+    "schema": "http://schema.org/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "agent": "https://mathking.kr/ontology/agent#",
+    "persona": "https://mathking.kr/ontology/persona#",
+    "intervention": "https://mathking.kr/ontology/intervention#"
+  },
+  "@graph": [
+    {
+      "@id": "agent:Agent20",
+      "@type": "owl:Class",
+      "rdfs:label": "Intervention Preparation Agent",
+      "rdfs:comment": "학생 상태를 분석하고 적절한 개입을 준비하는 에이전트",
+      "agent:role": "intervention_preparation",
+      "agent:priority": 8
+    },
+    {
+      "@id": "persona:P20_ANALYZER",
+      "@type": "persona:Persona",
+      "rdfs:label": "분석가 페르소나",
+      "persona:agent": {"@id": "agent:Agent20"},
+      "persona:tone": "Analytical",
+      "persona:priority": 7,
+      "persona:description": "학생 데이터와 행동 패턴을 분석하여 개입 필요성 판단"
+    },
+    {
+      "@id": "persona:P20_STRATEGIST",
+      "@type": "persona:Persona",
+      "rdfs:label": "전략가 페르소나",
+      "persona:agent": {"@id": "agent:Agent20"},
+      "persona:tone": "Strategic",
+      "persona:priority": 8,
+      "persona:description": "최적의 개입 전략을 선택하고 계획"
+    },
+    {
+      "@id": "persona:P20_COORDINATOR",
+      "@type": "persona:Persona",
+      "rdfs:label": "조정자 페르소나",
+      "persona:agent": {"@id": "agent:Agent20"},
+      "persona:tone": "Collaborative",
+      "persona:priority": 6,
+      "persona:description": "여러 에이전트 간 협력 조정"
+    },
+    {
+      "@id": "persona:P20_MONITOR",
+      "@type": "persona:Persona",
+      "rdfs:label": "감시자 페르소나",
+      "persona:agent": {"@id": "agent:Agent20"},
+      "persona:tone": "Observant",
+      "persona:priority": 5,
+      "persona:description": "개입 효과 모니터링 및 조정"
+    },
+    {
+      "@id": "intervention:EmotionalSupport",
+      "@type": "intervention:Strategy",
+      "rdfs:label": "감정적 지원 전략",
+      "intervention:triggers": ["anxiety", "frustration", "low_confidence"],
+      "intervention:priority": 8,
+      "intervention:targetAgent": {"@id": "agent:Agent21"},
+      "intervention:actions": ["send_encouragement", "reduce_pressure", "offer_break"]
+    },
+    {
+      "@id": "intervention:CognitiveScaffolding",
+      "@type": "intervention:Strategy",
+      "rdfs:label": "인지적 비계 전략",
+      "intervention:triggers": ["confusion", "repeated_errors", "slow_progress"],
+      "intervention:priority": 7,
+      "intervention:targetAgent": {"@id": "agent:Agent19"},
+      "intervention:actions": ["provide_hints", "simplify_problem", "offer_examples"]
+    },
+    {
+      "@id": "intervention:MotivationBoost",
+      "@type": "intervention:Strategy",
+      "rdfs:label": "동기 부여 전략",
+      "intervention:triggers": ["boredom", "disengagement", "low_effort"],
+      "intervention:priority": 6,
+      "intervention:targetAgent": {"@id": "agent:Agent18"},
+      "intervention:actions": ["gamify_task", "set_challenge", "show_progress"]
+    },
+    {
+      "@id": "intervention:BehaviorGuidance",
+      "@type": "intervention:Strategy",
+      "rdfs:label": "행동 안내 전략",
+      "intervention:triggers": ["off_task", "rushing", "skipping_steps"],
+      "intervention:priority": 5,
+      "intervention:targetAgent": {"@id": "agent:Agent17"},
+      "intervention:actions": ["redirect_attention", "slow_down", "review_steps"]
+    },
+    {
+      "@id": "intervention:ImmediateHelp",
+      "@type": "intervention:Strategy",
+      "rdfs:label": "즉각적 도움 전략",
+      "intervention:triggers": ["stuck", "help_request", "critical_error"],
+      "intervention:priority": 9,
+      "intervention:targetAgent": {"@id": "agent:Agent21"},
+      "intervention:actions": ["provide_solution", "connect_teacher", "offer_alternative"]
+    },
+    {
+      "@id": "agent:Agent17",
+      "@type": "owl:Class",
+      "rdfs:label": "Behavior Guidance Agent",
+      "agent:role": "behavior_guidance"
+    },
+    {
+      "@id": "agent:Agent18",
+      "@type": "owl:Class",
+      "rdfs:label": "Motivation Agent",
+      "agent:role": "motivation"
+    },
+    {
+      "@id": "agent:Agent19",
+      "@type": "owl:Class",
+      "rdfs:label": "Learning Support Agent",
+      "agent:role": "learning_support"
+    },
+    {
+      "@id": "agent:Agent21",
+      "@type": "owl:Class",
+      "rdfs:label": "Intervention Execution Agent",
+      "agent:role": "intervention_execution"
+    },
+    {
+      "@id": "intervention:InterventionScore",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "개입 필요성 점수",
+      "rdfs:domain": {"@id": "agent:Student"},
+      "rdfs:range": {"@id": "xsd:float"},
+      "rdfs:comment": "0.0 ~ 1.0 범위, 0.6 이상이면 개입 권장"
+    },
+    {
+      "@id": "intervention:CooldownPeriod",
+      "@type": "owl:DatatypeProperty",
+      "rdfs:label": "쿨다운 기간",
+      "rdfs:domain": {"@id": "intervention:Strategy"},
+      "rdfs:range": {"@id": "xsd:integer"},
+      "rdfs:comment": "분 단위, 기본값 10분"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{{!
+    ExamFocus 추천 배너 템플릿
+    
+    @template local_examfocus/recommendation_banner
+    @copyright 2025 MathKing
+    @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="examfocus-banner alert {{#urgent}}alert-danger{{/urgent}}{{#important}}alert-warning{{/important}}{{^urgent}}{{^important}}alert-info{{/important}}{{/urgent}} alert-dismissible fade show" role="alert">
+    <div class="examfocus-header d-flex align-items-center mb-2">
+        <i class="fa fa-graduation-cap fa-2x mr-3"></i>
+        <div>
+            <h4 class="examfocus-title mb-0">{{title}}</h4>
+            <small class="text-muted">
+                시험까지 <strong>D-{{days_until}}</strong> ({{exam_date}})
+            </small>
+        </div>
+    </div>
+    
+    <div class="examfocus-body mb-3">
+        <p class="mb-2">{{message}}</p>
+        
+        {{#urgent}}
+        <div class="alert alert-danger mb-2">
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>긴급!</strong> 지금 바로 집중 학습이 필요합니다.
+        </div>
+        {{/urgent}}
+        
+        <div class="examfocus-mode-info">
+            <span class="badge badge-primary">추천 모드: {{mode}}</span>
+        </div>
+    </div>
+    
+    <div class="examfocus-actions">
+        <button type="button" class="btn btn-success examfocus-apply" data-mode="{{mode}}">
+            <i class="fa fa-check"></i> {{apply_label}}
+        </button>
+        <button type="button" class="btn btn-secondary examfocus-dismiss">
+            <i class="fa fa-times"></i> {{dismiss_label}}
+        </button>
+    </div>
+    
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<style>
+.examfocus-banner {
+    position: relative;
+    margin: 20px 0;
+    padding: 20px;
+    border-left: 5px solid;
+    animation: slideInDown 0.5s ease-out;
+}
+
+.examfocus-banner.alert-danger {
+    border-left-color: #dc3545;
+}
+
+.examfocus-banner.alert-warning {
+    border-left-color: #ffc107;
+}
+
+.examfocus-banner.alert-info {
+    border-left-color: #17a2b8;
+}
+
+.examfocus-highlight {
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.8) !important;
+    border: 2px solid #ffc107 !important;
+}
+
+.examfocus-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+</style>

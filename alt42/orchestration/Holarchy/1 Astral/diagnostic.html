@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holonic AGI Diagnostic Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e2e8f0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            padding: 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+
+        .header-subtitle {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .status-badge.safe { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e; }
+        .status-badge.caution { background: rgba(234, 179, 8, 0.2); color: #eab308; border: 1px solid #eab308; }
+        .status-badge.danger { background: rgba(249, 115, 22, 0.2); color: #f97316; border: 1px solid #f97316; }
+        .status-badge.critical { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-dot.safe { background: #22c55e; }
+        .status-dot.caution { background: #eab308; }
+        .status-dot.danger { background: #f97316; }
+        .status-dot.critical { background: #ef4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title-icon {
+            font-size: 1rem;
+        }
+
+        /* Top Layer Visualization */
+        .top-layer-viz {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .top-layer-box {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(34, 211, 238, 0.05));
+            border: 2px solid #22d3ee;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .top-layer-box::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .top-layer-label {
+            color: #22d3ee;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .top-layer-status {
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .holon-tree {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .holon-node {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            position: relative;
+        }
+
+        .holon-node::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .holon-node.safe { border-color: #22c55e; }
+        .holon-node.caution { border-color: #eab308; }
+        .holon-node.danger { border-color: #f97316; }
+
+        /* Diagnostic Parameters */
+        .param-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .param-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .param-label {
+            width: 40px;
+            font-weight: bold;
+            color: #a78bfa;
+            font-size: 0.875rem;
+        }
+
+        .param-bar-container {
+            flex: 1;
+            height: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 0.25rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .param-bar {
+            height: 100%;
+            border-radius: 0.25rem;
+            transition: width 0.5s ease;
+        }
+
+        .param-bar.sei { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .param-bar.ec { background: linear-gradient(90deg, #eab308, #facc15); }
+        .param-bar.es { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .param-bar.bv { background: linear-gradient(90deg, #f97316, #fb923c); }
+        .param-bar.gr { background: linear-gradient(90deg, #a855f7, #c084fc); }
+
+        .param-value {
+            width: 50px;
+            text-align: right;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .param-layer {
+            width: 80px;
+            font-size: 0.625rem;
+            color: #6b7280;
+            text-align: right;
+        }
+
+        /* Situation Display */
+        .situation-display {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .situation-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(34, 211, 238, 0.1);
+            border: 2px solid #22d3ee;
+            border-radius: 50%;
+            font-size: 1.5rem;
+        }
+
+        .situation-info {
+            flex: 1;
+        }
+
+        .situation-name {
+            font-weight: bold;
+            font-size: 1.125rem;
+            color: #22d3ee;
+        }
+
+        .situation-desc {
+            color: #6b7280;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Center Panel */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(34, 211, 238, 0.03));
+            border-color: rgba(168, 85, 247, 0.2);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(34, 211, 238, 0.1);
+            border-color: rgba(34, 211, 238, 0.3);
+            transform: translateX(4px);
+        }
+
+        .quick-action-icon {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+
+        .stat-value.warning {
+            color: #eab308;
+        }
+
+        .stat-value.danger {
+            color: #ef4444;
+        }
+
+        .stat-value.success {
+            color: #22c55e;
+        }
+
+        .stat-label {
+            font-size: 0.625rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        /* Holon Tree View */
+        .tree-view {
+            font-size: 0.875rem;
+        }
+
+        .tree-item {
+            padding: 0.5rem 0.75rem;
+            border-left: 2px solid rgba(255,255,255,0.1);
+            margin-left: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tree-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .tree-item-root {
+            margin-left: 0;
+            border-left: none;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+
+        .tree-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .tree-status.safe { background: #22c55e; }
+        .tree-status.caution { background: #eab308; }
+        .tree-status.danger { background: #f97316; }
+
+        /* Risk Log */
+        .risk-log {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 0.75rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            border-left: 3px solid;
+        }
+
+        .log-item.safe { border-color: #22c55e; }
+        .log-item.caution { border-color: #eab308; }
+        .log-item.danger { border-color: #f97316; }
+        .log-item.critical { border-color: #ef4444; }
+
+        .log-time {
+            color: #6b7280;
+            font-size: 0.625rem;
+        }
+
+        .log-message {
+            color: #e2e8f0;
+            margin-top: 0.25rem;
+        }
+
+        /* Loop Status */
+        .loop-status {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .loop-step {
+            padding: 0.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.375rem;
+            text-align: center;
+            font-size: 0.625rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .loop-step.active {
+            border-color: #22d3ee;
+            background: rgba(34, 211, 238, 0.1);
+        }
+
+        .loop-step-num {
+            font-weight: bold;
+            color: #22d3ee;
+            font-size: 0.875rem;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #22d3ee, #3b82f6);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-nav a {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 0.5rem;
+            color: #a5b4fc;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .header-nav a:hover {
+            background: rgba(34, 211, 238, 0.15);
+            border-color: #22d3ee;
+            color: #22d3ee;
+            transform: translateY(-2px);
+        }
+
+        .header-nav a .nav-icon {
+            margin-right: 0.4rem;
+        }
+
+        /* Improvement Recommendations */
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .recommendation-item {
+            padding: 0.875rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 0.5rem;
+            border-left: 3px solid;
+            transition: all 0.2s ease;
+        }
+
+        .recommendation-item:hover {
+            background: rgba(0,0,0,0.3);
+            transform: translateX(4px);
+        }
+
+        .recommendation-agent {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .agent-icon {
+            font-size: 1rem;
+        }
+
+        .agent-name {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #a5b4fc;
+        }
+
+        .agent-holon {
+            font-size: 0.625rem;
+            color: #6b7280;
+            margin-left: auto;
+            padding: 0.15rem 0.4rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 0.25rem;
+        }
+
+        /* Agent Row List */
+        .agent-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--agent-bg);
+            border-left: 3px solid var(--agent-border);
+            border-radius: 0.375rem;
+            text-decoration: none;
+            color: #e2e8f0;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .agent-row:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(4px);
+            border-left-width: 5px;
+        }
+
+        .agent-row:hover .agent-row-arrow {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .agent-row-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .agent-row-id {
+            font-weight: bold;
+            color: var(--agent-text);
+            width: 1.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+        }
+
+        .agent-row-name {
+            flex: 1;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-row-category {
+            font-size: 0.5rem;
+            padding: 0.1rem 0.35rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 0.2rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+        }
+
+        .agent-row-arrow {
+            opacity: 0;
+            color: var(--agent-text);
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        /* Custom Scrollbar for Agent List */
+        .recommendation-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .recommendation-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .recommendation-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+
+        .recommendation-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .recommendation-item.priority-high {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        .recommendation-item.priority-medium {
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.08);
+        }
+
+        .recommendation-item.priority-low {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .recommendation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommendation-target {
+            font-weight: bold;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+        }
+
+        .recommendation-priority {
+            font-size: 0.625rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .recommendation-priority.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .recommendation-priority.medium {
+            background: rgba(234, 179, 8, 0.2);
+            color: #eab308;
+        }
+
+        .recommendation-priority.low {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .recommendation-content {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            line-height: 1.5;
+        }
+
+        .recommendation-action {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #a5b4fc;
+            font-weight: 500;
+        }
+
+        .recommendation-action::before {
+            content: '→ ';
+        }
+
+        .recommendation-metric {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.15rem 0.4rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 0.25rem;
+            font-size: 0.625rem;
+            color: #a78bfa;
+            margin-right: 0.5rem;
+        }
+
+        /* Agent Dropdown Styles */
+        .agent-dropdown {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 0.5rem;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239ca3af' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+        }
+
+        .agent-dropdown:hover {
+            border-color: #22d3ee;
+            background-color: rgba(34, 211, 238, 0.1);
+        }
+
+        .agent-dropdown:focus {
+            outline: none;
+            border-color: #22d3ee;
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+        }
+
+        .agent-dropdown option {
+            background: #1a1a2e;
+            color: #e2e8f0;
+            padding: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 280px 1fr;
+            }
+            
+            .right-panel {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .right-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .header-nav {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .header-nav a {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div>
+            <h1 class="header-title">HOLONIC AGI DIAGNOSTIC</h1>
+            <p class="header-subtitle">시스템 전체 상태 모니터링 - 5개 최소 진단 파라미터</p>
+        </div>
+        <nav class="header-nav">
+            <a href="https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/agent_orchestration/agentmission.html#agent01" target="_blank">
+                <span class="nav-icon">🤖</span>에이전트 개발
+            </a>
+            <a href="https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/Holarchy/0%20Docs/dashboard.html" target="_blank">
+                <span class="nav-icon">📋</span>회의 → 홀론
+            </a>
+            <a href="https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/Holarchy/1%20Astral/index.html" target="_blank">
+                <span class="nav-icon">⬡</span>홀론 크리에이터
+            </a>
+            <a href="https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/ontology_persona/dashboard.html" target="_blank">
+                <span class="nav-icon">📊</span>자동개입 대시보드
+            </a>
+        </nav>
+        <div id="statusBadge" class="status-badge safe">
+            <span class="status-dot safe"></span>
+            <span>SYSTEM STABLE</span>
+        </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <!-- Current Situation -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">📍</span>
+                    현재 상황
+                </h3>
+                <div class="situation-display">
+                    <div class="situation-icon" id="situationIcon">🚀</div>
+                    <div class="situation-info">
+                        <div class="situation-name" id="situationName">INIT</div>
+                        <div class="situation-desc" id="situationDesc">프로젝트/홀론 초기화</div>
+                    </div>
+                </div>
+                
+                <!-- Loop Status -->
+                <h4 style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem;">반복 루프 단계</h4>
+                <div class="loop-status">
+                    <div class="loop-step active">
+                        <div class="loop-step-num">1</div>
+                        <div>Context</div>
+                    </div>
+                    <div class="loop-step">
+                        <div class="loop-step-num">2</div>
+                        <div>Risk Check</div>
+                    </div>
+                    <div class="loop-step">
+                        <div class="loop-step-num">3</div>
+                        <div>Questions</div>
+                    </div>
+                    <div class="loop-step">
+                        <div class="loop-step-num">4</div>
+                        <div>Update</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Layer Stability -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">🌳</span>
+                    Top Layer 안정성
+                </h3>
+                <div class="top-layer-viz">
+                    <div class="top-layer-box">
+                        <div class="top-layer-label">TOP LAYER (불변)</div>
+                        <div class="top-layer-status">W_ROOT: K-12 EdTech</div>
+                    </div>
+                    <div class="holon-tree">
+                        <div class="holon-node safe">학습진단</div>
+                        <div class="holon-node caution">AI튜터</div>
+                        <div class="holon-node safe">콘텐츠</div>
+                    </div>
+                </div>
+                <p style="text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 1rem;">
+                    상위 구조 불변 → 하위 홀론 자유롭게 확장/교체 가능
+                </p>
+            </div>
+
+            <!-- Diagnostic Parameters -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">📊</span>
+                    5개 진단 파라미터
+                </h3>
+                <div class="param-list" id="paramList">
+                    <!-- JS로 렌더링 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel -->
+        <div class="center-panel">
+            <!-- Holon Tree View -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">🌲</span>
+                    홀론 트리 구조
+                </h3>
+                <div class="tree-view" id="holonTree">
+                    <div class="tree-item tree-item-root">
+                        <span class="tree-status safe"></span>
+                        [ROOT] K-12 EdTech - 자기진화형 교육 기업
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-status safe"></span>
+                        학습진단 홀론
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-status caution"></span>
+                        AI튜터 홀론 (caution)
+                    </div>
+                    <div class="tree-item">
+                        <span class="tree-status safe"></span>
+                        콘텐츠관리 홀론
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="runLoop()">▶ 루프 실행</button>
+                    <button class="btn btn-secondary" onclick="refreshData()">↻ 새로고침</button>
+                </div>
+            </div>
+
+            <!-- Risk Log -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">📋</span>
+                    위험 로그
+                </h3>
+                <div class="risk-log" id="riskLog">
+                    <div class="log-item caution">
+                        <div class="log-time">2025-12-05 10:30:15</div>
+                        <div class="log-message">AI튜터 홀론에서 caution 감지됨 - EC 지표 하락</div>
+                    </div>
+                    <div class="log-item safe">
+                        <div class="log-time">2025-12-05 10:25:00</div>
+                        <div class="log-message">시스템 초기화 완료 - 모든 파라미터 정상</div>
+                    </div>
+                    <div class="log-item safe">
+                        <div class="log-time">2025-12-05 10:20:00</div>
+                        <div class="log-message">context.md 로드 완료</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W_ROOT Display -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(34, 211, 238, 0.05), rgba(139, 92, 246, 0.05));">
+                <h3 class="card-title">
+                    <span class="card-title-icon">🎯</span>
+                    W_ROOT (최상위 의지 - 불변)
+                </h3>
+                <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; border-left: 3px solid #22d3ee;">
+                    <p style="font-size: 0.875rem; line-height: 1.6;">
+                        <strong style="color: #22d3ee;">Identity:</strong> 전국 최고의 AI 기반 자기진화형 K-12 수학 교육 기업<br>
+                        <strong style="color: #a78bfa;">Drive:</strong> 1:1 과외 효과를 기술로 재현·확장 (Bloom's 2σ)<br>
+                        <strong style="color: #22c55e;">North Star:</strong> 모든 학생이 AI와 함께 수학을 정복할 수 있다
+                    </p>
+                </div>
+                <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.75rem; text-align: center;">
+                    이 의지는 시스템이 어떻게 확장되어도 절대 변하지 않습니다.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Panel - 홀론닉 에이전트 -->
+        <div class="right-panel">
+            <div class="card recommendation-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">🤖</span>
+                    홀론닉 에이전트 (22)
+                </h3>
+                <div style="margin-bottom: 1rem;">
+                    <select id="holonicAgentSelect" class="agent-dropdown" onchange="navigateToAgent(this.value, 'holonic')">
+                        <option value="">-- 에이전트 선택 --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 컨텐츠 개발팀 에이전트들 -->
+            <div class="card recommendation-card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">🛠️</span>
+                    컨텐츠 개발팀 홀론 (12)
+                </h3>
+                <div style="margin-bottom: 1rem;">
+                    <select id="contentTeamSelect" class="agent-dropdown" onchange="navigateToAgent(this.value, 'content')">
+                        <option value="">-- 홀론 선택 --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">⚡</span>
+                    빠른 실행
+                </h3>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="runLoop()">
+                        <span class="quick-action-icon">▶</span>
+                        <span class="quick-action-text">진단 루프 실행</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="refreshData()">
+                        <span class="quick-action-icon">↻</span>
+                        <span class="quick-action-text">데이터 새로고침</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="exportReport()">
+                        <span class="quick-action-icon">📊</span>
+                        <span class="quick-action-text">리포트 내보내기</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="card">
+                <h3 class="card-title">
+                    <span class="card-title-icon">📈</span>
+                    요약 통계
+                </h3>
+                <div class="summary-stats" id="summaryStats">
+                    <!-- JS로 렌더링 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA ==========
+        const diagnosticParams = [
+            { key: 'SEI', name: '학습 효과', layer: '인지/콘텐츠', value: 0.82, color: 'sei' },
+            { key: 'EC', name: '몰입 지속', layer: '정서/동기', value: 0.71, color: 'ec' },
+            { key: 'ES', name: '정서 안전', layer: '정서/심리', value: 0.89, color: 'es' },
+            { key: 'BV', name: '지점 편차', layer: '운영/조직', value: 0.23, color: 'bv', inverted: true },
+            { key: 'GR', name: '일반화 신뢰성', layer: '메타/정책', value: 0.76, color: 'gr' }
+        ];
+
+        const situations = {
+            init: { icon: '🚀', name: 'INIT', desc: '프로젝트/홀론 초기화' },
+            develop: { icon: '⚙️', name: 'DEVELOP', desc: '개발/실행 진행 중' },
+            review: { icon: '👁️', name: 'REVIEW', desc: '검토 필요 (사람 개입)' },
+            blocked: { icon: '🛑', name: 'BLOCKED', desc: '진행 불가 (위험 감지)' },
+            complete: { icon: '✅', name: 'COMPLETE', desc: '완료' }
+        };
+
+        // 22개 홀론닉 에이전트 목록
+        const holonicAgents = [
+            { id: 'agent01', name: 'Onboarding', nameKr: '온보딩', icon: '🚀', category: 'core' },
+            { id: 'agent02', name: 'Exam Schedule', nameKr: '시험일정', icon: '📅', category: 'support' },
+            { id: 'agent03', name: 'Goals Analysis', nameKr: '목표분석', icon: '🎯', category: 'support' },
+            { id: 'agent04', name: 'Inspect Weakpoints', nameKr: '취약점진단', icon: '🔍', category: 'core' },
+            { id: 'agent05', name: 'Learning Emotion', nameKr: '학습정서', icon: '💚', category: 'analysis' },
+            { id: 'agent06', name: 'Teacher Feedback', nameKr: '교사피드백', icon: '👨‍🏫', category: 'support' },
+            { id: 'agent07', name: 'Interaction Targeting', nameKr: '상호작용타겟팅', icon: '🎯', category: 'support' },
+            { id: 'agent08', name: 'Calmness', nameKr: '안정화', icon: '🧘', category: 'analysis' },
+            { id: 'agent09', name: 'Learning Management', nameKr: '학습관리', icon: '📊', category: 'analysis' },
+            { id: 'agent10', name: 'Concept Notes', nameKr: '개념노트', icon: '📝', category: 'analysis' },
+            { id: 'agent11', name: 'Problem Notes', nameKr: '문제노트', icon: '📋', category: 'analysis' },
+            { id: 'agent12', name: 'Rest Routine', nameKr: '휴식루틴', icon: '😴', category: 'analysis' },
+            { id: 'agent13', name: 'Learning Dropout', nameKr: '학습이탈', icon: '⚠️', category: 'analysis' },
+            { id: 'agent14', name: 'Current Position', nameKr: '현재위치', icon: '📍', category: 'core' },
+            { id: 'agent15', name: 'Problem Redefinition', nameKr: '문제재정의', icon: '🔄', category: 'analysis' },
+            { id: 'agent16', name: 'Interaction Preparation', nameKr: '상호작용준비', icon: '🤝', category: 'execution' },
+            { id: 'agent17', name: 'Remaining Activities', nameKr: '잔여활동', icon: '📌', category: 'analysis' },
+            { id: 'agent18', name: 'Signature Routine', nameKr: '시그니처루틴', icon: '✨', category: 'analysis' },
+            { id: 'agent19', name: 'Interaction Content', nameKr: '상호작용콘텐츠', icon: '💬', category: 'execution' },
+            { id: 'agent20', name: 'Intervention Preparation', nameKr: '개입준비', icon: '🎬', category: 'execution' },
+            { id: 'agent21', name: 'Intervention Execution', nameKr: '개입실행', icon: '▶️', category: 'execution' },
+            { id: 'agent22', name: 'Module Improvement', nameKr: '모듈개선', icon: '🔧', category: 'analysis' }
+        ];
+
+        // 에이전트 카테고리 색상
+        const categoryColors = {
+            core: { bg: 'rgba(34, 197, 94, 0.1)', border: '#22c55e', text: '#22c55e' },
+            support: { bg: 'rgba(59, 130, 246, 0.1)', border: '#3b82f6', text: '#3b82f6' },
+            analysis: { bg: 'rgba(168, 85, 247, 0.1)', border: '#a855f7', text: '#a855f7' },
+            execution: { bg: 'rgba(249, 115, 22, 0.1)', border: '#f97316', text: '#f97316' }
+        };
+
+        // 컨텐츠 개발팀 홀론 목록
+        const contentTeamHolons = [
+            { id: 'content_dev', name: '컨텐츠 개발 홀론', icon: '📚' },
+            { id: 'student_feedback', name: '학생피드백 수집 홀론', icon: '📝' },
+            { id: 'interface_improve', name: '인터페이스 개선 홀론', icon: '🎨' },
+            { id: 'interface_integration', name: '인터페이스 통합 홀론', icon: '🔗' },
+            { id: 'new_counseling', name: '신규 상담 홀론', icon: '💬' },
+            { id: 'dev_support', name: '개발자 지원 홀론', icon: '👨‍💻' },
+            { id: 'first_class_opt', name: '첫수업 최적화 홀론', icon: '🎯' },
+            { id: 'system_perf', name: '시스템 성능 개선 홀론', icon: '⚡' },
+            { id: 'self_explain', name: '자기설명 개선 홀론', icon: '💡' },
+            { id: 'self_recognition', name: '자기인정 개선 홀론', icon: '✨' },
+            { id: 'class_flow', name: '수업흐름 분석 홀론', icon: '📊' },
+            { id: 'collab_orch', name: '협업 오케스트레이션 홀론', icon: '🤝' }
+        ];
+
+        // 에이전트 대화 URL 생성
+        const AGENT_CHAT_BASE_URL = 'https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/agent22_module_improvement/ui/index.php';
+
+        let currentSituation = 'init';
+        let riskLevel = 'safe';
+
+        // ========== RENDER FUNCTIONS ==========
+        function renderDropdowns() {
+            // 홀론닉 에이전트 드롭다운 렌더링
+            const holonicSelect = document.getElementById('holonicAgentSelect');
+            holonicSelect.innerHTML = '<option value="">-- 에이전트 선택 --</option>' + 
+                holonicAgents.map(agent => {
+                    return `<option value="${agent.id}">${agent.icon} ${agent.id.replace('agent', '')}. ${agent.nameKr} (${agent.name})</option>`;
+                }).join('');
+            
+            // 컨텐츠 개발팀 홀론 드롭다운 렌더링
+            const contentSelect = document.getElementById('contentTeamSelect');
+            contentSelect.innerHTML = '<option value="">-- 홀론 선택 --</option>' + 
+                contentTeamHolons.map(holon => {
+                    return `<option value="${holon.id}">${holon.icon} ${holon.name}</option>`;
+                }).join('');
+        }
+
+        function navigateToAgent(value, type) {
+            if (!value) return;
+            
+            if (type === 'holonic') {
+                const agent = holonicAgents.find(a => a.id === value);
+                if (agent) {
+                    const chatUrl = `${AGENT_CHAT_BASE_URL}#${agent.id}_${agent.name.toLowerCase().replace(/ /g, '_')}`;
+                    window.open(chatUrl, '_blank');
+                    addLogEntry(`${agent.icon} ${agent.nameKr} 에이전트 대화 시작`, 'safe');
+                    // 선택 초기화
+                    document.getElementById('holonicAgentSelect').value = '';
+                }
+            } else if (type === 'content') {
+                const holon = contentTeamHolons.find(h => h.id === value);
+                if (holon) {
+                    // 컨텐츠 개발팀 홀론은 별도 URL이 있을 수 있음 (일단 로그만 표시)
+                    addLogEntry(`${holon.icon} ${holon.name} 선택됨`, 'safe');
+                    alert(`${holon.icon} ${holon.name}\n\n해당 홀론 페이지로 이동합니다.`);
+                    // 선택 초기화
+                    document.getElementById('contentTeamSelect').value = '';
+                }
+            }
+        }
+
+        function startAgentChat(agentId) {
+            const agent = holonicAgents.find(a => a.id === agentId);
+            if (agent) {
+                const chatUrl = `${AGENT_CHAT_BASE_URL}#${agent.id}_${agent.name.toLowerCase().replace(/ /g, '_')}`;
+                window.open(chatUrl, '_blank');
+                addLogEntry(`${agent.icon} ${agent.nameKr} 에이전트 대화 시작`, 'safe');
+            }
+        }
+        
+        // 기존 호환성을 위한 함수 (삭제하지 않음)
+        function renderRecommendations() {
+            renderDropdowns();
+        }
+
+        function renderParams() {
+            const container = document.getElementById('paramList');
+            container.innerHTML = diagnosticParams.map(param => {
+                const displayValue = param.inverted ? (1 - param.value) : param.value;
+                const percent = Math.round(displayValue * 100);
+                
+                return `
+                    <div class="param-item">
+                        <span class="param-label">${param.key}</span>
+                        <div class="param-bar-container">
+                            <div class="param-bar ${param.color}" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="param-value">${percent}%</span>
+                        <span class="param-layer">${param.layer}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateRiskLevel() {
+            // BV는 낮을수록 좋으므로 반전
+            const scores = diagnosticParams.map(p => p.inverted ? (1 - p.value) : p.value);
+            const minScore = Math.min(...scores);
+            
+            let level, text;
+            if (minScore >= 0.8) {
+                level = 'safe';
+                text = 'SYSTEM STABLE';
+            } else if (minScore >= 0.6) {
+                level = 'caution';
+                text = 'CAUTION';
+            } else if (minScore >= 0.4) {
+                level = 'danger';
+                text = 'DANGER - 확인 필요';
+            } else {
+                level = 'critical';
+                text = 'CRITICAL - 즉시 조치';
+            }
+            
+            riskLevel = level;
+            const badge = document.getElementById('statusBadge');
+            badge.className = `status-badge ${level}`;
+            badge.innerHTML = `<span class="status-dot ${level}"></span><span>${text}</span>`;
+        }
+
+        function updateSituation(situation) {
+            currentSituation = situation;
+            const s = situations[situation];
+            document.getElementById('situationIcon').textContent = s.icon;
+            document.getElementById('situationName').textContent = s.name;
+            document.getElementById('situationDesc').textContent = s.desc;
+        }
+
+        function addLogEntry(message, level = 'safe') {
+            const log = document.getElementById('riskLog');
+            const now = new Date().toISOString().replace('T', ' ').substring(0, 19);
+            
+            const entry = document.createElement('div');
+            entry.className = `log-item ${level}`;
+            entry.innerHTML = `
+                <div class="log-time">${now}</div>
+                <div class="log-message">${message}</div>
+            `;
+            
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        // ========== ACTIONS ==========
+        function runLoop() {
+            addLogEntry('루프 실행 시작...', riskLevel);
+            
+            // Simulate loop steps
+            const steps = document.querySelectorAll('.loop-step');
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                steps.forEach((step, i) => {
+                    step.classList.toggle('active', i === currentStep);
+                });
+                
+                currentStep++;
+                
+                if (currentStep > 3) {
+                    clearInterval(interval);
+                    addLogEntry('루프 실행 완료 - 상태 업데이트됨', riskLevel);
+                    
+                    // Simulate parameter change
+                    diagnosticParams[1].value = Math.min(1, diagnosticParams[1].value + 0.02);
+                    renderParams();
+                    renderRecommendations();
+                    renderSummaryStats();
+                    updateRiskLevel();
+                }
+            }, 500);
+        }
+
+        function refreshData() {
+            addLogEntry('데이터 새로고침 중...', 'safe');
+            
+            // Simulate API call
+            setTimeout(() => {
+                renderParams();
+                renderRecommendations();
+                renderSummaryStats();
+                updateRiskLevel();
+                addLogEntry('데이터 새로고침 완료', 'safe');
+            }, 500);
+        }
+
+        // ========== SUMMARY STATS ==========
+        function renderSummaryStats() {
+            const container = document.getElementById('summaryStats');
+            
+            // 전체 평균 계산
+            const scores = diagnosticParams.map(p => p.inverted ? (1 - p.value) : p.value);
+            const avgScore = Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100);
+            
+            // 경고 수 계산
+            const warnings = scores.filter(s => s < 0.8 && s >= 0.6).length;
+            const dangers = scores.filter(s => s < 0.6).length;
+            
+            // 최저 지표 찾기
+            const minScore = Math.min(...scores);
+            const minIdx = scores.indexOf(minScore);
+            const weakestParam = diagnosticParams[minIdx];
+            
+            let avgClass = 'success';
+            if (avgScore < 60) avgClass = 'danger';
+            else if (avgScore < 80) avgClass = 'warning';
+            
+            container.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value ${avgClass}">${avgScore}%</div>
+                    <div class="stat-label">전체 건강도</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value ${warnings > 0 ? 'warning' : 'success'}">${warnings}</div>
+                    <div class="stat-label">주의 지표</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value ${dangers > 0 ? 'danger' : 'success'}">${dangers}</div>
+                    <div class="stat-label">위험 지표</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="font-size: 1rem; color: #a78bfa;">${weakestParam.key}</div>
+                    <div class="stat-label">최저 지표</div>
+                </div>
+            `;
+        }
+
+        function exportReport() {
+            addLogEntry('리포트 생성 중...', 'safe');
+            
+            setTimeout(() => {
+                const scores = diagnosticParams.map(p => ({
+                    key: p.key,
+                    name: p.name,
+                    value: Math.round((p.inverted ? (1 - p.value) : p.value) * 100)
+                }));
+                
+                const report = {
+                    timestamp: new Date().toISOString(),
+                    situation: currentSituation,
+                    riskLevel: riskLevel,
+                    parameters: scores
+                };
+                
+                const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `holonic-diagnostic-${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                addLogEntry('리포트 내보내기 완료', 'safe');
+            }, 500);
+        }
+
+        // ========== INIT ==========
+        function init() {
+            renderParams();
+            renderRecommendations();
+            renderSummaryStats();
+            updateRiskLevel();
+            updateSituation('init');
+        }
+
+        init();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새로운 테이블 구조 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .data-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #fff3cd;
+        }
+    </style>
+</head>
+<body>
+    <h1>새로운 테이블 구조 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1. API 연결 테스트</h2>
+        <button onclick="testOldAPI()">기존 API 테스트</button>
+        <button onclick="testNewAPI()">새 API 테스트</button>
+        <div id="apiTestResult" class="test-result info">API를 선택하여 테스트하세요</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 데이터 저장 테스트</h2>
+        <button onclick="saveTestData('internal_link')">내부링크 저장</button>
+        <button onclick="saveTestData('external_link')">외부링크 저장</button>
+        <button onclick="saveTestData('send_message')">메시지 저장</button>
+        <button onclick="saveTestData('agent')">에이전트 저장</button>
+        <div id="saveTestResult" class="test-result info">저장할 플러그인 타입을 선택하세요</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 데이터 조회 및 비교</h2>
+        <button onclick="compareData()">기존 vs 새 구조 비교</button>
+        <div id="compareResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. 마이그레이션 검증</h2>
+        <button onclick="validateMigration()">마이그레이션 검증</button>
+        <div id="migrationResult" class="data-display" style="display:none;"></div>
+    </div>
+
+    <script>
+        const userId = 1; // 테스트용 사용자 ID
+        const category = 'test_category';
+        
+        // 기존 API 테스트
+        async function testOldAPI() {
+            const result = document.getElementById('apiTestResult');
+            try {
+                const response = await fetch('plugin_settings_api_real.php?action=getCardSettings&user_id=' + userId);
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'test-result success';
+                    result.textContent = `✓ 기존 API 정상 작동 (${data.data.length}개 카드)`;
+                } else {
+                    result.className = 'test-result error';
+                    result.textContent = `✗ 기존 API 오류: ${data.error}`;
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.textContent = `✗ 연결 오류: ${error.message}`;
+            }
+        }
+        
+        // 새 API 테스트
+        async function testNewAPI() {
+            const result = document.getElementById('apiTestResult');
+            try {
+                const formData = new FormData();
+                formData.append('action', 'getCardSettings');
+                formData.append('user_id', userId);
+                
+                const response = await fetch('plugin_settings_api_new.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'test-result success';
+                    result.textContent = `✓ 새 API 정상 작동 (${data.data.length}개 카드)`;
+                } else {
+                    result.className = 'test-result error';
+                    result.textContent = `✗ 새 API 오류: ${data.error}`;
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.textContent = `✗ 연결 오류: ${error.message}`;
+            }
+        }
+        
+        // 테스트 데이터 저장
+        async function saveTestData(pluginId) {
+            const result = document.getElementById('saveTestResult');
+            const timestamp = new Date().getTime();
+            
+            let config = {
+                plugin_name: `테스트 ${pluginId} - ${timestamp}`,
+                card_description: `테스트 설명 - ${timestamp}`
+            };
+            
+            // 플러그인 타입별 추가 설정
+            switch (pluginId) {
+                case 'internal_link':
+                    config.internal_url = '/test/page';
+                    config.open_new_tab = false;
+                    break;
+                case 'external_link':
+                    config.external_url = 'https://example.com';
+                    config.open_new_tab = true;
+                    break;
+                case 'send_message':
+                    config.message_content = '테스트 메시지입니다.';
+                    config.message_type = 'success';
+                    break;
+                case 'agent':
+                    config.agent_type = 'php';
+                    config.agent_code = 'echo "Hello World";';
+                    config.agent_description = '테스트 에이전트';
+                    config.agent_config = {
+                        title: '에이전트 제목',
+                        description: '에이전트 설명',
+                        details: ['상세1', '상세2'],
+                        action: 'test_action'
+                    };
+                    break;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'saveCardSetting');
+                formData.append('user_id', userId);
+                formData.append('category', category);
+                formData.append('card_title', `테스트 카드 ${timestamp}`);
+                formData.append('card_index', 0);
+                formData.append('plugin_id', pluginId);
+                formData.append('config', JSON.stringify(config));
+                
+                const response = await fetch('plugin_settings_api_new.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    result.className = 'test-result success';
+                    result.textContent = `✓ ${pluginId} 저장 성공 (ID: ${data.id})`;
+                } else {
+                    result.className = 'test-result error';
+                    result.textContent = `✗ 저장 실패: ${data.error}`;
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.textContent = `✗ 저장 오류: ${error.message}`;
+            }
+        }
+        
+        // 데이터 비교
+        async function compareData() {
+            const resultDiv = document.getElementById('compareResult');
+            resultDiv.innerHTML = '<div class="test-result info">데이터를 비교하는 중...</div>';
+            
+            try {
+                // 기존 API 데이터
+                const oldResponse = await fetch('plugin_settings_api_real.php?action=getCardSettings&user_id=' + userId + '&category=' + category);
+                const oldData = await oldResponse.json();
+                
+                // 새 API 데이터
+                const newFormData = new FormData();
+                newFormData.append('action', 'getCardSettings');
+                newFormData.append('user_id', userId);
+                newFormData.append('category', category);
+                
+                const newResponse = await fetch('plugin_settings_api_new.php', {
+                    method: 'POST',
+                    body: newFormData
+                });
+                const newData = await newResponse.json();
+                
+                if (oldData.success && newData.success) {
+                    let html = '<table class="comparison-table">';
+                    html += '<thead><tr><th>항목</th><th>기존 구조</th><th>새 구조</th><th>일치 여부</th></tr></thead>';
+                    html += '<tbody>';
+                    
+                    // 레코드 수 비교
+                    html += '<tr>';
+                    html += '<td>레코드 수</td>';
+                    html += `<td>${oldData.data.length}</td>`;
+                    html += `<td>${newData.data.length}</td>`;
+                    html += `<td class="${oldData.data.length === newData.data.length ? 'success' : 'error'}">${oldData.data.length === newData.data.length ? '✓' : '✗'}</td>`;
+                    html += '</tr>';
+                    
+                    // 샘플 데이터 비교 (최대 5개)
+                    const maxSamples = Math.min(5, Math.min(oldData.data.length, newData.data.length));
+                    for (let i = 0; i < maxSamples; i++) {
+                        const oldItem = oldData.data[i];
+                        const newItem = newData.data[i];
+                        
+                        html += '<tr class="highlight">';
+                        html += `<td colspan="4"><strong>샘플 ${i + 1}: ${oldItem.card_title}</strong></td>`;
+                        html += '</tr>';
+                        
+                        // plugin_config 비교
+                        const oldConfig = JSON.stringify(oldItem.plugin_config, null, 2);
+                        const newConfig = JSON.stringify(newItem.plugin_config, null, 2);
+                        
+                        html += '<tr>';
+                        html += '<td>plugin_config</td>';
+                        html += `<td><pre>${oldConfig}</pre></td>`;
+                        html += `<td><pre>${newConfig}</pre></td>`;
+                        html += `<td class="${oldConfig === newConfig ? 'success' : 'warning'}">${oldConfig === newConfig ? '✓' : '⚠'}</td>`;
+                        html += '</tr>';
+                    }
+                    
+                    html += '</tbody></table>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = '<div class="test-result error">데이터 로드 실패</div>';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">비교 오류: ${error.message}</div>`;
+            }
+        }
+        
+        // 마이그레이션 검증
+        async function validateMigration() {
+            const resultDiv = document.getElementById('migrationResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '검증 중...\n';
+            
+            try {
+                // 직접 데이터베이스 검증을 위한 PHP 스크립트 호출
+                const response = await fetch('validate_migration.php');
+                const text = await response.text();
+                resultDiv.textContent = text;
+            } catch (error) {
+                resultDiv.textContent = `검증 오류: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

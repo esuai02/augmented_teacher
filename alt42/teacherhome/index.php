@@ -1,0 +1,305 @@
+<?php 
+include_once("/home/moodle/public_html/moodle/config.php"); 
+global $DB,$USER;
+require_login();
+$userid=$_GET["userid"]; 
+if($userid==NULL)$userid=$USER->id;
+$userrole=$DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22'  "); 
+$role=$userrole->data;
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTM 코파일럿</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <!-- 좌측 에이전트 목록 -->
+        <div class="agent-sidebar">
+            <div class="sidebar-header">
+                <div class="header-title">
+                    <h1>KTM 코파일럿</h1>
+                    <div class="header-buttons">
+                        <button class="home-button" onclick="goToHome()" title="홈으로 이동">🏠</button>
+                        <button title="알림">🔔</button>
+                        <button title="설정">⚙️</button>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" class="search-input" placeholder="에이전트 검색..." id="searchInput">
+                </div>
+            </div>
+            
+            <div class="agent-list" id="agentList">
+                <!-- 분기활동 -->
+                <div class="menu-category" data-category="quarterly">
+                    <div class="category-header" onclick="selectCategory('quarterly')">
+                        <span class="category-title">1. 분기활동</span>
+                        <span class="category-status" id="quarterly-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 주간활동 -->
+                <div class="menu-category" data-category="weekly">
+                    <div class="category-header" onclick="selectCategory('weekly')">
+                        <span class="category-title">2. 주간활동</span>
+                        <span class="category-status" id="weekly-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 오늘활동 -->
+                <div class="menu-category" data-category="daily">
+                    <div class="category-header" onclick="selectCategory('daily')">
+                        <span class="category-title">3. 오늘활동</span>
+                        <span class="category-status" id="daily-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 실시간 관리 -->
+                <div class="menu-category" data-category="realtime">
+                    <div class="category-header" onclick="selectCategory('realtime')">
+                        <span class="category-title">4. 실시간 관리</span>
+                        <span class="category-status" id="realtime-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 상호작용 관리 -->
+                <div class="menu-category" data-category="interaction">
+                    <div class="category-header" onclick="selectCategory('interaction')">
+                        <span class="category-title">5. 상호작용 관리</span>
+                        <span class="category-status" id="interaction-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 인지관성 개선 -->
+                <div class="menu-category" data-category="bias">
+                    <div class="category-header" onclick="selectCategory('bias')">
+                        <span class="category-title">6. 인지관성 개선</span>
+                        <span class="category-status" id="bias-status">●</span>
+                    </div>
+                </div>
+
+                <!-- 컨텐츠 및 앱개발 -->
+                <div class="menu-category content-development" data-category="development">
+                    <div class="category-header" onclick="selectCategory('development')">
+                        <span class="category-title">7. 컨텐츠 및 앱개발</span>
+                        <span class="category-status" id="development-status">●</span>
+                    </div>
+                </div>
+                
+                <!-- 바이럴 마케팅 -->
+                <div class="menu-category viral-marketing" data-category="viral">
+                    <div class="category-header" onclick="selectCategory('viral')">
+                        <span class="category-title">8. 바이럴 마케팅</span>
+                        <span class="category-status" id="viral-status">●</span>
+                    </div>
+                </div>
+                
+                <!-- 상담관리 -->
+                <div class="menu-category consultation" data-category="consultation">
+                    <div class="category-header" onclick="selectCategory('consultation')">
+                        <span class="category-title">9. 상담관리</span>
+                        <span class="category-status" id="consultation-status">●</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 우측 콘텐츠 영역 -->
+        <div class="content-area" id="contentArea">
+            <!-- 초기 로딩 iframe -->
+            <div class="initial-iframe-container" id="initialIframeContainer" style="display: block; width: 100%; height: 100%;">
+                <iframe 
+                    src="https://mathking.kr/moodle/local/augmented_teacher/alt42/viralktm/index.html" 
+                    frameborder="0" 
+                    width="100%" 
+                    height="100%"
+                    id="initialIframe">
+                </iframe>
+            </div>
+            
+            <!-- 헤더 -->
+            <div class="content-header" style="display: none;">
+                <div class="header-info">
+                    <div class="current-agent">
+                        <div class="current-agent-avatar">
+                            <div class="current-avatar-circle" id="currentAgentAvatar"></div>
+                            <div class="status-indicator status-online"></div>
+                        </div>
+                        <div class="current-agent-info">
+                            <h2 id="currentAgentName"></h2>
+                            <p id="currentAgentRole"></p>
+                        </div>
+                    </div>
+                    <div class="mode-switcher">
+                        <button class="mode-button active" onclick="switchMode('onboarding')">
+                            💡 온보딩
+                        </button>
+                        <button class="mode-button" onclick="switchMode('menu')">
+                            📋 메뉴
+                        </button>
+                        <button class="mode-button" onclick="switchMode('chat')">
+                            💬 채팅
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 가이드 메시지 (온보딩/채팅 모드에서 표시) -->
+            <div id="guideMessage" class="guide-message" style="display: none;">
+                💡 무엇이든 자유롭게 질문해보세요!
+            </div>
+
+            <!-- 메뉴탭 영역 -->
+            <div class="menu-tab-container" id="menuTabContainer" style="display: none;">
+                <div class="menu-tab-grid" id="menuTabGrid">
+                    <!-- 메뉴탭 아이템들이 여기에 동적으로 생성됩니다 -->
+                </div>
+                <div class="submenu-container" id="submenuContainer">
+                    <!-- 세부 메뉴들이 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+
+            <!-- 채팅 영역 -->
+            <div class="chat-area" id="chatArea" style="display: none;">
+                <div class="chat-container" id="chatContainer">
+                    <!-- 메시지가 여기에 동적으로 생성됩니다 -->
+                </div>
+            </div>
+
+            <!-- 입력 영역 -->
+            <div class="input-area" style="display: none;">
+                <div class="input-container">
+                    <button class="input-button">📎</button>
+                    <div class="input-wrapper">
+                        <input type="text" class="message-input" placeholder="궁금한 것을 자유롭게 물어보세요..." id="messageInput" onkeypress="if(event.key === 'Enter') sendMessage()">
+                        <div class="input-actions">
+                            <button class="input-button">😊</button>
+                        </div>
+                    </div>
+                    <button class="input-button">🎤</button>
+                    <button class="send-button" onclick="sendMessage()">📤</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 슬라이딩 채팅 패널 -->
+    <div class="sliding-chat-panel" id="slidingChatPanel">
+        <div class="chat-panel-header">
+            <h3>💬 AI 챗봇 대화</h3>
+            <button class="chat-close-btn" onclick="closeChatPanel()">✕</button>
+        </div>
+        <div class="chat-panel-messages" id="chatPanelMessages">
+            <!-- 채팅 메시지가 여기에 표시됩니다 -->
+        </div>
+        <div class="chat-panel-input">
+            <div class="chat-input-container">
+                <button class="chat-input-button">📎</button>
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-message-input" placeholder="궁금한 것을 자유롭게 물어보세요..." id="chatPanelInput" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                    <div class="chat-input-actions">
+                        <button class="chat-input-button">😊</button>
+                    </div>
+                </div>
+                <button class="chat-input-button">🎤</button>
+                <button class="chat-send-button" onclick="sendChatMessage()">📤</button>
+            </div>
+            <!-- 채팅 팁 버튼 - 채팅 패널 내부로 이동 -->
+            <button class="chat-tips-btn-inline" onclick="toggleChatTips()" title="채팅 팁">
+                <span class="tips-icon">💡</span>
+                <span class="tips-text">채팅 팁</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 채팅 패널 오버레이 -->
+    <div class="chat-panel-overlay" id="chatPanelOverlay" onclick="closeChatPanel()"></div>
+
+    <!-- 플러그인 슬라이딩 패널 -->
+    <div class="agent-panel" id="agentPanel">
+        <div class="agent-panel-header">
+            <h3>📋 플러그인</h3>
+            <button class="agent-close-btn" onclick="closeAgentPanel()">✕</button>
+        </div>
+        <div class="agent-panel-content">
+            <iframe id="agentIframe" src="" frameborder="0" width="100%" height="100%"></iframe>
+        </div>
+    </div>
+
+    <!-- 에이전트 패널 오버레이 (클릭해도 닫히지 않음) -->
+    <div class="agent-panel-overlay" id="agentPanelOverlay"></div>
+
+    <!-- 우측 하단 고정 복원 버튼 -->
+    <div class="floating-restore-btn" id="floatingRestoreBtn" onclick="showRestoreDeletedCards()" style="display: none;" title="삭제된 카드 복원">
+        <span class="restore-icon">↺</span>
+        <span class="restore-count" id="restoreCount">0</span>
+    </div>
+
+    <!-- 채팅 팁 슬라이드 패널 -->
+    <div class="chat-tips-panel" id="chatTipsPanel">
+        <div class="tips-panel-header">
+            <h3>💡 채팅 팁</h3>
+            <button class="tips-close-btn" onclick="toggleChatTips()">✕</button>
+        </div>
+        <div class="tips-panel-content">
+            <div class="tip-item">
+                <h4>🎯 효과적인 질문하기</h4>
+                <p>구체적이고 명확한 질문을 하면 더 정확한 답변을 받을 수 있습니다.</p>
+            </div>
+            <div class="tip-item">
+                <h4>📝 명령어 활용</h4>
+                <p>특정 작업을 요청할 때는 명확한 동작 동사를 사용하세요.</p>
+            </div>
+            <div class="tip-item">
+                <h4>🔄 대화 이어가기</h4>
+                <p>이전 대화 내용을 참고하여 연관된 질문을 할 수 있습니다.</p>
+            </div>
+            <div class="tip-item">
+                <h4>📊 데이터 요청</h4>
+                <p>특정 학생이나 기간의 데이터를 요청할 수 있습니다.</p>
+            </div>
+            <div class="tip-item">
+                <h4>⚡ 빠른 실행</h4>
+                <p>자주 사용하는 기능은 즐겨찾기로 등록해두세요.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 채팅 팁 오버레이 -->
+    <div class="chat-tips-overlay" id="chatTipsOverlay" onclick="toggleChatTips()"></div>
+
+    <!-- SweetAlert2 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- 플러그인 설정 클라이언트 -->
+    <script src="plugin_settings_client.js"></script>
+    
+    <!-- 플러그인 클라이언트 초기화 (다른 스크립트보다 먼저) -->
+    <script>
+        // KTM 플러그인 클라이언트 초기화
+        window.ktmPluginClient = new KTMPluginSettingsClient('plugin_settings_api_real.php');
+        console.log('KTM Plugin Client initialized:', window.ktmPluginClient);
+        
+        // PHP 변수를 JavaScript로 전달
+        window.currentUserId = <?php echo json_encode($userid); ?>;
+        window.userRole = <?php echo json_encode($role); ?>;
+    </script>
+    
+    <!-- 각 모듈 스크립트 로드 -->
+    <script src="quarterly/quarterly.js"></script>
+    <script src="weekly/weekly.js"></script>
+    <script src="daily/daily.js"></script>
+    <script src="realtime/realtime.js"></script>
+    <script src="interaction/interaction.js"></script>
+    <script src="bias/bias.js"></script>
+    <script src="development/development.js"></script>
+    
+    <!-- 메인 스크립트 -->
+    <script src="script.js"></script>
+</body>
+</html>

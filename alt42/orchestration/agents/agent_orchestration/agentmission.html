@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>에이전트 미션 및 상관관계 시각화</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background: #fafafa;
+            padding: 0;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .nav-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            gap: 2px;
+            align-items: flex-start;
+        }
+        
+        .nav-dropdown > *:first-child {
+            border-radius: 0 0 0 8px;
+        }
+        
+        .nav-dropdown > *:last-child {
+            border-radius: 0 0 8px 0;
+        }
+        
+        .nav-dropdown select {
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 200px;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .nav-dropdown select:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 좌측 상단 분석 리포트 버튼 */
+        .nav-report-btn {
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .nav-report-btn:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            transform: translateY(2px);
+        }
+        
+        .nav-report-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 우측 상단 에이전트 선택 */
+        .agent-selector {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .agent-selector select {
+            padding: 10px 15px;
+            border-radius: 0 0 0 8px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 200px;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .agent-selector select:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        
+        .agent-selector select:focus {
+            outline: none;
+            border-color: rgba(0,0,0,0.3);
+        }
+        
+        /* 좌측 상단 동적 버튼 */
+        #dynamicButtons {
+            display: flex;
+            gap: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 4px;
+            padding: 30px;
+            padding-top: 60px; /* 네비게이션 메뉴 공간 확보 */
+            padding-right: 220px; /* 우측 에이전트 선택 메뉴 공간 확보 */
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .header-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        h1 {
+            color: #222;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            display: inline-block;
+            background: rgba(0,0,0,0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .subtitle:hover {
+            background: rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .search-bar {
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #e5e5e5;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+            background: #fafafa;
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: #999;
+            background: white;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: #f5f5f5;
+        }
+        
+        .filter-btn.active {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+        
+        .agent-section {
+            margin-bottom: 20px;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            background: white;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .agent-section:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .agent-header {
+            padding: 18px 20px;
+            background: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+            transition: background 0.2s;
+        }
+        
+        .agent-header:hover {
+            background: #f0f0f0;
+        }
+        
+        .agent-header h2 {
+            color: #222;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .agent-id {
+            background: #333;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .agent-content {
+            padding: 20px;
+            display: none;
+        }
+        
+        .agent-section.expanded .agent-content {
+            display: block;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.2s;
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .agent-section.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .mission-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border-left: 4px solid #333;
+        }
+        
+        .mission-summary h3 {
+            color: #222;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .mission-summary p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .relationships {
+            margin-top: 20px;
+        }
+        
+        .relationships h3 {
+            color: #222;
+            font-size: 16px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .relationship-item {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .relationship-type {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .relationship-type.input {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .relationship-type.output {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .relationship-type.bidirectional {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        
+        .relationship-agents {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .relationship-agents strong {
+            color: #333;
+        }
+        
+        .visualization-section {
+            margin-top: 40px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .visualization-section h2 {
+            color: #222;
+            font-size: 18px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 6px;
+            margin-top: 15px;
+        }
+        
+        .agent-card {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 6px 10px;
+            text-align: left;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 28px;
+        }
+        
+        .agent-card:hover {
+            border-color: #333;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .agent-card.core {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+        
+        .agent-card.analysis {
+            border-color: #7b1fa2;
+            background: #f3e5f5;
+        }
+        
+        .agent-card.support {
+            border-color: #388e3c;
+            background: #e8f5e9;
+        }
+        
+        .agent-card.execution {
+            border-color: #e65100;
+            background: #fff3e0;
+        }
+        
+        .agent-card-number {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            flex-shrink: 0;
+        }
+        
+        .agent-card-name {
+            font-size: 12px;
+            color: #555;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 툴팁 스타일 */
+        .agent-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 400px;
+            z-index: 10000;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .agent-tooltip.visible {
+            opacity: 1;
+        }
+        
+        .agent-tooltip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .agent-tooltip-content {
+            color: #e0e0e0;
+        }
+        
+        .connection-line {
+            position: absolute;
+            background: #999;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                padding-top: 60px; /* 네비게이션 메뉴 공간 확보 */
+            }
+            
+            .nav-dropdown {
+                flex-wrap: wrap;
+            }
+            
+            .nav-dropdown select {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-width: 150px;
+                height: 36px;
+            }
+            
+            .nav-report-btn {
+                font-size: 12px;
+                padding: 8px 12px;
+                height: 36px;
+            }
+            
+            .agent-selector select {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-width: 150px;
+                height: 36px;
+            }
+            
+            .container {
+                padding-right: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .agent-header h2 {
+                font-size: 16px;
+            }
+            
+            .agent-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 4px;
+            }
+            
+            .agent-card {
+                padding: 4px 8px;
+                min-height: 24px;
+            }
+            
+            .agent-card-number,
+            .agent-card-name {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-dropdown">
+        <select id="pageSelector" onchange="navigateToPage()">
+            <option value="agentmission.html" selected>1. 에이전트 미션</option>
+            <option value="questions.html">2. 주요 요청들</option>
+            <option value="dataindex.php">3. 데이터 통합</option>
+            <option value="rules_viewer.html">4. 에이전트 룰들</option>
+            <option value="progress_dashboard.php">5. Mathking AI 조교</option>
+            <option value="heartbeat_dashboard.html">6. Heartbeat Dashboard</option>
+            <option value="../agent22_module_improvement/ui/index.php">7. 에이전트 가드닝</option>
+            <option value="../agent01_onboarding/persona_system/test_chat.php">8. 페르소나 테스트</option>
+            <option value="quantum_modeling.html">9. Quantum Modeling</option>
+            <option value="Alignment_dashboard.php">10. Alignment Dashboard</option>
+        </select>
+        <div id="dynamicButtons"></div>
+    </div>
+    
+    <!-- 우측 상단 에이전트 선택 메뉴 -->
+    <div class="agent-selector">
+        <select id="agentSelector" onchange="handleAgentSelect()">
+            <option value="">전체</option>
+            <option value="agent01">Agent 01 - Onboarding</option>
+            <option value="agent02">Agent 02 - Exam Schedule</option>
+            <option value="agent03">Agent 03 - Goals Analysis</option>
+            <option value="agent04">Agent 04 - Inspect Weakpoints</option>
+            <option value="agent05">Agent 05 - Learning Emotion</option>
+            <option value="agent06">Agent 06 - Teacher Feedback</option>
+            <option value="agent07">Agent 07 - Interaction Targeting</option>
+            <option value="agent08">Agent 08 - Calmness</option>
+            <option value="agent09">Agent 09 - Learning Management</option>
+            <option value="agent10">Agent 10 - Concept Notes</option>
+            <option value="agent11">Agent 11 - Problem Notes</option>
+            <option value="agent12">Agent 12 - Rest Routine</option>
+            <option value="agent13">Agent 13 - Learning Dropout</option>
+            <option value="agent14">Agent 14 - Current Position</option>
+            <option value="agent15">Agent 15 - Problem Redefinition</option>
+            <option value="agent16">Agent 16 - Interaction Preparation</option>
+            <option value="agent17">Agent 17 - Remaining Activities</option>
+            <option value="agent18">Agent 18 - Signature Routine</option>
+            <option value="agent19">Agent 19 - Interaction Content</option>
+            <option value="agent20">Agent 20 - Intervention Preparation</option>
+            <option value="agent21">Agent 21 - Intervention Execution</option>
+            <option value="agent22">Agent 22 - Module Improvement</option>
+        </select>
+    </div>
+    
+    <div class="container">
+        <div class="header-section">
+            <div class="header-title-row">
+                <h1>🤖 에이전트 미션 및 상관관계 시각화</h1>
+                <span class="subtitle">22개 에이전트의 미션과 에이전트 간 상관관계를 시각화하여 확인할 수 있습니다.</span>
+            </div>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 에이전트명, 미션 내용, 키워드로 검색...">
+            <div class="filter-buttons" style="display: none;">
+                <button class="filter-btn active" data-filter="all">전체</button>
+                <button class="filter-btn" data-filter="core">핵심 에이전트</button>
+                <button class="filter-btn" data-filter="analysis">분석 에이전트</button>
+                <button class="filter-btn" data-filter="support">지원 에이전트</button>
+                <button class="filter-btn" data-filter="execution">실행 에이전트</button>
+            </div>
+        </div>
+        
+        <div id="agentsContainer">
+            <!-- Agent 01 -->
+            <div class="agent-section core" data-agent="agent01" data-category="core">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 01: 온보딩 (Onboarding)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 01</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>신규/대상 학생의 기본 프로필과 학습 이력 로딩 시 교사의 노하우를 반영하여 초기 맥락을 정확히 수집합니다. 수학학원 시스템에 특화된 정보(수학 학습 스타일, 학원 정보, 수학 성적, 교재 정보 등)를 수집하고, 담임 선생님에게 수집된 내용을 자동으로 전달합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>다른 모든 에이전트에 기본 정보 제공</strong>
+                            <div class="relationship-agents">→ 학생 프로필, MBTI, 학습 스타일, 집중 시간대, 선호도 등</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 02 -->
+            <div class="agent-section support" data-agent="agent02" data-category="support">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 02: 시험일정 (Exam Schedule)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 02</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>매주 첫 수업시간 또는 요청이 있을 경우 실행되며, 시험 8주 전(D-56일)으로 진입하면 해당 시점의 학습전략을 수립합니다. 학원-학교-집 학습 연계, 학원 교재 시스템 활용, 학원 모의고사 및 테스트, 학원 선생님 피드백 반영을 통한 최적화된 학습 계획을 제공합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 학원 정보, 학습 스타일</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 03, 04, 07, 14</strong>
+                            <div class="relationship-agents">→ 시험 맥락, D-Day 정보, 학습 전략</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 03 -->
+            <div class="agent-section support" data-agent="agent03" data-category="support">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 03: 목표분석 (Goals Analysis)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 03</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>목표와 계획이 얼마나 잘 연계되었는지, 각 단계들이 회복탄력성 있는 구조로 설계되었는지 분석합니다. 분기목표, 주간목표, 오늘목표, 수업준비, 포모도르, 귀가검사, 커리큘럼 분석을 통해 목표 정렬도와 조정안을 제시합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 02</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 시험 일정</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 14, 17</strong>
+                            <div class="relationship-agents">→ 목표 데이터, 목표 정렬도</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 04 -->
+            <div class="agent-section core" data-agent="agent04" data-category="core">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 04: 취약점검사 (Inspect Weakpoints)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 04</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>각각의 학습활동에 대한 페르소나(행동유형) 분석과 페르소나 맞춤 행동유도 시스템을 연결하여 학생들이 자신만의 시그너처루틴 레벨에 도달하여 몰입에 빠지도록 합니다. 개념이해, 유형학습, 문제풀이, 오답노트, 질의응답, 복습활동, 포모도르, 귀가검사 등 8가지 활동 유형을 분석합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 05</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 감정/페르소나 정보</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 05, 07, 16, 18</strong>
+                            <div class="relationship-agents">→ 활동 유형, 페르소나 분석 결과</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 05 -->
+            <div class="agent-section analysis" data-agent="agent05" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 05: 학습감정 (Learning Emotion)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 05</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>학생의 감정 패턴과 행동유형(페르소나)을 정밀하게 식별하고, 각 학습활동에서 나타나는 감정·집중·동기 상태를 감정매핑 알고리즘으로 연결하여 시그너처 루틴을 찾아냅니다. 이 감정 기반 페르소나 정보는 다른 모든 에이전트에 전달되어 맞춤형 피드백 방식으로 작동됩니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 04</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 활동 데이터</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>모든 에이전트</strong>
+                            <div class="relationship-agents">→ 감정 패턴, 페르소나 정보, 집중도 및 동기 상태</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 06 -->
+            <div class="agent-section support" data-agent="agent06" data-category="support">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 06: 교사피드백 (Teacher Feedback)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 06</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>교사의 피드백과 노하우를 수집하고 다른 에이전트들에게 전달하여 시스템의 분석 정확도를 향상시킵니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>모든 에이전트</strong>
+                            <div class="relationship-agents">→ 교사 피드백, 노하우 정보</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 07 -->
+            <div class="agent-section support" data-agent="agent07" data-category="support">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 07: 상호작용타게팅 (Interaction Targeting)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 07</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>학생과의 상호작용 상황을 선택하고 준비된 상호작용이 어떤 상황에서 학생에게 전달되게 할 것인지를 섬세하게 결정합니다. 분기목표, 주간목표, 오늘목표, 수업준비, 포모도르 상황, 실시간고민, 귀가검사, 장기목표 설계 상황 등을 고려합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 02, 03, 04, 05</strong>
+                            <div class="relationship-agents">→ 시험 맥락, 목표, 활동, 감정 정보</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 16, 19</strong>
+                            <div class="relationship-agents">→ 상호작용 타겟 정보</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 08 -->
+            <div class="agent-section analysis" data-agent="agent08" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 08: 침착도 (Calmness)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 08</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>침착도(집중/정서 안정) 지표로 학습 수행 적합도를 판단하고 개입을 제안합니다. 학생이 풀은 후 답을 선택한 문제 중 실제로 정답인 비율로 측정하여 풀이 과정에 대한 확신이 없거나 추가적인 분석이 필요한 경우 선생님에게 질문을 하거나 아예 정답을 선택하지 않는 것을 유도합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 12, 13, 20</strong>
+                            <div class="relationship-agents">→ 침착도 지수, 개선 제안</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 09 -->
+            <div class="agent-section analysis" data-agent="agent09" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 09: 학습관리 (Learning Management)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 09</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>출결, 목표, 포모도로, 오답노트, 시험 패턴을 종합하여 학습관리 전략을 도출합니다. 중요한 데이터들에 대한 grade를 매기고 취약한 데이터가 무엇인지를 식별하여 개선하기 위한 전략수립 및 개선 피드백 실행을 제안하고 추적합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 03, 11, 14</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 목표, 오답노트, 진행 위치</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 14, 17</strong>
+                            <div class="relationship-agents">→ 학습 관리 전략, 루틴 패턴 피드백</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 10 -->
+            <div class="agent-section analysis" data-agent="agent10" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 10: 개념노트 (Concept Notes)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 10</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>개념노트(화이트보드 필기) 데이터를 기반으로 개념 이해도와 학습 흐름을 해석합니다. 학생의 필기양, 페이지별 체류 시간, 재방문 패턴, TTS 활용 분석, 단계별 지시에 따른 필기 데이터 등을 분석하여 학생개인별 루틴형성을 최종 목적으로 합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 04, 15, 16</strong>
+                            <div class="relationship-agents">→ 개념 이해도 분석, 개선 피드백 리포트</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 11 -->
+            <div class="agent-section analysis" data-agent="agent11" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 11: 문제노트 (Problem Notes)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 11</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>오답 패턴을 분석하여 취약 영역을 규명하고 복습 전략을 설계합니다. 오답노트를 얼마나 의미있게 작성하는지 분석하고 습관, 행동 변화를 위한 학생만의 시그니처 루틴을 찾아줍니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 09, 15, 16</strong>
+                            <div class="relationship-agents">→ 오답 패턴 분석, 취약 영역, 복습 전략</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 12 -->
+            <div class="agent-section analysis" data-agent="agent12" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 12: 휴식루틴 (Rest Routine)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 12</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>휴식 루틴을 최적화해 에너지 회복과 집중 유지에 기여합니다. 수업 중 휴식의 효과성과 주단위의 피로감 상승 여부를 분석하여 피로 누적 시점을 감지하고 휴식 루틴을 삽입합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 08, 14</strong>
+                            <div class="relationship-agents">→ 침착도, 리듬 점수, 집중도 밀도</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 13, 20</strong>
+                            <div class="relationship-agents">→ 휴식 루틴 제안, 피로도 분석</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 13 -->
+            <div class="agent-section analysis" data-agent="agent13" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 13: 학습이탈 (Learning Dropout)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 13</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>최근 24시간(롤링 윈도우) 동안의 학습 이탈 조짐을 조기 탐지하고 예방 개입을 설계합니다. 수학 학습 특화 분석으로 단원별/난이도별/학원 맥락 통합 분석을 통해 수학 학습 이탈 원인을 정확히 파악하고, 쉬운 승리 구간을 제안하여 필요한 활동으로 빠르게 재진입하도록 가이드합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 12, 14</strong>
+                            <div class="relationship-agents">→ 위험도 등급, 감정 상태, 활동 부재 시간</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 20, 21</strong>
+                            <div class="relationship-agents">→ 이탈 위험도, 조기 경고, Quick Win 제안</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 14 -->
+            <div class="agent-section core" data-agent="agent14" data-category="core">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 14: 현재위치 (Current Position)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 14</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>학생의 학습 활동 흐름 속에서 "지금 이 학생은 어디에 있는가?"를 정교하게 계산하고 이를 다른 에이전트들이 의사결정의 기준점(reference signal)으로 삼을 수 있도록 전달합니다. 계획 대비 실제의 시간·행동·정서 궤적을 해석하여 현재의 '좌표'를 도출하는 분석 에이전트입니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 03, 09</strong>
+                            <div class="relationship-agents">→ 목표 데이터, 포모도르 진행 데이터</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 09, 12, 13, 17</strong>
+                            <div class="relationship-agents">→ 진행 상태, 완료율, 위험도, 리듬 점수, 감정 상태</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 15 -->
+            <div class="agent-section analysis" data-agent="agent15" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 15: 문제재정의 (Problem Redefinition)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 15</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>지금까지의 모든 분석결과들을 취합하여 학생이 겪고 있는 실제문제의 원인을 파악하고 본질적인 질문과 개선 방향을 도출하여 제공합니다. 초기 문제에 대한 재정의를 통해 증상이 아닌 근본 원인에 접근하고, 실행 가능한 개선방안을 구체적으로 제시합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>모든 분석 에이전트</strong>
+                            <div class="relationship-agents">→ 종합 분석 데이터 (Agent 01~14)</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 17, 19</strong>
+                            <div class="relationship-agents">→ 재정의된 문제, 핵심 개선 방향 (우선순위 3가지)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 16 -->
+            <div class="agent-section execution" data-agent="agent16" data-category="execution">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 16: 상호작용준비 (Interaction Preparation)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 16</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>문제 개선을 위한 아이디어를 컨텐츠화하는 것을 준비하는 단계입니다. 상호작용에 적합한 세계관(커리큘럼, 맞춤학습, 시험대비, 단기미션, 자기성찰, 자기주도, 도제학습, 시간성찰, 탐구학습)을 선택하고 해당 세계관이 자연스러운 스토리텔링을 위한 테마로 작동하도록 합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 04, 05, 07, 10, 11, 15</strong>
+                            <div class="relationship-agents">→ 활동 정보, 감정 상태, 문제 재정의 결과</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 19</strong>
+                            <div class="relationship-agents">→ 선택된 세계관, 테마, 상호작용 톤</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 17 -->
+            <div class="agent-section analysis" data-agent="agent17" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 17: 잔여활동 (Remaining Activities)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 17</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>학생의 잔여 학습 활동을 분석하고 조정하여 목표 대비 완료율을 높입니다. 계획된 학습 활동 중 미완료된 항목들을 식별하고, 시간 제약, 우선순위, 병목 현상 등을 고려하여 실행 가능한 최적의 활동 계획을 재조정합니다. 학습 리듬을 복원시키는 것이 핵심입니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 03, 04, 14, 15</strong>
+                            <div class="relationship-agents">→ 목표 데이터, 현재 위치 평가, 문제 재정의 결과</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 19, 20</strong>
+                            <div class="relationship-agents">→ 조정된 활동 계획, 우선순위 재설정</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 18 -->
+            <div class="agent-section analysis" data-agent="agent18" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 18: 시그너처루틴 (Signature Routine)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 18</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>개인 최적 학습 루틴(시그너처)을 발견하고 정교화합니다. 학생의 온보딩 정보와 최근 선호동 정보를 통합 분석하여 학생이 "공부가 자연스럽게 되는 순간"의 패턴을 탐색하고, 이를 시그너처 루틴으로 정의하여 몰입을 유도하는 상호작용 설계 가이드라인을 생성합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 04, 05</strong>
+                            <div class="relationship-agents">→ 온보딩 정보, 활동 데이터, 감정 패턴</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 19</strong>
+                            <div class="relationship-agents">→ 시그너처 루틴, 상호작용 가이드라인</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 19 -->
+            <div class="agent-section execution" data-agent="agent19" data-category="execution">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 19: 상호작용컨텐츠 (Interaction Content)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 19</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>맞춤형 상호작용 컨텐츠 생성 및 패키징을 담당합니다. 취합된 내용을 토대로 최적의 상호작용 유형을 알고리즘으로 자동 선택하고, 선택된 상호작용 방법에 맞게 상호작용 내용을 패키징하여 제공합니다. 실제로 코딩으로 컨텐츠를 생성하여 발송 준비를 완료합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 15, 16, 17, 18</strong>
+                            <div class="relationship-agents">→ 문제 재정의, 세계관/테마, 활동 계획, 시그너처 루틴</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 20</strong>
+                            <div class="relationship-agents">→ 패키징된 상호작용 컨텐츠</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 20 -->
+            <div class="agent-section execution" data-agent="agent20" data-category="execution">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 20: 개입준비 (Intervention Preparation)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 20</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>개입 실행을 위한 리소스/메시지/타이밍 사전 준비를 담당합니다. 개입 위치(인터페이스 위치 또는 데이터 트리거), 개입 방식(알림 표시, 메시지, 채팅, 호출), 상호작용 유형을 결정하고 개입 계획을 수립합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 08, 13, 19</strong>
+                            <div class="relationship-agents">→ 침착도, 이탈 위험도, 상호작용 컨텐츠</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 21</strong>
+                            <div class="relationship-agents">→ 개입 계획, 개입 위치, 개입 방식, 예상 타이밍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 21 -->
+            <div class="agent-section execution" data-agent="agent21" data-category="execution">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 21: 개입실행 (Intervention Execution)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 21</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>최종적으로 개입을 실행하는 것을 목표로 합니다. Agent 20에서 전달받은 개입 계획을 실제로 실행하고, 결과를 기록하며, 효과를 모니터링합니다. 개인 개입 목록 관리, 우선순위 재조정, 실행 시점 타게팅, 개입 실행, 결과 기록 및 모니터링을 수행합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>Agent 01, 05, 13, 14, 17, 19, 20</strong>
+                            <div class="relationship-agents">→ 학생 프로필, 감정 상태, 위험도, 진행 위치, 활동 계획, 컨텐츠, 개입 계획</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>Agent 19, 20, 22</strong>
+                            <div class="relationship-agents">→ 실행 결과, 효과성 데이터, 실행 로그</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agent 22 -->
+            <div class="agent-section analysis" data-agent="agent22" data-category="analysis">
+                <div class="agent-header" onclick="toggleSection(this)">
+                    <div>
+                        <h2>Agent 22: 모듈개선 (Module Improvement)</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="agent-id">Agent 22</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                </div>
+                <div class="agent-content">
+                    <div class="mission-summary">
+                        <h3>📋 미션 요약</h3>
+                        <p>모듈 성능 개선 제안 및 자가 업그레이드를 목표로 합니다. 실행 과정에서 관여한 에이전트들의 동작 데이터를 분석하여 취약한 룰이나 분석 내용의 약점을 식별하고, 자가 업그레이드 아이디어를 생성하여 리포트를 작성합니다.</p>
+                    </div>
+                    <div class="relationships">
+                        <h3>🔗 에이전트 간 상관관계</h3>
+                        <div class="relationship-item">
+                            <span class="relationship-type input">입력</span>
+                            <strong>모든 에이전트 (Agent 01~21)</strong>
+                            <div class="relationship-agents">→ 실행 데이터, 룰 파일, 분석 결과, 실행 로그</div>
+                        </div>
+                        <div class="relationship-item">
+                            <span class="relationship-type output">출력</span>
+                            <strong>모든 에이전트</strong>
+                            <div class="relationship-agents">→ 개선 제안, 업그레이드 문서</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization-section">
+            <h2>🎨 에이전트 카테고리별 시각화</h2>
+            <div class="agent-grid" id="agentGrid">
+                <!-- Agent cards will be dynamically generated -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 버튼 클릭 처리 함수
+        function handleButtonClick(action) {
+            switch(action) {
+                case 'verification':
+                    // 검증 리포트로 이동
+                    window.open('../../../../.cursor/rules/final-verification-report.md', '_blank');
+                    break;
+                case 'math_ontology':
+                    window.location.href = '../math topics/ontology_visualizer.php';
+                    break;
+            }
+        }
+        
+        // 에이전트 선택 처리 함수
+        function handleAgentSelect() {
+            const selector = document.getElementById('agentSelector');
+            const selectedAgent = selector.value;
+            
+            // 동적 버튼 업데이트
+            updateDynamicButtons(selectedAgent);
+            
+            if (!selectedAgent) {
+                // 전체 선택 시 모든 섹션 표시
+                const agentSections = document.querySelectorAll('.agent-section');
+                agentSections.forEach(section => {
+                    section.classList.remove('hidden');
+                });
+                // URL 해시 제거
+                window.history.replaceState(null, null, window.location.pathname);
+            } else {
+                // 특정 에이전트 선택 시 해당 섹션으로 스크롤
+                const agentSection = document.querySelector(`[data-agent="${selectedAgent}"]`);
+                if (agentSection) {
+                    // 다른 섹션 숨김
+                    const agentSections = document.querySelectorAll('.agent-section');
+                    agentSections.forEach(section => {
+                        if (section !== agentSection) {
+                            section.classList.add('hidden');
+                        } else {
+                            section.classList.remove('hidden');
+                        }
+                    });
+                    
+                    // 해당 섹션 확장
+                    agentSection.classList.add('expanded');
+                    
+                    // 스크롤하여 해당 섹션으로 이동
+                    setTimeout(() => {
+                        agentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                    
+                    // URL 해시 업데이트
+                    window.location.hash = selectedAgent;
+                }
+            }
+        }
+        
+        // 동적 버튼 업데이트 함수
+        function updateDynamicButtons(agentId) {
+            const dynamicButtons = document.getElementById('dynamicButtons');
+            if (!dynamicButtons) return;
+            
+            // 기존 동적 버튼 제거
+            dynamicButtons.innerHTML = '';
+            
+            // Agent 03인 경우 Math Ontology 버튼 표시
+            if (agentId === 'agent03') {
+                const mathBtn = document.createElement('button');
+                mathBtn.className = 'nav-report-btn';
+                mathBtn.textContent = '📊 Math Ontology';
+                mathBtn.onclick = () => handleButtonClick('math_ontology');
+                dynamicButtons.appendChild(mathBtn);
+            }
+        }
+        
+        // 페이지 네비게이션
+        function navigateToPage() {
+            const select = document.getElementById('pageSelector');
+            const selectedPage = select.value;
+            if (selectedPage !== 'agentmission.html') {
+                // 현재 URL의 해시 정보 유지
+                const currentHash = window.location.hash;
+                let url = selectedPage;
+                if (currentHash) {
+                    url += currentHash;
+                }
+                window.location.href = url;
+            }
+        }
+        
+        // 현재 페이지에 맞게 선택 메뉴 설정 및 에이전트 영역 표시
+        window.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const pageSelector = document.getElementById('pageSelector');
+            if (pageSelector) {
+                if (currentPage === 'agentmission.html') {
+                    pageSelector.value = 'agentmission.html';
+                } else if (currentPage === 'questions.html') {
+                    pageSelector.value = 'questions.html';
+                } else if (currentPage === 'dataindex.php') {
+                    pageSelector.value = 'dataindex.php';
+                } else if (currentPage === 'rules_viewer.html') {
+                    pageSelector.value = 'rules_viewer.html';
+                } else if (currentPage === 'heartbeat_dashboard.html') {
+                    pageSelector.value = 'heartbeat_dashboard.html';
+                } else if (window.location.pathname.includes('agent22_module_improvement')) {
+                    pageSelector.value = '../agent22_module_improvement/ui/index.php';
+                } else if (currentPage === 'index.php' || currentPage === '') {
+                    pageSelector.value = '../../index.php';
+                }
+            }
+            
+            // URL 해시에서 에이전트 정보 확인 및 해당 영역 표시
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#agent')) {
+                const agentId = hash.substring(1); // # 제거
+                // agent06_teacher_feedback -> agent06로 변환
+                const agentNum = agentId.match(/agent(\d+)/);
+                if (agentNum) {
+                    const agentKey = `agent${agentNum[1]}`;
+                    const agentSelector = document.getElementById('agentSelector');
+                    if (agentSelector) {
+                        agentSelector.value = agentKey;
+                        handleAgentSelect();
+                    }
+                }
+            } else {
+                // 해시가 없으면 전체 표시
+                updateDynamicButtons('');
+            }
+        });
+        
+        // 섹션 토글
+        function toggleSection(header) {
+            const section = header.closest('.agent-section');
+            section.classList.toggle('expanded');
+        }
+        
+        // 검색 기능
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const agentSections = document.querySelectorAll('.agent-section');
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            agentSections.forEach(section => {
+                const agentName = section.querySelector('h2').textContent.toLowerCase();
+                const missionText = section.querySelector('.mission-summary p')?.textContent.toLowerCase() || '';
+                const relationshipsText = section.textContent.toLowerCase();
+                const category = section.dataset.category;
+                
+                const matchesSearch = !searchTerm || 
+                    agentName.includes(searchTerm) || 
+                    missionText.includes(searchTerm) || 
+                    relationshipsText.includes(searchTerm);
+                
+                const matchesFilter = activeFilter === 'all' || 
+                    (activeFilter === 'core' && category === 'core') ||
+                    (activeFilter === 'analysis' && category === 'analysis') ||
+                    (activeFilter === 'support' && category === 'support') ||
+                    (activeFilter === 'execution' && category === 'execution');
+                
+                if (matchesSearch && matchesFilter) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', performSearch);
+        
+        // 필터 버튼 클릭
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                performSearch();
+            });
+        });
+        
+        // 툴팁 생성
+        const tooltip = document.createElement('div');
+        tooltip.className = 'agent-tooltip';
+        tooltip.id = 'agentTooltip';
+        document.body.appendChild(tooltip);
+        
+        // 에이전트 미션 요약 데이터 추출 함수
+        function getAgentMissionSummary(agentNum) {
+            // agentNum이 '01', '02' 형식이므로 'agent01', 'agent02' 형식으로 변환
+            const agentId = `agent${agentNum.padStart(2, '0')}`;
+            const section = document.querySelector(`[data-agent="${agentId}"]`);
+            if (section) {
+                const missionSummary = section.querySelector('.mission-summary p');
+                return missionSummary ? missionSummary.textContent.trim() : '';
+            }
+            return '';
+        }
+        
+        // 툴팁 표시 함수
+        function showTooltip(event, agentNum, agentName) {
+            const summary = getAgentMissionSummary(agentNum);
+            if (!summary) return;
+            
+            tooltip.innerHTML = `
+                <div class="agent-tooltip-title">Agent ${agentNum}: ${agentName}</div>
+                <div class="agent-tooltip-content">${summary}</div>
+            `;
+            
+            tooltip.classList.add('visible');
+            
+            // 툴팁 위치 설정
+            const rect = event.target.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.bottom + 10;
+            
+            // 화면 밖으로 나가지 않도록 조정
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            if (top + tooltipRect.height > window.innerHeight - 10) {
+                top = rect.top - tooltipRect.height - 10;
+            }
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+        
+        // 툴팁 숨김 함수
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+        }
+        
+        // 에이전트 그리드 생성
+        const agentGrid = document.getElementById('agentGrid');
+        const agentData = [
+            { num: '01', name: '온보딩', category: 'core' },
+            { num: '02', name: '시험일정', category: 'support' },
+            { num: '03', name: '목표분석', category: 'support' },
+            { num: '04', name: '취약점검사', category: 'core' },
+            { num: '05', name: '학습감정', category: 'analysis' },
+            { num: '06', name: '교사피드백', category: 'support' },
+            { num: '07', name: '상호작용타게팅', category: 'support' },
+            { num: '08', name: '침착도', category: 'analysis' },
+            { num: '09', name: '학습관리', category: 'analysis' },
+            { num: '10', name: '개념노트', category: 'analysis' },
+            { num: '11', name: '문제노트', category: 'analysis' },
+            { num: '12', name: '휴식루틴', category: 'analysis' },
+            { num: '13', name: '학습이탈', category: 'analysis' },
+            { num: '14', name: '현재위치', category: 'core' },
+            { num: '15', name: '문제재정의', category: 'analysis' },
+            { num: '16', name: '상호작용준비', category: 'execution' },
+            { num: '17', name: '잔여활동', category: 'analysis' },
+            { num: '18', name: '시그너처루틴', category: 'analysis' },
+            { num: '19', name: '상호작용컨텐츠', category: 'execution' },
+            { num: '20', name: '개입준비', category: 'execution' },
+            { num: '21', name: '개입실행', category: 'execution' },
+            { num: '22', name: '모듈개선', category: 'analysis' }
+        ];
+        
+        agentData.forEach(agent => {
+            const card = document.createElement('div');
+            card.className = `agent-card ${agent.category}`;
+            card.onclick = () => {
+                const section = document.querySelector(`[data-agent="agent${agent.num}"]`);
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    section.classList.add('expanded');
+                }
+            };
+            card.onmouseenter = (e) => showTooltip(e, agent.num, agent.name);
+            card.onmouseleave = hideTooltip;
+            card.onmousemove = (e) => {
+                if (tooltip.classList.contains('visible')) {
+                    const rect = e.target.getBoundingClientRect();
+                    const tooltipRect = tooltip.getBoundingClientRect();
+                    let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+                    let top = rect.bottom + 10;
+                    
+                    if (left < 10) left = 10;
+                    if (left + tooltipRect.width > window.innerWidth - 10) {
+                        left = window.innerWidth - tooltipRect.width - 10;
+                    }
+                    if (top + tooltipRect.height > window.innerHeight - 10) {
+                        top = rect.top - tooltipRect.height - 10;
+                    }
+                    
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                }
+            };
+            card.innerHTML = `
+                <div class="agent-card-number">${agent.num}</div>
+                <div class="agent-card-name">${agent.name}</div>
+            `;
+            agentGrid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
+

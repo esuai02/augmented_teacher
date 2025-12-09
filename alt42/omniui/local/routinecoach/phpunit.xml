@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="../../lib/phpunit/bootstrap.php"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         colors="true"
+         verbose="true">
+    
+    <testsuites>
+        <testsuite name="local_routinecoach_testsuite">
+            <directory suffix="_test.php">tests</directory>
+        </testsuite>
+    </testsuites>
+    
+    <coverage processUncoveredFiles="false">
+        <include>
+            <directory suffix=".php">classes</directory>
+        </include>
+        <exclude>
+            <directory>tests</directory>
+            <directory>db</directory>
+            <directory>lang</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="tests/coverage"/>
+            <text outputFile="tests/coverage.txt"/>
+        </report>
+    </coverage>
+    
+    <php>
+        <const name="PHPUNIT_LONGTEST" value="1"/>
+        <const name="PHPUNIT_PATH_TO_SASSLINT" value="sass-lint"/>
+        
+        <!-- Database for testing -->
+        <var name="DB_DSN" value="mysql:host=localhost;dbname=moodle_test"/>
+        <var name="DB_USER" value="moodletest"/>
+        <var name="DB_PASSWD" value="moodletest"/>
+        <var name="DB_DBNAME" value="moodle_test"/>
+        
+        <!-- Skip slow tests -->
+        <const name="PHPUNIT_SKIP_SLOW_TESTS" value="0"/>
+    </php>
+    
+    <logging>
+        <junit outputFile="tests/logs/junit.xml"/>
+        <testdoxHtml outputFile="tests/logs/testdox.html"/>
+        <testdoxText outputFile="tests/logs/testdox.txt"/>
+    </logging>
+</phpunit>

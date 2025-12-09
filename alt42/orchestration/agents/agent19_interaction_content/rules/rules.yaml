@@ -1,0 +1,1105 @@
+# Auto-generated rules.yaml for agent19_interaction_content
+# Generated at: 2025-01-27
+# Updated at: 2025-01-27 (Ontology 매핑 추가)
+# Source: agent19_interaction_content_questions.md → 7가지 핵심 상황 기반 상호작용 컨텐츠 생성 룰
+# Ontology: alphatutor_ontology.owl (Agent 19 관련 클래스 및 Triples 참조)
+# Metadata: metadata.md (데이터 소스 및 Ontology 매핑 상세 정보)
+
+version: "1.1"
+scenario: "interaction_content"
+description: "맞춤형 상호작용 컨텐츠 생성 및 패키징 - 7가지 핵심 상황별 최적 상호작용 유형 선택 및 템플릿 생성"
+
+# Ontology 매핑 정보
+ontology_mapping:
+  core_ontology: "InteractionTypeTemplate"
+  situation_detection: "LearningSituationDetection"
+  interaction_types:
+    - "ReentryInteraction"  # S1
+    - "DelayRecoveryInteraction"  # S2
+    - "RestRoutineImprovementInteraction"  # S3
+    - "ErrorPatternRecoveryInteraction"  # S4
+    - "EmotionalStabilityInteraction"  # S5
+    - "ActivityBalanceInteraction"  # S6
+    - "SignatureRoutineReinforcementInteraction"  # S7
+  data_sources:
+    engagement_score: "EngagementScore"
+    input_event_count: "InputEventCount"
+    calmness_score_change: "CalmnessScoreChange"
+    template_library_match: "TemplateLibraryMatch"
+    template_match_score: "TemplateMatchScore"
+    situation_code: "SituationCode"
+    detection_source: "DetectionSource"
+    reentry_success_rate: "ReentrySuccessRate"
+    click_rate: "ClickRate"
+    participation_rate: "ParticipationRate"
+
+rules:
+  # ========== S1: 학습 이탈 조짐 감지 후 재진입 유도 ==========
+  
+  - rule_id: "S1R1_engagement_drop_detection"
+    priority: 95
+    description: "학습 집중도 급감 및 입력 이벤트 감소 시 재진입 유도 상호작용 생성"
+    conditions:
+      - field: "engagement_score"
+        operator: "<"
+        value: 0.3
+      - field: "input_event_count"
+        operator: "<"
+        value: 5
+      - field: "time_window_minutes"
+        operator: ">="
+        value: 30
+      - field: "emotion_state"
+        operator: "=="
+        value: "권태"
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '미니 재진입 챌린지'"
+      - "generate_interaction_content: 'reengagement_challenge'"
+      - "provide_link: 'easy_win_zone'"
+      - "display_message: '잠깐, 가벼운 도전 하나 해볼까요? 작은 성공이 큰 동기로 이어집니다.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "S1: 이탈 조짐 감지 시 즉각적인 재진입 유도가 필요하며, 쉬운 승리 구간 제시로 정서적 재진입을 유도"
+
+  - rule_id: "S1R2_low_immersion_reentry"
+    priority: 93
+    description: "몰입도 급격히 낮아진 학생에게 활동반려 기반 재진입 유도"
+    conditions:
+      - field: "immersion_level"
+        operator: "<"
+        value: 0.25
+      - field: "detection_source"
+        operator: "=="
+        value: "agent13_learning_dropout"
+      - field: "current_activity_difficulty"
+        operator: ">="
+        value: 7
+    action:
+      - "select_interaction_type: '활동반려 또는 학습지점 변경'"
+      - "select_template: '가벼운 루틴 재시작 인터페이스'"
+      - "provide_link: 'alternative_easy_activity'"
+      - "generate_interaction_content: 'light_routine_restart'"
+      - "display_message: '현재 활동이 조금 부담스러울 수 있어요. 더 가벼운 활동으로 전환해볼까요?'"
+      - "delivery_method: 'visual'"
+    confidence: 0.9
+    rationale: "높은 난이도 활동이 이탈 원인일 경우 대안 활동으로 전환하여 재진입 유도"
+
+  - rule_id: "S1R3_emotion_based_reentry"
+    priority: 91
+    description: "감정 상태 기반 맞춤형 재진입 상호작용 생성"
+    conditions:
+      - field: "emotion_state"
+        operator: "in"
+        value: ["권태", "지루함", "피로"]
+      - field: "mbti_type"
+        operator: "!="
+        value: null
+      - field: "engagement_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '감정 기반 재진입 경로'"
+      - "generate_interaction_content: 'emotion_adaptive_reentry'"
+      - "personalize_by_mbti: true"
+      - "provide_link: 'emotion_support_content'"
+      - "display_message: '지금 기분이 어떤가요? 당신의 감정에 맞는 활동을 함께 찾아볼게요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.88
+    rationale: "감정 상태와 MBTI를 고려한 개인화된 재진입 경로 제공으로 효과적 재진입 유도"
+
+  # ========== S2: 현재 위치 지연 감지 ==========
+  
+  - rule_id: "S2R1_progress_delay_detection"
+    priority: 94
+    description: "목표 대비 진행률 저조 시 부담 완화 및 동기 회복 상호작용"
+    conditions:
+      - field: "progress_rate"
+        operator: "<"
+        value: 0.7
+      - field: "current_position_status"
+        operator: "=="
+        value: "지연 구간"
+      - field: "detection_source"
+        operator: "=="
+        value: "agent14_current_position"
+    action:
+      - "select_interaction_type: '타임쉬프팅'"
+      - "select_template: '페이스 조정 + 긍정 메시지'"
+      - "generate_interaction_content: 'pace_adjustment_positive'"
+      - "provide_link: 'pace_adjustment_guide'"
+      - "display_message: '진행 속도는 조절할 수 있어요. 부담 없이 조금씩 나아가면 됩니다. 당신의 페이스를 조정해볼까요?'"
+      - "delivery_method: 'visual'"
+    confidence: 0.91
+    rationale: "S2: 지연 상태 감지 시 타임쉬프팅으로 부담 완화하고 동기 회복 유도"
+
+  - rule_id: "S2R2_low_progress_with_high_pressure"
+    priority: 92
+    description: "낮은 진행률과 높은 압박감 시 루틴 개선 및 타임쉬프팅 복합 상호작용"
+    conditions:
+      - field: "progress_rate"
+        operator: "<"
+        value: 0.65
+      - field: "pressure_level"
+        operator: ">="
+        value: 7
+      - field: "study_hours_per_week"
+        operator: "<"
+        value: 15
+    action:
+      - "select_interaction_type: '루틴 개선'"
+      - "select_template: '부담 완화 루틴 재설계'"
+      - "generate_interaction_content: 'pressure_reduction_routine'"
+      - "provide_link: 'alternative_learning_path'"
+      - "display_message: '목표를 조금 조정하고 학습 루틴을 재설계해볼까요? 무리하지 않는 것이 중요해요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.89
+    rationale: "높은 압박감과 낮은 진행률 조합 시 루틴 개선을 통한 근본적 해결 제시"
+
+  - rule_id: "S2R3_delay_with_confidence_drop"
+    priority: 90
+    description: "지연 상태와 자신감 하락 복합 상황 대응"
+    conditions:
+      - field: "progress_rate"
+        operator: "<"
+        value: 0.7
+      - field: "confidence_change"
+        operator: "<"
+        value: -0.2
+      - field: "current_position_status"
+        operator: "=="
+        value: "지연 구간"
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '자신감 회복 단계별 가이드'"
+      - "generate_interaction_content: 'confidence_recovery_multiturn'"
+      - "provide_link: 'motivation_content'"
+      - "display_message: '진행이 느려졌다고 해서 실력이 떨어진 건 아니에요. 함께 다시 페이스를 찾아볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.87
+    rationale: "지연과 자신감 하락이 함께 나타날 때 단계별 접근으로 점진적 회복 유도"
+
+  # ========== S3: 휴식 루틴 이상 탐지 ==========
+  
+  - rule_id: "S3R1_rest_pattern_abnormal"
+    priority: 93
+    description: "휴식 패턴 비정상 및 피로 누적 시 휴식 리셋 상호작용 생성"
+    conditions:
+      - field: "rest_pattern_status"
+        operator: "=="
+        value: "비정상"
+      - field: "fatigue_accumulation"
+        operator: ">="
+        value: 0.7
+      - field: "detection_source"
+        operator: "=="
+        value: "agent12_rest_routine"
+    action:
+      - "select_interaction_type: '루틴 개선 + 타임쉬프팅 복합'"
+      - "select_template: '집중 리듬 리셋 인터페이스'"
+      - "generate_interaction_content: 'rest_routine_reset'"
+      - "provide_link: 'rest_routine_guide'"
+      - "display_message: '휴식 패턴을 다시 조정해볼까요? 적절한 휴식이 학습 효율을 높입니다.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "S3: 휴식 루틴 이상 시 루틴 개선과 타임쉬프팅을 통한 종합적 해결"
+
+  - rule_id: "S3R2_short_rest_intervals"
+    priority: 91
+    description: "휴식 간격이 너무 짧은 경우 휴식 루틴 개선 상호작용"
+    conditions:
+      - field: "rest_interval_minutes"
+        operator: "<"
+        value: 10
+      - field: "study_session_duration"
+        operator: ">="
+        value: 60
+      - field: "fatigue_accumulation"
+        operator: ">="
+        value: 0.6
+    action:
+      - "select_interaction_type: '루틴 개선'"
+      - "select_template: '휴식 간격 최적화 가이드'"
+      - "generate_interaction_content: 'rest_interval_optimization'"
+      - "provide_link: 'optimal_rest_pattern'"
+      - "display_message: '충분한 휴식 시간을 확보하는 것이 중요해요. 휴식 패턴을 개선해볼까요?'"
+      - "delivery_method: 'visual'"
+    confidence: 0.88
+    rationale: "짧은 휴식 간격은 피로 누적의 원인이 되므로 휴식 루틴 개선 필요"
+
+  - rule_id: "S3R3_rest_missing_detection"
+    priority: 89
+    description: "휴식 누락 감지 시 강제 휴식 유도 상호작용"
+    conditions:
+      - field: "rest_missing_count"
+        operator: ">="
+        value: 3
+      - field: "consecutive_study_minutes"
+        operator: ">="
+        value: 90
+      - field: "fatigue_accumulation"
+        operator: ">="
+        value: 0.75
+    action:
+      - "select_interaction_type: '활동반려 또는 학습지점 변경'"
+      - "select_template: '강제 휴식 안내'"
+      - "generate_interaction_content: 'mandatory_rest_intervention'"
+      - "provide_link: 'rest_activity_content'"
+      - "display_message: '지금은 휴식이 필요해요. 잠시 쉬고 나면 더 집중할 수 있을 거예요.'"
+      - "delivery_method: 'text'"
+    confidence: 0.9
+    rationale: "휴식 누락이 심각할 경우 강제 휴식으로 피로 회복 유도"
+
+  # ========== S4: 오답 패턴 반복 ==========
+  
+  - rule_id: "S4R1_repeated_error_pattern"
+    priority: 94
+    description: "동일 유형 오답 3회 이상 반복 시 학습 루틴 개선형 상호작용 생성"
+    conditions:
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 3
+      - field: "error_type"
+        operator: "!="
+        value: null
+      - field: "detection_source"
+        operator: "=="
+        value: "agent11_problem_notes"
+    action:
+      - "select_interaction_type: '루틴 개선'"
+      - "select_template: '오답 루프 탈출 가이드형 상호작용'"
+      - "generate_interaction_content: 'error_loop_escape_guide'"
+      - "provide_link: 'concept_reinforcement'"
+      - "display_message: '같은 실수를 반복하고 있네요. 원인을 찾아 함께 개선해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.93
+    rationale: "S4: 오답 패턴 반복 시 루틴 개선으로 원인 인식 유도 및 개념 보강 링크 제공"
+
+  - rule_id: "S4R2_concept_understanding_gap"
+    priority: 92
+    description: "개념 이해 단계 체류시간 부족으로 인한 오답 패턴 대응"
+    conditions:
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 2
+      - field: "concept_review_time_seconds"
+        operator: "<"
+        value: 30
+      - field: "error_category"
+        operator: "=="
+        value: "개념 이해 부족"
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '개념 이해 강화 단계별 가이드'"
+      - "generate_interaction_content: 'concept_understanding_strengthening'"
+      - "provide_link: 'concept_explanation_content'"
+      - "display_message: '개념을 제대로 이해하는 시간이 필요해요. 단계별로 함께 이해해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.91
+    rationale: "개념 이해 부족이 원인일 경우 단계별 개념 이해 강화 상호작용 필요"
+
+  - rule_id: "S4R3_error_pattern_with_study_style"
+    priority: 90
+    description: "학습 스타일과 오답 패턴 연계 분석 기반 루틴 개선"
+    conditions:
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 3
+      - field: "study_style"
+        operator: "=="
+        value: "문제풀이 위주"
+      - field: "concept_mastery_level"
+        operator: "<"
+        value: 0.6
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '학습 스타일 맞춤 오답 개선 경로'"
+      - "generate_interaction_content: 'study_style_adaptive_error_improvement'"
+      - "provide_link: 'balanced_learning_approach'"
+      - "display_message: '문제풀이도 중요하지만, 개념 이해가 선행되어야 해요. 균형잡힌 학습 방법을 함께 찾아볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.88
+    rationale: "학습 스타일이 문제풀이 위주일 경우 개념 보강을 통한 균형잡힌 접근 유도"
+
+  # ========== S5: 정서적 침착도 저하 ==========
+  
+  - rule_id: "S5R1_calmness_score_drop"
+    priority: 95
+    description: "침착도 점수 하락 및 선택 오류 빈번 시 감정 안정형 상호작용 생성"
+    conditions:
+      - field: "calmness_score_change"
+        operator: "<"
+        value: -0.25
+      - field: "selection_error_frequency"
+        operator: ">="
+        value: 0.3
+      - field: "emotion_log"
+        operator: "contains"
+        value: "조급함"
+      - field: "detection_source"
+        operator: "=="
+        value: "agent08_calmness"
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '감정-인지 리밸런싱 대화형 컨텐츠'"
+      - "generate_interaction_content: 'emotion_cognitive_rebalancing'"
+      - "personalize_by_mbti: true"
+      - "provide_link: 'emotional_stability_content'"
+      - "display_message: '조금 서두르지 말고 천천히 생각해볼 시간을 가져볼까요? 침착하게 접근하면 더 좋은 결과가 나올 거예요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.94
+    rationale: "S5: 침착도 저하 시 MBTI 기반 감정 안정화 상호작용으로 인지적 속도 조절 및 안정화 피드백 제공"
+
+  - rule_id: "S5R2_mbti_infp_calmness_support"
+    priority: 93
+    description: "INFP형 학생의 침착도 저하 시 맞춤형 감정 지원 상호작용"
+    conditions:
+      - field: "mbti_type"
+        operator: "=="
+        value: "INFP"
+      - field: "calmness_score"
+        operator: "<"
+        value: 0.5
+      - field: "emotion_log"
+        operator: "contains"
+        value: "조급함"
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: 'INFP 맞춤 감정 안정화 경로'"
+      - "generate_interaction_content: 'infp_emotional_support'"
+      - "tone: '공감적이고 부드러운'"
+      - "provide_link: 'infp_support_content'"
+      - "display_message: '지금 마음이 조급하신가요? INFP인 당신은 깊이 생각하는 성향이 있어요. 충분한 시간을 가지고 천천히 접근해보세요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.91
+    rationale: "INFP형은 감정적으로 민감하므로 공감적이고 부드러운 톤의 맞춤형 지원 필요"
+
+  - rule_id: "S5R3_repeated_mistakes_emotional_impact"
+    priority: 91
+    description: "실수 반복으로 인한 정서적 영향 대응"
+    conditions:
+      - field: "mistake_repeat_count"
+        operator: ">="
+        value: 4
+      - field: "calmness_score"
+        operator: "<"
+        value: 0.4
+      - field: "emotion_log"
+        operator: "contains"
+        value: "좌절"
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '실수 극복 단계별 지원'"
+      - "generate_interaction_content: 'mistake_recovery_multiturn'"
+      - "provide_link: 'resilience_building_content'"
+      - "display_message: '실수는 누구나 해요. 중요한 건 그 실수에서 배우는 거예요. 함께 극복해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.89
+    rationale: "실수 반복으로 인한 좌절감이 침착도를 떨어뜨릴 경우 단계별 감정 지원 필요"
+
+  # ========== S6: 목표 대비 활동 불균형 ==========
+  
+  - rule_id: "S6R1_activity_imbalance_detection"
+    priority: 92
+    description: "목표 대비 활동 분포 불균형 시 학습지점 변경 또는 활동반려 상호작용"
+    conditions:
+      - field: "activity_distribution_balance"
+        operator: "<"
+        value: 0.6
+      - field: "concept_study_ratio"
+        operator: ">"
+        value: 0.7
+      - field: "problem_solving_ratio"
+        operator: "<"
+        value: 0.3
+      - field: "detection_source"
+        operator: "=="
+        value: "agent17_remaining_activities"
+    action:
+      - "select_interaction_type: '활동반려 또는 학습지점 변경'"
+      - "select_template: '활동 균형 재배치 제안형 UI'"
+      - "generate_interaction_content: 'activity_balance_reallocation'"
+      - "provide_link: 'alternative_activity_links'"
+      - "display_message: '개념 공부에 많이 집중하고 계시네요. 문제풀이 활동도 함께 해보면 더 균형잡힌 학습이 될 거예요.'"
+      - "delivery_method: 'visual'"
+    confidence: 0.91
+    rationale: "S6: 활동 불균형 시 학습지점 변경으로 활동 리밸런싱 유도"
+
+  - rule_id: "S6R2_concept_overfocus_with_goal_mismatch"
+    priority: 90
+    description: "개념 공부 과다 집중이 목표와 불일치하는 경우 대안 활동 제안"
+    conditions:
+      - field: "concept_study_ratio"
+        operator: ">"
+        value: 0.75
+      - field: "goal_type"
+        operator: "in"
+        value: ["문제풀이 실력 향상", "시험 대비"]
+      - field: "problem_solving_ratio"
+        operator: "<"
+        value: 0.25
+    action:
+      - "select_interaction_type: '활동반려 또는 학습지점 변경'"
+      - "select_template: '목표 정렬 활동 전환'"
+      - "generate_interaction_content: 'goal_aligned_activity_switch'"
+      - "provide_link: 'problem_solving_activity'"
+      - "display_message: '목표를 달성하려면 문제풀이도 필요해요. 지금 문제풀이 활동으로 전환해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.88
+    rationale: "목표가 문제풀이 실력 향상인데 개념 공부에만 집중할 경우 활동 전환 필요"
+
+  - rule_id: "S6R3_gradual_activity_shift_recommendation"
+    priority: 88
+    description: "점진적 활동 전환을 위한 멀티턴 상호작용"
+    conditions:
+      - field: "activity_distribution_balance"
+        operator: "<"
+        value: 0.65
+      - field: "user_resistance_to_change"
+        operator: ">="
+        value: 0.6
+      - field: "previous_intervention_count"
+        operator: ">="
+        value: 2
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '점진적 활동 전환 가이드'"
+      - "generate_interaction_content: 'gradual_activity_transition'"
+      - "provide_link: 'balanced_activity_mix'"
+      - "display_message: '갑자기 바꾸기 어렵다면 조금씩 변화를 만들어볼까요? 함께 단계별로 진행해봐요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.86
+    rationale: "활동 전환에 저항이 있을 경우 점진적 접근으로 부드러운 전환 유도"
+
+  # ========== S7: 시그너처 루틴 형성 시점 ==========
+  
+  - rule_id: "S7R1_signature_routine_formation"
+    priority: 96
+    description: "몰입 루틴(시그너처 루틴) 형성 감지 시 루틴 강화 상호작용 생성"
+    conditions:
+      - field: "signature_routine_detected"
+        operator: "=="
+        value: true
+      - field: "immersion_level"
+        operator: ">="
+        value: 0.8
+      - field: "detection_source"
+        operator: "=="
+        value: "agent18_signature_routine"
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '루틴 강화 챕터형 상호작용'"
+      - "generate_interaction_content: 'routine_reinforcement_multiturn'"
+      - "provide_link: 'reward_content'"
+      - "display_message: '완벽해요! 당신만의 학습 루틴을 찾으셨네요. 이 루틴을 더욱 강화해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.95
+    rationale: "S7: 시그너처 루틴 형성 시 멀티턴 상호작용으로 루틴 강화 및 지속성 확보"
+
+  - rule_id: "S7R2_routine_consolidation_support"
+    priority: 94
+    description: "형성된 루틴의 정착을 위한 지속적 강화 상호작용"
+    conditions:
+      - field: "signature_routine_detected"
+        operator: "=="
+        value: true
+      - field: "routine_consistency_days"
+        operator: ">="
+        value: 3
+      - field: "routine_consistency_days"
+        operator: "<"
+        value: 7
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '루틴 정착 지원 단계별 가이드'"
+      - "generate_interaction_content: 'routine_consolidation_support'"
+      - "provide_link: 'routine_maintenance_tips'"
+      - "display_message: '좋은 루틴이 자리를 잡고 있어요. 조금만 더 지속하면 습관이 될 거예요. 함께 해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "루틴 형성 초기 단계에서 지속적 강화로 정착 지원"
+
+  - rule_id: "S7R3_routine_reward_celebration"
+    priority: 90
+    description: "시그너처 루틴 성공 달성 시 보상형 콘텐츠 제공"
+    conditions:
+      - field: "signature_routine_detected"
+        operator: "=="
+        value: true
+      - field: "routine_consistency_days"
+        operator: ">="
+        value: 7
+      - field: "routine_success_rate"
+        operator: ">="
+        value: 0.8
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '성공 축하 보상형 인터페이스'"
+      - "generate_interaction_content: 'routine_success_celebration'"
+      - "provide_link: 'reward_content'"
+      - "display_message: '축하해요! 당신의 학습 루틴이 완벽하게 자리잡았어요. 보상을 받아가세요!'"
+      - "delivery_method: 'visual'"
+    confidence: 0.89
+    rationale: "루틴 성공 달성 시 보상형 콘텐츠로 동기 강화 및 지속성 확보"
+
+  # ========== 복합 상황 대응 룰 ==========
+  
+  - rule_id: "CR1_dropout_with_delay_complex"
+    priority: 97
+    description: "이탈 조짐과 지연 상태 복합 상황 종합 대응"
+    conditions:
+      - field: "engagement_score"
+        operator: "<"
+        value: 0.3
+      - field: "progress_rate"
+        operator: "<"
+        value: 0.65
+      - field: "current_position_status"
+        operator: "=="
+        value: "지연 구간"
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '복합 상황 종합 해결 경로'"
+      - "generate_interaction_content: 'complex_situation_resolution'"
+      - "provide_link: 'comprehensive_support_content'"
+      - "display_message: '지금 여러 상황이 겹쳐있네요. 하나씩 천천히 해결해볼까요? 함께 단계별로 진행해봐요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.93
+    rationale: "복합 상황 시 비선형 상호작용으로 다각도 접근하여 종합적 해결"
+
+  - rule_id: "CR2_fatigue_with_error_pattern"
+    priority: 95
+    description: "피로 누적과 오답 패턴 반복 복합 대응"
+    conditions:
+      - field: "fatigue_accumulation"
+        operator: ">="
+        value: 0.7
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 3
+      - field: "rest_pattern_status"
+        operator: "=="
+        value: "비정상"
+    action:
+      - "select_interaction_type: '루틴 개선 + 타임쉬프팅 복합'"
+      - "select_template: '피로와 오답 종합 개선 가이드'"
+      - "generate_interaction_content: 'fatigue_error_comprehensive_improvement'"
+      - "provide_link: 'rest_and_learning_balance'"
+      - "display_message: '피로가 쌓이면 실수도 늘어나요. 휴식과 학습의 균형을 함께 찾아볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.91
+    rationale: "피로와 오답 패턴이 함께 나타날 경우 휴식과 학습 루틴의 종합적 개선 필요"
+
+  - rule_id: "CR3_imbalance_with_calmness_drop"
+    priority: 93
+    description: "활동 불균형과 침착도 저하 복합 대응"
+    conditions:
+      - field: "activity_distribution_balance"
+        operator: "<"
+        value: 0.6
+      - field: "calmness_score"
+        operator: "<"
+        value: 0.5
+      - field: "emotion_log"
+        operator: "contains"
+        value: "조급함"
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '균형과 침착도 종합 개선 경로'"
+      - "generate_interaction_content: 'balance_calmness_comprehensive'"
+      - "provide_link: 'balanced_emotional_stability'"
+      - "display_message: '활동 균형과 마음의 평정을 함께 찾아볼까요? 서두르지 않고 천천히 접근하는 것이 중요해요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.89
+    rationale: "활동 불균형과 침착도 저하가 함께 나타날 경우 종합적 접근 필요"
+
+  # ========== MBTI 기반 개인화 룰 ==========
+  
+  - rule_id: "MBTI1_introvert_interaction_style"
+    priority: 75
+    description: "내향형(I) 학생을 위한 조용한 상호작용 스타일"
+    conditions:
+      - field: "mbti_type"
+        operator: "matches"
+        value: "^I.*"
+      - field: "interaction_type"
+        operator: "!="
+        value: null
+    action:
+      - "adjust_tone: '조용하고 사려깊은'"
+      - "reduce_interruption: true"
+      - "prefer_text_over_visual: true"
+      - "display_message: '(MBTI 맞춤: 내향형 학생을 위한 조용한 상호작용 모드 적용)'"
+    confidence: 0.82
+    rationale: "내향형 학생은 과도한 시각적 자극보다 텍스트 기반 조용한 상호작용 선호"
+
+  - rule_id: "MBTI2_extrovert_interaction_style"
+    priority: 75
+    description: "외향형(E) 학생을 위한 활발한 상호작용 스타일"
+    conditions:
+      - field: "mbti_type"
+        operator: "matches"
+        value: "^E.*"
+      - field: "interaction_type"
+        operator: "!="
+        value: null
+    action:
+      - "adjust_tone: '활발하고 격려하는'"
+      - "prefer_visual_over_text: true"
+      - "increase_engagement_prompts: true"
+      - "display_message: '(MBTI 맞춤: 외향형 학생을 위한 활발한 상호작용 모드 적용)'"
+    confidence: 0.82
+    rationale: "외향형 학생은 시각적이고 활발한 상호작용을 선호"
+
+  # ========== 템플릿 재사용 및 관리 룰 ==========
+  
+  - rule_id: "TMP1_template_reuse_priority"
+    priority: 70
+    description: "기존 템플릿 우선 재사용 원칙"
+    conditions:
+      - field: "template_library_has_match"
+        operator: "=="
+        value: true
+      - field: "template_match_score"
+        operator: ">="
+        value: 0.8
+    action:
+      - "use_existing_template: true"
+      - "customize_template: true"
+      - "update_template_usage_count: true"
+      - "display_message: '(기존 템플릿 재사용 및 맞춤화 적용)'"
+    confidence: 0.85
+    rationale: "효율성과 일관성을 위해 기존 템플릿 우선 재사용"
+
+  - rule_id: "TMP2_new_template_creation"
+    priority: 65
+    description: "기존 템플릿 부재 시 신규 템플릿 생성"
+    conditions:
+      - field: "template_library_has_match"
+        operator: "=="
+        value: false
+      - field: "interaction_type"
+        operator: "!="
+        value: null
+    action:
+      - "create_new_template: true"
+      - "register_to_library: true"
+      - "generate_code: true"
+      - "display_message: '(신규 맞춤형 템플릿 생성 및 라이브러리 등록)'"
+    confidence: 0.8
+    rationale: "기존 템플릿이 없을 경우 신규 템플릿 생성 및 라이브러리 확장"
+
+  # ========== 링크 제공 및 컨텐츠 시스템 연동 룰 ==========
+  
+  - rule_id: "LNK1_easy_win_zone_link"
+    priority: 85
+    description: "재진입 유도 시 쉬운 승리 구간 링크 제공"
+    conditions:
+      - field: "interaction_type"
+        operator: "=="
+        value: "상호작용 컨텐츠"
+      - field: "situation_code"
+        operator: "=="
+        value: "S1"
+    action:
+      - "provide_link: 'easy_win_zone'"
+      - "link_type: 'content_system'"
+      - "link_description: '쉬운 승리 구간 활동으로 재진입 유도'"
+    confidence: 0.9
+    rationale: "S1 상황에서 쉬운 승리 구간 링크는 재진입 유도에 필수"
+
+  - rule_id: "LNK2_concept_reinforcement_link"
+    priority: 88
+    description: "오답 패턴 반복 시 개념 보강 링크 제공"
+    conditions:
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 3
+      - field: "interaction_type"
+        operator: "=="
+        value: "루틴 개선"
+    action:
+      - "provide_link: 'concept_reinforcement'"
+      - "link_type: 'content_system'"
+      - "link_description: '개념 이해 보강을 위한 학습 컨텐츠'"
+    confidence: 0.92
+    rationale: "오답 패턴 반복 시 개념 보강이 필수적"
+
+  - rule_id: "LNK3_alternative_activity_links"
+    priority: 86
+    description: "활동반려 시 대안 활동 링크 제공"
+    conditions:
+      - field: "interaction_type"
+        operator: "in"
+        value: ["활동반려 또는 학습지점 변경", "학습지점 변경"]
+    action:
+      - "provide_link: 'alternative_activity_links'"
+      - "link_type: 'content_system'"
+      - "link_description: '대안 학습 활동으로 전환'"
+    confidence: 0.89
+    rationale: "활동반려 시 명확한 대안 활동 링크 제공 필요"
+
+  # ========== 수학 교과 특화 룰 (Phase 1: 수학 교과 특화 데이터 구축) ==========
+  
+  - rule_id: "MATH_UNIT_LINK_MAPPING"
+    priority: 88
+    description: "수학 단원별 학습 컨텐츠 링크 매핑"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "learning_stage"
+        operator: "in"
+        value: ["concept", "practice", "advanced"]
+    action:
+      - "lookup_unit_content_link: true"
+      - "provide_link: 'unit_content_link'"
+      - "link_type: 'unit_specific'"
+      - "link_description: '{{current_unit}} 단원 {{learning_stage}} 단계 학습 컨텐츠'"
+      - "display_message: '{{current_unit}} 단원의 {{learning_stage}} 단계 컨텐츠를 확인해볼까요?'"
+    confidence: 0.92
+    rationale: "수학 단원별 맞춤 컨텐츠 링크 제공으로 효과적 학습 지원"
+
+  - rule_id: "ACADEMY_TEXTBOOK_LINK_MAPPING"
+    priority: 87
+    description: "학원 교재별 학습 컨텐츠 링크 매핑"
+    conditions:
+      - field: "academy_textbook"
+        operator: "!="
+        value: null
+      - field: "textbook_level"
+        operator: "in"
+        value: ["A", "B", "C", "concept", "RPM"]
+    action:
+      - "lookup_textbook_content_link: true"
+      - "provide_link: 'textbook_content_link'"
+      - "link_type: 'textbook_specific'"
+      - "link_description: '{{academy_textbook}} {{textbook_level}} 단계 학습 컨텐츠'"
+      - "display_message: '학원에서 사용하는 {{academy_textbook}} {{textbook_level}} 단계 컨텐츠를 확인해볼까요?'"
+    confidence: 0.91
+    rationale: "학원 교재에 맞는 컨텐츠 링크 제공으로 학원-학교 연계 학습 지원"
+
+  - rule_id: "PROBLEM_TYPE_INTERACTION_TEMPLATE"
+    priority: 89
+    description: "수학 문제 유형별 맞춤 상호작용 템플릿 선택"
+    conditions:
+      - field: "problem_type"
+        operator: "in"
+        value: ["basic", "type", "advanced"]
+      - field: "error_type"
+        operator: "in"
+        value: ["calculation_error", "concept_error"]
+    action:
+      - "select_template_by_problem_type: true"
+      - "select_template_by_error_type: true"
+      - "generate_interaction_content: 'problem_type_specific'"
+      - "basic_with_calculation_error: '기본형 문제에서 계산 실수가 있었네요. 다시 한 번 계산해볼까요? 단계별로 확인해봐요.'"
+      - "basic_with_concept_error: '기본형 문제에서 개념 오류가 있었네요. 개념을 다시 생각해볼까요?'"
+      - "advanced_with_calculation_error: '심화 문제에서 계산 실수가 있었네요. 차근차근 계산해봐요.'"
+      - "advanced_with_concept_error: '심화 문제에서 개념 오류가 있었네요. 개념을 제대로 이해하면 해결할 수 있어요.'"
+    confidence: 0.93
+    rationale: "문제 유형과 오류 유형에 맞는 맞춤형 상호작용 제공"
+
+  - rule_id: "WEAK_UNIT_CONTENT_RECOMMENDATION"
+    priority: 90
+    description: "학생의 취약 단원 기반 맞춤 컨텐츠 추천"
+    conditions:
+      - field: "weak_units"
+        operator: "!="
+        value: null
+      - field: "current_unit"
+        operator: "in"
+        value: "weak_units"
+    action:
+      - "prioritize_weak_unit_content: true"
+      - "provide_link: 'weak_unit_reinforcement_content'"
+      - "link_type: 'weak_unit_specific'"
+      - "display_message: '{{current_unit}} 단원이 취약한 부분이네요. 이 단원에서 더 연습해볼까요? 취약한 부분을 함께 보강해봐요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.94
+    rationale: "취약 단원 집중 보강으로 학습 효과 극대화"
+
+  # ========== 수학 학습 맥락 반영 룰 (Phase 2: 학생 진단 및 이해 능력 강화) ==========
+  
+  - rule_id: "S1R1_engagement_drop_detection_ENHANCED"
+    priority: 96
+    description: "학습 집중도 급감 시 수학 학습 맥락 고려 재진입 유도"
+    conditions:
+      - field: "engagement_score"
+        operator: "<"
+        value: 0.3
+      - field: "input_event_count"
+        operator: "<"
+        value: 5
+      - field: "time_window_minutes"
+        operator: ">="
+        value: 30
+      - field: "emotion_state"
+        operator: "=="
+        value: "권태"
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "learning_stage"
+        operator: "in"
+        value: ["concept", "practice", "advanced"]
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '미니 재진입 챌린지'"
+      - "generate_interaction_content: 'reengagement_challenge'"
+      - "provide_unit_specific_link: true"
+      - "provide_link: 'easy_win_zone'"
+      - "display_message: '지금 {{current_unit}} 단원을 학습 중이시네요. 가벼운 도전 하나 해볼까요? 작은 성공이 큰 동기로 이어집니다.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.95
+    rationale: "수학 학습 맥락을 고려한 맞춤형 재진입 유도"
+
+  - rule_id: "MATH_LEARNING_STYLE_INTERACTION"
+    priority: 76
+    description: "수학 학습 스타일 기반 맞춤 상호작용"
+    conditions:
+      - field: "math_learning_style"
+        operator: "in"
+        value: ["calculation_focused", "concept_focused", "application_focused"]
+    action:
+      - "adjust_interaction_by_style: true"
+      - "calculation_focused: '계산 연습 컨텐츠 우선 제공'"
+      - "concept_focused: '개념 설명 컨텐츠 우선 제공'"
+      - "application_focused: '다양한 문제 유형 컨텐츠 우선 제공'"
+      - "provide_link: 'style_specific_content'"
+      - "display_message: '당신의 학습 스타일에 맞는 컨텐츠를 추천해드릴게요.'"
+    confidence: 0.85
+    rationale: "학생의 수학 학습 스타일에 맞는 컨텐츠 우선 제공"
+
+  # ========== 수학 학습 단계별 상호작용 전략 룰 (Phase 3: 맞춤형 전략 수립 능력 강화) ==========
+  
+  - rule_id: "MATH_LEARNING_STAGE_CONCEPT"
+    priority: 91
+    description: "개념 학습 단계 상호작용 전략"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "concept"
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '개념 이해 확인 질문형'"
+      - "generate_interaction_content: 'concept_understanding_check'"
+      - "provide_link: 'concept_explanation_content'"
+      - "display_message: '{{current_unit}} 단원의 개념을 이해하셨나요? 예제를 통해 확인해볼까요?'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "개념 학습 단계에 맞는 이해 확인 및 예제 안내"
+
+  - rule_id: "MATH_LEARNING_STAGE_PRACTICE"
+    priority: 91
+    description: "유형 연습 단계 상호작용 전략"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "practice"
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '유형별 문제 제시형'"
+      - "generate_interaction_content: 'type_practice_interaction'"
+      - "provide_link: 'type_practice_content'"
+      - "display_message: '{{current_unit}} 단원의 유형별 문제를 연습해볼까요? 정답률을 확인하면서 진행해봐요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "유형 연습 단계에 맞는 문제 제시 및 피드백 제공"
+
+  - rule_id: "MATH_LEARNING_STAGE_ADVANCED"
+    priority: 91
+    description: "심화 학습 단계 상호작용 전략"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "advanced"
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '비선형 상호작용 알고리즘'"
+      - "select_template: '도전 문제 제시형'"
+      - "generate_interaction_content: 'advanced_challenge_interaction'"
+      - "provide_link: 'advanced_problem_content'"
+      - "display_message: '{{current_unit}} 단원의 심화 문제에 도전해볼까요? 힌트를 제공할게요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.92
+    rationale: "심화 학습 단계에 맞는 도전 문제 제시 및 힌트 제공"
+
+  - rule_id: "ACADEMY_CLASS_PRE_INTERACTION"
+    priority: 88
+    description: "학원 수업 전 예습 상호작용"
+    conditions:
+      - field: "academy_class_time"
+        operator: "before"
+        value: "2_hours"
+      - field: "academy_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '예습 가이드형'"
+      - "generate_interaction_content: 'preview_preparation'"
+      - "provide_link: 'preview_content'"
+      - "display_message: '학원 수업 전에 미리 예습해볼까요? 오늘 배울 {{academy_unit}} 단원을 살펴봐요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.90
+    rationale: "학원 수업 전 예습으로 수업 이해도 향상"
+
+  - rule_id: "ACADEMY_CLASS_POST_INTERACTION"
+    priority: 88
+    description: "학원 수업 후 복습 상호작용"
+    conditions:
+      - field: "academy_class_time"
+        operator: "after"
+        value: "1_hour"
+      - field: "academy_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '복습 강화형'"
+      - "generate_interaction_content: 'review_reinforcement'"
+      - "provide_link: 'review_content'"
+      - "display_message: '학원 수업에서 배운 {{academy_unit}} 단원을 복습해볼까요? 더 확실하게 이해할 수 있어요.'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.90
+    rationale: "학원 수업 후 복습으로 학습 내용 정착"
+
+  # ========== 수학 특화 피드백 룰 (Phase 4: 피드백 및 개선 능력 강화) ==========
+  
+  - rule_id: "MATH_SPECIFIC_FEEDBACK_CALCULATION"
+    priority: 92
+    description: "계산 실수에 대한 수학 특화 피드백"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "calculation_error"
+      - field: "error_repeat_count"
+        operator: ">="
+        value: 2
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '계산 실수 개선 가이드형'"
+      - "generate_interaction_content: 'calculation_error_feedback'"
+      - "display_message: '계산 실수가 있었네요. 다시 한 번 계산해볼까요? 단계별로 확인해봐요. 차근차근 풀면 정확해질 거예요.'"
+      - "provide_link: 'calculation_practice_content'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.93
+    rationale: "계산 실수에 대한 구체적이고 건설적인 피드백 제공"
+
+  - rule_id: "MATH_SPECIFIC_FEEDBACK_CONCEPT"
+    priority: 92
+    description: "개념 오류에 대한 수학 특화 피드백"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "concept_error"
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '멀티턴 상호작용'"
+      - "select_template: '개념 오류 개선 가이드형'"
+      - "generate_interaction_content: 'concept_error_feedback'"
+      - "display_message: '{{current_unit}} 단원의 개념을 다시 생각해볼까요? 개념을 제대로 이해하면 문제가 쉬워질 거예요. 개념 설명 링크를 확인해봐요.'"
+      - "provide_link: 'concept_explanation_content'"
+      - "delivery_method: 'interactive'"
+    confidence: 0.93
+    rationale: "개념 오류에 대한 개념 재학습 안내 피드백 제공"
+
+  - rule_id: "INTERACTION_EFFECTIVENESS_TRACKING"
+    priority: 68
+    description: "상호작용 효과성 추적 및 분석"
+    conditions:
+      - field: "interaction_delivered"
+        operator: "=="
+        value: true
+    action:
+      - "track_click_rate: true"
+      - "track_engagement_rate: true"
+      - "track_improvement_rate: true"
+      - "send_to_agent22: true"
+      - "update_template_effectiveness: true"
+    confidence: 0.80
+    rationale: "상호작용 효과성 추적으로 지속적 개선"
+
+  # ========== 수학 학습 특화 동기 부여 룰 (Phase 5: 정서/동기 관리 강화) ==========
+  
+  - rule_id: "MATH_ACHIEVEMENT_MOTIVATION"
+    priority: 86
+    description: "수학 문제 풀이 성취감 증진"
+    conditions:
+      - field: "problem_solved_correctly"
+        operator: "=="
+        value: true
+      - field: "problem_type"
+        operator: "=="
+        value: "basic"
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '성취 축하형'"
+      - "generate_interaction_content: 'achievement_celebration'"
+      - "display_message: '잘했어요! 정확하게 풀었네요. 다음 문제도 도전해볼까요?'"
+      - "provide_link: 'next_problem_content'"
+      - "delivery_method: 'visual'"
+    confidence: 0.88
+    rationale: "기본형 문제 해결 시 성취감 증진 및 다음 문제 도전 유도"
+
+  - rule_id: "MATH_ADVANCED_ACHIEVEMENT_MOTIVATION"
+    priority: 87
+    description: "심화 문제 해결 시 동기 부여"
+    conditions:
+      - field: "problem_solved_correctly"
+        operator: "=="
+        value: true
+      - field: "problem_type"
+        operator: "=="
+        value: "advanced"
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '고난도 성취 축하형'"
+      - "generate_interaction_content: 'advanced_achievement_celebration'"
+      - "display_message: '훌륭해요! 어려운 문제를 해결했네요. 실력이 많이 늘었어요! 다른 심화 문제도 도전해볼까요?'"
+      - "provide_link: 'advanced_problem_content'"
+      - "delivery_method: 'visual'"
+    confidence: 0.89
+    rationale: "심화 문제 해결 시 강한 성취감 및 자신감 증진"
+
+  - rule_id: "MATH_UNIT_COMPLETION_MOTIVATION"
+    priority: 88
+    description: "단원 완료 시 축하 및 동기 부여"
+    conditions:
+      - field: "unit_completed"
+        operator: "=="
+        value: true
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "select_interaction_type: '상호작용 컨텐츠'"
+      - "select_template: '단원 완료 축하형'"
+      - "generate_interaction_content: 'unit_completion_celebration'"
+      - "display_message: '축하해요! {{current_unit}} 단원을 완료했어요! 정말 수고하셨어요. 다음 단원도 함께 도전해볼까요?'"
+      - "provide_link: 'next_unit_content'"
+      - "provide_reward: true"
+      - "delivery_method: 'visual'"
+    confidence: 0.90
+    rationale: "단원 완료 시 축하 및 다음 단원 도전 동기 부여"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "select_interaction_type: '텍스트 전달'"
+    - "display_message: '상호작용 컨텐츠를 분석하고 생성 중입니다.'"
+  confidence: 0.5
+  rationale: "기본 상호작용 컨텐츠 생성 루틴 적용"

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>JSON-LD RDF Graph Visualizer</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <h1>JSON-LD RDF Graph Visualizer</h1>
+    </header>
+    <div class="app-content">
+        <div class="input-section">
+            <label class="section-heading" for="jsonld-input">
+                Paste your JSON‑LD document below to visualize it as an interactive RDF graph.
+            </label>
+            <div class="textarea-container">
+                <textarea id="jsonld-input" placeholder="Paste your JSON-LD document here..."></textarea>
+            </div>
+
+            <div class="button-container">
+                <div class="init-buttons">
+                    <button id="visualize-btn">Visualize</button>
+                    <button id="example-btn" class="example">Load Example</button>
+                    <button id="clear-btn" class="clear">Clear</button>
+                </div>
+            </div>
+
+            <div id="message-box" class="message"></div>
+
+            <hr class="divider">
+
+            <div class="legend">
+                <div class="interact-buttons">
+                    <button id="recenter-btn" class="secondary">Re-center</button>
+                    <button id="expand-level-btn" class="secondary">Expand Level</button>
+                    <button id="collapse-level-btn" class="secondary">Collapse Level</button>
+                </div>
+
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3498db;"></div>
+                        <span>RDF Subject or Object (IRIs)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9b59b6;"></div>
+                        <span>RDF Predicate (IRIs)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f39c12;"></div>
+                        <span>RDF Subject or Object (Literals, Blank Nodes)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 2px dashed #3498db; background-color: white;"></div>
+                        <span>Expandable Node</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="graph-container" class="graph-container"></div>
+    </div>
+    <footer></footer>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

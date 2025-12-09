@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#">
+    <rdfs:label xml:lang="ko">AlphaTutor Learning Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 학습 온보딩 및 에이전트 시스템 온톨로지</rdfs:comment>
+
+    <owl:imports rdf:resource="modules/agent06.owl"/>
+    <owl:imports rdf:resource="modules/agent07.owl"/>
+    <owl:imports rdf:resource="modules/agent08.owl"/>
+    <owl:imports rdf:resource="modules/agent09.owl"/>
+    <owl:imports rdf:resource="modules/agent10.owl"/>
+    <owl:imports rdf:resource="modules/agent11.owl"/>
+    <owl:imports rdf:resource="modules/agent12.owl"/>
+    <owl:imports rdf:resource="modules/agent15.owl"/>
+    <owl:imports rdf:resource="modules/agent16.owl"/>
+    <owl:imports rdf:resource="modules/agent17.owl"/>
+    <owl:imports rdf:resource="modules/agent18.owl"/>
+    <owl:imports rdf:resource="modules/agent19.owl"/>
+    <owl:imports rdf:resource="modules/agent20.owl"/>
+    <owl:imports rdf:resource="modules/agent21.owl"/>
+    <owl:imports rdf:resource="modules/agent22.owl"/>
+    <owl:imports rdf:resource="modules/core.owl"/>
+  </owl:Ontology>
+
+</rdf:RDF>

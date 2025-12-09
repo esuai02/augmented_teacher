@@ -1,0 +1,1033 @@
+<?php 
+include_once("/home/moodle/public_html/moodle/config.php"); 
+global $DB, $USER;
+require_login();
+
+// Get parameters
+$studentid = $_GET["id"]; 
+$cid = $_GET["cid"]; 
+$access = $_GET["access"];
+if($studentid == NULL) $studentid = $USER->id;
+
+// Check user role and permissions
+$userrole = $DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22'"); 
+$role = $userrole->data;
+
+if($USER->id != $studentid && $role === 'student') {
+    echo '<br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;다른 사용자의 정보에 접근하실 수 없습니다.';
+    exit;
+}
+
+// Get user data
+$timecreated = time();
+$username = $DB->get_record_sql("SELECT id, hideinput, lastname, firstname, timezone FROM mdl_user WHERE id='$studentid' ORDER BY id DESC LIMIT 1");
+$studentname = $username->firstname.$username->lastname;
+$tabtitle = $username->lastname;
+
+// Get user additional data
+$userdata2 = $DB->get_records_sql("SELECT data,fieldid FROM mdl_user_info_data where userid='$studentid' AND (fieldid='107' OR fieldid='88' OR fieldid='89' OR fieldid='82' OR fieldid='90' OR fieldid='64')"); 
+$thisuser = json_decode(json_encode($userdata2), True);
+foreach($thisuser as $value) {
+    if($value['fieldid'] == 107) $usersex = $value['data'];
+    if($value['fieldid'] == 88) $institute = $value['data'];
+    if($value['fieldid'] == 89) $birthyear = $value['data'];
+    if($value['fieldid'] == 82) $AutopilotMode = $value['data'];
+    if($value['fieldid'] == 90) $usrdata = $value['data'];
+    if($value['fieldid'] == 64) $tsymbol = $value['data'];			
+} 
+
+// Redirect for teacher accessing via 'my'
+if($access === 'my' && $role !== 'student') {
+    header('Location: https://mathking.kr/moodle/local/augmented_teacher/teachers/timetable.php?id='.$USER->id.'&tb=7');
+}
+
+// Log access for students
+if($role === 'student') {
+    $DB->execute("INSERT INTO {abessi_missionlog} (userid,page,timecreated) VALUES('$studentid','studentindex','$timecreated')");
+}
+
+// Time calculations
+$timestart = time() - 604800 * 2;
+$aweekago = time() - 604800;
+$timestart2 = time() - 43200;
+$timestart3 = time() - 86400;
+
+// Get review notes
+$reviewnotes = $DB->get_records_sql("SELECT * FROM mdl_abessi_messages WHERE userid='$studentid' AND timemodified > '$aweekago' AND mtype='audio' ORDER BY timemodified DESC LIMIT 30"); 
+$rvresult = json_decode(json_encode($reviewnotes), True);
+$reviewhistory = '';
+foreach($rvresult as $rvvalue) {
+    $url = $rvvalue['url'];
+    $cnttitle = $rvvalue['contentstitle'];
+    $nreview = $rvvalue['nreview'];
+    $nlastview = round(($timecreated - $rvvalue['timemodified']) / 86400, 0);
+    $reviewhistory .= '<tr><td><a href="https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?'.$url.'" target="_blank">🎧 복습 : '.$cnttitle.' ('.$nreview.') </a></td></tr>';
+}
+
+// Get mission lists
+$trecent2 = time() - 31104000;  // 1 year ago
+$missionlist = $DB->get_records_sql("SELECT * FROM mdl_abessi_mission WHERE timecreated>'$trecent2' AND userid='$studentid' ORDER by norder ASC");
+$result = json_decode(json_encode($missionlist), True);
+
+// Initialize mission type arrays
+$mt01 = $mt02 = $mt03 = $mt04 = $mt05 = $mt06 = $mt07 = $mt08 = '';
+
+foreach($result as $value) {
+    $mtid = 0;
+    $mid = $value['id'];
+    $subject = $value['subject'];	
+    $deadline = $value['deadline']; 	
+    $unixtimedeadline = strtotime($deadline);	
+    if($unixtimedeadline > time() + 31536000 || $unixtimedeadline < time() - 31536000) continue;
+    $passgrade = $value['grade'];
+    $mtname = $DB->get_record_sql("SELECT * FROM mdl_abessi_curriculum WHERE id='$subject'");
+    $contentslist = $mtname->contentslist;
+    $subjectname = $mtname->name;
+    $mtid = $mtname->mtid;
+    $subjectname = str_replace("개념 :", "", $subjectname);
+    $subjectname = str_replace("심화 :", "", $subjectname);
+    $subjectname = str_replace("내신 :", "", $subjectname);
+    $subjectname = str_replace("수능 :", "", $subjectname);
+    
+    if($value['complete'] == 0) {
+        if($mtid == 1 || $mtid == 7) {
+            $mt01 .= '<tr><td><a href="https://mathking.kr/moodle/local/augmented_teacher/books/chapter.php?cid='.$subject.'&nch=1&studentid='.$studentid.'&type=init" target="_blank"><img loading="lazy" style="margin-bottom:4px;" src="https://mathking.kr/moodle/local/augmented_teacher/IMAGES/gpt3.png" width="20"> GPT '.$subjectname.' </a> &nbsp; <a href="https://mathking.kr/moodle/local/augmented_teacher/books/ankisystem.php?dmn=math&sbjt=h3&studentid='.$studentid.'&nch=9" target="_blank"><img src="https://ankiweb.net/logo.png" width="20"></a></td>
+            <td width="4%" style=""></td><td width="30%" align="left" style="font-size:12pt">  </td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td>
+            <td width="4%"><div class="form-check"> 완료 &nbsp;<label style="margin-bottom:5px;" class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 2) {
+            if(strpos($subjectname, '초등') !== false) {
+                $mt02 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+            } else {
+                $mt02 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+            }
+        } elseif($mtid == 3) {
+            $mt03 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label style="margin-bottom:5px;" class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 4) {
+            $mt04 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        }
+    } else {
+        if($mtid == 1 || $mtid == 7) {
+            $mt05 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">개념 : '.$subjectname.'</a> &nbsp; <a href="https://mathking.kr/moodle/local/augmented_teacher/books/ankisystem.php?dmn=math&sbjt=h3&studentid='.$studentid.'&nch=9" target="_blank"><img src="https://ankiweb.net/logo.png" width="20"></a></td><td width="4%" style=""></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td>
+            <td width="4%"><div class="form-check"> 추가 &nbsp;<label style="" class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 2) {
+            if(strpos($subjectname, '초등') !== false) {
+                $mt06 .= '<tr><td width="30%" align="left" style="font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'">심화 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+            } else {
+                $mt06 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">심화 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+            }
+        } elseif($mtid == 3) {
+            $mt07 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">내신 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label style="" class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 4) {
+            $mt08 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'">수능 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+        }
+    }
+}
+
+// Additional navigation for teachers
+if($role !== 'student') {
+    $inspect_fixnotes = ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a style="text-decoration:none;color:white;font-size:18px;" href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid='.$studentid.'" target="_blank">귀가평가</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a style="text-decoration:none;color:white;font-size:14px;" href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid='.$studentid.'" target="_blank">오답노트 검사</a> ';
+}
+
+// Save last accessed course for each mission type
+if($cid) {
+    // Save to user preferences or session
+    $_SESSION['last_advanced_course'] = $cid;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title><?php echo $tabtitle; ?> - 학습 홈</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="../assets/img/icon.ico" type="image/x-icon"/>
+    
+    <!-- Fonts and icons -->
+    <script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Open+Sans:300,400,600,700"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['../assets/css/fonts.css']},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/azzara.min.css">
+    <link rel="stylesheet" href="../assets/css/demo.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .header-top {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .user-info h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .user-info p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        .content-wrapper {
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .view-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .view-btn {
+            padding: 8px 16px;
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .view-btn:hover {
+            background: #f1f3f4;
+        }
+        
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Tab View Styles */
+        .tab-view {
+            display: none;
+        }
+        
+        .tab-view.active {
+            display: block;
+        }
+        
+        .tab-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Scroll View Styles */
+        .scroll-view {
+            display: none;
+        }
+        
+        .scroll-view.active {
+            display: block;
+        }
+        
+        /* Mission Section Styles */
+        .mission-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+        
+        .mission-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mission-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .badge-concept {
+            background: #E05D22;
+            color: white;
+        }
+        
+        .badge-advanced {
+            background: #f093fb;
+            color: white;
+        }
+        
+        .badge-exam {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .badge-sat {
+            background: #fa709a;
+            color: white;
+        }
+        
+        .add-mission-btn {
+            padding: 8px 20px;
+            background: #3383FF;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .add-mission-btn:hover {
+            background: #2968d6;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        .mission-list {
+            margin-top: 15px;
+        }
+        
+        .mission-list table {
+            width: 100%;
+        }
+        
+        .mission-list tr {
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .mission-list tr:last-child {
+            border-bottom: none;
+        }
+        
+        .mission-list td {
+            padding: 12px 5px;
+            vertical-align: middle;
+        }
+        
+        .mission-link {
+            color: #3383FF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .mission-link:hover {
+            color: #2968d6;
+            text-decoration: underline;
+        }
+        
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .review-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .review-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .review-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .review-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .form-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .form-check-label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state img {
+            width: 80px;
+            opacity: 0.5;
+            margin-bottom: 15px;
+        }
+        
+        /* Additional Info Section */
+        .info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .info-header {
+            background: #0082D8;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .info-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .info-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+        
+        .info-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tab-btn {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            .mission-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-top">
+        <div class="user-header">
+            <div class="user-info">
+                <h2><?php echo $username->lastname; ?>님 안녕하세요!</h2>
+                <p>배움의 본능이 일깨워진 심장이 뛰기 시작한다면 수학에도 봄날이 올거예요.</p>
+            </div>
+            <div class="header-nav">
+                <a href="today.php?id=<?php echo $studentid; ?>" class="nav-btn">오늘목표</a>
+                <a href="schedule.php?id=<?php echo $studentid; ?>" class="nav-btn">주간계획</a>
+                <a href="goals.php?id=<?php echo $studentid; ?>" class="nav-btn">목표관리</a>
+                <a href="mynote.php?id=<?php echo $studentid; ?>" class="nav-btn">마이노트</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="view-controls">
+            <button class="view-btn active" onclick="switchView('tab')">탭 뷰</button>
+            <button class="view-btn" onclick="switchView('scroll')">스크롤 뷰</button>
+        </div>
+
+        <!-- Tab View -->
+        <div id="tabView" class="tab-view active">
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="openTab('concept')">
+                    <span class="mission-badge badge-concept">개념</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('advanced')">
+                    <span class="mission-badge badge-advanced">심화</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('exam')">
+                    <span class="mission-badge badge-exam">내신</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('sat')">
+                    <span class="mission-badge badge-sat">수능</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('ktm')">KTM 서술평가</button>
+            </div>
+
+            <!-- Concept Tab -->
+            <div id="concept" class="tab-content active">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-concept">개념</span>
+                            개념학습 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=7&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/topiclearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt01): ?>
+                            <table><?php echo $mt01; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 개념학습 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <?php if($reviewhistory): ?>
+                    <div class="review-section">
+                        <div class="review-title">📚 개념복습 추천</div>
+                        <div class="review-list">
+                            <table width="100%"><?php echo $reviewhistory; ?></table>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Completed Concept Missions -->
+                <?php if($mt05): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 개념학습 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt05; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div id="advanced" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-advanced">심화</span>
+                            심화학습 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=2&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/deeperlearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt02): ?>
+                            <table><?php echo $mt02; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 심화학습 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed Advanced Missions -->
+                <?php if($mt06): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 심화학습 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt06; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Exam Tab -->
+            <div id="exam" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-exam">내신</span>
+                            내신대비 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=3&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt03): ?>
+                            <table><?php echo $mt03; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 내신대비 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed Exam Missions -->
+                <?php if($mt07): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 내신대비 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt07; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- SAT Tab -->
+            <div id="sat" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-sat">수능</span>
+                            수능대비 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=4&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt04): ?>
+                            <table><?php echo $mt04; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 수능대비 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed SAT Missions -->
+                <?php if($mt08): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 수능대비 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt08; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- KTM Tab -->
+            <div id="ktm" class="tab-content">
+                <div class="info-section">
+                    <div class="info-header">
+                        <h3>KTM 서술평가</h3>
+                        <div class="info-links">
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/synergetic_step.php?userid=<?php echo $studentid; ?>" target="_blank">출제목록</a>
+                            <?php if($role !== 'student'): ?>
+                                <a href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid=<?php echo $studentid; ?>" target="_blank">귀가평가</a>
+                                <a href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid=<?php echo $studentid; ?>" target="_blank">오답노트 검사</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div>
+                        <?php include("SPEC Intelligence.php"); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll View -->
+        <div id="scrollView" class="scroll-view">
+            <!-- Concept Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-concept">개념</span>
+                        개념학습 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=7&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/topiclearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt01): ?>
+                        <table><?php echo $mt01; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 개념학습 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <?php if($reviewhistory): ?>
+                <div class="review-section">
+                    <div class="review-title">📚 개념복습 추천</div>
+                    <div class="review-list">
+                        <table width="100%"><?php echo $reviewhistory; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Advanced Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-advanced">심화</span>
+                        심화학습 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=2&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/deeperlearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt02): ?>
+                        <table><?php echo $mt02; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 심화학습 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Exam Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-exam">내신</span>
+                        내신대비 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=3&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt03): ?>
+                        <table><?php echo $mt03; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 내신대비 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- SAT Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-sat">수능</span>
+                        수능대비 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=4&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt04): ?>
+                        <table><?php echo $mt04; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 수능대비 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Long-term Planning Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge" style="background: #6c757d; color: white;">후속</span>
+                        장기계획
+                    </div>
+                    <a href="https://mathking.kr/moodle/local/augmented_teacher/students/fullplan.php?id=<?php echo $studentid; ?>" class="add-mission-btn">
+                        장기계획 설정 <i class="flaticon-plus"></i>
+                    </a>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt05 || $mt06 || $mt07 || $mt08): ?>
+                        <table><?php echo $mt05.$mt06.$mt07.$mt08; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <p>완료된 미션을 후속 계획으로 설정할 수 있습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- KTM Section -->
+            <div class="info-section">
+                <div class="info-header">
+                    <h3>KTM 서술평가</h3>
+                    <div class="info-links">
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/synergetic_step.php?userid=<?php echo $studentid; ?>" target="_blank">출제목록</a>
+                        <?php if($role !== 'student'): ?>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid=<?php echo $studentid; ?>" target="_blank">귀가평가</a>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid=<?php echo $studentid; ?>" target="_blank">오답노트 검사</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div>
+                    <?php include("SPEC Intelligence.php"); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../assets/js/ready.min.js"></script>
+
+    <script>
+        // View switching
+        function switchView(viewType) {
+            const tabView = document.getElementById('tabView');
+            const scrollView = document.getElementById('scrollView');
+            const viewBtns = document.querySelectorAll('.view-btn');
+            
+            viewBtns.forEach(btn => btn.classList.remove('active'));
+            
+            if(viewType === 'tab') {
+                tabView.classList.add('active');
+                scrollView.classList.remove('active');
+                viewBtns[0].classList.add('active');
+                localStorage.setItem('indexPreferredView', 'tab');
+            } else {
+                tabView.classList.remove('active');
+                scrollView.classList.add('active');
+                viewBtns[1].classList.add('active');
+                localStorage.setItem('indexPreferredView', 'scroll');
+            }
+        }
+
+        // Tab switching
+        function openTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            // Find and activate the corresponding button
+            const tabIndex = {
+                'concept': 0,
+                'advanced': 1,
+                'exam': 2,
+                'sat': 3,
+                'ktm': 4
+            };
+            
+            if(tabBtns[tabIndex[tabName]]) {
+                tabBtns[tabIndex[tabName]].classList.add('active');
+            }
+            
+            localStorage.setItem('indexActiveTab', tabName);
+        }
+
+        // Checkbox functions
+        function changecheckbox(Eventid, Userid, Missionid, Checkvalue) {
+            var checkimsi = 0;
+            if(Checkvalue == true) {
+                checkimsi = 1;
+            }
+            $.ajax({
+                url: "check.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "eventid": Eventid,
+                    "userid": Userid,
+                    "missionid": Missionid,
+                    "checkimsi": checkimsi
+                },
+                success: function(data) {
+                    location.reload();
+                }
+            });
+        }
+
+        // Load user preferences on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load preferred view
+            const preferredView = localStorage.getItem('indexPreferredView');
+            if(preferredView) {
+                switchView(preferredView);
+            }
+            
+            // Load active tab
+            const activeTab = localStorage.getItem('indexActiveTab');
+            if(activeTab) {
+                openTab(activeTab);
+            }
+        });
+    </script>
+</body>
+</html>

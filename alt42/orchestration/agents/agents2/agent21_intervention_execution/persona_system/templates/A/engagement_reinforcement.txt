@@ -1,0 +1,16 @@
+[ACKNOWLEDGMENT]
+
+{{student_name}}님이 꾸준히 참여해 주시는 모습이 인상적이에요.
+
+[PROGRESS_NOTE]
+
+지금까지 {{completed_tasks}}개의 활동을 완료하셨네요.
+{{progress_percentage}}%의 진행률을 보이고 계세요!
+
+[ENCOURAGEMENT]
+
+이 속도라면 {{expected_completion}}까지 목표를 달성할 수 있을 것 같아요.
+
+[MOTIVATION]
+
+앞으로도 함께 화이팅해요!

@@ -1,0 +1,19 @@
+[ENCOURAGEMENT]
+
+{{student_name}}님, 정말 잘하고 계세요!
+
+{{encouragement_message}}
+
+꾸준히 노트를 작성하는 습관이 실력 향상의 비결입니다.
+
+[MOTIVATION]
+
+{{motivation_tip}}
+
+[CLOSING]
+
+<!--
+파일: templates/default/encouragement.txt
+변수: student_name, encouragement_message, motivation_tip
+용도: 학습 동기 부여 및 격려 메시지
+-->

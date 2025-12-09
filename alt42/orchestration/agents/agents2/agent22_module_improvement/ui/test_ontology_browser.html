@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>온톨로지 테스트 - 브라우저</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .info {
+            color: #3b82f6;
+        }
+        .loading {
+            color: #f59e0b;
+        }
+        pre {
+            background: #f3f4f6;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 온톨로지 테스트 - 브라우저</h1>
+        
+        <div class="test-section">
+            <h2>테스트 1: 첫 수업 질문 (온톨로지 액션 포함 룰)</h2>
+            <p>이 테스트는 Q1 룰이 매칭되어 온톨로지 액션이 실행되는지 확인합니다.</p>
+            <button onclick="testFirstClass()">테스트 실행</button>
+            <div id="result1" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>테스트 2: 기본 질문 (온톨로지 액션 없음)</h2>
+            <p>이 테스트는 일반적인 질문이 올바르게 처리되는지 확인합니다.</p>
+            <button onclick="testBasic()">테스트 실행</button>
+            <div id="result2" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>테스트 3: 커스텀 요청</h2>
+            <p>직접 요청을 입력하여 테스트할 수 있습니다.</p>
+            <input type="text" id="customRequest" placeholder="요청을 입력하세요" style="width: 70%; padding: 8px; margin-right: 10px;">
+            <button onclick="testCustom()">테스트 실행</button>
+            <div id="result3" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'test_ontology_bypass.php';
+        const STUDENT_ID = 810; // 기본 학생 ID
+
+        async function callAPI(agentId, request, studentId = STUDENT_ID) {
+            try {
+                const formData = new URLSearchParams();
+                formData.append('agent_id', agentId);
+                formData.append('request', request);
+                formData.append('userid', studentId);
+
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        function displayResult(resultId, data, request) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.style.display = 'block';
+            
+            let html = `<h3>요청: "${request}"</h3>`;
+            
+            if (data.success) {
+                const result = data.result || data.data || {};
+                const response = result.response || {};
+                const ruleId = result.matched_rule || response.rule_id || result.rule_id || 'N/A';
+                const ontologyCheck = data.ontology_check || {};
+                const hasOntology = ontologyCheck.has_ontology_results || !!(result.ontology_results || response.ontology_results);
+                const ontologyResults = ontologyCheck.ontology_results || result.ontology_results || response.ontology_results || [];
+                
+                html += `<p class="success">✅ 요청 성공</p>`;
+                html += `<p><strong>매칭된 룰:</strong> <span class="info">${ruleId}</span></p>`;
+                html += `<p><strong>온톨로지 결과:</strong> <span class="${hasOntology ? 'success' : 'error'}">${hasOntology ? `✅ 있음 (${ontologyCheck.ontology_results_count || ontologyResults.length}개)` : '❌ 없음'}</span></p>`;
+                
+                if (hasOntology && ontologyResults.length > 0) {
+                    html += `<h4>온톨로지 결과 상세:</h4>`;
+                    html += `<pre>${JSON.stringify(ontologyResults, null, 2)}</pre>`;
+                }
+                
+                html += `<h4>응답 메시지:</h4>`;
+                html += `<p>${response.message || result.message || 'N/A'}</p>`;
+                
+                html += `<h4>전체 응답:</h4>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            } else {
+                html += `<p class="error">❌ 요청 실패</p>`;
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+
+        async function testFirstClass() {
+            const resultDiv = document.getElementById('result1');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p class="loading">⏳ 테스트 실행 중...</p>';
+            
+            const request = '첫 수업을 어떻게 시작해야 할지 알려주세요';
+            const data = await callAPI('agent01', request);
+            displayResult('result1', data, request);
+        }
+
+        async function testBasic() {
+            const resultDiv = document.getElementById('result2');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p class="loading">⏳ 테스트 실행 중...</p>';
+            
+            const request = '안녕하세요';
+            const data = await callAPI('agent01', request);
+            displayResult('result2', data, request);
+        }
+
+        async function testCustom() {
+            const requestInput = document.getElementById('customRequest');
+            const request = requestInput.value.trim();
+            
+            if (!request) {
+                alert('요청을 입력해주세요.');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('result3');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p class="loading">⏳ 테스트 실행 중...</p>';
+            
+            const data = await callAPI('agent01', request);
+            displayResult('result3', data, request);
+        }
+    </script>
+</body>
+</html>
+

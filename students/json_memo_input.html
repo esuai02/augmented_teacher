@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 메모 입력</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 12px 30px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+        .validate-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .validate-btn:hover {
+            background-color: #1976D2;
+        }
+        .clear-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .clear-btn:hover {
+            background-color: #d32f2f;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .example {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .example h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .example pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 JSON 메모 입력 시스템</h1>
+        
+        <div class="example">
+            <h3>📋 JSON 형식 예시</h3>
+            <pre>{
+    "useraddcourse": "수학",
+    "usermathlevel": "고급",
+    "userprogresstype": "심화학습",
+    "userid": 123,
+    "type": "today",
+    "content": "오늘의 학습 내용입니다.",
+    "additional_data": {
+        "subject": "미적분",
+        "difficulty": "상"
+    }
+}</pre>
+        </div>
+
+        <form id="jsonMemoForm">
+            <div class="form-group">
+                <label for="jsonInput">JSON 데이터 입력:</label>
+                <textarea id="jsonInput" name="jsonInput" placeholder="JSON 형식의 데이터를 입력하세요..."></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="validate-btn" onclick="validateJSON()">✓ JSON 검증</button>
+                <button type="button" class="save-btn" onclick="saveJSONMemo()">💾 저장</button>
+                <button type="button" class="clear-btn" onclick="clearInput()">🗑️ 지우기</button>
+            </div>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function validateJSON() {
+            const input = document.getElementById('jsonInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                showResult('JSON 데이터를 입력해주세요.', 'error');
+                return false;
+            }
+            
+            try {
+                const parsed = JSON.parse(input);
+                showResult('✅ 유효한 JSON 형식입니다!\n\n파싱된 데이터:\n' + JSON.stringify(parsed, null, 2), 'success');
+                return true;
+            } catch (error) {
+                showResult('❌ JSON 형식이 올바르지 않습니다:\n' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        function saveJSONMemo() {
+            // 먼저 JSON 검증
+            if (!validateJSON()) {
+                return;
+            }
+            
+            const jsonData = document.getElementById('jsonInput').value.trim();
+            
+            // AJAX 요청으로 서버에 데이터 전송
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'process_json_memo.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        
+                        if (response.success) {
+                            showResult('✅ 저장 완료!\n\n결과:\n' + JSON.stringify(response, null, 2), 'success');
+                        } else {
+                            showResult('❌ 저장 실패:\n' + (response.error || '알 수 없는 오류'), 'error');
+                        }
+                    } catch (error) {
+                        showResult('❌ 서버 응답 처리 오류:\n' + error.message, 'error');
+                    }
+                }
+            };
+            
+            xhr.onerror = function() {
+                showResult('❌ 네트워크 오류가 발생했습니다.', 'error');
+            };
+            
+            xhr.send(jsonData);
+        }
+        
+        function clearInput() {
+            if (confirm('입력된 내용을 모두 지우시겠습니까?')) {
+                document.getElementById('jsonInput').value = '';
+                document.getElementById('result').style.display = 'none';
+            }
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = 'result ' + type;
+            resultDiv.style.display = 'block';
+        }
+        
+        // 페이지 로드 시 예시 데이터 추가
+        window.onload = function() {
+            const exampleData = {
+                "useraddcourse": "수학",
+                "usermathlevel": "중급",
+                "userprogresstype": "복습",
+                "userid": 1,
+                "type": "today",
+                "content": "이차함수의 그래프 학습 완료"
+            };
+            
+            // 예시 버튼 추가
+            const buttonGroup = document.querySelector('.button-group');
+            const exampleBtn = document.createElement('button');
+            exampleBtn.type = 'button';
+            exampleBtn.className = 'validate-btn';
+            exampleBtn.textContent = '📝 예시 로드';
+            exampleBtn.onclick = function() {
+                document.getElementById('jsonInput').value = JSON.stringify(exampleData, null, 2);
+            };
+            buttonGroup.insertBefore(exampleBtn, buttonGroup.firstChild);
+        };
+    </script>
+</body>
+</html> 

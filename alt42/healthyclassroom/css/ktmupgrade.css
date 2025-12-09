@@ -1,0 +1,478 @@
+/* KTM 통합 진단 시스템 커스텀 스타일 */
+
+/* 전역 스타일 */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #2d3748;
+}
+
+/* Lucide 아이콘 기본 스타일 */
+[data-lucide] {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+/* 작은 아이콘 */
+.w-5.h-5[data-lucide] {
+    width: 20px;
+    height: 20px;
+}
+
+.w-4.h-4[data-lucide] {
+    width: 16px;
+    height: 16px;
+}
+
+.w-3\\.5.h-3\\.5[data-lucide] {
+    width: 14px;
+    height: 14px;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 모듈 카드 호버 효과 */
+.module-card {
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+}
+
+.module-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e0;
+}
+
+.module-card:hover .text-6xl {
+    opacity: 0.2 !important;
+}
+
+/* 학생 카드 호버 효과 */
+.student-card {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.student-card:hover {
+    transform: translateY(-2px);
+}
+
+.student-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: currentColor;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.student-card:hover::before {
+    transform: translateX(0);
+}
+
+/* 버튼 스타일 개선 */
+button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* 차분한 색상 테마 */
+.calm-gradient {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+.calm-header {
+    background-color: #2d3748;
+}
+
+.calm-primary {
+    background-color: #4a5568;
+    color: white;
+}
+
+.calm-primary:hover {
+    background-color: #2d3748;
+}
+
+.calm-secondary {
+    background-color: #718096;
+    color: white;
+}
+
+.calm-accent {
+    background-color: #64748b;
+    color: white;
+}
+
+.calm-success {
+    background-color: #48bb78;
+}
+
+.calm-warning {
+    background-color: #ed8936;
+}
+
+.calm-danger {
+    background-color: #e53e3e;
+}
+
+.calm-info {
+    background-color: #4299e1;
+}
+
+/* 텍스트 색상 */
+.calm-text-primary {
+    color: #2d3748;
+}
+
+.calm-text-secondary {
+    color: #4a5568;
+}
+
+.calm-text-muted {
+    color: #718096;
+}
+
+/* 그라디언트 버튼 호버 효과 */
+.bg-gradient-to-r {
+    background-size: 200% 100%;
+    transition: background-position 0.5s ease;
+}
+
+.bg-gradient-to-r:hover {
+    background-position: right center;
+}
+
+/* 프로그레스 바 애니메이션 */
+.progress-bar {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 모달 애니메이션 */
+#studentModal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+#studentModal > div {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* KTM 지수 배경 효과 */
+.module-card .absolute {
+    transition: opacity 0.3s ease;
+}
+
+/* 아이콘 회전 효과 */
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+/* 긴급 알림 효과 - 펄스 제거하고 차분한 스타일 적용 */
+.calm-alert {
+    background-color: #fed7d7;
+    color: #742a2a;
+    border: 1px solid #fc8181;
+}
+
+/* 툴팁 스타일 */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4a5568;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+/* 스크롤바 커스터마이징 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #a0aec0;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #718096;
+}
+
+/* 로딩 스피너 */
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 그리드 레이아웃 보정 */
+.grid {
+    display: grid;
+}
+
+.grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.col-span-2 {
+    grid-column: span 2 / span 2;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .grid-cols-6 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    
+    .grid-cols-5 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    
+    .col-span-2 {
+        grid-column: span 1 / span 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .flex-row {
+        flex-direction: column;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+}
+
+/* 프린트 스타일 */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .bg-gradient-to-r {
+        background: #000 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    button {
+        display: none;
+    }
+}
+
+/* 다크 모드 지원 (옵션) */
+@media (prefers-color-scheme: dark) {
+    /* 다크 모드 스타일 추가 가능 */
+}
+
+/* 커스텀 유틸리티 클래스 */
+.shadow-soft {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.border-gradient {
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(to right, #3b82f6, #8b5cf6) border-box;
+    border: 2px solid transparent;
+}
+
+/* 차트 스타일 */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 20px 0;
+}
+
+/* 뱃지 스타일 */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+/* 카드 그림자 효과 */
+.card-shadow {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
+                0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.card-shadow:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* 텍스트 그라디언트 */
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 오버레이 효과 */
+.overlay {
+    position: relative;
+}
+
+.overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay:hover::before {
+    opacity: 1;
+}

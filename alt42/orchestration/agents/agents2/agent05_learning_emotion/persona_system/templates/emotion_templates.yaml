@@ -1,0 +1,439 @@
+# emotion_templates.yaml
+# Agent05 Learning Emotion - 감정별 응답 템플릿
+#
+# 구조: emotion_type -> intensity_level -> templates[]
+# 각 템플릿은 {variable} 플레이스홀더 지원
+#
+# DB Tables: at_learning_emotion_log, at_agent_response_log
+# Created: 2024-12-02
+# Version: 1.0
+
+metadata:
+  agent_id: 5
+  agent_name: "learning_emotion"
+  template_version: "1.0"
+  last_updated: "2024-12-02"
+  supported_emotions: 8
+  supported_intensities: 3
+  total_templates: 72  # 8 emotions × 3 intensities × 3 templates each
+
+# =============================================================================
+# 감정별 응답 템플릿
+# =============================================================================
+
+emotions:
+
+  # ---------------------------------------------------------------------------
+  # 불안 (Anxiety)
+  # ---------------------------------------------------------------------------
+  anxiety:
+    description: "학습에 대한 불안감, 걱정, 두려움"
+    color_code: "#FFB74D"
+    icon: "😰"
+
+    high:
+      - template: "많이 걱정되고 있구나... {student_name}아, 괜찮아. 한 번에 다 할 필요 없어. 지금 {current_topic}부터 천천히 같이 해보자."
+        context: "general"
+        tone: "reassuring"
+      - template: "수학이 어렵게 느껴지는 건 당연해. 그런데 {student_name}은/는 이미 {achievement}을/를 해냈잖아! 그때처럼 하나씩 해보자."
+        context: "with_achievement"
+        tone: "encouraging"
+      - template: "지금 너무 걱정하지 마. 선생님이 {student_name} 속도에 맞춰서 도와줄게. 우선 심호흡 한 번 하고 시작해볼까?"
+        context: "high_stress"
+        tone: "calming"
+
+    medium:
+      - template: "{student_name}아, 조금 걱정되는 것 같은데, 같이 차근차근 해보면 괜찮을 거야."
+        context: "general"
+        tone: "supportive"
+      - template: "이 부분이 좀 어려워 보이지? 그런데 {hint}부터 시작하면 훨씬 쉬워질 거야."
+        context: "with_hint"
+        tone: "guiding"
+      - template: "걱정되는 마음 이해해. 하지만 {student_name}이/가 {recent_progress}한 걸 보면 충분히 할 수 있어!"
+        context: "with_progress"
+        tone: "encouraging"
+
+    low:
+      - template: "살짝 긴장되는 것 같네! 괜찮아, 천천히 해보자."
+        context: "general"
+        tone: "light"
+      - template: "{current_topic} 시작하기 전에 살짝 긴장되지? 금방 익숙해질 거야!"
+        context: "new_topic"
+        tone: "reassuring"
+      - template: "조금 부담스러워 보이는데, 한 문제씩 해보면 어느새 끝나 있을 거야."
+        context: "problem_solving"
+        tone: "motivating"
+
+  # ---------------------------------------------------------------------------
+  # 좌절 (Frustration)
+  # ---------------------------------------------------------------------------
+  frustration:
+    description: "문제가 안 풀릴 때의 답답함, 짜증"
+    color_code: "#EF5350"
+    icon: "😤"
+
+    high:
+      - template: "정말 답답하겠다... {student_name}아, 잠깐 쉬었다가 다시 해볼까? 머리 식히고 오면 더 잘 보일 거야."
+        context: "general"
+        tone: "empathetic"
+      - template: "이 문제 때문에 속상하구나. {attempt_count}번이나 시도한 {student_name}의 노력이 대단해. 다른 방법으로 접근해볼까?"
+        context: "multiple_attempts"
+        tone: "validating"
+      - template: "화나는 마음 충분히 이해해. 잠깐, {student_name}이/가 놓친 부분이 있는 것 같아. {hint}를 한번 확인해볼래?"
+        context: "with_hint"
+        tone: "redirecting"
+
+    medium:
+      - template: "이 부분이 잘 안 풀리니까 답답하지? {key_concept}만 이해하면 금방 풀릴 거야."
+        context: "concept_gap"
+        tone: "guiding"
+      - template: "짜증나는 거 알아. 하지만 {student_name}은/는 {past_success}도 처음엔 어려웠잖아. 이것도 곧 그렇게 될 거야."
+        context: "with_past_success"
+        tone: "perspective"
+      - template: "힘들지? 여기서 포기하면 아까워. 힌트 하나 줄까?"
+        context: "offer_help"
+        tone: "supportive"
+
+    low:
+      - template: "살짝 막히는 것 같네! 이 부분 같이 봐볼까?"
+        context: "general"
+        tone: "casual"
+      - template: "이 문제 좀 까다롭지? {approach}로 접근해보면 어때?"
+        context: "with_approach"
+        tone: "suggesting"
+      - template: "잠깐 막혔구나. 괜찮아, 누구나 그럴 수 있어!"
+        context: "normalizing"
+        tone: "reassuring"
+
+  # ---------------------------------------------------------------------------
+  # 자신감 (Confidence)
+  # ---------------------------------------------------------------------------
+  confidence:
+    description: "학습에 대한 자신감, 성취감"
+    color_code: "#66BB6A"
+    icon: "😎"
+
+    high:
+      - template: "와, {student_name} 완전 자신감 넘치네! 이 기세로 {next_challenge}도 도전해볼까?"
+        context: "general"
+        tone: "enthusiastic"
+      - template: "대단해! {achievement}을/를 해내다니! {student_name}의 실력이 정말 늘었어!"
+        context: "with_achievement"
+        tone: "celebrating"
+      - template: "{student_name} 지금 완전 잘하고 있어! 이 흐름 그대로 가보자!"
+        context: "momentum"
+        tone: "energetic"
+
+    medium:
+      - template: "오, 자신감이 붙었네! {current_topic} 확실히 이해한 것 같아."
+        context: "general"
+        tone: "affirming"
+      - template: "{student_name}이/가 {progress}하고 있어서 기분 좋지? 계속 이렇게 해보자!"
+        context: "with_progress"
+        tone: "encouraging"
+      - template: "잘하고 있어! 이 정도면 {next_step}도 충분히 할 수 있을 거야."
+        context: "with_next_step"
+        tone: "guiding"
+
+    low:
+      - template: "조금씩 자신감이 붙는 것 같네! 좋은 징조야."
+        context: "general"
+        tone: "supportive"
+      - template: "이 문제 맞췄네! {student_name}도 할 수 있다는 거지?"
+        context: "correct_answer"
+        tone: "building"
+      - template: "점점 나아지고 있어. 이 느낌 기억해두자!"
+        context: "improvement"
+        tone: "positive"
+
+  # ---------------------------------------------------------------------------
+  # 호기심 (Curiosity)
+  # ---------------------------------------------------------------------------
+  curiosity:
+    description: "새로운 개념에 대한 관심과 탐구욕"
+    color_code: "#42A5F5"
+    icon: "🤔"
+
+    high:
+      - template: "오! {student_name} 진짜 궁금한 게 많구나! 좋아, {topic}에 대해 더 깊이 알아볼까?"
+        context: "general"
+        tone: "excited"
+      - template: "와, 그런 질문을 하다니! {student_name}의 생각이 정말 깊어지고 있어. {explanation}에 대해 설명해줄게."
+        context: "deep_question"
+        tone: "impressed"
+      - template: "호기심이 대폭발이네! 이렇게 궁금해하는 학생이 가장 빨리 늘어. {related_topic}도 알아볼래?"
+        context: "expanding"
+        tone: "encouraging"
+
+    medium:
+      - template: "{topic}이/가 궁금하구나? 좋은 질문이야! 같이 알아보자."
+        context: "general"
+        tone: "engaging"
+      - template: "그 부분이 신기하지? {student_name}처럼 '왜?'라고 묻는 게 진짜 공부야."
+        context: "why_question"
+        tone: "validating"
+      - template: "더 알고 싶은 마음 좋아! {hint}를 먼저 보고 생각해볼까?"
+        context: "with_hint"
+        tone: "guiding"
+
+    low:
+      - template: "관심이 생겼네! 이 부분 재미있지?"
+        context: "general"
+        tone: "casual"
+      - template: "살짝 궁금한 것 같은데, {topic} 더 알아볼까?"
+        context: "invitation"
+        tone: "inviting"
+      - template: "오, 뭔가 흥미로운 걸 발견한 것 같네!"
+        context: "discovery"
+        tone: "observing"
+
+  # ---------------------------------------------------------------------------
+  # 지루함 (Boredom)
+  # ---------------------------------------------------------------------------
+  boredom:
+    description: "학습에 대한 흥미 저하, 지루함"
+    color_code: "#78909C"
+    icon: "😑"
+
+    high:
+      - template: "좀 지루하지? {student_name}아, 잠깐 재미있는 문제로 바꿔볼까? {fun_activity}는 어때?"
+        context: "general"
+        tone: "energizing"
+      - template: "같은 유형 계속 하니까 질리지? 괜찮아, {different_approach}로 해보자!"
+        context: "repetitive"
+        tone: "refreshing"
+      - template: "집중이 안 되는 것 같네. 5분만 쉬고 올래? 아니면 {game_element} 넣어서 해볼까?"
+        context: "low_focus"
+        tone: "flexible"
+
+    medium:
+      - template: "조금 지겨워지는 것 같네. {interesting_fact} 알아? 이거랑 연결되는 내용이야!"
+        context: "with_fact"
+        tone: "engaging"
+      - template: "{student_name}아, 이 부분 빨리 끝내고 더 재미있는 거 해볼까?"
+        context: "motivation"
+        tone: "goal_setting"
+      - template: "루틴하게 느껴지지? 조금만 더 하면 새로운 개념 배우는데, 그건 더 재미있을 거야."
+        context: "preview"
+        tone: "anticipation"
+
+    low:
+      - template: "살짝 지루해 보이는데, 방식을 바꿔볼까?"
+        context: "general"
+        tone: "observing"
+      - template: "이 부분은 좀 단순하지? 금방 끝나니까 조금만 힘내자!"
+        context: "simple_task"
+        tone: "encouraging"
+      - template: "반복 연습이 좀 지겹지? 하지만 이게 실력 쌓는 비결이야!"
+        context: "practice"
+        tone: "perspective"
+
+  # ---------------------------------------------------------------------------
+  # 피로 (Fatigue)
+  # ---------------------------------------------------------------------------
+  fatigue:
+    description: "학습 피로, 집중력 저하, 에너지 부족"
+    color_code: "#8D6E63"
+    icon: "😴"
+
+    high:
+      - template: "{student_name}아, 많이 피곤해 보여. 오늘은 여기까지 하고 푹 쉬는 게 어때?"
+        context: "general"
+        tone: "caring"
+      - template: "너무 무리하지 마. {study_duration}이나 공부했잖아! 대단해. 이제 쉬어도 돼."
+        context: "long_study"
+        tone: "validating"
+      - template: "피곤할 때 억지로 하면 효과 없어. 잠깐 쉬고 와. 선생님이 기다릴게."
+        context: "break_suggestion"
+        tone: "understanding"
+
+    medium:
+      - template: "좀 지친 것 같네. {short_task}만 하고 쉴까?"
+        context: "general"
+        tone: "accommodating"
+      - template: "집중력이 떨어지는 것 같아. 스트레칭하고 물 한 잔 마시고 올래?"
+        context: "refresh"
+        tone: "practical"
+      - template: "{student_name}이/가 오늘 {achievement}했으니까 충분해! 무리하지 마."
+        context: "with_achievement"
+        tone: "reassuring"
+
+    low:
+      - template: "살짝 피곤해 보이네. 페이스 조절하면서 하자!"
+        context: "general"
+        tone: "light"
+      - template: "조금 지친 것 같은데, 쉬운 문제로 워밍업 해볼까?"
+        context: "easy_start"
+        tone: "adjusting"
+      - template: "에너지가 좀 떨어졌네. 이 문제만 끝내고 잠깐 쉬자!"
+        context: "milestone"
+        tone: "goal_oriented"
+
+  # ---------------------------------------------------------------------------
+  # 성취감 (Achievement)
+  # ---------------------------------------------------------------------------
+  achievement:
+    description: "목표 달성 후의 뿌듯함과 성취감"
+    color_code: "#FDD835"
+    icon: "🎉"
+
+    high:
+      - template: "와아아! {student_name} 해냈어!! {achievement}을/를 완벽하게 해내다니 정말 대단해!"
+        context: "general"
+        tone: "celebrating"
+      - template: "드디어! {student_name}의 노력이 빛을 발했어! 이 순간 기억해둬. 넌 할 수 있어!"
+        context: "breakthrough"
+        tone: "triumphant"
+      - template: "최고야! {difficulty_level} 문제를 풀다니! {student_name} 진짜 레벨업했어!"
+        context: "difficult_problem"
+        tone: "impressed"
+
+    medium:
+      - template: "잘했어! {achievement}을/를 해내다니 기분 좋지?"
+        context: "general"
+        tone: "affirming"
+      - template: "오! {correct_count}개 연속 정답! {student_name} 실력이 확실히 늘었어!"
+        context: "streak"
+        tone: "tracking"
+      - template: "멋져! 이 성취감 기억해두고, 다음에도 이렇게 해보자!"
+        context: "momentum"
+        tone: "encouraging"
+
+    low:
+      - template: "맞았어! 작은 성공이지만 이게 쌓이면 큰 실력이 돼."
+        context: "general"
+        tone: "building"
+      - template: "좋아! 한 걸음 더 나아갔어. 계속 가보자!"
+        context: "progress"
+        tone: "forward"
+      - template: "이것도 성취야! {student_name}의 노력의 결과지."
+        context: "validation"
+        tone: "recognizing"
+
+  # ---------------------------------------------------------------------------
+  # 혼란 (Confusion)
+  # ---------------------------------------------------------------------------
+  confusion:
+    description: "개념 이해가 안 될 때의 혼란스러움"
+    color_code: "#AB47BC"
+    icon: "😵"
+
+    high:
+      - template: "많이 헷갈리는 것 같네. 괜찮아, {student_name}아. 처음부터 차근차근 다시 설명해줄게."
+        context: "general"
+        tone: "patient"
+      - template: "복잡하지? 이 개념은 원래 어려워. {simple_analogy}로 생각해보면 어때?"
+        context: "with_analogy"
+        tone: "simplifying"
+      - template: "헷갈리는 거 당연해. {prerequisite}부터 다시 확인해볼까? 그러면 더 명확해질 거야."
+        context: "prerequisite_gap"
+        tone: "diagnostic"
+
+    medium:
+      - template: "좀 혼란스럽지? {key_point}만 기억하면 훨씬 쉬워질 거야."
+        context: "general"
+        tone: "clarifying"
+      - template: "{concept_a}와 {concept_b}가 헷갈리는 것 같아. 둘의 차이점을 정리해줄게."
+        context: "comparison"
+        tone: "organizing"
+      - template: "어디서부터 헷갈리기 시작했어? 그 부분부터 다시 봐보자."
+        context: "locating"
+        tone: "diagnostic"
+
+    low:
+      - template: "살짝 헷갈리는 것 같네. 어떤 부분이 애매해?"
+        context: "general"
+        tone: "inquiring"
+      - template: "이 부분 좀 복잡하지? 핵심만 짚어줄게."
+        context: "summarizing"
+        tone: "helpful"
+      - template: "조금 혼란스러워 보이는데, 예시 하나 더 볼까?"
+        context: "with_example"
+        tone: "supportive"
+
+# =============================================================================
+# 복합 감정 템플릿
+# =============================================================================
+
+complex_emotions:
+
+  anxious_curiosity:
+    description: "불안하지만 궁금한 복합 감정"
+    primary: "anxiety"
+    secondary: "curiosity"
+    templates:
+      - template: "궁금하면서도 걱정되는 마음, 이해해. {student_name}아, 천천히 알아가보자. 모르는 게 당연하니까!"
+        tone: "balanced"
+      - template: "새로운 게 무섭기도 하고 신기하기도 하지? 그게 배움의 시작이야!"
+        tone: "normalizing"
+
+  frustrated_determination:
+    description: "좌절했지만 포기하지 않으려는 의지"
+    primary: "frustration"
+    secondary: "confidence"
+    templates:
+      - template: "힘들지만 포기 안 하려는 {student_name} 멋져! 그 끈기가 결국 이기는 거야."
+        tone: "admiring"
+      - template: "답답하면서도 다시 도전하는 모습이 대단해. 이번엔 {approach}로 해볼까?"
+        tone: "strategic"
+
+  tired_but_achieving:
+    description: "피곤하지만 성취감을 느끼는 상태"
+    primary: "fatigue"
+    secondary: "achievement"
+    templates:
+      - template: "피곤하겠지만 {achievement}을/를 해낸 {student_name}! 오늘 정말 대단했어. 이제 푹 쉬어!"
+        tone: "proud"
+      - template: "힘든 와중에도 해냈네! 이게 진짜 성장이야. 오늘은 여기까지!"
+        tone: "concluding"
+
+  bored_but_trying:
+    description: "지루하지만 노력하려는 상태"
+    primary: "boredom"
+    secondary: "confidence"
+    templates:
+      - template: "지루해도 계속하려는 {student_name} 의지 좋아! 이 인내심이 실력이 되는 거야."
+        tone: "encouraging"
+      - template: "재미없는 부분도 해내는 게 진짜 실력자야. 조금만 더 하면 재미있는 부분 나와!"
+        tone: "motivating"
+
+# =============================================================================
+# 메타 정보
+# =============================================================================
+
+variable_definitions:
+  student_name: "학생 이름"
+  current_topic: "현재 학습 중인 주제"
+  achievement: "달성한 성취"
+  hint: "힌트 내용"
+  recent_progress: "최근 진전 사항"
+  key_concept: "핵심 개념"
+  past_success: "과거 성공 경험"
+  approach: "접근 방법"
+  attempt_count: "시도 횟수"
+  next_challenge: "다음 도전 과제"
+  progress: "진행 상황"
+  next_step: "다음 단계"
+  topic: "주제"
+  explanation: "설명 내용"
+  related_topic: "관련 주제"
+  fun_activity: "재미있는 활동"
+  different_approach: "다른 접근법"
+  game_element: "게임 요소"
+  interesting_fact: "흥미로운 사실"
+  study_duration: "공부 시간"
+  short_task: "짧은 과제"
+  correct_count: "정답 개수"
+  difficulty_level: "난이도"
+  simple_analogy: "간단한 비유"
+  prerequisite: "선수 지식"
+  key_point: "핵심 포인트"
+  concept_a: "개념 A"
+  concept_b: "개념 B"
+
+usage_guidelines:
+  - "템플릿 선택 시 context 필드를 참고하여 상황에 맞는 것 선택"
+  - "변수는 반드시 실제 값으로 치환 후 사용"
+  - "동일 감정이라도 intensity에 따라 다른 템플릿 사용"
+  - "복합 감정 감지 시 complex_emotions 섹션 참고"
+  - "tone 필드를 참고하여 전체적인 응답 어조 조절"

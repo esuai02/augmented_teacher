@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Integration Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .test-button:hover {
+            background: #45a049;
+        }
+        .test-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 Agent Integration Test</h1>
+        <p>This page tests the agent system integration with selectmode.php</p>
+        
+        <div class="test-section">
+            <h2>API Connectivity Test</h2>
+            <button class="test-button" onclick="testAPIConnectivity()">Test API Connection</button>
+            <button class="test-button" onclick="testAgentSystem()">Test Agent System</button>
+            <div id="apiResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Agent Modal Test</h2>
+            <button class="test-button" onclick="testModalDisplay()">Test Modal Display</button>
+            <button class="test-button" onclick="testModalFunctions()">Test Modal Functions</button>
+            <div id="modalResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Integration Status</h2>
+            <button class="test-button" onclick="checkIntegrationStatus()">Check Integration</button>
+            <div id="integrationResult" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'contextual_agents/intro_modes/api.php';
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `test-result ${type}`;
+            element.textContent = message;
+        }
+        
+        async function testAPIConnectivity() {
+            try {
+                const response = await fetch(API_BASE + '/status');
+                const result = await response.json();
+                showResult('apiResult', `✅ API Connection Success:\n${JSON.stringify(result, null, 2)}`, 'success');
+            } catch (error) {
+                showResult('apiResult', `❌ API Connection Failed:\n${error.message}`, 'error');
+            }
+        }
+        
+        async function testAgentSystem() {
+            try {
+                const response = await fetch(API_BASE + '/agents');
+                const result = await response.json();
+                showResult('apiResult', `✅ Agent System Test:\n${JSON.stringify(result, null, 2)}`, 'success');
+            } catch (error) {
+                showResult('apiResult', `❌ Agent System Failed:\n${error.message}`, 'error');
+            }
+        }
+        
+        function testModalDisplay() {
+            // Simulate modal opening
+            try {
+                const testModal = document.createElement('div');
+                testModal.style.cssText = `
+                    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    background: #1a1a2e; color: white; padding: 20px; border-radius: 10px;
+                    z-index: 1000; border: 2px solid #4CAF50;
+                `;
+                testModal.innerHTML = `
+                    <h3>🤖 Test Modal</h3>
+                    <p>Modal display test successful!</p>
+                    <button onclick="this.parentElement.remove()" style="background: #4CAF50; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Close</button>
+                `;
+                document.body.appendChild(testModal);
+                showResult('modalResult', '✅ Modal display test successful - Check the modal above', 'success');
+            } catch (error) {
+                showResult('modalResult', `❌ Modal display test failed:\n${error.message}`, 'error');
+            }
+        }
+        
+        function testModalFunctions() {
+            // Test essential functions
+            const functions = [
+                'showAgentInterface',
+                'closeAgentInterface', 
+                'collectUserData',
+                'callAgentAPI',
+                'showAgentResult'
+            ];
+            
+            let results = [];
+            functions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    results.push(`✅ ${func}: Available`);
+                } else {
+                    results.push(`❌ ${func}: Missing`);
+                }
+            });
+            
+            showResult('modalResult', results.join('\n'), results.some(r => r.includes('❌')) ? 'error' : 'success');
+        }
+        
+        function checkIntegrationStatus() {
+            const checks = [];
+            
+            // Check if agent system files exist
+            checks.push('🔍 Checking integration components...');
+            
+            // Check CSS classes
+            const agentButtonExists = document.querySelector('.agent-button') !== null;
+            const modalExists = document.querySelector('.agent-modal') !== null;
+            
+            if (agentButtonExists || modalExists) {
+                checks.push('✅ Agent UI components: Detected in current page');
+            } else {
+                checks.push('⚠️  Agent UI components: Not found in current page (this is expected for test page)');
+            }
+            
+            // Check JavaScript functions
+            const jsChecks = [
+                'showAgentInterface',
+                'callAgentAPI', 
+                'collectUserData'
+            ];
+            
+            let jsFound = 0;
+            jsChecks.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    jsFound++;
+                }
+            });
+            
+            checks.push(`📊 JavaScript Functions: ${jsFound}/${jsChecks.length} found`);
+            
+            // Final status
+            if (jsFound === jsChecks.length) {
+                checks.push('\n🎉 Integration Status: READY');
+                checks.push('The agent system has been successfully integrated into selectmode.php');
+                checks.push('Agent buttons should appear on mode cards with full functionality');
+            } else {
+                checks.push('\n⚠️  Integration Status: PARTIAL');
+                checks.push('Some components may be missing or need verification');
+            }
+            
+            showResult('integrationResult', checks.join('\n'), 'info');
+        }
+        
+        // Auto-run integration check on load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkIntegrationStatus();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

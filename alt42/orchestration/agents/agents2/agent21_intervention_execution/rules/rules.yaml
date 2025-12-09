@@ -1,0 +1,713 @@
+# Rules for Agent 21 - Intervention Execution
+# 현직 수학선생님 수준 90% 달성을 위한 룰셋
+# Generated at: 2025-01-21
+# Updated at: 2025-01-27 (온톨로지 매핑 추가)
+# Purpose: 수학 교과 특화 개입 실행 전략
+# Source: teacher_level_evaluation.md 기반 개선
+# Ontology: alphatutor_ontology.owl (InterventionExecutionOptimization, InterventionCombination, InterventionStrategyAdjustment, DataTriggerIntervention, InterventionPlanExecution, MessageOverloadConflict, ConcentrationTimeIntervention, TeacherDirectIntervention, InterventionEffectivenessVerification)
+
+version: "2.0"
+scenario: "intervention_execution"
+description: "수학 학습 단계별, 학원 수업 전후, 실시간 문제 풀이 개입 실행을 포함한 현직 수학선생님 수준의 개입 실행 룰셋"
+ontology_mapping:
+  - concept: "InterventionExecutionOptimization"
+    description: "개입 실행 최적화"
+    data_sources:
+      - "RecentActivity"
+      - "EmotionStatus"
+      - "ConcentrationTimeSlot"
+      - "InterventionPlan"
+      - "InterventionIntensity"
+      - "InterventionMethod"
+      - "ExpectedResponsePattern"
+      - "OptimalExecutionMethod"
+      - "OptimalExecutionTime"
+  - concept: "InterventionCombination"
+    description: "개입 조합 및 조정"
+    data_sources:
+      - "DailyMessageLimit"
+      - "ChainTrigger"
+      - "PredecessorSuccessorRelationship"
+      - "FatigueMinimizationStrategy"
+      - "ConcentrationChange"
+      - "ExecutionSequence"
+      - "PendingInterventions"
+      - "InterventionCombination"
+      - "NaturalExecution"
+  - concept: "InterventionStrategyAdjustment"
+    description: "개입 실행 전략 조정"
+    data_sources:
+      - "ReadRate"
+      - "ResponseTime"
+      - "InterventionEffectiveness"
+      - "BehaviorChange"
+      - "EmotionRecoverySpeed"
+      - "NextInterventionTone"
+      - "NextInterventionTime"
+      - "NextInterventionCycle"
+      - "ImprovementLoop"
+      - "RecentInterventionResponse"
+      - "RecentInterventionPerformance"
+      - "StrategyAdjustment"
+  - concept: "DataTriggerIntervention"
+    description: "데이터 트리거 발생 시 즉시 개입 실행"
+    data_sources:
+      - "TriggerType"
+      - "TriggerSeverity"
+      - "CalmnessDrop"
+      - "NoteDelay"
+      - "DropoutRisk"
+      - "EmotionStatus"
+      - "ConcentrationTimeSlot"
+      - "ImmediateIntervention"
+      - "TriggerTiming"
+      - "OptimalExecutionTime"
+      - "InterventionIntensity"
+  - concept: "InterventionPlanExecution"
+    description: "개입 계획 도착 후 실행 단계"
+    data_sources:
+      - "InterventionPlan"
+      - "PlannedContent"
+      - "ScheduledTiming"
+      - "PlannedPriority"
+      - "PendingInterventionList"
+      - "ConflictDetection"
+      - "PriorityReadjustmentNeeded"
+      - "InterventionListUpdate"
+      - "OptimalExecutionTime"
+      - "ExecutionMethod"
+  - concept: "MessageOverloadConflict"
+    description: "메시지 과다 또는 충돌 상황 처리"
+    data_sources:
+      - "DailyMessageCount"
+      - "DailyMessageLimit"
+      - "LimitExceeded"
+      - "PendingInterventions"
+      - "InterventionPriority"
+      - "ChainTriggerDetected"
+      - "PriorityReordering"
+      - "TeacherApprovalNeeded"
+      - "ApprovalCriteria"
+  - concept: "ConcentrationTimeIntervention"
+    description: "집중 시간대 또는 활동 전환 직전 개입 실행"
+    data_sources:
+      - "NextConcentrationTimeSlot"
+      - "CurrentTime"
+      - "TimeUntilConcentration"
+      - "EffectiveInterventionTypes"
+      - "EffectivenessPrediction"
+      - "ConcentrationTimeInterventions"
+      - "SelectedInterventions"
+      - "ExecutionOrder"
+      - "TimeOffsetCalculation"
+  - concept: "TeacherDirectIntervention"
+    description: "선생님 직접 개입 필요 시 처리"
+    data_sources:
+      - "EmotionStability"
+      - "EmotionInstabilityDetected"
+      - "AutoInterventionInappropriate"
+      - "PendingInterventions"
+      - "TeacherDeliveryMoreEffective"
+      - "EffectivenessComparison"
+      - "AutoInterventionHold"
+      - "TeacherFeedbackRequest"
+      - "InterventionStatusChange"
+  - concept: "InterventionEffectivenessVerification"
+    description: "효과성 검증 및 리포트 요청"
+    data_sources:
+      - "InterventionExecutionHistory"
+      - "ReadPattern"
+      - "ResponsePattern"
+      - "InterventionMethod"
+      - "GoalAchievementRate"
+      - "BehaviorChangeDegree"
+      - "EmotionRecoverySpeed"
+      - "InterventionEffectiveness"
+      - "EffectivePatterns"
+      - "IneffectivePatterns"
+      - "ImprovementRecommendations"
+      - "NextInterventionImprovements"
+
+rules:
+  # ========== 수학 학습 단계별 개입 실행 전략 ==========
+  
+  - rule_id: "MATH_STAGE_01_concept_learning_execution"
+    priority: 95
+    description: "개념 학습 단계 개입 실행 전략 - 이해 확인 질문 먼저"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "concept"
+      - field: "intervention_status"
+        operator: "=="
+        value: "pending"
+    action:
+      - "execute_order: ['understanding_check_question', 'concept_review', 'example_guidance']"
+      - "execute_intervention: 'understanding_check_question'"
+      - "wait_for_response: 300"  # 5분 대기
+      - "if_not_understood: execute 'concept_review'"
+      - "if_understood: execute 'example_guidance'"
+      - "record_stage: 'concept'"
+    confidence: 0.92
+    rationale: "현직 선생님: 개념 학습 단계에서는 이해 확인 질문 먼저 → 이해 안 되면 개념 재설명 → 이해되면 예제 풀이 안내"
+    data_source: "선생님 텍스트 입력: '개념 학습 단계: 이해 확인 질문 먼저, 이해 안 되면 개념 재설명, 이해되면 예제 풀이 안내'"
+    
+  - rule_id: "MATH_STAGE_02_type_practice_execution"
+    priority: 94
+    description: "유형 연습 단계 개입 실행 전략 - 힌트 제공 후 재시도"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "type_practice"
+      - field: "problem_stuck_time"
+        operator: ">="
+        value: 180  # 3분
+    action:
+      - "execute_order: ['hint_provision', 'retry_encouragement', 'error_analysis', 'similar_problem']"
+      - "if_stuck_3min: execute 'hint_provision'"
+      - "if_stuck_5min: execute 'error_analysis'"
+      - "if_wrong_after_hint: execute 'similar_problem'"
+      - "record_stage: 'type_practice'"
+    confidence: 0.91
+    rationale: "현직 선생님: 유형 연습 단계에서는 막히면 힌트 제공 → 재시도 권장 → 틀리면 오류 원인 분석 → 유사 문제 제공"
+    data_source: "선생님 텍스트 입력: '유형 연습 단계: 막히면 힌트 제공, 재시도 권장, 틀리면 오류 원인 분석'"
+    
+  - rule_id: "MATH_STAGE_03_advanced_learning_execution"
+    priority: 93
+    description: "심화 학습 단계 개입 실행 전략 - 도전 의욕 확인 후 단계별 접근법"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "advanced"
+      - field: "problem_difficulty"
+        operator: "=="
+        value: "high"
+    action:
+      - "execute_order: ['challenge_motivation_check', 'stepwise_approach', 'encouragement_before_giveup', 'partial_success_highlight']"
+      - "execute_intervention: 'challenge_motivation_check'"
+      - "if_low_motivation: execute 'encouragement_before_giveup'"
+      - "if_stuck: execute 'stepwise_approach'"
+      - "if_partial_success: execute 'partial_success_highlight'"
+      - "record_stage: 'advanced'"
+    confidence: 0.90
+    rationale: "현직 선생님: 심화 학습 단계에서는 도전 의욕 확인 → 단계별 접근법 제시 → 포기 직전 격려 → 부분 성공 강조"
+    data_source: "선생님 텍스트 입력: '심화 학습 단계: 도전 의욕 확인, 단계별 접근법 제시, 포기 직전 격려'"
+    
+  - rule_id: "MATH_STAGE_04_exam_practice_execution"
+    priority: 92
+    description: "기출 문제 풀이 단계 개입 실행 전략 - 시간 관리 및 실전 전략"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "exam_practice"
+      - field: "intervention_type"
+        operator: "=="
+        value: "exam_strategy"
+    action:
+      - "execute_order: ['time_management_guidance', 'exam_strategy_provision', 'wrong_answer_analysis', 'retry_recommendation']"
+      - "execute_intervention: 'time_management_guidance'"
+      - "execute_intervention: 'exam_strategy_provision'"
+      - "if_wrong_answer: execute 'wrong_answer_analysis'"
+      - "after_analysis: execute 'retry_recommendation'"
+      - "record_stage: 'exam_practice'"
+    confidence: 0.89
+    rationale: "현직 선생님: 기출 문제 풀이 단계에서는 시간 관리 안내 → 실전 전략 제시 → 오답 분석 → 재풀이 권장"
+    data_source: "선생님 텍스트 입력: '기출 문제 풀이 단계: 시간 관리 안내, 실전 전략 제시, 오답 분석 후 재풀이'"
+  
+  # ========== 학원 수업 전후 개입 실행 타이밍 ==========
+  
+  - rule_id: "ACADEMY_01_pre_class_intervention"
+    priority: 91
+    description: "학원 수업 전 예습 개입 실행 - 2시간 전 개념 요약, 30분 전 핵심 포인트"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: "<="
+        value: "academy_class_time - 2hours"
+      - field: "current_time"
+        operator: ">="
+        value: "academy_class_time - 2hours - 30min"
+    action:
+      - "execute_intervention: 'concept_summary'"
+      - "target_timing: '2hours_before_class'"
+      - "content_type: 'concept_review'"
+      - "record_timing: 'pre_class_prep'"
+    confidence: 0.88
+    rationale: "현직 선생님: 학원 수업 2시간 전 개념 요약 제공 → 수업 이해도 향상"
+    data_source: "선생님 텍스트 입력: '학원 수업 2시간 전 개념 요약, 30분 전 핵심 포인트 안내'"
+    
+  - rule_id: "ACADEMY_02_pre_class_keypoints"
+    priority: 90
+    description: "학원 수업 30분 전 핵심 포인트 안내"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: "<="
+        value: "academy_class_time - 30min"
+      - field: "current_time"
+        operator: ">="
+        value: "academy_class_time - 30min - 10min"
+    action:
+      - "execute_intervention: 'key_points_reminder'"
+      - "target_timing: '30min_before_class'"
+      - "content_type: 'focused_review'"
+      - "record_timing: 'pre_class_final'"
+    confidence: 0.87
+    rationale: "현직 선생님: 학원 수업 30분 전 핵심 포인트 안내 → 수업 집중도 향상"
+    data_source: "선생님 설문: '학원 수업 전후 언제 개입이 가장 효과적이었나요?'"
+    
+  - rule_id: "ACADEMY_03_post_class_immediate"
+    priority: 89
+    description: "학원 수업 직후 30분 내 핵심 정리 개입"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: ">="
+        value: "academy_class_time"
+      - field: "current_time"
+        operator: "<="
+        value: "academy_class_time + 30min"
+    action:
+      - "execute_intervention: 'post_class_summary'"
+      - "target_timing: 'within_30min_after_class'"
+      - "content_type: 'key_points_review'"
+      - "record_timing: 'post_class_immediate'"
+    confidence: 0.86
+    rationale: "현직 선생님: 학원 수업 직후 30분 내 핵심 정리 → 기억 강화"
+    data_source: "선생님 텍스트 입력: '학원 수업 직후 30분 내 핵심 정리, 2시간 후 문제 풀이, 24시간 후 복습 확인'"
+    
+  - rule_id: "ACADEMY_04_post_class_practice"
+    priority: 88
+    description: "학원 수업 2시간 후 문제 풀이 안내"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: ">="
+        value: "academy_class_time + 2hours"
+      - field: "current_time"
+        operator: "<="
+        value: "academy_class_time + 2hours + 30min"
+    action:
+      - "execute_intervention: 'practice_guidance'"
+      - "target_timing: '2hours_after_class'"
+      - "content_type: 'problem_solving'"
+      - "link_textbook: 'academy_textbook'"
+      - "record_timing: 'post_class_practice'"
+    confidence: 0.85
+    rationale: "현직 선생님: 학원 수업 2시간 후 문제 풀이 안내 → 이해도 강화"
+    
+  - rule_id: "ACADEMY_05_post_class_review"
+    priority: 87
+    description: "학원 수업 24시간 후 복습 확인"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: ">="
+        value: "academy_class_time + 24hours"
+      - field: "current_time"
+        operator: "<="
+        value: "academy_class_time + 24hours + 2hours"
+    action:
+      - "execute_intervention: 'review_check'"
+      - "target_timing: '24hours_after_class'"
+      - "content_type: 'review_verification'"
+      - "record_timing: 'post_class_review'"
+    confidence: 0.84
+    rationale: "현직 선생님: 학원 수업 24시간 후 복습 확인 → 장기 기억 강화"
+    
+  - rule_id: "ACADEMY_06_homework_intervention"
+    priority: 86
+    description: "학원 과제 수행 시 개입 - 예습 상기 → 막힘 시 교재 참고 → 완료 후 정리"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "academy_homework"
+      - field: "homework_status"
+        operator: "in"
+        value: ["starting", "in_progress", "stuck"]
+    action:
+      - "if_starting: execute 'preview_reminder'"
+      - "if_stuck: execute 'textbook_reference_guidance'"
+      - "if_completed: execute 'completion_summary'"
+      - "link_textbook: 'academy_textbook'"
+      - "record_timing: 'homework_session'"
+    confidence: 0.83
+    rationale: "현직 선생님: 학원 과제 시작 전 예습 내용 상기 → 과제 중 막힘 시 학원 교재 참고 안내 → 과제 완료 후 정리"
+    data_source: "선생님 텍스트 입력: '과제 시작 전 예습 상기, 과제 중 막힘 시 학원 교재 참고, 과제 완료 후 정리'"
+  
+  # ========== 실시간 문제 풀이 개입 실행 ==========
+  
+  - rule_id: "REALTIME_01_stuck_1min_hint"
+    priority: 85
+    description: "문제 풀이 1분 막힘 시 간단한 힌트 제공"
+    conditions:
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+      - field: "stuck_duration"
+        operator: ">="
+        value: 60  # 1분
+      - field: "stuck_duration"
+        operator: "<"
+        value: 180  # 3분
+    action:
+      - "execute_intervention: 'simple_hint'"
+      - "intervention_type: 'realtime'"
+      - "hint_level: 'light'"
+      - "record_stuck_time: '1min'"
+    confidence: 0.82
+    rationale: "현직 선생님: 1분 막힘 → 간단한 힌트 제공"
+    data_source: "선생님 체크리스트: '1분 막힘: 간단한 힌트 제공'"
+    
+  - rule_id: "REALTIME_02_stuck_3min_stepwise"
+    priority: 84
+    description: "문제 풀이 3분 막힘 시 단계별 접근법 제시"
+    conditions:
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+      - field: "stuck_duration"
+        operator: ">="
+        value: 180  # 3분
+      - field: "stuck_duration"
+        operator: "<"
+        value: 300  # 5분
+    action:
+      - "execute_intervention: 'stepwise_approach'"
+      - "intervention_type: 'realtime'"
+      - "hint_level: 'medium'"
+      - "record_stuck_time: '3min'"
+    confidence: 0.81
+    rationale: "현직 선생님: 3분 막힘 → 단계별 접근법 제시"
+    data_source: "선생님 체크리스트: '3분 막힘: 단계별 접근법 제시'"
+    
+  - rule_id: "REALTIME_03_stuck_5min_immediate_hint"
+    priority: 83
+    description: "문제 풀이 5분 막힘 시 즉시 힌트 제공 및 쉬운 유사 문제"
+    conditions:
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+      - field: "stuck_duration"
+        operator: ">="
+        value: 300  # 5분
+      - field: "stuck_duration"
+        operator: "<"
+        value: 600  # 10분
+    action:
+      - "execute_intervention: 'immediate_hint'"
+      - "execute_intervention: 'similar_easier_problem'"
+      - "intervention_type: 'realtime'"
+      - "hint_level: 'strong'"
+      - "record_stuck_time: '5min'"
+    confidence: 0.80
+    rationale: "현직 선생님: 5분 막힘 → 즉시 힌트 제공 + 쉬운 유사 문제"
+    data_source: "선생님 체크리스트: '5분 막힘: 즉시 힌트 제공 + 쉬운 유사 문제'"
+    
+  - rule_id: "REALTIME_04_stuck_10min_problem_change"
+    priority: 82
+    description: "문제 풀이 10분 막힘 시 문제 변경 권장"
+    conditions:
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+      - field: "stuck_duration"
+        operator: ">="
+        value: 600  # 10분
+    action:
+      - "execute_intervention: 'problem_change_recommendation'"
+      - "intervention_type: 'realtime'"
+      - "hint_level: 'change_problem'"
+      - "record_stuck_time: '10min'"
+      - "suggest_easier_level: true"
+    confidence: 0.79
+    rationale: "현직 선생님: 10분 막힘 → 문제 변경 권장"
+    data_source: "선생님 체크리스트: '10분 막힘: 문제 변경 권장'"
+    
+  - rule_id: "REALTIME_05_error_type_calculation_mistake"
+    priority: 81
+    description: "계산 실수 감지 시 즉시 확인 요청"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "calculation_mistake"
+      - field: "detection_time"
+        operator: "<="
+        value: 30  # 30초 내 감지
+    action:
+      - "execute_intervention: 'calculation_check_request'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'immediate'"
+      - "record_error_type: 'calculation'"
+    confidence: 0.78
+    rationale: "현직 선생님: 계산 실수 감지 시 즉시 확인 요청"
+    data_source: "선생님 텍스트 입력: '계산 실수 감지 시 즉시 확인 요청'"
+    
+  - rule_id: "REALTIME_06_error_type_concept_error"
+    priority: 80
+    description: "개념 오류 감지 시 개념 설명 제공"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "concept_error"
+      - field: "detection_time"
+        operator: "<="
+        value: 60  # 1분 내 감지
+    action:
+      - "execute_intervention: 'concept_explanation'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'high'"
+      - "link_concept_content: true"
+      - "record_error_type: 'concept'"
+    confidence: 0.77
+    rationale: "현직 선생님: 개념 오류 감지 시 개념 설명 제공"
+    data_source: "선생님 텍스트 입력: '개념 오류 시 개념 설명'"
+    
+  - rule_id: "REALTIME_07_error_type_process_error"
+    priority: 79
+    description: "풀이 과정 오류 감지 시 단계별 안내"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "process_error"
+      - field: "detection_time"
+        operator: "<="
+        value: 90  # 1.5분 내 감지
+    action:
+      - "execute_intervention: 'stepwise_guidance'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'medium'"
+      - "show_step_by_step: true"
+      - "record_error_type: 'process'"
+    confidence: 0.76
+    rationale: "현직 선생님: 풀이 과정 오류 감지 시 단계별 안내"
+    data_source: "선생님 텍스트 입력: '풀이 과정 오류 시 단계별 안내'"
+    
+  - rule_id: "REALTIME_08_emotion_frustration"
+    priority: 78
+    description: "풀이 중 좌절 감지 시 즉시 격려"
+    conditions:
+      - field: "emotion_state"
+        operator: "=="
+        value: "frustration"
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+    action:
+      - "execute_intervention: 'immediate_encouragement'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'immediate'"
+      - "emotion_support: true"
+      - "record_emotion: 'frustration'"
+    confidence: 0.75
+    rationale: "현직 선생님: 풀이 중 좌절 감지 → 즉시 격려"
+    data_source: "선생님 텍스트 입력: '좌절 감지 → 즉시 격려'"
+    
+  - rule_id: "REALTIME_09_concentration_drop"
+    priority: 77
+    description: "풀이 중 집중도 하락 감지 시 휴식 권장"
+    conditions:
+      - field: "concentration_level"
+        operator: "<"
+        value: 0.5
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+    action:
+      - "execute_intervention: 'rest_recommendation'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'medium'"
+      - "suggest_break: true"
+      - "record_concentration: 'low'"
+    confidence: 0.74
+    rationale: "현직 선생님: 풀이 중 집중도 하락 → 휴식 권장"
+    data_source: "선생님 텍스트 입력: '집중도 하락 → 휴식 권장'"
+    
+  - rule_id: "REALTIME_10_confidence_drop"
+    priority: 76
+    description: "풀이 중 자신감 하락 감지 시 성공 경험 상기"
+    conditions:
+      - field: "confidence_level"
+        operator: "<"
+        value: 0.5
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+    action:
+      - "execute_intervention: 'success_experience_reminder'"
+      - "intervention_type: 'realtime'"
+      - "response_urgency: 'medium'"
+      - "show_past_success: true"
+      - "record_confidence: 'low'"
+    confidence: 0.73
+    rationale: "현직 선생님: 풀이 중 자신감 하락 → 성공 경험 상기"
+    data_source: "선생님 텍스트 입력: '자신감 하락 → 성공 상기'"
+  
+  # ========== 단원별 취약점 기반 개입 효과성 분석 ==========
+  
+  - rule_id: "UNIT_01_vulnerable_unit_priority"
+    priority: 75
+    description: "취약 단원 기반 개입 우선순위 조정 - 즉시 실행"
+    conditions:
+      - field: "unit_vulnerability"
+        operator: "=="
+        value: "high"
+      - field: "intervention_target_unit"
+        operator: "in"
+        value: ["vulnerable_units"]
+    action:
+      - "priority_multiplier: 1.3"
+      - "execute_immediately: true"
+      - "record_unit_type: 'vulnerable'"
+      - "track_effectiveness: true"
+    confidence: 0.72
+    rationale: "현직 선생님: 취약 단원에서 개입 시 즉시 실행, 비취약 단원은 후순위"
+    data_source: "선생님 텍스트 입력: '취약 단원 개입 시 즉시 실행, 비취약 단원은 후순위'"
+    
+  - rule_id: "UNIT_02_unit_effectiveness_tracking"
+    priority: 74
+    description: "단원별 개입 효과성 데이터 수집 및 추적"
+    conditions:
+      - field: "intervention_completed"
+        operator: "=="
+        value: true
+      - field: "target_unit"
+        operator: "!="
+        value: null
+    action:
+      - "track_effectiveness_by_unit: true"
+      - "record_metrics: ['response_rate', 'goal_achievement', 'behavior_change']"
+      - "update_unit_effectiveness_db: true"
+      - "analyze_pattern: 'unit_based'"
+    confidence: 0.71
+    rationale: "현직 선생님: 단원별 개입 효과성 추적 (함수 단원 85%, 도형 단원 60% 등)"
+    data_source: "선생님 텍스트 입력: '함수 단원 개입 효과성 85%, 도형 단원 60%'"
+    
+  - rule_id: "UNIT_03_unit_strategy_differentiation"
+    priority: 73
+    description: "단원별 개입 전략 차별화 - 함수는 그래프 시각화, 도형은 도형 그리기"
+    conditions:
+      - field: "target_unit"
+        operator: "=="
+        value: "function"
+    action:
+      - "intervention_strategy: 'graph_visualization'"
+      - "content_type: 'visual_learning'"
+      - "emphasis: 'graph_understanding'"
+      - "record_strategy: 'function_specific'"
+    confidence: 0.70
+    rationale: "현직 선생님: 단원별 개입 전략 차별화 (함수: 그래프 시각화 중심, 도형: 도형 그리기 중심)"
+    data_source: "선생님 텍스트 입력: '함수 단원: 그래프 시각화 중심, 도형 단원: 도형 그리기 중심'"
+    
+  - rule_id: "UNIT_04_geometry_strategy"
+    priority: 72
+    description: "도형 단원 개입 전략 - 도형 그리기 중심"
+    conditions:
+      - field: "target_unit"
+        operator: "=="
+        value: "geometry"
+    action:
+      - "intervention_strategy: 'drawing_guidance'"
+      - "content_type: 'visual_construction'"
+      - "emphasis: 'geometric_drawing'"
+      - "record_strategy: 'geometry_specific'"
+    confidence: 0.69
+    rationale: "현직 선생님: 도형 단원은 도형 그리기 안내 중심"
+  
+  # ========== 학생 수준별 메시지 제한 차별화 ==========
+  
+  - rule_id: "STUDENT_LEVEL_01_high_level_message_limit"
+    priority: 71
+    description: "상위권 학생 메시지 제한 상향 - 일일 12개, 시간당 4개"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "high"
+    action:
+      - "daily_message_limit: 12"
+      - "hourly_message_limit: 4"
+      - "priority_multiplier: 1.1"
+    confidence: 0.68
+    rationale: "현직 선생님: 상위권 학생은 더 많은 개입 가능"
+    
+  - rule_id: "STUDENT_LEVEL_02_middle_level_message_limit"
+    priority: 70
+    description: "중위권 학생 메시지 제한 표준 - 일일 10개, 시간당 3개"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "middle"
+    action:
+      - "daily_message_limit: 10"
+      - "hourly_message_limit: 3"
+      - "priority_multiplier: 1.0"
+    confidence: 0.67
+    rationale: "현직 선생님: 중위권 학생은 표준 개입"
+    
+  - rule_id: "STUDENT_LEVEL_03_low_level_message_limit"
+    priority: 69
+    description: "하위권 학생 메시지 제한 하향 - 일일 8개, 시간당 2개"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "low"
+    action:
+      - "daily_message_limit: 8"
+      - "hourly_message_limit: 2"
+      - "priority_multiplier: 0.9"
+    confidence: 0.66
+    rationale: "현직 선생님: 하위권 학생은 서서히 개입, 과도한 메시지 주의"
+  
+  # ========== 학습 단계별 효과성 분석 세분화 ==========
+  
+  - rule_id: "EFFECTIVENESS_01_stage_based_tracking"
+    priority: 68
+    description: "학습 단계별 개입 효과성 추적"
+    conditions:
+      - field: "intervention_completed"
+        operator: "=="
+        value: true
+      - field: "learning_stage"
+        operator: "!="
+        value: null
+    action:
+      - "track_effectiveness_by_stage: true"
+      - "record_stage_metrics: ['concept', 'type_practice', 'advanced', 'exam_practice']"
+      - "update_stage_effectiveness_db: true"
+      - "optimize_stage_strategy: true"
+    confidence: 0.65
+    rationale: "현직 선생님: 개념/유형/심화/기출 단계별 효과성 추적 및 전략 최적화"
+  
+  # ========== 기본 우선순위 재조정 (기존 로직 유지) ==========
+  
+  - rule_id: "PRIORITY_01_basic_calculation"
+    priority: 60
+    description: "기본 우선순위 점수 계산 - 목표 기여도, 긴급도, 효과성 예측, 완료 용이성"
+    conditions:
+      - field: "intervention_status"
+        operator: "=="
+        value: "pending"
+    action:
+      - "calculate_priority: '(goal_contribution * 0.4) + (urgency * 0.3) + (effectiveness_prediction * 0.2) + (completion_ease * 0.1)'"
+      - "apply_intervention_weight: true"
+      - "apply_time_weight: true"
+    confidence: 0.95
+    rationale: "기본 우선순위 계산 알고리즘 (Agent 17 참조)"
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "execute_intervention: 'standard'"
+    - "record_execution: true"
+  confidence: 0.5
+  rationale: "기본 개입 실행"

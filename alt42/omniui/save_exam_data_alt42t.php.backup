@@ -1,0 +1,602 @@
+<?php
+header('Content-Type: application/json; charset=utf-8');
+
+include_once("/home/moodle/public_html/moodle/config.php"); 
+global $DB, $USER;
+require_login();
+
+// JSON 입력 데이터 받기
+$input_raw = file_get_contents("php://input");
+$input = json_decode($input_raw, true);
+
+// 디버깅용 로그
+error_log('save_exam_data_alt42t.php - Raw input: ' . $input_raw);
+error_log('save_exam_data_alt42t.php - Current user ID: ' . $USER->id);
+
+// 디버그 로그 파일 생성
+$debug_file = __DIR__ . '/debug_exam_save.txt';
+file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Request started\n", FILE_APPEND);
+file_put_contents($debug_file, "Raw input: " . $input_raw . "\n", FILE_APPEND);
+file_put_contents($debug_file, "User ID: " . $USER->id . "\n", FILE_APPEND);
+
+// 입력 데이터 검증
+if (!$input) {
+    echo json_encode([
+        'success' => false,
+        'message' => '입력 데이터가 없습니다'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// userid 확인
+$userid = isset($input['userid']) ? intval($input['userid']) : $USER->id;
+$section = isset($input['section']) ? intval($input['section']) : 0;
+
+error_log('save_exam_data_alt42t.php - Using userid: ' . $userid . ', section: ' . $section);
+
+// Helper function to update record using raw SQL if standard update fails
+function update_record_raw($DB, $table, $data, $where_conditions) {
+    global $CFG;
+    
+    // Build SET clause
+    $set_parts = array();
+    $params = array();
+    $param_counter = 1;
+    
+    foreach ($data as $field => $value) {
+        if ($field !== 'id' && $field !== 'exam_date_id' && $field !== 'resource_id') {
+            $set_parts[] = "$field = :param$param_counter";
+            $params["param$param_counter"] = $value;
+            $param_counter++;
+        }
+    }
+    
+    // Build WHERE clause
+    $where_parts = array();
+    foreach ($where_conditions as $field => $value) {
+        $where_parts[] = "$field = :param$param_counter";
+        $params["param$param_counter"] = $value;
+        $param_counter++;
+    }
+    
+    $sql = "UPDATE {$CFG->prefix}$table SET " . implode(', ', $set_parts) . " WHERE " . implode(' AND ', $where_parts);
+    
+    error_log('Raw SQL UPDATE: ' . $sql);
+    error_log('Parameters: ' . print_r($params, true));
+    
+    return $DB->execute($sql, $params);
+}
+
+// Start session for storing user_id and exam_id
+session_start();
+
+try {
+    $now = time();
+    
+    // mdl_user_info_data에 데이터 저장하는 함수
+    function saveUserInfoData($userid, $fieldid, $data) {
+        global $DB;
+        
+        // 기존 데이터 확인
+        $existing = $DB->get_record('user_info_data', array(
+            'userid' => $userid,
+            'fieldid' => $fieldid
+        ));
+        
+        if ($existing) {
+            // 업데이트
+            $existing->data = $data;
+            $DB->update_record('user_info_data', $existing);
+        } else {
+            // 신규 삽입
+            $record = new stdClass();
+            $record->userid = $userid;
+            $record->fieldid = $fieldid;
+            $record->data = $data;
+            $record->dataformat = 0;
+            $DB->insert_record('user_info_data', $record);
+        }
+    }
+    
+    // Section별 처리
+    if ($section === 0) {
+        // 기본 정보 저장 (학교, 학년, 시험종류)
+        
+        // 1. mdl_alt42t_users 테이블에 사용자 정보 저장/업데이트
+        $existing_user = $DB->get_record('alt42t_users', array('userid' => $userid));
+        
+        $user_data = new stdClass();
+        $user_data->userid = $userid;
+        $user_data->name = $USER->firstname . ' ' . $USER->lastname;
+        $user_data->school_name = trim($input['school']);
+        $user_data->grade = intval($input['grade']);
+        $user_data->timecreated = $now;
+        $user_data->timemodified = $now;
+        
+        if ($existing_user) {
+            $user_data->id = $existing_user->id;
+            unset($user_data->timecreated);
+            $DB->update_record('alt42t_users', $user_data);
+            $user_id = $existing_user->id;
+            error_log('Updated alt42t_users for user_id: ' . $user_id);
+        } else {
+            $user_data->created_at = date('Y-m-d H:i:s');
+            $user_id = $DB->insert_record('alt42t_users', $user_data);
+            error_log('Inserted new alt42t_users with user_id: ' . $user_id);
+        }
+        
+        // 2. mdl_alt42t_exams 테이블에 시험 정보 저장/업데이트
+        $exam_type_map = [
+            '1mid' => '1학기 중간고사',
+            '1final' => '1학기 기말고사',
+            '2mid' => '2학기 중간고사',
+            '2final' => '2학기 기말고사'
+        ];
+        
+        $exam_type_str = $exam_type_map[$input['examType']] ?? $input['examType'];
+        
+        $existing_exam = $DB->get_record('alt42t_exams', array(
+            'school_name' => trim($input['school']),
+            'grade' => intval($input['grade']),
+            'exam_type' => $exam_type_str
+        ));
+        
+        if (!$existing_exam) {
+            $exam_data = new stdClass();
+            $exam_data->school_name = trim($input['school']);
+            $exam_data->grade = intval($input['grade']);
+            $exam_data->exam_type = $exam_type_str;
+            $exam_data->userid = $userid;
+            $exam_data->timecreated = $now;
+            $exam_data->timemodified = $now;
+            
+            $exam_id = $DB->insert_record('alt42t_exams', $exam_data);
+            error_log('Inserted new alt42t_exams with exam_id: ' . $exam_id);
+        } else {
+            $exam_id = $existing_exam->exam_id;
+            error_log('Found existing exam_id: ' . $exam_id);
+        }
+        
+        // 세션에 user_id와 exam_id 저장 (다음 섹션에서 사용)
+        $_SESSION['alt42t_user_id'] = $user_id;
+        $_SESSION['alt42t_exam_id'] = $exam_id;
+        
+        // 3. mdl_user_info_data 테이블에도 정보 저장
+        // 학교 정보 저장 (fieldid: 88)
+        if (!empty(trim($input['school']))) {
+            saveUserInfoData($userid, 88, trim($input['school']));
+            error_log('Saved school to mdl_user_info_data: ' . trim($input['school']));
+        }
+        
+        // 출생년도 계산 및 저장 (fieldid: 89)
+        if (!empty($input['grade'])) {
+            $grade = intval($input['grade']);
+            
+            // 학년에서 출생년도 역계산 (2025년 기준)
+            // 학교 이름에서 학교급 판단
+            $school_name = trim($input['school']);
+            $is_elementary = (strpos($school_name, '초등') !== false);
+            $is_middle = (strpos($school_name, '중학') !== false);
+            $is_high = (strpos($school_name, '고등') !== false || strpos($school_name, '고교') !== false);
+            
+            $birthYearMap = array(
+                // 고등학교
+                'high' => array(
+                    3 => 2007,
+                    2 => 2008,
+                    1 => 2009
+                ),
+                // 중학교
+                'middle' => array(
+                    3 => 2010,
+                    2 => 2011,
+                    1 => 2012
+                ),
+                // 초등학교
+                'elementary' => array(
+                    6 => 2013,
+                    5 => 2014,
+                    4 => 2015,
+                    3 => 2016
+                )
+            );
+            
+            $birthYear = 0;
+            if ($is_elementary && isset($birthYearMap['elementary'][$grade])) {
+                $birthYear = $birthYearMap['elementary'][$grade];
+            } else if ($is_middle && isset($birthYearMap['middle'][$grade])) {
+                $birthYear = $birthYearMap['middle'][$grade];
+            } else if ($is_high && isset($birthYearMap['high'][$grade])) {
+                $birthYear = $birthYearMap['high'][$grade];
+            } else {
+                // 학교급을 판단할 수 없는 경우, 시험 종류로 추정
+                if ($grade >= 1 && $grade <= 3) {
+                    // 기본적으로 고등학교로 가정
+                    $birthYear = isset($birthYearMap['high'][$grade]) ? $birthYearMap['high'][$grade] : 0;
+                } else if ($grade >= 4 && $grade <= 6) {
+                    // 초등학교로 가정
+                    $birthYear = isset($birthYearMap['elementary'][$grade]) ? $birthYearMap['elementary'][$grade] : 0;
+                }
+            }
+            
+            // 기존 출생년도가 없는 경우에만 저장
+            $existing_birthdate = $DB->get_field('user_info_data', 'data', array(
+                'userid' => $userid,
+                'fieldid' => 89
+            ));
+            
+            if (!$existing_birthdate && $birthYear > 0) {
+                saveUserInfoData($userid, 89, $birthYear);
+                error_log('Saved birth year to mdl_user_info_data: ' . $birthYear);
+            }
+        }
+        
+        $message = "기본 정보가 저장되었습니다.";
+        
+    } else if ($section === 1) {
+        // 시험 일정 저장
+        
+        // 저장된 user_id와 exam_id 가져오기
+        $user_id = $_SESSION['alt42t_user_id'] ?? null;
+        $exam_id = $_SESSION['alt42t_exam_id'] ?? null;
+        
+        if (!$user_id || !$exam_id) {
+            // 세션에 없으면 DB에서 다시 조회
+            $user_record = $DB->get_record('alt42t_users', array('userid' => $userid));
+            if ($user_record) {
+                $user_id = $user_record->id;
+                
+                // exam_id도 조회
+                $exam_record = $DB->get_record_sql("
+                    SELECT e.* FROM {alt42t_exams} e
+                    WHERE e.school_name = ? AND e.grade = ?
+                    ORDER BY e.timecreated DESC
+                    LIMIT 1
+                ", array($user_record->school_name, $user_record->grade));
+                
+                if ($exam_record) {
+                    $exam_id = $exam_record->exam_id;
+                }
+            }
+        }
+        
+        if (!$user_id || !$exam_id) {
+            throw new Exception('기본 정보를 먼저 저장해주세요.');
+        }
+        
+        // mdl_alt42t_exam_dates에 저장/업데이트
+        $existing_date = $DB->get_record('alt42t_exam_dates', array(
+            'exam_id' => $exam_id,
+            'user_id' => $user_id
+        ));
+        
+        // EXTENSIVE DEBUGGING START
+        error_log('=== DEBUG save_exam_data_alt42t.php SECTION ' . $section . ' ===');
+        error_log('Current execution section: ' . $section);
+        error_log('exam_id: ' . $exam_id);
+        error_log('user_id: ' . $user_id);
+        
+        // 디버그 파일에도 기록
+        file_put_contents($debug_file, "\n=== SECTION 1 DEBUG ===\n", FILE_APPEND);
+        file_put_contents($debug_file, "exam_id: " . $exam_id . "\n", FILE_APPEND);
+        file_put_contents($debug_file, "user_id: " . $user_id . "\n", FILE_APPEND);
+        
+        if ($existing_date) {
+            error_log('--- EXISTING_DATE OBJECT DUMP ---');
+            error_log('existing_date full dump: ' . print_r($existing_date, true));
+            
+            // 파일에도 기록
+            file_put_contents($debug_file, "\nEXISTING DATE OBJECT:\n" . print_r($existing_date, true) . "\n", FILE_APPEND);
+            
+            // Check all possible ID fields
+            error_log('Checking for ID fields:');
+            error_log('  - isset($existing_date->id): ' . (isset($existing_date->id) ? 'YES' : 'NO'));
+            error_log('  - isset($existing_date->exam_date_id): ' . (isset($existing_date->exam_date_id) ? 'YES' : 'NO'));
+            
+            if (isset($existing_date->id)) {
+                error_log('  - $existing_date->id value: ' . $existing_date->id);
+            }
+            if (isset($existing_date->exam_date_id)) {
+                error_log('  - $existing_date->exam_date_id value: ' . $existing_date->exam_date_id);
+            }
+            
+            // List all properties of existing_date
+            error_log('All properties of existing_date:');
+            foreach ($existing_date as $key => $value) {
+                error_log('  - ' . $key . ' => ' . $value);
+            }
+        } else {
+            error_log('No existing_date found for exam_id=' . $exam_id . ', user_id=' . $user_id);
+        }
+        
+        $date_data = new stdClass();
+        $date_data->exam_id = $exam_id;
+        $date_data->user_id = $user_id;
+        $date_data->start_date = $input['startDate'];
+        $date_data->end_date = $input['endDate'];
+        $date_data->math_date = $input['mathDate'];
+        $date_data->status = ($input['status'] === 'confirmed') ? '확정' : '예상';
+        $date_data->userid = $userid;
+        $date_data->timemodified = $now;
+        
+        if ($existing_date) {
+            // Before setting ID field
+            error_log('--- BEFORE SETTING ID ---');
+            error_log('date_data object before ID assignment: ' . print_r($date_data, true));
+            
+            // Moodle requires 'id' field for update_record
+            // Map the primary key field to 'id'
+            if (isset($existing_date->exam_date_id)) {
+                $date_data->id = $existing_date->exam_date_id;
+                error_log('Set date_data->id from exam_date_id: ' . $date_data->id);
+            } else if (isset($existing_date->id)) {
+                $date_data->id = $existing_date->id;
+                error_log('Set date_data->id from id: ' . $date_data->id);
+            } else {
+                error_log('WARNING: No ID field found in existing_date!');
+                error_log('Available fields: ' . implode(', ', array_keys((array)$existing_date)));
+            }
+            
+            // After setting ID field
+            error_log('--- AFTER SETTING ID ---');
+            error_log('date_data object after ID assignment: ' . print_r($date_data, true));
+            error_log('About to call update_record with table: alt42t_exam_dates');
+            
+            try {
+                // Check if we have an ID field set
+                if (isset($date_data->id)) {
+                    $DB->update_record('alt42t_exam_dates', $date_data);
+                    error_log('Updated alt42t_exam_dates successfully using update_record');
+                } else {
+                    // Fallback to raw SQL if no ID field
+                    error_log('No ID field found, using raw SQL update');
+                    $where_conditions = array(
+                        'exam_id' => $exam_id,
+                        'user_id' => $user_id
+                    );
+                    $result = update_record_raw($DB, 'alt42t_exam_dates', $date_data, $where_conditions);
+                    if ($result) {
+                        error_log('Updated alt42t_exam_dates successfully using raw SQL');
+                    } else {
+                        throw new Exception('Failed to update alt42t_exam_dates using raw SQL');
+                    }
+                }
+            } catch (Exception $e) {
+                error_log('ERROR in update_record: ' . $e->getMessage());
+                error_log('Stack trace: ' . $e->getTraceAsString());
+                throw $e;
+            }
+        } else {
+            $date_data->created_at = date('Y-m-d H:i:s');
+            $date_data->timecreated = $now;
+            error_log('--- INSERTING NEW RECORD ---');
+            error_log('date_data for insert: ' . print_r($date_data, true));
+            $DB->insert_record('alt42t_exam_dates', $date_data);
+            error_log('Inserted new alt42t_exam_dates');
+        }
+        error_log('=== END DEBUG ===');
+        
+        // exam_scope가 있으면 alt42t_exam_resources에 저장
+        if (!empty($input['examScope'])) {
+            $existing_resource = $DB->get_record('alt42t_exam_resources', array(
+                'exam_id' => $exam_id,
+                'user_id' => $user_id
+            ));
+            
+            $resource_data = new stdClass();
+            $resource_data->exam_id = $exam_id;
+            $resource_data->user_id = $user_id;
+            $resource_data->tip_text = '시험 범위: ' . $input['examScope'];
+            $resource_data->userid = $userid;
+            $resource_data->timemodified = $now;
+            
+            if ($existing_resource) {
+                // DEBUGGING FOR EXAM_RESOURCES
+                error_log('--- DEBUG alt42t_exam_resources UPDATE ---');
+                error_log('existing_resource full dump: ' . print_r($existing_resource, true));
+                error_log('Checking resource ID fields:');
+                error_log('  - isset($existing_resource->id): ' . (isset($existing_resource->id) ? 'YES' : 'NO'));
+                error_log('  - isset($existing_resource->resource_id): ' . (isset($existing_resource->resource_id) ? 'YES' : 'NO'));
+                
+                // List all properties
+                error_log('All properties of existing_resource:');
+                foreach ($existing_resource as $key => $value) {
+                    error_log('  - ' . $key . ' => ' . $value);
+                }
+                
+                error_log('resource_data before ID assignment: ' . print_r($resource_data, true));
+                
+                // Moodle requires 'id' field for update_record
+                // Map the primary key field to 'id'
+                if (isset($existing_resource->resource_id)) {
+                    $resource_data->id = $existing_resource->resource_id;
+                    error_log('Set resource_data->id from resource_id: ' . $resource_data->id);
+                } else if (isset($existing_resource->id)) {
+                    $resource_data->id = $existing_resource->id;
+                    error_log('Set resource_data->id from id: ' . $resource_data->id);
+                } else {
+                    error_log('WARNING: No ID field found in existing_resource!');
+                    error_log('Available fields: ' . implode(', ', array_keys((array)$existing_resource)));
+                }
+                
+                error_log('resource_data after ID assignment: ' . print_r($resource_data, true));
+                
+                try {
+                    // Check if we have an ID field set
+                    if (isset($resource_data->id)) {
+                        $DB->update_record('alt42t_exam_resources', $resource_data);
+                        error_log('Updated alt42t_exam_resources successfully using update_record');
+                    } else {
+                        // Fallback to raw SQL if no ID field
+                        error_log('No ID field found for resources, using raw SQL update');
+                        $where_conditions = array(
+                            'exam_id' => $exam_id,
+                            'user_id' => $user_id
+                        );
+                        $result = update_record_raw($DB, 'alt42t_exam_resources', $resource_data, $where_conditions);
+                        if ($result) {
+                            error_log('Updated alt42t_exam_resources successfully using raw SQL');
+                        } else {
+                            throw new Exception('Failed to update alt42t_exam_resources using raw SQL');
+                        }
+                    }
+                } catch (Exception $e) {
+                    error_log('ERROR in update_record for resources: ' . $e->getMessage());
+                    error_log('Stack trace: ' . $e->getTraceAsString());
+                    throw $e;
+                }
+            } else {
+                $resource_data->created_at = date('Y-m-d H:i:s');
+                $resource_data->timecreated = $now;
+                error_log('--- DEBUG alt42t_exam_resources INSERT ---');
+                error_log('Inserting new resource: ' . print_r($resource_data, true));
+                $DB->insert_record('alt42t_exam_resources', $resource_data);
+                error_log('Inserted new alt42t_exam_resources');
+            }
+        }
+        
+        $message = "시험 일정이 저장되었습니다.";
+        
+    } else if ($section === 3) {
+        // 학습 상태 저장
+        
+        // 저장된 user_id와 exam_id 가져오기
+        $user_id = $_SESSION['alt42t_user_id'] ?? null;
+        $exam_id = $_SESSION['alt42t_exam_id'] ?? null;
+        
+        if (!$user_id || !$exam_id) {
+            // 세션에 없으면 DB에서 다시 조회
+            $user_record = $DB->get_record('alt42t_users', array('userid' => $userid));
+            if ($user_record) {
+                $user_id = $user_record->id;
+                
+                // exam_id도 조회
+                $exam_record = $DB->get_record_sql("
+                    SELECT e.* FROM {alt42t_exams} e
+                    WHERE e.school_name = ? AND e.grade = ?
+                    ORDER BY e.timecreated DESC
+                    LIMIT 1
+                ", array($user_record->school_name, $user_record->grade));
+                
+                if ($exam_record) {
+                    $exam_id = $exam_record->exam_id;
+                }
+            }
+        }
+        
+        if (!$user_id || !$exam_id) {
+            throw new Exception('기본 정보를 먼저 저장해주세요.');
+        }
+        
+        // mdl_alt42t_study_status에 저장/업데이트
+        $existing_status = $DB->get_record('alt42t_study_status', array(
+            'user_id' => $user_id,
+            'exam_id' => $exam_id
+        ));
+        
+        // DEBUGGING FOR STUDY STATUS
+        error_log('=== DEBUG save_exam_data_alt42t.php SECTION 3 ===');
+        error_log('user_id: ' . $user_id);
+        error_log('exam_id: ' . $exam_id);
+        
+        if ($existing_status) {
+            error_log('--- EXISTING_STATUS OBJECT DUMP ---');
+            error_log('existing_status full dump: ' . print_r($existing_status, true));
+            
+            // Check all possible ID fields
+            error_log('Checking for ID fields:');
+            error_log('  - isset($existing_status->id): ' . (isset($existing_status->id) ? 'YES' : 'NO'));
+            error_log('  - isset($existing_status->status_id): ' . (isset($existing_status->status_id) ? 'YES' : 'NO'));
+            
+            // List all properties
+            error_log('All properties of existing_status:');
+            foreach ($existing_status as $key => $value) {
+                error_log('  - ' . $key . ' => ' . $value);
+            }
+        } else {
+            error_log('No existing_status found for user_id=' . $user_id . ', exam_id=' . $exam_id);
+        }
+        
+        $status_data = new stdClass();
+        $status_data->user_id = $user_id;
+        $status_data->exam_id = $exam_id;
+        $status_data->status = $input['studyStatus'];
+        $status_data->userid = $userid;
+        $status_data->timemodified = $now;
+        
+        if ($existing_status) {
+            error_log('--- BEFORE SETTING ID ---');
+            error_log('status_data object before ID assignment: ' . print_r($status_data, true));
+            
+            // Moodle requires 'id' field for update_record
+            // Map the primary key field to 'id'
+            if (isset($existing_status->status_id)) {
+                $status_data->id = $existing_status->status_id;
+                error_log('Set status_data->id from status_id: ' . $status_data->id);
+            } else if (isset($existing_status->id)) {
+                $status_data->id = $existing_status->id;
+                error_log('Set status_data->id from id: ' . $status_data->id);
+            } else {
+                error_log('WARNING: No ID field found in existing_status!');
+                error_log('Available fields: ' . implode(', ', array_keys((array)$existing_status)));
+            }
+            
+            error_log('--- AFTER SETTING ID ---');
+            error_log('status_data object after ID assignment: ' . print_r($status_data, true));
+            
+            try {
+                // Check if we have an ID field set
+                if (isset($status_data->id)) {
+                    $DB->update_record('alt42t_study_status', $status_data);
+                    error_log('Updated alt42t_study_status successfully using update_record');
+                } else {
+                    // Fallback to raw SQL if no ID field
+                    error_log('No ID field found, using raw SQL update');
+                    $where_conditions = array(
+                        'user_id' => $user_id,
+                        'exam_id' => $exam_id
+                    );
+                    $result = update_record_raw($DB, 'alt42t_study_status', $status_data, $where_conditions);
+                    if ($result) {
+                        error_log('Updated alt42t_study_status successfully using raw SQL');
+                    } else {
+                        throw new Exception('Failed to update alt42t_study_status using raw SQL');
+                    }
+                }
+            } catch (Exception $e) {
+                error_log('ERROR in update_record for study_status: ' . $e->getMessage());
+                error_log('Stack trace: ' . $e->getTraceAsString());
+                throw $e;
+            }
+        } else {
+            $status_data->created_at = date('Y-m-d H:i:s');
+            $status_data->timecreated = $now;
+            error_log('--- INSERTING NEW STUDY STATUS ---');
+            error_log('status_data for insert: ' . print_r($status_data, true));
+            $DB->insert_record('alt42t_study_status', $status_data);
+            error_log('Inserted new alt42t_study_status');
+        }
+        error_log('=== END DEBUG SECTION 3 ===');
+        
+        $message = "학습 상태가 저장되었습니다.";
+        
+    } else {
+        $message = "알 수 없는 섹션입니다.";
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'message' => $message,
+        'user_id' => $user_id ?? null,
+        'exam_id' => $exam_id ?? null
+    ], JSON_UNESCAPED_UNICODE);
+    
+} catch (Exception $e) {
+    error_log('save_exam_data_alt42t.php 오류: ' . $e->getMessage());
+    
+    echo json_encode([
+        'success' => false,
+        'message' => '저장 중 오류 발생: ' . $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
+}
+?>

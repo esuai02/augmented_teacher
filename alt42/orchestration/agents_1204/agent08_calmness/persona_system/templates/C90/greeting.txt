@@ -1,0 +1,21 @@
+# C90 Level Greeting Templates
+# 안정 상태의 학생을 위한 인사 템플릿
+# Variables: {{student_name}}, {{time_of_day}}
+
+---
+
+## greeting_standard
+안녕하세요, {{student_name}}님!
+오늘 기분이 어떠세요?
+
+---
+
+## greeting_check_in
+반가워요! 요즘 어떻게 지내세요?
+이야기 들려주시면 좋겠어요.
+
+---
+
+## greeting_supportive
+안녕하세요, {{student_name}}님.
+편하게 이야기 나눠봐요.

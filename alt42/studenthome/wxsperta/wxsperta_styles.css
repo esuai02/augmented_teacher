@@ -1,0 +1,1208 @@
+/* 🌌 마이 궤도 - WXsperta 스타일시트 */
+/* 분리일: 2025-12-07 */
+
+:root {
+    /* 🌌 우주 테마 팔레트 */
+    --space-dark: #0D1B2A;     /* 깊은 우주 */
+    --space-mid: #1B263B;      /* 우주 배경 */
+    --nebula: #415A77;         /* 성운 */
+    --starlight: #778DA9;      /* 별빛 */
+    --moon: #E0E1DD;           /* 달빛 */
+    
+    /* 행성 색상 */
+    --planet-blue: #4FC3F7;    /* 푸른 행성 */
+    --planet-purple: #B388FF;  /* 보라 행성 */
+    --planet-orange: #FFB74D;  /* 주황 행성 */
+    --planet-green: #69F0AE;   /* 초록 행성 */
+    --planet-pink: #F48FB1;    /* 분홍 행성 */
+    
+    /* 카테고리 색상 */
+    --cat-voyage: #7C4DFF;     /* 항해 지도 - 보라 */
+    --cat-mission: #FF6D00;    /* 미션 센터 - 주황 */
+    --cat-flag: #F50057;       /* 나의 깃발 - 핑크 */
+    --cat-resource: #00E676;   /* 자원 창고 - 초록 */
+    
+    /* 상태 색상 */
+    --energy-high: #76FF03;
+    --energy-mid: #FFEA00;
+    --energy-low: #FF6E40;
+}
+
+* { font-family: 'Noto Sans KR', sans-serif; }
+
+body {
+    background: linear-gradient(135deg, var(--space-dark) 0%, var(--space-mid) 50%, #1a1a2e 100%);
+    min-height: 100vh;
+    color: var(--moon);
+}
+
+/* 별 배경 효과 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, white, transparent),
+        radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 230px 80px, white, transparent),
+        radial-gradient(2px 2px at 300px 150px, rgba(255,255,255,0.7), transparent);
+    background-repeat: repeat;
+    background-size: 350px 200px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+/* ==================== 메인 레이아웃 ==================== */
+.orbit-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.sector-section {
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+.sector-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--moon);
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(4px);
+}
+
+.sector-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* ==================== 미션 카드 ==================== */
+.mission-card {
+    width: 150px;
+    height: 120px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.mission-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--planet-blue), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 20px rgba(79,195,247,0.1);
+}
+
+.mission-card.selected {
+    background: rgba(79,195,247,0.15);
+    border-color: var(--planet-blue);
+    box-shadow: 0 0 20px rgba(79,195,247,0.3);
+}
+
+.mission-card.selected::before {
+    opacity: 1;
+}
+
+.mission-card:hover::before {
+    opacity: 1;
+}
+
+.mission-card.highlighted {
+    animation: orbit-pulse 2s infinite;
+}
+
+@keyframes orbit-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79,195,247,0.4); }
+    50% { box-shadow: 0 0 20px 5px rgba(79,195,247,0.2); }
+}
+
+.mission-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mission-name {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--moon);
+    line-height: 1.4;
+    max-width: 100%;
+}
+
+/* 카테고리별 테두리 글로우 */
+.mission-card[data-category="future_design"] { --glow-color: var(--cat-voyage); }
+.mission-card[data-category="execution"] { --glow-color: var(--cat-mission); }
+.mission-card[data-category="branding"] { --glow-color: var(--cat-flag); }
+.mission-card[data-category="knowledge_management"] { --glow-color: var(--cat-resource); }
+
+.mission-card[data-category]::before {
+    background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+}
+
+/* 상태 표시 */
+.status-dot {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.2s;
+}
+
+.mission-card.has-data .status-dot { 
+    background: var(--planet-green); 
+    box-shadow: 0 0 8px var(--planet-green);
+}
+.mission-card.active .status-dot { 
+    background: var(--planet-orange); 
+    box-shadow: 0 0 8px var(--planet-orange);
+}
+
+/* 액션 버튼들 */
+.action-buttons {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.mission-card:hover .action-buttons { opacity: 1; }
+
+.action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+}
+
+.action-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.15);
+    border-color: rgba(255,255,255,0.4);
+}
+
+/* 레벨 표시 태그 */
+.level-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 0.55rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 8px;
+    color: var(--moon);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ==================== 모달 스타일 ==================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 27, 42, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 40;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: linear-gradient(145deg, var(--space-mid) 0%, var(--space-dark) 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 42rem;
+    max-height: 90vh;
+    margin: 2rem;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideUp 0.3s ease;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 40px rgba(79,195,247,0.1);
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==================== 채팅 패널 ==================== */
+.chat-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 400px;
+    height: 100vh;
+    background: linear-gradient(180deg, var(--space-mid) 0%, var(--space-dark) 100%);
+    box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(255,255,255,0.1);
+}
+
+@media (max-width: 768px) {
+    .chat-panel { width: 100vw; }
+    .mission-card { width: calc(50% - 0.5rem); }
+}
+
+.chat-panel.open { transform: translateX(0); }
+
+.main-container { transition: all 0.3s ease; }
+.main-container.shifted { margin-right: 400px; }
+
+@media (max-width: 768px) {
+    .main-container.shifted { margin-right: 0; }
+}
+
+/* ==================== 헤더 ==================== */
+.orbit-header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+}
+
+.orbit-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--moon);
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 20px rgba(79,195,247,0.3);
+}
+
+.orbit-subtitle {
+    font-size: 0.85rem;
+    color: var(--starlight);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ==================== 범례 ==================== */
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 1rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--starlight);
+    padding: 0.4rem 0.8rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+}
+
+/* 추천 카드 강조 */
+.mission-card.recommended {
+    border: 1px solid var(--planet-green);
+    animation: recommend-glow 2s infinite;
+}
+
+@keyframes recommend-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(105, 240, 174, 0.4); }
+    50% { box-shadow: 0 0 20px 5px rgba(105, 240, 174, 0.15); }
+}
+
+/* ==================== 감정 날씨 체커 ==================== */
+.mood-checker {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.mood-question {
+    font-size: 0.9rem;
+    color: var(--moon);
+    margin-bottom: 0.75rem;
+}
+
+.mood-options {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.mood-btn {
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mood-btn:hover {
+    transform: scale(1.15);
+    background: rgba(255,255,255,0.1);
+}
+
+.mood-btn.selected {
+    background: rgba(79,195,247,0.2);
+    border-color: var(--planet-blue);
+}
+
+/* ==================== 뷰 스위칭 버튼 ==================== */
+.view-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--starlight);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.view-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: var(--moon);
+}
+
+.view-btn.active {
+    background: rgba(79,195,247,0.2);
+    color: var(--planet-blue);
+}
+
+/* 뷰 컨테이너 */
+.view-container {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.view-container.hidden {
+    display: none;
+}
+
+#networkView {
+    position: relative;
+    min-height: 650px;
+}
+
+/* ==================== 네트워크 뷰 스타일 ==================== */
+.network-container {
+    position: relative;
+    background: rgba(255,255,255,0.02);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 1rem;
+    overflow: visible;
+}
+
+#networkSvg {
+    background: radial-gradient(ellipse at center, rgba(79,195,247,0.05) 0%, transparent 70%);
+    border-radius: 16px;
+}
+
+/* 네트워크 노드 */
+.network-node {
+    cursor: grab;
+}
+
+.network-node.selected {
+    filter: url(#glow);
+}
+
+/* 연결선 스타일 */
+.network-connection {
+    stroke: var(--starlight);
+    stroke-opacity: 0.2;
+    stroke-width: 1.5;
+    fill: none;
+}
+
+.network-connection.highlighted {
+    stroke-opacity: 0.7;
+    stroke-width: 2.5;
+    stroke: var(--planet-blue);
+}
+
+.network-connection.mutual {
+    stroke-dasharray: none;
+}
+
+.network-connection.outgoing {
+    stroke-dasharray: 5, 3;
+}
+
+/* 애니메이션 효과 */
+@keyframes pulse-node {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes orbit-motion {
+    0% { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+}
+
+@keyframes flow-connection {
+    0% { stroke-dashoffset: 20; }
+    100% { stroke-dashoffset: 0; }
+}
+
+.network-connection.animated {
+    stroke-dasharray: 5, 3;
+    animation: flow-connection 1s linear infinite;
+}
+
+/* 네트워크 컨트롤 */
+.network-controls {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.network-ctrl-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.3);
+    color: var(--moon);
+    font-size: 0.9rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s;
+}
+
+.network-ctrl-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--planet-blue);
+}
+
+/* ==================== 노드 정보 패널 (우측 슬라이드) ==================== */
+.node-info-panel {
+    position: fixed;
+    top: 0;
+    right: -680px;
+    width: 640px;
+    height: 100vh;
+    background: rgba(13, 27, 42, 0.98);
+    border-left: 1px solid rgba(79,195,247,0.3);
+    padding: 1.5rem;
+    padding-top: 3rem;
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.node-info-panel.visible {
+    right: 0;
+}
+
+/* 패널 상단 정보 영역 */
+.node-info-top {
+    flex-shrink: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 1rem;
+}
+
+/* 탐험 콘텐츠 영역 */
+.explore-content {
+    display: none;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    height: 500px;
+    border: 1px solid rgba(79,195,247,0.2);
+}
+
+.explore-content.active {
+    display: block;
+}
+
+.explore-content iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 12px;
+    background: #0d1b2a;
+}
+
+.explore-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--starlight);
+    gap: 1rem;
+}
+
+.explore-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(79,195,247,0.2);
+    border-top-color: var(--planet-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.node-info-panel .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    color: var(--moon);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.node-info-panel .close-btn:hover {
+    background: rgba(255,111,97,0.3);
+    border-color: rgba(255,111,97,0.5);
+}
+
+.node-info-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.node-info-icon {
+    font-size: 1.8rem;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+}
+
+.node-info-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--moon);
+}
+
+.node-info-desc {
+    font-size: 0.8rem;
+    color: var(--starlight);
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+}
+
+.node-connections {
+    margin-bottom: 0.75rem;
+}
+
+.connection-label {
+    font-size: 0.7rem;
+    color: var(--starlight);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.connection-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.connection-chip {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: var(--starlight);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.connection-chip:hover {
+    background: rgba(79,195,247,0.2);
+    border-color: var(--planet-blue);
+    color: var(--moon);
+}
+
+.node-action-btn {
+    width: 100%;
+    padding: 0.6rem;
+    background: linear-gradient(135deg, rgba(79,195,247,0.3), rgba(79,195,247,0.1));
+    border: 1px solid rgba(79,195,247,0.3);
+    border-radius: 10px;
+    color: var(--moon);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.node-action-btn:hover {
+    background: linear-gradient(135deg, rgba(79,195,247,0.4), rgba(79,195,247,0.2));
+}
+
+/* 카테고리별 노드 색상 */
+.node-future_design { fill: url(#grad-voyage); }
+.node-execution { fill: url(#grad-mission); }
+.node-branding { fill: url(#grad-flag); }
+.node-knowledge_management { fill: url(#grad-resource); }
+
+/* 드래그 스타일 */
+.network-node {
+    cursor: grab;
+}
+
+/* 연결선 기본 스타일 업데이트 */
+.network-connection {
+    fill: none;
+    stroke: rgba(79,195,247,0.25);
+    stroke-width: 1.5;
+    transition: stroke 0.2s, stroke-width 0.2s;
+}
+
+.network-connection.mutual {
+    stroke: rgba(255,111,97,0.35);
+    stroke-width: 2;
+}
+
+.network-connection.highlighted {
+    stroke: var(--planet-blue);
+    stroke-width: 3;
+    filter: drop-shadow(0 0 6px rgba(79,195,247,0.5));
+}
+
+/* 순환 표시 인디케이터 */
+.cycle-indicator {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--starlight);
+    backdrop-filter: blur(8px);
+}
+
+.cycle-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    animation: pulse-node 1.5s infinite;
+}
+
+/* ==================== 전체 화면 탐험 모달 ==================== */
+.fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--space-deep);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.fullscreen-modal.visible {
+    opacity: 1;
+}
+
+.fullscreen-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(79, 195, 247, 0.2);
+    flex-shrink: 0;
+}
+
+.modal-agent-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-agent-icon {
+    font-size: 1.5rem;
+}
+
+.modal-agent-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--moon);
+}
+
+/* 연결된 에이전트 */
+.connected-agents {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    margin-right: 1.5rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(179, 136, 255, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(179, 136, 255, 0.2);
+}
+
+.conn-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-right: 0.25rem;
+}
+
+.conn-agent-link {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(79, 195, 247, 0.15);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.conn-agent-link:hover {
+    background: rgba(79, 195, 247, 0.3);
+    border-color: rgba(79, 195, 247, 0.5);
+    transform: translateY(-1px);
+}
+
+.conn-icon {
+    font-size: 1rem;
+}
+
+.conn-name {
+    font-size: 0.85rem;
+    color: var(--moon);
+    font-weight: 500;
+}
+
+/* 모달 액션 버튼 그룹 */
+.modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.start-chat-btn {
+    padding: 0.5rem 1.25rem;
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.3), rgba(41, 182, 246, 0.3));
+    border: 1px solid rgba(79, 195, 247, 0.5);
+    border-radius: 20px;
+    color: #4FC3F7;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.start-chat-btn:hover {
+    background: linear-gradient(135deg, rgba(79, 195, 247, 0.5), rgba(41, 182, 246, 0.5));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(79, 195, 247, 0.3);
+}
+
+.back-to-content-btn {
+    padding: 0.5rem 1.25rem;
+    background: rgba(179, 136, 255, 0.2);
+    border: 1px solid rgba(179, 136, 255, 0.4);
+    border-radius: 20px;
+    color: #B388FF;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.back-to-content-btn:hover {
+    background: rgba(179, 136, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+/* iframe 컨테이너 */
+.iframe-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.fullscreen-close-btn {
+    padding: 0.5rem 1.25rem;
+    background: rgba(255, 107, 107, 0.2);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    border-radius: 8px;
+    color: #FF6B6B;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fullscreen-close-btn:hover {
+    background: rgba(255, 107, 107, 0.3);
+    border-color: rgba(255, 107, 107, 0.6);
+}
+
+.fullscreen-modal-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--starlight);
+    z-index: 1;
+}
+
+.fullscreen-modal-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(79, 195, 247, 0.2);
+    border-top-color: var(--planet-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.fullscreen-modal-iframe {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--space-void);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==================== 채팅 인터페이스 ==================== */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, #0a0f1a 0%, #1a1f2e 50%, #0d1117 100%);
+    overflow: hidden;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    max-width: 85%;
+    animation: messageSlide 0.3s ease-out;
+}
+
+@keyframes messageSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.agent-message {
+    align-self: flex-start;
+}
+
+.user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    background: rgba(79, 195, 247, 0.15);
+    border: 1px solid rgba(79, 195, 247, 0.3);
+}
+
+.user-message .message-avatar {
+    background: rgba(179, 136, 255, 0.15);
+    border-color: rgba(179, 136, 255, 0.3);
+}
+
+.message-content {
+    padding: 0.875rem 1.25rem;
+    border-radius: 18px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.agent-message .message-content {
+    background: rgba(79, 195, 247, 0.1);
+    border: 1px solid rgba(79, 195, 247, 0.2);
+    color: var(--starlight);
+    border-bottom-left-radius: 4px;
+}
+
+.user-message .message-content {
+    background: linear-gradient(135deg, rgba(179, 136, 255, 0.3), rgba(124, 77, 255, 0.3));
+    border: 1px solid rgba(179, 136, 255, 0.4);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.message-content strong {
+    color: #4FC3F7;
+    font-weight: 600;
+}
+
+/* 타이핑 애니메이션 */
+.typing-dots {
+    display: inline-block;
+    animation: typingBlink 1s infinite;
+}
+
+@keyframes typingBlink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+/* 선택지 영역 */
+.chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(79, 195, 247, 0.1);
+    min-height: 50px;
+}
+
+.suggestion-btn {
+    padding: 0.6rem 1rem;
+    background: rgba(79, 195, 247, 0.1);
+    border: 1px solid rgba(79, 195, 247, 0.3);
+    border-radius: 20px;
+    color: var(--starlight);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.suggestion-btn:hover {
+    background: rgba(79, 195, 247, 0.25);
+    border-color: rgba(79, 195, 247, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+}
+
+/* 입력 영역 */
+.chat-input-area {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-top: 1px solid rgba(79, 195, 247, 0.2);
+}
+
+.chat-input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(79, 195, 247, 0.3);
+    border-radius: 25px;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.chat-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.chat-input:focus {
+    border-color: rgba(79, 195, 247, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+}
+
+.chat-send-btn {
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, #4FC3F7, #29B6F6);
+    border: none;
+    border-radius: 25px;
+    color: #0a0f1a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chat-send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(79, 195, 247, 0.4);
+}
+
+.chat-send-btn:active {
+    transform: scale(0.98);
+}
+
+/* 채팅 로딩 */
+.chat-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
+    color: var(--starlight);
+}
+
+.chat-error {
+    text-align: center;
+    color: #FF6B6B;
+    padding: 2rem;
+}
+
+/* 스크롤바 스타일 */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(79, 195, 247, 0.3);
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(79, 195, 247, 0.5);
+}
+

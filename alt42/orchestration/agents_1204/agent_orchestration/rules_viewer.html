@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules Viewer - Interactive Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 60px; /* 네비게이션 메뉴 공간 확보 */
+            padding-right: 270px; /* 우측 에이전트 선택 메뉴 공간 확보 */
+        }
+        
+        /* 좌측 상단 네비게이션 */
+        .nav-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            gap: 2px;
+            align-items: flex-start;
+        }
+        
+        .nav-dropdown > *:first-child {
+            border-radius: 0 0 0 8px;
+        }
+        
+        .nav-dropdown > *:last-child {
+            border-radius: 0 0 8px 0;
+        }
+        
+        .nav-dropdown select {
+            padding: 10px 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #667eea;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 200px;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .nav-dropdown select:hover {
+            background: white;
+            border-color: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        
+        .nav-dropdown select:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        /* 좌측 상단 분석 리포트 버튼 */
+        .nav-report-btn {
+            padding: 10px 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #667eea;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .nav-report-btn:hover {
+            background: white;
+            border-color: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            transform: translateY(2px);
+        }
+        
+        .nav-report-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 우측 상단 에이전트 선택 */
+        .agent-selector {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .agent-selector select {
+            padding: 10px 15px;
+            border-radius: 0 0 0 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #667eea;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .agent-selector select:hover {
+            background: white;
+            border-color: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        
+        .agent-selector select:focus {
+            outline: none;
+            border-color: white;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        .loading-indicator {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* 스크롤뷰 스타일 */
+        .scroll-view {
+            display: block;
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+        }
+        
+        .scroll-view::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .scroll-view::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .scroll-view::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+        
+        .scroll-view::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+        
+        /* 위키 스타일 */
+        .wiki-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .wiki-section:last-child {
+            border-bottom: none;
+        }
+        
+        .wiki-section-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .wiki-section-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .wiki-section-id {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        
+        .wiki-section-description {
+            color: #6c757d;
+            font-size: 1em;
+            margin-top: 8px;
+        }
+        
+        .wiki-rule {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .wiki-rule:hover {
+            background: #e9ecef;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .wiki-rule-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .wiki-rule-id {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .wiki-rule-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .wiki-rule-description {
+            font-size: 1.05em;
+            color: #495057;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .wiki-rule-content {
+            margin-top: 15px;
+        }
+        
+        .wiki-rule-content h4 {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
+        
+        .wiki-rule-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .wiki-rule-content li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        .wiki-rule-content li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .wiki-message {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-style: italic;
+            color: #856404;
+        }
+        
+        .wiki-rationale {
+            background: #e7f5ff;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            color: #0c5460;
+        }
+        
+        .wiki-rationale::before {
+            content: '💡 ';
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            margin-top: 3px;
+            font-size: 0.75em;
+        }
+        
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+            background: #e9ecef;
+            padding: 3px;
+            border-radius: 20px;
+        }
+        
+        .view-btn {
+            padding: 5px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-btn.active {
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+            min-height: 450px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            backdrop-filter: blur(10px);
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .scenario-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .scenario-header {
+            padding: 8px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            position: relative;
+        }
+        
+        .scenario-number {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #667eea;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.7em;
+        }
+        
+        .scenario-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 3px;
+            padding-right: 35px;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .scenario-meta {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 3px;
+        }
+        
+        .meta-badge {
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.65em;
+            font-weight: 600;
+        }
+        
+        .rules-badge {
+            background: #28a745;
+            color: white;
+        }
+        
+        .priority-range {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .scenario-preview {
+            padding: 8px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .preview-text {
+            color: #6c757d;
+            font-size: 0.7em;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .hover-info {
+            display: none;
+            position: absolute;
+            bottom: 5px;
+            left: 8px;
+            right: 8px;
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 5px;
+            border-radius: 6px;
+            font-size: 0.7em;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .scenario-card:hover .hover-info {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+        
+        .modal-subtitle {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .detail-section {
+            margin-bottom: 25px;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        
+        .condition-item, .action-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .condition-item:last-child, .action-item:last-child {
+            border-bottom: none;
+        }
+        
+        .message-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #856404;
+        }
+        
+        .rationale-box {
+            background: #e7f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            color: #0c5460;
+        }
+        
+        .priority-high {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .priority-medium {
+            background: #ffc107;
+            color: #000;
+        }
+        
+        .priority-low {
+            background: #28a745;
+            color: white;
+        }
+        
+        .confidence-badge {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .mini-badge {
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding-right: 20px; /* 모바일에서는 우측 여백 제거 */
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .modal-content {
+                margin: 10px;
+            }
+            
+            .nav-dropdown select {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-width: 150px;
+            }
+            
+            .agent-selector select {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 좌측 상단 HTML 간 이동 메뉴 -->
+    <div class="nav-dropdown">
+        <select id="pageSelector" onchange="navigateToPage()">
+            <option value="agentmission.html">1. 에이전트 미션</option>
+            <option value="questions.html">2. 주요 요청들</option>
+            <option value="dataindex.php">3. 데이터 통합</option>
+            <option value="rules_viewer.html" selected>4. 에이전트 룰들</option>
+            <option value="../../index.php">5. Mathking AI 조교</option>
+            <option value="heartbeat_dashboard.html">6. Heartbeat Dashboard</option>
+            <option value="../agent22_module_improvement/ui/index.php">7. 에이전트 가드닝</option>
+        </select>
+    </div>
+    
+    <!-- 우측 상단 에이전트 선택 메뉴 -->
+    <div class="agent-selector">
+        <select id="agentSelector" onchange="loadAgentRules()">
+            <option value="agent01_onboarding">Agent 01 - Onboarding</option>
+            <option value="agent02_exam_schedule">Agent 02 - Exam Schedule</option>
+            <option value="agent03_goals_analysis">Agent 03 - Goals Analysis</option>
+            <option value="agent04_inspect_weakpoints">Agent 04 - Inspect Weakpoints</option>
+            <option value="agent05_learning_emotion">Agent 05 - Learning Emotion</option>
+            <option value="agent06_teacher_feedback">Agent 06 - Teacher Feedback</option>
+            <option value="agent07_interaction_targeting">Agent 07 - Interaction Targeting</option>
+            <option value="agent08_calmness" selected>Agent 08 - Calmness</option>
+            <option value="agent09_learning_management">Agent 09 - Learning Management</option>
+            <option value="agent10_concept_notes">Agent 10 - Concept Notes</option>
+            <option value="agent11_problem_notes">Agent 11 - Problem Notes</option>
+            <option value="agent12_rest_routine">Agent 12 - Rest Routine</option>
+            <option value="agent13_learning_dropout">Agent 13 - Learning Dropout</option>
+            <option value="agent14_current_position">Agent 14 - Current Position</option>
+            <option value="agent15_problem_redefinition">Agent 15 - Problem Redefinition</option>
+            <option value="agent16_interaction_preparation">Agent 16 - Interaction Preparation</option>
+            <option value="agent17_remaining_activities">Agent 17 - Remaining Activities</option>
+            <option value="agent18_signature_routine">Agent 18 - Signature Routine</option>
+            <option value="agent19_interaction_content">Agent 19 - Interaction Content</option>
+            <option value="agent20_intervention_preparation">Agent 20 - Intervention Preparation</option>
+            <option value="agent21_intervention_execution">Agent 21 - Intervention Execution</option>
+            <option value="agent22_module_improvement">Agent 22 - Module Improvement</option>
+        </select>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 id="agent-title">🧠 Rules Viewer - Interactive Dashboard</h1>
+            <p id="agent-description">클릭하여 상세 정보 확인</p>
+        </div>
+        
+        <div class="loading-indicator" id="loading" style="display: none;">
+            <div>로딩 중...</div>
+        </div>
+        
+        <div id="error-container"></div>
+        
+        <div class="controls" id="controls" style="display: none;">
+            <button class="filter-btn active" onclick="filterByPriority('all')">전체</button>
+            <button class="filter-btn" onclick="filterByPriority('high')">높음(90+)</button>
+            <button class="filter-btn" onclick="filterByPriority('medium')">중간(85-89)</button>
+            <button class="filter-btn" onclick="filterByPriority('low')">낮음(&lt;85)</button>
+            <input type="text" class="search-box" placeholder="시나리오 또는 규칙 검색..." onkeyup="searchContent(this.value)">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="setView('card')">카드뷰</button>
+                <button class="view-btn" onclick="setView('scroll')">스크롤뷰</button>
+            </div>
+        </div>
+        
+        <div id="scenarios-container" class="scenarios-grid" style="display: none;">
+            <!-- 시나리오 카드들 -->
+        </div>
+        
+        <div id="scroll-container" class="scroll-view" style="display: none;">
+            <!-- 위키 스타일 스크롤뷰 -->
+        </div>
+        
+        <div class="stats-container" id="stats-container" style="display: none;">
+            <div class="stat-box">
+                <div class="stat-number" id="stat-scenarios">0</div>
+                <div class="stat-label">주요 시나리오</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-rules">0</div>
+                <div class="stat-label">세부 규칙</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-max-priority">0</div>
+                <div class="stat-label">최고 우선순위</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-max-confidence">0</div>
+                <div class="stat-label">최고 신뢰도</div>
+            </div>
+        </div>
+        
+        <!-- 모달 -->
+        <div id="modal" class="modal" onclick="closeModalOnBackground(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modal-title">제목</h2>
+                    <p class="modal-subtitle" id="modal-subtitle">부제목</p>
+                    <button class="close-btn" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <!-- 상세 내용 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script>
+        let currentAgent = 'agent08_calmness';
+        let currentView = 'card';
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let rulesData = null;
+        let scenarios = [];
+        let fileCheckInterval = null;
+        
+        // 21개 에이전트 정보
+        const agents = [
+            { id: 'agent01_onboarding', name: 'Agent 01 - Onboarding' },
+            { id: 'agent02_exam_schedule', name: 'Agent 02 - Exam Schedule' },
+            { id: 'agent03_goals_analysis', name: 'Agent 03 - Goals Analysis' },
+            { id: 'agent04_inspect_weakpoints', name: 'Agent 04 - Inspect Weakpoints' },
+            { id: 'agent05_learning_emotion', name: 'Agent 05 - Learning Emotion' },
+            { id: 'agent06_teacher_feedback', name: 'Agent 06 - Teacher Feedback' },
+            { id: 'agent07_interaction_targeting', name: 'Agent 07 - Interaction Targeting' },
+            { id: 'agent08_calmness', name: 'Agent 08 - Calmness' },
+            { id: 'agent09_learning_management', name: 'Agent 09 - Learning Management' },
+            { id: 'agent10_concept_notes', name: 'Agent 10 - Concept Notes' },
+            { id: 'agent11_problem_notes', name: 'Agent 11 - Problem Notes' },
+            { id: 'agent12_rest_routine', name: 'Agent 12 - Rest Routine' },
+            { id: 'agent13_learning_dropout', name: 'Agent 13 - Learning Dropout' },
+            { id: 'agent14_current_position', name: 'Agent 14 - Current Position' },
+            { id: 'agent15_problem_redefinition', name: 'Agent 15 - Problem Redefinition' },
+            { id: 'agent16_interaction_preparation', name: 'Agent 16 - Interaction Preparation' },
+            { id: 'agent17_remaining_activities', name: 'Agent 17 - Remaining Activities' },
+            { id: 'agent18_signature_routine', name: 'Agent 18 - Signature Routine' },
+            { id: 'agent19_interaction_content', name: 'Agent 19 - Interaction Content' },
+            { id: 'agent20_intervention_preparation', name: 'Agent 20 - Intervention Preparation' },
+            { id: 'agent21_intervention_execution', name: 'Agent 21 - Intervention Execution' },
+            { id: 'agent22_module_improvement', name: 'Agent 22 - Module Improvement' }
+        ];
+        
+        // YAML 파일 로드 및 파싱
+        async function loadRulesYAML(agentId) {
+            const loadingEl = document.getElementById('loading');
+            const errorContainer = document.getElementById('error-container');
+            const scenariosContainer = document.getElementById('scenarios-container');
+            const statsContainer = document.getElementById('stats-container');
+            const controls = document.getElementById('controls');
+            
+            loadingEl.style.display = 'block';
+            errorContainer.innerHTML = '';
+            scenariosContainer.style.display = 'none';
+            document.getElementById('scroll-container').style.display = 'none';
+            statsContainer.style.display = 'none';
+            controls.style.display = 'none';
+            
+            try {
+                const url = `../${agentId}/rules/rules.yaml?t=${Date.now()}`;
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const yamlText = await response.text();
+                rulesData = jsyaml.load(yamlText);
+                
+                // 시나리오 그룹핑
+                scenarios = groupRulesByScenario(rulesData.rules);
+                
+                // UI 업데이트
+                updateHeader();
+                updateStats();
+                renderScenarios();
+                
+                loadingEl.style.display = 'none';
+                if (currentView === 'card') {
+                    scenariosContainer.style.display = 'grid';
+                } else if (currentView === 'scroll') {
+                    document.getElementById('scroll-container').style.display = 'block';
+                }
+                statsContainer.style.display = 'grid';
+                controls.style.display = 'flex';
+                
+                // 파일 변경 감지 시작
+                startFileWatcher(agentId);
+                
+            } catch (error) {
+                loadingEl.style.display = 'none';
+                errorContainer.innerHTML = `
+                    <div class="error-message">
+                        <strong>오류 발생:</strong> ${error.message}<br>
+                        <small>파일 경로: ../${agentId}/rules/rules.yaml</small>
+                    </div>
+                `;
+                console.error('Error loading rules.yaml:', error);
+            }
+        }
+        
+        // 규칙을 시나리오별로 그룹핑
+        function groupRulesByScenario(rules) {
+            const scenarioMap = new Map();
+            let currentScenario = null;
+            
+            // rule_id 패턴 분석으로 시나리오 추출
+            rules.forEach(rule => {
+                let scenarioId = 'S0';
+                let scenarioTitle = '기타 규칙';
+                let scenarioDesc = '분류되지 않은 규칙들';
+                
+                if (rule.rule_id) {
+                    // 패턴 1: S1_R1, S2_R1a 등
+                    let match = rule.rule_id.match(/^(S\d+[a-z]?)_/);
+                    if (match) {
+                        scenarioId = match[1];
+                        currentScenario = scenarioId;
+                    } else {
+                        // 패턴 2: R1, R1a, R2 등 (숫자로 시작)
+                        match = rule.rule_id.match(/^R(\d+)/);
+                        if (match) {
+                            scenarioId = `S${match[1]}`;
+                            currentScenario = scenarioId;
+                        } else {
+                            // 패턴 3: CU_A1, PR_A1 등 (활동 유형)
+                            match = rule.rule_id.match(/^([A-Z]{2,})_/);
+                            if (match) {
+                                scenarioId = match[1];
+                                scenarioTitle = getActivityTypeName(match[1]);
+                                scenarioDesc = `${scenarioTitle} 관련 규칙`;
+                            }
+                        }
+                    }
+                }
+                
+                // rule_id 패턴으로 제목을 찾지 못한 경우, description과 action을 분석하여 제목 생성
+                if (scenarioTitle === '기타 규칙' && rule.description) {
+                    const desc = rule.description.toLowerCase();
+                    const actions = Array.isArray(rule.action) ? rule.action : [];
+                    
+                    // description에서 키워드 추출
+                    if (desc.includes('스트레스') || desc.includes('stress')) {
+                        scenarioTitle = '스트레스 관리';
+                        scenarioDesc = '스트레스 관련 규칙';
+                    } else if (desc.includes('집중') || desc.includes('concentration') || desc.includes('focus')) {
+                        scenarioTitle = '집중도 관리';
+                        scenarioDesc = '집중도 관련 규칙';
+                    } else if (desc.includes('이탈') || desc.includes('dropout') || desc.includes('이탈')) {
+                        scenarioTitle = '학습 이탈 방지';
+                        scenarioDesc = '학습 이탈 관련 규칙';
+                    } else if (desc.includes('목표') || desc.includes('goal')) {
+                        scenarioTitle = '목표 관리';
+                        scenarioDesc = '목표 관련 규칙';
+                    } else if (desc.includes('피드백') || desc.includes('feedback')) {
+                        scenarioTitle = '피드백 처리';
+                        scenarioDesc = '피드백 관련 규칙';
+                    } else if (desc.includes('개입') || desc.includes('intervention')) {
+                        scenarioTitle = '개입 실행';
+                        scenarioDesc = '개입 관련 규칙';
+                    } else if (desc.includes('상호작용') || desc.includes('interaction')) {
+                        scenarioTitle = '상호작용 관리';
+                        scenarioDesc = '상호작용 관련 규칙';
+                    } else if (desc.includes('문제') || desc.includes('problem')) {
+                        scenarioTitle = '문제 분석';
+                        scenarioDesc = '문제 관련 규칙';
+                    } else if (desc.includes('학습') || desc.includes('learning')) {
+                        scenarioTitle = '학습 활동';
+                        scenarioDesc = '학습 활동 관련 규칙';
+                    } else if (desc.includes('시험') || desc.includes('exam')) {
+                        scenarioTitle = '시험 대비';
+                        scenarioDesc = '시험 관련 규칙';
+                    } else if (actions.length > 0) {
+                        // action에서 키워드 추출
+                        const actionStr = JSON.stringify(actions).toLowerCase();
+                        if (actionStr.includes('notify') || actionStr.includes('알림')) {
+                            scenarioTitle = '알림 처리';
+                            scenarioDesc = '알림 관련 규칙';
+                        } else if (actionStr.includes('route') || actionStr.includes('라우팅')) {
+                            scenarioTitle = '라우팅 처리';
+                            scenarioDesc = '라우팅 관련 규칙';
+                        } else if (actionStr.includes('update') || actionStr.includes('업데이트')) {
+                            scenarioTitle = '상태 업데이트';
+                            scenarioDesc = '상태 업데이트 관련 규칙';
+                        } else {
+                            // description의 첫 20자 사용
+                            scenarioTitle = rule.description.substring(0, 20).replace(/[^\w\s가-힣]/g, '').trim() || '기타 규칙';
+                            scenarioDesc = rule.description.length > 50 ? rule.description.substring(0, 50) + '...' : rule.description;
+                        }
+                    } else {
+                        // description의 첫 20자 사용
+                        scenarioTitle = rule.description.substring(0, 20).replace(/[^\w\s가-힣]/g, '').trim() || '기타 규칙';
+                        scenarioDesc = rule.description.length > 50 ? rule.description.substring(0, 50) + '...' : rule.description;
+                    }
+                }
+                
+                // 시나리오별로 그룹핑
+                if (!scenarioMap.has(scenarioId)) {
+                    scenarioMap.set(scenarioId, {
+                        id: scenarioId,
+                        title: scenarioTitle,
+                        description: scenarioDesc,
+                        rules: []
+                    });
+                }
+                
+                scenarioMap.get(scenarioId).rules.push(rule);
+            });
+            
+            // 시나리오 정렬 및 메타데이터 계산
+            const scenarios = Array.from(scenarioMap.values()).map(scenario => {
+                const priorities = scenario.rules.map(r => r.priority || 0).filter(p => p > 0);
+                const confidences = scenario.rules.map(r => r.confidence || 0).filter(c => c > 0);
+                
+                if (priorities.length === 0) {
+                    priorities.push(0);
+                }
+                if (confidences.length === 0) {
+                    confidences.push(0);
+                }
+                
+                return {
+                    ...scenario,
+                    ruleCount: scenario.rules.length,
+                    priorityRange: priorities.length > 0 ? `${Math.min(...priorities)}-${Math.max(...priorities)}` : 'N/A',
+                    maxPriority: Math.max(...priorities),
+                    maxConfidence: Math.max(...confidences)
+                };
+            });
+            
+            // 우선순위 높은 순으로 정렬
+            scenarios.sort((a, b) => {
+                // 숫자로 시작하는 시나리오 우선 정렬
+                const aNum = parseInt(a.id.match(/\d+/)?.[0] || '999');
+                const bNum = parseInt(b.id.match(/\d+/)?.[0] || '999');
+                if (aNum !== bNum) {
+                    return aNum - bNum;
+                }
+                return b.maxPriority - a.maxPriority;
+            });
+            
+            return scenarios;
+        }
+        
+        // 활동 유형 이름 매핑
+        function getActivityTypeName(code) {
+            const mapping = {
+                'CU': '개념이해',
+                'PR': '문제풀이',
+                'RV': '복습활동',
+                'ER': '오답노트',
+                'TP': '유형학습',
+                'QA': '질의응답',
+                'PO': '포모도르'
+            };
+            return mapping[code] || code;
+        }
+        
+        // 헤더 업데이트
+        function updateHeader() {
+            const agent = agents.find(a => a.id === currentAgent);
+            document.getElementById('agent-title').textContent = `🧠 ${agent.name} - Rules Viewer`;
+            document.getElementById('agent-description').textContent = rulesData.description || '클릭하여 상세 정보 확인';
+        }
+        
+        // 통계 업데이트
+        function updateStats() {
+            const totalRules = rulesData.rules.length;
+            const priorities = rulesData.rules.map(r => r.priority || 0);
+            const confidences = rulesData.rules.map(r => r.confidence || 0);
+            
+            document.getElementById('stat-scenarios').textContent = scenarios.length;
+            document.getElementById('stat-rules').textContent = totalRules;
+            document.getElementById('stat-max-priority').textContent = Math.max(...priorities);
+            document.getElementById('stat-max-confidence').textContent = (Math.max(...confidences) * 100).toFixed(0);
+        }
+        
+        // 시나리오 카드 렌더링
+        function renderScenarios() {
+            const cardContainer = document.getElementById('scenarios-container');
+            const scrollContainer = document.getElementById('scroll-container');
+            
+            cardContainer.innerHTML = '';
+            scrollContainer.innerHTML = '';
+            
+            let filteredScenarios = scenarios;
+            
+            // 필터 적용
+            if (currentFilter !== 'all') {
+                filteredScenarios = filteredScenarios.filter(s => {
+                    if (currentFilter === 'high') return s.maxPriority >= 90;
+                    if (currentFilter === 'medium') return s.maxPriority >= 85 && s.maxPriority < 90;
+                    if (currentFilter === 'low') return s.maxPriority < 85;
+                    return true;
+                });
+            }
+            
+            // 검색 적용
+            if (currentSearch) {
+                const searchLower = currentSearch.toLowerCase();
+                filteredScenarios = filteredScenarios.filter(s => {
+                    return s.title.toLowerCase().includes(searchLower) ||
+                           s.description.toLowerCase().includes(searchLower) ||
+                           s.rules.some(r => 
+                               r.rule_id.toLowerCase().includes(searchLower) ||
+                               r.description.toLowerCase().includes(searchLower)
+                           );
+                });
+            }
+            
+            if (currentView === 'card') {
+                cardContainer.style.display = 'grid';
+                scrollContainer.style.display = 'none';
+                filteredScenarios.forEach(scenario => {
+                    const card = createScenarioCard(scenario);
+                    cardContainer.appendChild(card);
+                });
+            } else if (currentView === 'scroll') {
+                cardContainer.style.display = 'none';
+                scrollContainer.style.display = 'block';
+                filteredScenarios.forEach(scenario => {
+                    const wikiSection = createWikiSection(scenario);
+                    scrollContainer.appendChild(wikiSection);
+                });
+            }
+        }
+        
+        // 시나리오 카드 생성
+        function createScenarioCard(scenario) {
+            const card = document.createElement('div');
+            card.className = 'scenario-card fade-in';
+            card.onclick = () => showScenarioDetail(scenario);
+            
+            card.innerHTML = `
+                <div class="scenario-header">
+                    <div class="scenario-number">${scenario.id}</div>
+                    <div class="scenario-title">${scenario.title}</div>
+                    <div class="scenario-meta">
+                        <span class="meta-badge rules-badge">${scenario.ruleCount}개 규칙</span>
+                        <span class="meta-badge priority-range">우선순위: ${scenario.priorityRange}</span>
+                    </div>
+                </div>
+                <div class="scenario-preview">
+                    <div class="preview-text">${scenario.description}</div>
+                </div>
+                <div class="hover-info">
+                    클릭하여 ${scenario.ruleCount}개의 상세 규칙 확인
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // 위키 스타일 시나리오 섹션 생성
+        function createWikiSection(scenario) {
+            const section = document.createElement('div');
+            section.className = 'wiki-section';
+            
+            let rulesHTML = '';
+            if (scenario.rules && scenario.rules.length > 0) {
+                rulesHTML = scenario.rules.map(rule => {
+                    const conditions = rule.conditions || [];
+                    const actions = rule.action || [];
+                    
+                    return `
+                        <div class="wiki-rule">
+                            <div class="wiki-rule-header">
+                                <span class="wiki-rule-id">${rule.rule_id || 'Unknown Rule'}</span>
+                                <div class="wiki-rule-badges">
+                                    <span class="mini-badge priority-${rule.priority >= 90 ? 'high' : rule.priority >= 85 ? 'medium' : 'low'}">
+                                        우선순위: ${rule.priority || 'N/A'}
+                                    </span>
+                                    <span class="mini-badge confidence-badge">
+                                        신뢰도: ${((rule.confidence || 0) * 100).toFixed(0)}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="wiki-rule-description">
+                                ${rule.description || 'N/A'}
+                            </div>
+                            <div class="wiki-rule-content">
+                                <h4>조건 (Conditions)</h4>
+                                <ul>
+                                    ${conditions.map(c => {
+                                        if (typeof c === 'string') {
+                                            return `<li>${c}</li>`;
+                                        } else if (c.field) {
+                                            return `<li>${c.field} ${c.operator} ${c.value}</li>`;
+                                        } else if (c.OR) {
+                                            return `<li>OR: ${c.OR.map(o => `${o.field} ${o.operator} ${o.value}`).join(' OR ')}</li>`;
+                                        }
+                                        return `<li>${JSON.stringify(c)}</li>`;
+                                    }).join('')}
+                                </ul>
+                                
+                                <h4>액션 (Actions)</h4>
+                                <ul>
+                                    ${actions.map(a => {
+                                        if (typeof a === 'string') {
+                                            return `<li>${a}</li>`;
+                                        }
+                                        return `<li>${JSON.stringify(a)}</li>`;
+                                    }).join('')}
+                                </ul>
+                                
+                                ${rule.display_message ? `
+                                    <div class="wiki-message">
+                                        ${rule.display_message}
+                                    </div>
+                                ` : ''}
+                                
+                                ${rule.rationale ? `
+                                    <div class="wiki-rationale">
+                                        ${rule.rationale}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                rulesHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">상세 규칙 데이터가 준비 중입니다.</p>';
+            }
+            
+            section.innerHTML = `
+                <div class="wiki-section-header">
+                    <div class="wiki-section-title">
+                        <span class="wiki-section-id">${scenario.id}</span>
+                        ${scenario.title}
+                    </div>
+                    <div class="wiki-section-description">
+                        ${scenario.description}
+                    </div>
+                </div>
+                ${rulesHTML}
+            `;
+            
+            return section;
+        }
+        
+        // 시나리오 상세 보기
+        function showScenarioDetail(scenario) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalSubtitle = document.getElementById('modal-subtitle');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalTitle.textContent = `${scenario.id}: ${scenario.title}`;
+            modalSubtitle.textContent = scenario.description;
+            
+            let bodyHTML = '';
+            
+            if (scenario.rules && scenario.rules.length > 0) {
+                bodyHTML = scenario.rules.map(rule => {
+                    const conditions = rule.conditions || [];
+                    const actions = rule.action || [];
+                    
+                    return `
+                        <div class="detail-section">
+                            <div class="detail-title">
+                                <span style="color: #667eea;">📋</span>
+                                ${rule.rule_id || 'Unknown Rule'}
+                            </div>
+                            <div class="detail-content">
+                                <div style="margin-bottom: 10px;">
+                                    <span class="mini-badge priority-${rule.priority >= 90 ? 'high' : rule.priority >= 85 ? 'medium' : 'low'}">
+                                        우선순위: ${rule.priority || 'N/A'}
+                                    </span>
+                                    <span class="mini-badge confidence-badge">
+                                        신뢰도: ${((rule.confidence || 0) * 100).toFixed(0)}%
+                                    </span>
+                                </div>
+                                <p style="margin-bottom: 15px;"><strong>설명:</strong> ${rule.description || 'N/A'}</p>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <strong>조건:</strong>
+                                    ${conditions.map(c => {
+                                        if (typeof c === 'string') {
+                                            return `<div class="condition-item">• ${c}</div>`;
+                                        } else if (c.field) {
+                                            return `<div class="condition-item">• ${c.field} ${c.operator} ${c.value}</div>`;
+                                        } else if (c.OR) {
+                                            return `<div class="condition-item">• OR: ${c.OR.map(o => `${o.field} ${o.operator} ${o.value}`).join(' OR ')}</div>`;
+                                        }
+                                        return `<div class="condition-item">• ${JSON.stringify(c)}</div>`;
+                                    }).join('')}
+                                </div>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <strong>액션:</strong>
+                                    ${actions.map(a => {
+                                        if (typeof a === 'string') {
+                                            return `<div class="action-item">• ${a}</div>`;
+                                        }
+                                        return `<div class="action-item">• ${JSON.stringify(a)}</div>`;
+                                    }).join('')}
+                                </div>
+                                
+                                ${rule.display_message ? `
+                                    <div class="message-box">
+                                        ${rule.display_message}
+                                    </div>
+                                ` : ''}
+                                
+                                ${rule.rationale ? `
+                                    <div class="rationale-box" style="margin-top: 10px;">
+                                        💡 ${rule.rationale}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                bodyHTML = '<p style="text-align: center; color: #6c757d;">상세 규칙 데이터가 준비 중입니다.</p>';
+            }
+            
+            modalBody.innerHTML = bodyHTML;
+            modal.classList.add('active');
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        
+        // 배경 클릭시 모달 닫기
+        function closeModalOnBackground(event) {
+            if (event.target.id === 'modal') {
+                closeModal();
+            }
+        }
+        
+        // 뷰 변경
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderScenarios();
+        }
+        
+        // 우선순위 필터
+        function filterByPriority(level) {
+            currentFilter = level;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderScenarios();
+        }
+        
+        // 검색
+        function searchContent(query) {
+            currentSearch = query;
+            renderScenarios();
+        }
+        
+        // 에이전트 변경
+        function loadAgentRules() {
+            const selector = document.getElementById('agentSelector');
+            currentAgent = selector.value;
+            
+            // 파일 감지 중지
+            if (fileCheckInterval) {
+                clearInterval(fileCheckInterval);
+            }
+            
+            loadRulesYAML(currentAgent);
+        }
+        
+        // 파일 변경 감지 (ETag 또는 파일 크기 기반)
+        function startFileWatcher(agentId) {
+            let lastContentLength = null;
+            let lastETag = null;
+            
+            fileCheckInterval = setInterval(async () => {
+                try {
+                    const url = `../${agentId}/rules/rules.yaml?t=${Date.now()}`;
+                    const response = await fetch(url, { method: 'HEAD' });
+                    
+                    if (response.ok) {
+                        const currentETag = response.headers.get('ETag');
+                        const currentLength = response.headers.get('Content-Length');
+                        
+                        // ETag 또는 Content-Length로 변경 감지
+                        if ((lastETag && currentETag && currentETag !== lastETag) ||
+                            (lastContentLength && currentLength && currentLength !== lastContentLength)) {
+                            console.log('Rules.yaml 파일이 변경되었습니다. 자동 업데이트 중...');
+                            loadRulesYAML(agentId);
+                            return; // loadRulesYAML에서 새로운 감지 시작하므로 여기서 중단
+                        }
+                        
+                        lastETag = currentETag;
+                        lastContentLength = currentLength;
+                    }
+                } catch (error) {
+                    // HEAD 요청 실패 시 GET으로 전체 파일 확인
+                    try {
+                        const url = `../${agentId}/rules/rules.yaml?t=${Date.now()}`;
+                        const response = await fetch(url);
+                        if (response.ok) {
+                            const text = await response.text();
+                            if (lastContentLength && text.length !== lastContentLength) {
+                                console.log('Rules.yaml 파일이 변경되었습니다. 자동 업데이트 중...');
+                                loadRulesYAML(agentId);
+                                return;
+                            }
+                            lastContentLength = text.length;
+                        }
+                    } catch (e) {
+                        console.error('파일 변경 감지 오류:', e);
+                    }
+                }
+            }, 10000); // 10초마다 확인
+        }
+        
+        // 버튼 클릭 처리 함수
+        function handleButtonClick(action) {
+            switch(action) {
+                case 'verification':
+                    // 검증 리포트로 이동
+                    window.open('../../../../.cursor/rules/final-verification-report.md', '_blank');
+                    break;
+            }
+        }
+        
+        // 페이지 네비게이션
+        function navigateToPage() {
+            const selector = document.getElementById('pageSelector');
+            const selectedPage = selector.value;
+            if (selectedPage) {
+                // 현재 URL의 해시 정보 유지
+                const currentHash = window.location.hash;
+                let url = selectedPage;
+                if (currentHash) {
+                    url += currentHash;
+                }
+                window.location.href = url;
+            }
+        }
+        
+        // 현재 페이지에 맞게 dropdown 선택 및 에이전트 설정
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const pageSelector = document.getElementById('pageSelector');
+            if (pageSelector) {
+                if (currentPage === 'agentmission.html') {
+                    pageSelector.value = 'agentmission.html';
+                } else if (currentPage === 'rules_viewer.html') {
+                    pageSelector.value = 'rules_viewer.html';
+                } else if (currentPage === 'questions.html') {
+                    pageSelector.value = 'questions.html';
+                } else if (currentPage === 'dataindex.php') {
+                    pageSelector.value = 'dataindex.php';
+                } else if (currentPage === 'heartbeat_dashboard.html') {
+                    pageSelector.value = 'heartbeat_dashboard.html';
+                } else if (window.location.pathname.includes('agent22_module_improvement')) {
+                    pageSelector.value = '../agent22_module_improvement/ui/index.php';
+                } else if (currentPage === 'index.php' || currentPage === '') {
+                    pageSelector.value = '../../index.php';
+                }
+            }
+            
+            // URL 해시에서 에이전트 정보 확인
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#agent')) {
+                const agentIdFromHash = hash.substring(1); // # 제거
+                // 유효한 에이전트 ID인지 확인
+                if (agentIdFromHash.match(/^agent\d+_/)) {
+                    currentAgent = agentIdFromHash;
+                    // 에이전트 선택 드롭다운 업데이트
+                    const agentSelector = document.getElementById('agentSelector');
+                    if (agentSelector) {
+                        agentSelector.value = currentAgent;
+                    }
+                }
+            }
+            
+            // 초기 로드
+            loadRulesYAML(currentAgent);
+        });
+        
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
+

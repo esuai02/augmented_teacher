@@ -1,0 +1,276 @@
+{
+  "@context": {
+    "@vocab": "https://hyperial.tech/ontology/exam_schedule#",
+    "mk": "https://hyperial.tech/ontology/exam_schedule#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "schema": "http://schema.org/",
+
+    "Student": "mk:Student",
+    "Institution": "mk:Institution",
+    "Context": "mk:Context",
+    "Strategy": "mk:Strategy",
+    "ExamSchedule": "mk:ExamSchedule",
+    "ExamScope": "mk:ExamScope",
+    "AcademySchoolHomeAlignment": "mk:AcademySchoolHomeAlignment",
+    "ProgressGapAnalysis": "mk:ProgressGapAnalysis",
+    "TimeResourceAllocation": "mk:TimeResourceAllocation",
+    "ScoreImprovementPotential": "mk:ScoreImprovementPotential",
+    "StrategyRatioOptimization": "mk:StrategyRatioOptimization",
+    "UnitPriorityByEfficiency": "mk:UnitPriorityByEfficiency",
+    "ExamCycleImprovement": "mk:ExamCycleImprovement",
+    "TextbookEffectivenessAnalysis": "mk:TextbookEffectivenessAnalysis",
+    "RoutineMaintenancePattern": "mk:RoutineMaintenancePattern",
+    "AlignmentPlan": "mk:AlignmentPlan",
+    "TimeAllocationReset": "mk:TimeAllocationReset",
+    "ExamPreparation": "mk:ExamPreparation",
+    "LearningStrategyRatio": "mk:LearningStrategyRatio",
+    "UnitPriority": "mk:UnitPriority",
+    "TextbookStrategy": "mk:TextbookStrategy",
+    "RoutineSchedule": "mk:RoutineSchedule",
+    "ErrorPattern": "mk:ErrorPattern",
+    "ImprovementStrategy": "mk:ImprovementStrategy",
+
+    "studentId": { "@id": "mk:studentId", "@type": "xsd:integer" },
+    "examName": { "@id": "mk:examName", "@type": "xsd:string" },
+    "examStartDate": { "@id": "mk:examStartDate", "@type": "xsd:date" },
+    "examEndDate": { "@id": "mk:examEndDate", "@type": "xsd:date" },
+    "dDay": { "@id": "mk:dDay", "@type": "xsd:integer" },
+    "examSubject": { "@id": "mk:examSubject", "@type": "xsd:string" },
+    "examScope": { "@id": "mk:examScope", "@type": "xsd:string" },
+    "targetScore": { "@id": "mk:targetScore", "@type": "xsd:integer" },
+    "currentExpectedScore": { "@id": "mk:currentExpectedScore", "@type": "xsd:integer" },
+    "academyRank": { "@id": "mk:academyRank", "@type": "xsd:integer" },
+    "schoolScore": { "@id": "mk:schoolScore", "@type": "xsd:integer" },
+
+    "academyProgress": { "@id": "mk:academyProgress", "@type": "xsd:string" },
+    "schoolExamScope": { "@id": "mk:schoolExamScope", "@type": "xsd:string" },
+    "progressGap": { "@id": "mk:progressGap", "@type": "xsd:integer" },
+    "academyAssignmentTime": { "@id": "mk:academyAssignmentTime", "@type": "xsd:integer" },
+    "academyAssignmentFatigue": { "@id": "mk:academyAssignmentFatigue", "@type": "xsd:integer" },
+    "homeStudyRoutine": { "@id": "mk:homeStudyRoutine", "@type": "xsd:string" },
+    "availableTimeByDDay": { "@id": "mk:availableTimeByDDay", "@type": "xsd:integer" },
+    "academyTime": { "@id": "mk:academyTime", "@type": "xsd:integer" },
+    "schoolTime": { "@id": "mk:schoolTime", "@type": "xsd:integer" },
+    "homeTime": { "@id": "mk:homeTime", "@type": "xsd:integer" },
+    "assignmentOverlap": { "@id": "mk:assignmentOverlap", "@type": "xsd:string" },
+    "textbookOverlap": { "@id": "mk:textbookOverlap", "@type": "xsd:string" },
+
+    "unitAccuracyRate": { "@id": "mk:unitAccuracyRate", "@type": "xsd:decimal" },
+    "textbookProgressRate": { "@id": "mk:textbookProgressRate", "@type": "xsd:decimal" },
+    "academyFeedbackData": { "@id": "mk:academyFeedbackData", "@type": "xsd:string" },
+    "conceptRatio": { "@id": "mk:conceptRatio", "@type": "xsd:decimal" },
+    "typeRatio": { "@id": "mk:typeRatio", "@type": "xsd:decimal" },
+    "advancedRatio": { "@id": "mk:advancedRatio", "@type": "xsd:decimal" },
+    "pastExamRatio": { "@id": "mk:pastExamRatio", "@type": "xsd:decimal" },
+    "timeWeightedEfficiency": { "@id": "mk:timeWeightedEfficiency", "@type": "xsd:decimal" },
+    "academyTextbookStrategy": { "@id": "mk:academyTextbookStrategy", "@type": "xsd:string" },
+    "shortTermRoutine": { "@id": "mk:shortTermRoutine", "@type": "xsd:string" },
+    "midTermRoutine": { "@id": "mk:midTermRoutine", "@type": "xsd:string" },
+    "routineTransitionPoint": { "@id": "mk:routineTransitionPoint", "@type": "xsd:integer" },
+
+    "questionTypeSuccessRate": { "@id": "mk:questionTypeSuccessRate", "@type": "xsd:decimal" },
+    "textbookCoverage": { "@id": "mk:textbookCoverage", "@type": "xsd:decimal" },
+    "examHitRate": { "@id": "mk:examHitRate", "@type": "xsd:decimal" },
+    "textbookEffectivenessIndex": { "@id": "mk:textbookEffectivenessIndex", "@type": "xsd:decimal" },
+    "calculationErrorRatio": { "@id": "mk:calculationErrorRatio", "@type": "xsd:decimal" },
+    "conceptErrorRatio": { "@id": "mk:conceptErrorRatio", "@type": "xsd:decimal" },
+    "routineMaintenanceRate": { "@id": "mk:routineMaintenanceRate", "@type": "xsd:decimal" },
+    "parentFeedbackReflectionRate": { "@id": "mk:parentFeedbackReflectionRate", "@type": "xsd:decimal" },
+    "academyFeedbackReflectionRate": { "@id": "mk:academyFeedbackReflectionRate", "@type": "xsd:decimal" },
+    "improvementPoints": { "@id": "mk:improvementPoints", "@type": "xsd:string" },
+    "reinforcementUnitList": { "@id": "mk:reinforcementUnitList", "@type": "xsd:string" },
+    "strategyToMaintain": { "@id": "mk:strategyToMaintain", "@type": "xsd:string" },
+    "strategyToChange": { "@id": "mk:strategyToChange", "@type": "xsd:string" },
+
+    "hasExamSchedule": { "@id": "mk:hasExamSchedule", "@type": "@id" },
+    "hasExamScope": { "@id": "mk:hasExamScope", "@type": "@id" },
+    "hasAcademyProgress": { "@id": "mk:hasAcademyProgress", "@type": "@id" },
+    "hasSchoolExamScope": { "@id": "mk:hasSchoolExamScope", "@type": "@id" },
+    "hasProgressGap": { "@id": "mk:hasProgressGap", "@type": "@id" },
+    "hasTimeResourceAllocation": { "@id": "mk:hasTimeResourceAllocation", "@type": "@id" },
+    "hasAlignmentPlan": { "@id": "mk:hasAlignmentPlan", "@type": "@id" },
+    "hasTimeAllocationReset": { "@id": "mk:hasTimeAllocationReset", "@type": "@id" },
+    "hasScoreImprovementPotential": { "@id": "mk:hasScoreImprovementPotential", "@type": "@id" },
+    "hasStrategyRatio": { "@id": "mk:hasStrategyRatio", "@type": "@id" },
+    "hasUnitPriority": { "@id": "mk:hasUnitPriority", "@type": "@id" },
+    "hasTextbookStrategy": { "@id": "mk:hasTextbookStrategy", "@type": "@id" },
+    "hasRoutineSchedule": { "@id": "mk:hasRoutineSchedule", "@type": "@id" },
+    "hasExamCycleImprovement": { "@id": "mk:hasExamCycleImprovement", "@type": "@id" },
+    "hasTextbookEffectiveness": { "@id": "mk:hasTextbookEffectiveness", "@type": "@id" },
+    "hasErrorPattern": { "@id": "mk:hasErrorPattern", "@type": "@id" },
+    "hasRoutineMaintenancePattern": { "@id": "mk:hasRoutineMaintenancePattern", "@type": "@id" },
+    "hasImprovementStrategy": { "@id": "mk:hasImprovementStrategy", "@type": "@id" },
+    "recommendsAlignmentStrategy": { "@id": "mk:recommendsAlignmentStrategy", "@type": "@id" },
+    "recommendsTimeAllocation": { "@id": "mk:recommendsTimeAllocation", "@type": "@id" },
+    "recommendsStrategyRatio": { "@id": "mk:recommendsStrategyRatio", "@type": "@id" },
+    "recommendsUnitPriority": { "@id": "mk:recommendsUnitPriority", "@type": "@id" },
+    "recommendsRoutineSchedule": { "@id": "mk:recommendsRoutineSchedule", "@type": "@id" },
+    "recommendsImprovementStrategy": { "@id": "mk:recommendsImprovementStrategy", "@type": "@id" }
+  },
+  "@graph": [
+    {
+      "@id": "mk:ExamSchedule",
+      "@type": "owl:Class",
+      "rdfs:label": "시험 일정",
+      "rdfs:comment": "시험 일정 정보를 표현하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:ExamScope",
+      "@type": "owl:Class",
+      "rdfs:label": "시험 범위",
+      "rdfs:comment": "시험 범위 정보를 표현하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:AcademySchoolHomeAlignment",
+      "@type": "owl:Class",
+      "rdfs:label": "학원-학교-집 학습 정렬",
+      "rdfs:comment": "학원, 학교, 집 학습의 정렬 상태를 분석하고 조정하는 핵심 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:ProgressGapAnalysis",
+      "@type": "owl:Class",
+      "rdfs:label": "진도 격차 분석",
+      "rdfs:comment": "학원 진도와 학교 시험 범위 간의 격차를 분석하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:TimeResourceAllocation",
+      "@type": "owl:Class",
+      "rdfs:label": "시간 자원 배분",
+      "rdfs:comment": "시험 D-day별 시간 자원 배분을 표현하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:ScoreImprovementPotential",
+      "@type": "owl:Class",
+      "rdfs:label": "점수 상승 잠재력",
+      "rdfs:comment": "시험 8주 루프 안에서 점수 상승 잠재력을 분석하는 핵심 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:StrategyRatioOptimization",
+      "@type": "owl:Class",
+      "rdfs:label": "학습 전략 비율 최적화",
+      "rdfs:comment": "개념:유형:심화:기출 비율을 최적화하는 온톨로지",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:UnitPriorityByEfficiency",
+      "@type": "owl:Class",
+      "rdfs:label": "단원 우선순위 (효율 기반)",
+      "rdfs:comment": "시간 대비 효율 가중치 기반 단원 우선순위를 표현하는 온톨로지",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:ExamCycleImprovement",
+      "@type": "owl:Class",
+      "rdfs:label": "시험 주기 개선 패턴",
+      "rdfs:comment": "시험 종료 후 다음 시험 주기 개선 패턴을 분석하는 핵심 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:TextbookEffectivenessAnalysis",
+      "@type": "owl:Class",
+      "rdfs:label": "교재 효과 분석",
+      "rdfs:comment": "학원 교재 효과 지표(문제 커버리지 vs 시험 적중률)를 분석하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:RoutineMaintenancePattern",
+      "@type": "owl:Class",
+      "rdfs:label": "루틴 유지 패턴",
+      "rdfs:comment": "학습 루틴 유지율 변동 패턴을 분석하는 온톨로지",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:AlignmentPlan",
+      "@type": "owl:Class",
+      "rdfs:label": "정렬 플랜",
+      "rdfs:comment": "학원-학교-집 3축 정렬 플랜",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:TimeAllocationReset",
+      "@type": "owl:Class",
+      "rdfs:label": "시간 배분 리셋",
+      "rdfs:comment": "시간 배분 리셋 루틴",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:ExamPreparation",
+      "@type": "owl:Class",
+      "rdfs:label": "시험 준비",
+      "rdfs:comment": "시험 준비 상태 및 계획",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:LearningStrategyRatio",
+      "@type": "owl:Class",
+      "rdfs:label": "학습 전략 비율",
+      "rdfs:comment": "개념:유형:심화:기출 비율",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:UnitPriority",
+      "@type": "owl:Class",
+      "rdfs:label": "단원 우선순위",
+      "rdfs:comment": "단원별 우선순위",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:TextbookStrategy",
+      "@type": "owl:Class",
+      "rdfs:label": "교재 전략",
+      "rdfs:comment": "학원 교재별 활용 전략",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:RoutineSchedule",
+      "@type": "owl:Class",
+      "rdfs:label": "루틴 일정",
+      "rdfs:comment": "단기/중기 루틴 일정",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:ErrorPattern",
+      "@type": "owl:Class",
+      "rdfs:label": "실수 패턴",
+      "rdfs:comment": "반복 실수 패턴 (계산/개념 비율)",
+      "rdfs:subClassOf": "mk:Context"
+    },
+    {
+      "@id": "mk:ImprovementStrategy",
+      "@type": "owl:Class",
+      "rdfs:label": "개선 전략",
+      "rdfs:comment": "다음 시험 루프 초기화 전략",
+      "rdfs:subClassOf": "mk:Strategy"
+    },
+    {
+      "@id": "mk:Student",
+      "@type": "rdfs:Class",
+      "rdfs:label": "학생"
+    },
+    {
+      "@id": "mk:Institution",
+      "@type": "rdfs:Class",
+      "rdfs:label": "기관"
+    },
+    {
+      "@id": "mk:Context",
+      "@type": "rdfs:Class",
+      "rdfs:label": "컨텍스트"
+    },
+    {
+      "@id": "mk:Strategy",
+      "@type": "rdfs:Class",
+      "rdfs:label": "전략"
+    }
+  ]
+}
+

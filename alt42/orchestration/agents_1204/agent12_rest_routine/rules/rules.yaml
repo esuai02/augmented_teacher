@@ -1,0 +1,1032 @@
+# Rules for Agent 12 - Rest Routine
+# Generated at: 2025-01-27
+# Purpose: 현직 수학선생님 수준의 휴식 루틴 분석 및 코칭 (90% 수준 목표)
+# Source: teacher_level_evaluation.md 분석 기반 확장
+
+version: "2.0"
+scenario: "rest_routine"
+description: "휴식 루틴 최적화를 통한 에너지 회복과 집중 유지 - 현직 수학선생님 수준의 심층 분석 및 맞춤형 코칭"
+
+rules:
+  # ========== S0: 휴식 분석을 위한 필수 정보 수집 룰 ==========
+  
+  - rule_id: "S0_R1_rest_activity_type_collection"
+    priority: 99
+    description: "휴식 활동 유형 정보 수집 (눈 휴식, 스트레칭, 간식, 스마트폰 등)"
+    conditions:
+      - field: "rest_activity_type"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "rest_button_clicked"
+          operator: "=="
+          value: true
+        - field: "rest_analysis_requested"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'rest_activity_type'"
+      - "validate: '휴식 활동 유형은 눈 휴식, 스트레칭, 간식, 스마트폰, 산책, 음악 듣기, 명상 중 하나 이상이어야 합니다'"
+      - "display_message: '휴식 활동 유형을 파악하여 효과적인 휴식 전략을 수립합니다.'"
+      - "question: '이번 휴식에 무엇을 했나요? (눈 휴식, 스트레칭, 간식, 스마트폰, 산책, 음악 듣기, 명상 등)'"
+    confidence: 0.98
+    rationale: "S0: 휴식 활동 유형에 따라 회복 효과가 다르므로 필수 정보"
+  
+  - rule_id: "S0_R2_emotional_state_before_after_collection"
+    priority: 98
+    description: "휴식 전후 감정 상태 수집"
+    conditions:
+      - field: "emotional_state_before_rest"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "rest_button_clicked"
+          operator: "=="
+          value: true
+        - field: "rest_analysis_requested"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'emotional_state_before_rest'"
+      - "collect_info: 'emotional_state_after_rest'"
+      - "validate: '감정 상태는 불안, 짜증, 피로, 지루함, 기쁨, 평온, 몰입 중 하나이며 1-5점 척도로 평가해야 합니다'"
+      - "display_message: '휴식 전후 감정 상태를 비교하여 휴식의 회복 효과를 평가합니다.'"
+      - "question: '휴식 전 감정 상태를 1-5점으로 평가해주세요. (1=매우 좋음, 5=매우 나쁨) 휴식 후 감정 상태는 어떠한가요?'"
+    confidence: 0.97
+    rationale: "S0: 감정-인지 복합 분석의 기초 데이터"
+  
+  - rule_id: "S0_R3_learning_activity_before_rest_collection"
+    priority: 97
+    description: "휴식 전 학습 활동 정보 수집 (문제 수, 학습 시간, 단원 난이도)"
+    conditions:
+      - field: "learning_activity_before_rest"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "rest_button_clicked"
+          operator: "=="
+          value: true
+        - field: "rest_effectiveness_analysis"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'learning_activity_before_rest'"
+      - "analyze: 'problem_count_before_rest'"
+      - "analyze: 'study_duration_before_rest'"
+      - "analyze: 'unit_difficulty_before_rest'"
+      - "validate: '학습 활동 정보는 문제 수, 학습 시간(분), 단원명, 단원 난이도(1-5점)를 포함해야 합니다'"
+      - "display_message: '휴식 전 학습 활동을 분석하여 적절한 휴식 타이밍을 평가합니다.'"
+      - "question: '휴식 전에 몇 문제를 풀었나요? 학습 시간은 얼마나 걸렸나요? 어떤 단원을 공부했나요? (난이도 1-5점)'"
+    confidence: 0.96
+    rationale: "S0: 학습량과 난이도가 휴식 필요성을 결정하는 핵심 요소"
+  
+  - rule_id: "S0_R4_sleep_pattern_collection"
+    priority: 96
+    description: "수면 패턴 정보 수집 (수면 시간, 수면 질)"
+    conditions:
+      - field: "sleep_hours"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "fatigue_accumulation_detected"
+          operator: "=="
+          value: true
+        - field: "weekly_analysis_requested"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'sleep_hours'"
+      - "collect_info: 'sleep_quality'"
+      - "validate: '수면 시간은 시간 단위(예: 7시간)이며, 수면 질은 1-5점 척도로 평가해야 합니다'"
+      - "display_message: '수면 패턴을 파악하여 피로 누적 원인을 분석합니다.'"
+      - "question: '어제 밤 몇 시간 잤나요? 수면의 질은 어떠했나요? (1=매우 좋음, 5=매우 나쁨)'"
+    confidence: 0.95
+    rationale: "S0: 수면 부족은 피로 누적의 주요 원인"
+  
+  - rule_id: "S0_R5_external_schedule_collection"
+    priority: 95
+    description: "외부 일정 정보 수집 (학교 일정, 학원 일정)"
+    conditions:
+      - field: "external_schedule_info"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "fatigue_accumulation_detected"
+          operator: "=="
+          value: true
+        - field: "weekly_analysis_requested"
+          operator: "=="
+          value: true
+    action:
+      - "load_data: 'agent01_onboarding'"  # 학원 정보 연계
+      - "load_data: 'agent02_exam_schedule'"  # 시험 일정 연계
+      - "collect_info: 'external_schedule_info'"
+      - "analyze: 'school_event_schedule'"
+      - "analyze: 'academy_class_schedule'"
+      - "validate: '외부 일정 정보는 학교 시험/행사 일정, 학원 수업 일정을 포함해야 합니다'"
+      - "display_message: '외부 일정을 파악하여 피로 누적 원인을 분석합니다.'"
+      - "question: '이번 주 학교나 학원에서 특별한 일정이 있나요? (시험, 행사, 특별 수업 등)'"
+    confidence: 0.94
+    rationale: "S0: 외부 일정 변동이 피로에 큰 영향"
+  
+  - rule_id: "S0_R6_physical_condition_collection"
+    priority: 94
+    description: "신체 컨디션 정보 수집 (목/어깨 통증, 눈 피로, 두통 등)"
+    conditions:
+      - field: "physical_condition"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "fatigue_accumulation_detected"
+          operator: "=="
+          value: true
+        - field: "daily_check_requested"
+          operator: "=="
+          value: true
+    action:
+      - "collect_info: 'physical_condition'"
+      - "validate: '신체 컨디션은 목/어깨 통증, 눈 피로, 두통, 허리 통증 등을 1-5점 척도로 평가해야 합니다'"
+      - "display_message: '신체 컨디션을 확인하여 피로 누적 신호를 감지합니다.'"
+      - "question: '오늘 신체 컨디션은 어떠한가요? (목/어깨 통증, 눈 피로, 두통 등 1-5점 척도)'"
+    confidence: 0.93
+    rationale: "S0: 신체 컨디션은 장시간 학습으로 인한 피로의 지표"
+  
+  - rule_id: "S0_R7_learning_style_collection"
+    priority: 93
+    description: "학습 스타일 정보 수집 (agent01에서 연계 또는 설문)"
+    conditions:
+      - field: "learning_style"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "personalized_strategy_requested"
+          operator: "=="
+          value: true
+        - field: "rest_routine_optimization"
+          operator: "=="
+          value: true
+    action:
+      - "load_data: 'agent01_onboarding'"  # 학습 스타일 연계
+      - "collect_info: 'learning_style'"
+      - "validate: '학습 스타일은 계산형, 개념형, 응용형 중 하나여야 합니다'"
+      - "display_message: '학습 스타일을 파악하여 맞춤형 휴식 전략을 수립합니다.'"
+      - "question: '수학 문제를 풀 때 어떤 방식이 편하신가요? (A) 계산을 정확하게 하는 것이 중요해요 (B) 개념을 이해하고 연결하는 것이 중요해요 (C) 다양한 문제 유형을 풀어보는 것이 중요해요'"
+    confidence: 0.92
+    rationale: "S0: 학습 스타일별로 최적 휴식 전략이 다름"
+  
+  - rule_id: "S0_R8_optimal_focus_time_collection"
+    priority: 92
+    description: "최적 집중 시간대 정보 수집 (오전형/오후형/저녁형)"
+    conditions:
+      - field: "optimal_focus_time"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "time_pattern_analysis_requested"
+          operator: "=="
+          value: true
+        - field: "rest_routine_optimization"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'focus_time_pattern'"  # 패턴 분석 기반 추론
+      - "collect_info: 'optimal_focus_time'"
+      - "validate: '최적 집중 시간대는 오전(6-12시), 오후(12-18시), 저녁(18-24시) 중 하나 이상이어야 합니다'"
+      - "display_message: '최적 집중 시간대를 파악하여 휴식 시간대를 조정합니다.'"
+      - "question: '언제 공부할 때 가장 집중이 잘 되나요? (오전/오후/저녁)'"
+    confidence: 0.91
+    rationale: "S0: 집중 시간대에 따라 휴식 전략 차별화 필요"
+  
+  # ========== S1: 휴식 패턴 분석 관련 룰 ==========
+  
+  - rule_id: "S1_R1_time_based_rest_pattern_analysis"
+    priority: 95
+    description: "시간대별 휴식 패턴 분석 (요일별, 시간대별 휴식 빈도 및 집중도 변화)"
+    conditions:
+      - field: "rest_patterns"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 10
+    action:
+      - "analyze: 'hourly_rest_frequency'"
+      - "analyze: 'daily_rest_frequency'"
+      - "analyze: 'weekly_rest_trend'"
+      - "analyze: 'focus_level_by_time_slot'"
+      - "generate_description: 'time_based_rest_pattern_analysis'"
+      - "display_message: '요일별, 시간대별 휴식 패턴을 분석하여 집중도 변화를 파악합니다. 특정 시간대에 휴식이 집중되는 패턴을 확인합니다.'"
+    confidence: 0.93
+    rationale: "S1: 시간대별 패턴 분석으로 개인 최적 학습 시간대 추론"
+  
+  - rule_id: "S1_R2_unit_difficulty_rest_correlation"
+    priority: 94
+    description: "학습 단원 난이도와 휴식 연관성 분석"
+    conditions:
+      - field: "learning_activity_before_rest"
+        operator: "!="
+        value: null
+      - field: "unit_difficulty_before_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'rest_frequency_by_unit_difficulty'"
+      - "analyze: 'difficult_unit_rest_pattern'"
+      - "load_db: 'math_unit_relations.yaml'"  # 단원 난이도 DB 활용
+      - "generate_description: 'unit_difficulty_rest_correlation_analysis'"
+      - "display_message: '어려운 단원을 공부할 때 휴식 빈도가 증가하는 패턴을 분석합니다. 단원 난이도와 휴식 필요성의 관계를 파악합니다.'"
+    confidence: 0.92
+    rationale: "S1: 어려운 단원에서 피로가 빨리 쌓이는 패턴 확인"
+  
+  - rule_id: "S1_R3_rest_duration_effectiveness_analysis"
+    priority: 93
+    description: "휴식 지속 시간과 회복 효과 관계 분석"
+    conditions:
+      - field: "rest_duration"
+        operator: "!="
+        value: null
+      - field: "rest_activity_type"
+        operator: "!="
+        value: null
+      - field: "emotional_state_after_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'rest_duration_recovery_curve'"
+      - "analyze: 'optimal_rest_duration_by_activity'"
+      - "analyze: 'over_rest_detection'"
+      - "generate_description: 'rest_duration_effectiveness_analysis'"
+      - "recommend: 'optimal_rest_duration'"
+      - "display_message: '휴식 시간별 회복 효과를 분석하여 최적 휴식 시간을 추천합니다. 과도한 휴식이 오히려 집중력을 떨어뜨리는 경우를 감지합니다.'"
+    confidence: 0.91
+    rationale: "S1: 휴식 시간이 너무 짧거나 길면 효과 떨어짐"
+  
+  - rule_id: "S1_R4_learning_volume_rest_correlation"
+    priority: 92
+    description: "학습량(문제 수)과 휴식 필요성 관계 분석"
+    conditions:
+      - field: "problem_count_before_rest"
+        operator: "!="
+        value: null
+      - field: "study_duration_before_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'rest_frequency_by_problem_count'"
+      - "analyze: 'optimal_problem_count_before_rest'"
+      - "analyze: 'rest_timing_by_learning_volume'"
+      - "generate_description: 'learning_volume_rest_correlation_analysis'"
+      - "recommend: 'optimal_learning_chunk_size'"
+      - "display_message: '문제 수와 학습 시간에 따른 휴식 필요성을 분석하여 적절한 학습 청크 크기를 추천합니다.'"
+    confidence: 0.90
+    rationale: "S1: 학습량이 많으면 휴식 빈도 증가 필요"
+  
+  - rule_id: "S1_R5_weekly_fatigue_accumulation_pattern"
+    priority: 91
+    description: "주단위 피로 누적 패턴 분석"
+    conditions:
+      - field: "rest_count"
+        operator: ">="
+        value: 20
+      - field: "daily_rest_frequency"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'weekly_fatigue_trend'"
+      - "analyze: 'day_of_week_rest_pattern'"
+      - "analyze: 'fatigue_accumulation_rate'"
+      - "generate_description: 'weekly_fatigue_accumulation_pattern_analysis'"
+      - "alert: 'fatigue_accumulation_warning'"
+      - "display_message: '주간 피로 누적 패턴을 분석합니다. 월요일부터 금요일까지 피로가 점진적으로 증가하는지 확인합니다.'"
+    confidence: 0.89
+    rationale: "S1: 주간 피로 누적은 장기 슬럼프 신호"
+  
+  # ========== S2: 피로도 누적 감지 관련 룰 ==========
+  
+  - rule_id: "S2_R1_fatigue_index_calculation"
+    priority: 96
+    description: "피로도 지수 계산 (집중 시간 변화율, 휴식 빈도 변화율, 학습 효율 변화율 기반)"
+    conditions:
+      - field: "rest_count"
+        operator: ">="
+        value: 10
+      - field: "focus_duration_history"
+        operator: "!="
+        value: null
+      - field: "learning_efficiency_history"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'focus_duration_change_rate'"
+      - "analyze: 'rest_frequency_change_rate'"
+      - "analyze: 'learning_efficiency_change_rate'"
+      - "calculate: 'fatigue_index = (focus_duration_decrease_rate * 0.4) + (rest_frequency_increase_rate * 0.3) + (learning_efficiency_decrease_rate * 0.3)'"
+      - "generate_description: 'fatigue_index_calculation'"
+      - "display_message: '집중 시간 감소율, 휴식 빈도 증가율, 학습 효율 감소율을 종합하여 피로도 지수를 계산합니다. (0-10점 척도)'"
+    confidence: 0.94
+    rationale: "S2: 피로도 지수는 객관적 피로 측정의 핵심"
+  
+  - rule_id: "S2_R2_temporary_vs_accumulated_fatigue_classification"
+    priority: 95
+    description: "일시적 피로 vs 누적 피로 구분"
+    conditions:
+      - field: "fatigue_index"
+        operator: ">="
+        value: 5
+      - field: "fatigue_duration"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'fatigue_duration_pattern'"
+      - "classify: 'fatigue_type'"
+      - "load_data: 'sleep_hours'"  # 수면 정보 연계
+      - "load_data: 'external_schedule_info'"  # 외부 일정 연계
+      - "generate_description: 'fatigue_type_classification'"
+      - "display_message: '피로 지속 기간과 외부 요인을 분석하여 일시적 피로(3일 이하)와 누적 피로(2주 이상)를 구분합니다.'"
+    confidence: 0.93
+    rationale: "S2: 피로 유형에 따라 대응 전략이 다름"
+  
+  - rule_id: "S2_R3_external_factor_fatigue_correlation"
+    priority: 94
+    description: "외부 요인(학교 일정, 학원 일정, 수면)과 피로 연관성 분석"
+    conditions:
+      - field: "fatigue_index"
+        operator: ">="
+        value: 5
+      - field: "external_schedule_info"
+        operator: "!="
+        value: null
+      - field: "sleep_hours"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'school_schedule_fatigue_correlation'"
+      - "analyze: 'academy_schedule_fatigue_correlation'"
+      - "analyze: 'sleep_fatigue_correlation'"
+      - "identify: 'primary_fatigue_cause'"
+      - "generate_description: 'external_factor_fatigue_correlation_analysis'"
+      - "display_message: '학교 일정, 학원 일정, 수면 패턴과 피로도의 연관성을 분석하여 주요 피로 원인을 파악합니다.'"
+    confidence: 0.92
+    rationale: "S2: 외부 요인이 피로의 주요 원인일 수 있음"
+  
+  - rule_id: "S2_R4_sleep_deficiency_fatigue_alert"
+    priority: 93
+    description: "수면 부족 기반 피로 경고"
+    conditions:
+      - field: "sleep_hours"
+        operator: "<"
+        value: 7
+      - field: "fatigue_index"
+        operator: ">="
+        value: 6
+    action:
+      - "alert: 'sleep_deficiency_fatigue_warning'"
+      - "recommend: 'sleep_improvement_strategy'"
+      - "generate_description: 'sleep_deficiency_analysis'"
+      - "display_message: '수면 시간이 부족하여 피로가 누적되고 있습니다. 충분한 수면(7시간 이상)이 학습 효율의 기반입니다.'"
+    confidence: 0.91
+    rationale: "S2: 수면 부족은 피로의 주요 원인"
+  
+  - rule_id: "S2_R5_physical_condition_fatigue_correlation"
+    priority: 92
+    description: "신체 컨디션과 피로 연관성 분석"
+    conditions:
+      - field: "physical_condition"
+        operator: "!="
+        value: null
+      - field: "fatigue_index"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'physical_symptom_fatigue_correlation'"
+      - "identify: 'physical_fatigue_indicators'"
+      - "recommend: 'physical_relief_strategy'"
+      - "generate_description: 'physical_condition_fatigue_correlation_analysis'"
+      - "display_message: '목/어깨 통증, 눈 피로 등 신체 증상과 피로도의 연관성을 분석합니다. 장시간 학습으로 인한 신체 피로를 감지합니다.'"
+    confidence: 0.90
+    rationale: "S2: 신체 증상은 피로의 객관적 지표"
+  
+  # ========== S3: 휴식 효과성 평가 관련 룰 ==========
+  
+  - rule_id: "S3_R1_rest_effectiveness_comparison"
+    priority: 97
+    description: "휴식 전후 학습 효율 비교 분석 (정답률, 집중도)"
+    conditions:
+      - field: "learning_efficiency_before_rest"
+        operator: "!="
+        value: null
+      - field: "learning_efficiency_after_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'pre_rest_efficiency'"  # 휴식 직전 30분 학습 효율
+      - "analyze: 'post_rest_efficiency'"  # 휴식 직후 30분 학습 효율
+      - "calculate: 'recovery_effectiveness_index = (post_rest_efficiency - pre_rest_efficiency) / pre_rest_efficiency * 100'"
+      - "generate_description: 'rest_effectiveness_comparison_analysis'"
+      - "display_message: '휴식 직전 30분과 휴식 직후 30분의 학습 효율(정답률, 집중도)을 비교하여 회복 효과를 측정합니다.'"
+    confidence: 0.95
+    rationale: "S3: 휴식 효과성 평가의 핵심 지표"
+  
+  - rule_id: "S3_R2_rest_activity_type_effectiveness"
+    priority: 96
+    description: "휴식 활동 유형별 효과 측정"
+    conditions:
+      - field: "rest_activity_type"
+        operator: "!="
+        value: null
+      - field: "recovery_effectiveness_index"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 10
+    action:
+      - "analyze: 'effectiveness_by_activity_type'"
+      - "rank: 'activity_effectiveness_ranking'"
+      - "recommend: 'optimal_rest_activities'"
+      - "generate_description: 'rest_activity_type_effectiveness_analysis'"
+      - "display_message: '휴식 활동 유형별 회복 효과를 측정하여 가장 효과적인 휴식 활동을 추천합니다.'"
+    confidence: 0.94
+    rationale: "S3: 활동 유형에 따라 회복 효과 차이 큼"
+  
+  - rule_id: "S3_R3_recovery_time_measurement"
+    priority: 95
+    description: "회복 시간 측정 (휴식 후 집중도 회복 시간 추적)"
+    conditions:
+      - field: "focus_level_after_rest"
+        operator: "!="
+        value: null
+      - field: "focus_level_history"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'recovery_time_pattern'"
+      - "calculate: 'average_recovery_time'"
+      - "identify: 'delayed_recovery_cases'"
+      - "generate_description: 'recovery_time_measurement_analysis'"
+      - "display_message: '휴식 후 집중도가 회복되는 데 걸리는 시간을 측정합니다. 회복이 지연되는 경우를 감지합니다.'"
+    confidence: 0.93
+    rationale: "S3: 회복 시간은 회복 탄력성의 지표"
+  
+  - rule_id: "S3_R4_over_rest_detection"
+    priority: 94
+    description: "과도한 휴식 감지 (휴식 후 학습 효율 오히려 하락)"
+    conditions:
+      - field: "rest_duration"
+        operator: ">"
+        value: 10
+      - field: "learning_efficiency_after_rest"
+        operator: "<"
+        value: "learning_efficiency_before_rest"
+    action:
+      - "alert: 'over_rest_warning'"
+      - "analyze: 'over_rest_pattern'"
+      - "recommend: 'optimal_rest_duration_adjustment'"
+      - "generate_description: 'over_rest_detection_analysis'"
+      - "display_message: '휴식 시간이 과도하여 오히려 집중력이 떨어지는 패턴을 감지합니다. 휴식 시간을 조정하는 것을 권장합니다.'"
+    confidence: 0.92
+    rationale: "S3: 과도한 휴식은 오히려 비효율적"
+  
+  - rule_id: "S3_R5_rest_frequency_learning_efficiency_relationship"
+    priority: 93
+    description: "휴식 빈도와 학습 지속력 관계 분석"
+    conditions:
+      - field: "rest_frequency"
+        operator: "!="
+        value: null
+      - field: "total_learning_volume"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 15
+    action:
+      - "analyze: 'rest_frequency_efficiency_curve'"
+      - "identify: 'optimal_rest_frequency'"
+      - "detect: 'excessive_rest_frequency'"
+      - "generate_description: 'rest_frequency_learning_efficiency_relationship_analysis'"
+      - "display_message: '휴식 빈도별 총 학습량과 효율을 비교하여 최적 휴식 빈도를 파악합니다. 너무 자주 쉬면 학습 흐름이 끊기는 문제를 감지합니다.'"
+    confidence: 0.91
+    rationale: "S3: 적절한 빈도가 학습 지속력에 중요"
+  
+  - rule_id: "S3_R6_emotional_recovery_measurement"
+    priority: 92
+    description: "휴식 전후 감정 회복 측정"
+    conditions:
+      - field: "emotional_state_before_rest"
+        operator: "!="
+        value: null
+      - field: "emotional_state_after_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "calculate: 'emotional_recovery_index = emotional_state_before_rest - emotional_state_after_rest'"
+      - "analyze: 'emotional_recovery_by_activity'"
+      - "generate_description: 'emotional_recovery_measurement_analysis'"
+      - "display_message: '휴식 전후 감정 상태 변화를 측정하여 정서적 회복 효과를 평가합니다.'"
+    confidence: 0.90
+    rationale: "S3: 감정 회복은 휴식 효과의 일부"
+  
+  # ========== S4: 개인화 휴식 전략 관련 룰 ==========
+  
+  - rule_id: "S4_R1_optimal_rest_time_slot_recommendation"
+    priority: 95
+    description: "개인 최적 휴식 시간대 추천 (시간대별 집중도 분석 기반)"
+    conditions:
+      - field: "optimal_focus_time"
+        operator: "!="
+        value: null
+      - field: "hourly_rest_frequency"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'focus_time_rest_alignment'"
+      - "recommend: 'optimal_rest_time_slots'"
+      - "generate_description: 'optimal_rest_time_slot_recommendation'"
+      - "display_message: '집중이 잘 되는 시간대에는 연속 학습을, 집중이 떨어지는 시간대에는 휴식을 배치하는 전략을 추천합니다.'"
+    confidence: 0.93
+    rationale: "S4: 개인별 최적 시간대 활용이 효율적"
+  
+  - rule_id: "S4_R2_learning_style_based_rest_strategy"
+    priority: 94
+    description: "학습 스타일별 휴식 전략 차별화"
+    conditions:
+      - field: "learning_style"
+        operator: "!="
+        value: null
+      - field: "rest_patterns"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'learning_style_rest_needs'"
+      - "recommend: 'personalized_rest_strategy'"
+      - "generate_description: 'learning_style_based_rest_strategy'"
+      - "display_message: '학습 스타일에 따라 휴식 전략을 차별화합니다. 계산형 학생은 짧고 자주, 개념형 학생은 긴 휴식이 효과적입니다.'"
+    confidence: 0.92
+    rationale: "S4: 학습 스타일별 최적 전략 다름"
+  
+  - rule_id: "S4_R3_unit_difficulty_based_dynamic_adjustment"
+    priority: 93
+    description: "단원 난이도 기반 동적 휴식 조정"
+    conditions:
+      - field: "unit_difficulty"
+        operator: "!="
+        value: null
+      - field: "current_learning_unit"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'math_unit_relations.yaml'"  # 단원 난이도 DB
+      - "analyze: 'difficulty_based_rest_interval'"
+      - "adjust: 'dynamic_rest_interval'"
+      - "generate_description: 'unit_difficulty_based_dynamic_adjustment'"
+      - "display_message: '어려운 단원을 공부할 때는 휴식 간격을 줄이고, 쉬운 단원일 때는 연속 학습을 권장합니다.'"
+    confidence: 0.91
+    rationale: "S4: 난이도에 따라 휴식 필요성 다름"
+  
+  - rule_id: "S4_R4_goal_based_rest_reward"
+    priority: 92
+    description: "목표 달성 기반 휴식 보상 시스템"
+    conditions:
+      - field: "learning_goal_achieved"
+        operator: "=="
+        value: true
+      - field: "rest_reward_enabled"
+        operator: "=="
+        value: true
+    action:
+      - "recommend: 'rest_reward_activity'"
+      - "suggest: 'extended_rest_duration'"
+      - "generate_description: 'goal_based_rest_reward_strategy'"
+      - "display_message: '학습 목표를 달성했으므로 보상 휴식을 권장합니다. 동기 부여를 위해 적절한 휴식 활동을 추천합니다.'"
+    confidence: 0.90
+    rationale: "S4: 목표 달성 보상으로 동기 강화"
+  
+  - rule_id: "S4_R5_emotional_state_based_rest_activity"
+    priority: 91
+    description: "감정 상태별 휴식 활동 추천"
+    conditions:
+      - field: "emotional_state_before_rest"
+        operator: "!="
+        value: null
+      - field: "emotional_state_after_rest"
+        operator: "!="
+        value: null
+      - field: "rest_activity_type"
+        operator: "!="
+        value: null
+    action:
+      - "load_data: 'agent05_learning_emotion'"  # 감정 로그 연계
+      - "analyze: 'emotional_state_activity_mapping'"
+      - "recommend: 'personalized_rest_activity'"
+      - "generate_description: 'emotional_state_based_rest_activity_recommendation'"
+      - "display_message: '현재 감정 상태에 따라 적절한 휴식 활동을 추천합니다. 짜증날 때는 심호흡, 지칠 때는 스트레칭, 불안할 때는 산책을 권장합니다.'"
+    confidence: 0.89
+    rationale: "S4: 감정 상태별 맞춤 활동이 효과적"
+  
+  # ========== S5: 예방적 조정 알고리즘 관련 룰 ==========
+  
+  - rule_id: "S5_R1_fatigue_accumulation_early_detection"
+    priority: 98
+    description: "피로 누적 사전 감지 (집중 시간, 학습 효율 트렌드 분석)"
+    conditions:
+      - field: "focus_duration_trend"
+        operator: "=="
+        value: "decreasing"
+      - field: "learning_efficiency_trend"
+        operator: "=="
+        value: "decreasing"
+      - field: "trend_duration"
+        operator: ">="
+        value: 3
+    action:
+      - "alert: 'fatigue_accumulation_early_warning'"
+      - "analyze: 'fatigue_trend_severity'"
+      - "recommend: 'preventive_rest_adjustment'"
+      - "generate_description: 'fatigue_accumulation_early_detection_analysis'"
+      - "display_message: '집중 시간과 학습 효율이 지속적으로 감소하고 있습니다. 피로 누적 신호로 감지되었습니다. 조기 개입을 권장합니다.'"
+    confidence: 0.96
+    rationale: "S5: 조기 감지로 슬럼프 예방"
+  
+  - rule_id: "S5_R2_optimal_rest_timing_prediction"
+    priority: 97
+    description: "최적 휴식 타이밍 예측 (학습 시간, 문제 난이도, 감정 상태 기반)"
+    conditions:
+      - field: "current_learning_duration"
+        operator: ">="
+        value: 45
+      - field: "problem_count_since_last_rest"
+        operator: ">="
+        value: 10
+      - field: "current_emotional_state"
+        operator: "in"
+        value: ["피로", "짜증", "지루함"]
+    action:
+      - "predict: 'optimal_rest_timing'"
+      - "analyze: 'rest_urgency_score'"
+      - "recommend: 'immediate_rest_suggestion'"
+      - "generate_description: 'optimal_rest_timing_prediction'"
+      - "display_message: '현재 학습 시간, 문제 수, 감정 상태를 분석하여 최적 휴식 타이밍을 예측합니다. 지금 휴식을 권장합니다.'"
+    confidence: 0.95
+    rationale: "S5: 적절한 타이밍이 회복 효과 극대화"
+  
+  - rule_id: "S5_R3_automatic_rest_routine_adjustment"
+    priority: 96
+    description: "휴식 루틴 자동 조정 (피로도 지수 기반)"
+    conditions:
+      - field: "fatigue_index"
+        operator: ">="
+        value: 7
+      - field: "fatigue_duration"
+        operator: ">="
+        value: 5
+    action:
+      - "adjust: 'rest_interval'"
+      - "adjust: 'rest_duration'"
+      - "recommend: 'rest_activity_type'"
+      - "generate_description: 'automatic_rest_routine_adjustment'"
+      - "display_message: '피로도가 높아 휴식 간격을 줄이고 휴식 시간을 늘리는 자동 조정을 제안합니다.'"
+    confidence: 0.94
+    rationale: "S5: 동적 조정으로 피로 회복"
+  
+  - rule_id: "S5_R4_long_term_slump_prevention"
+    priority: 95
+    description: "장기 슬럼프 예방 (2주 이상 피로 누적 감지 및 적극적 개입)"
+    conditions:
+      - field: "fatigue_index"
+        operator: ">="
+        value: 7
+      - field: "fatigue_duration"
+        operator: ">="
+        value: 14
+      - field: "learning_efficiency"
+        operator: "<"
+        value: 0.6
+    action:
+      - "alert: 'long_term_slump_warning'"
+      - "analyze: 'slump_root_causes'"
+      - "recommend: 'aggressive_intervention_strategy'"
+      - "generate_description: 'long_term_slump_prevention_analysis'"
+      - "display_message: '2주 이상 피로가 누적되고 학습 효율이 저하되고 있습니다. 장기 슬럼프 위험 단계입니다. 적극적인 개입 전략을 권장합니다.'"
+    confidence: 0.93
+    rationale: "S5: 장기 슬럼프는 학습 중단으로 이어질 수 있음"
+  
+  - rule_id: "S5_R5_recovery_resilience_assessment"
+    priority: 94
+    description: "회복 탄력성 평가 (휴식 후 회복 시간, 회복 정도 측정)"
+    conditions:
+      - field: "recovery_time_history"
+        operator: "!="
+        value: null
+      - field: "recovery_effectiveness_history"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 10
+    action:
+      - "analyze: 'recovery_resilience_score'"
+      - "calculate: 'average_recovery_time'"
+      - "calculate: 'average_recovery_effectiveness'"
+      - "generate_description: 'recovery_resilience_assessment'"
+      - "recommend: 'personalized_recovery_strategy'"
+      - "display_message: '휴식 후 회복 시간과 회복 정도를 측정하여 개인별 회복 탄력성을 평가합니다. 회복이 빠른 학생은 짧은 휴식, 느린 학생은 긴 휴식이 적합합니다.'"
+    confidence: 0.92
+    rationale: "S5: 회복 탄력성은 개인화 전략의 기초"
+  
+  # ========== S6: 감정-인지 복합 분석 관련 룰 ==========
+  
+  - rule_id: "S6_R1_emotional_state_rest_need_prediction"
+    priority: 95
+    description: "감정 상태와 휴식 필요성 예측 (감정 로그 기반)"
+    conditions:
+      - field: "emotional_log"
+        operator: "!="
+        value: null
+      - field: "current_emotional_state"
+        operator: "in"
+        value: ["짜증", "포기", "불안", "피로"]
+    action:
+      - "load_data: 'agent05_learning_emotion'"  # 감정 로그 연계
+      - "analyze: 'emotional_state_rest_correlation'"
+      - "predict: 'rest_need_from_emotion'"
+      - "recommend: 'preemptive_rest_suggestion'"
+      - "generate_description: 'emotional_state_rest_need_prediction'"
+      - "display_message: '짜증, 포기, 불안 감정이 나타나면 피로 신호입니다. 미리 휴식을 권장합니다.'"
+    confidence: 0.93
+    rationale: "S6: 감정은 피로의 조기 신호"
+  
+  - rule_id: "S6_R2_emotional_recovery_measurement"
+    priority: 94
+    description: "휴식 전후 감정 변화 측정"
+    conditions:
+      - field: "emotional_state_before_rest"
+        operator: "!="
+        value: null
+      - field: "emotional_state_after_rest"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "calculate: 'emotional_recovery_index = emotional_state_before_rest - emotional_state_after_rest'"
+      - "analyze: 'emotional_recovery_by_activity'"
+      - "generate_description: 'emotional_recovery_measurement_analysis'"
+      - "display_message: '휴식 전후 감정 점수 변화를 측정하여 정서적 회복 효과를 평가합니다.'"
+    confidence: 0.92
+    rationale: "S6: 감정 회복은 휴식 효과의 핵심"
+  
+  - rule_id: "S6_R3_stress_index_calculation"
+    priority: 93
+    description: "스트레스 지수 계산 및 휴식 전략 조정"
+    conditions:
+      - field: "emotional_log"
+        operator: "!="
+        value: null
+      - field: "learning_pressure"
+        operator: "!="
+        value: null
+      - field: "external_schedule_info"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'stress_index = f(emotional_log, learning_pressure, external_schedule)'"
+      - "analyze: 'stress_rest_correlation'"
+      - "adjust: 'rest_strategy_by_stress'"
+      - "generate_description: 'stress_index_calculation_analysis'"
+      - "display_message: '감정 로그, 학습 압박감, 외부 일정을 종합하여 스트레스 지수를 계산하고 휴식 전략을 조정합니다.'"
+    confidence: 0.91
+    rationale: "S6: 스트레스는 피로의 주요 원인"
+  
+  - rule_id: "S6_R4_motivation_rest_effectiveness_relationship"
+    priority: 92
+    description: "학습 동기와 휴식 효과 관계 분석"
+    conditions:
+      - field: "motivation_level"
+        operator: "!="
+        value: null
+      - field: "recovery_effectiveness_index"
+        operator: "!="
+        value: null
+      - field: "rest_count"
+        operator: ">="
+        value: 5
+    action:
+      - "load_data: 'agent03_goals_analysis'"  # 동기 정보 연계
+      - "load_data: 'agent05_learning_emotion'"  # 동기 정보 연계
+      - "analyze: 'motivation_rest_effectiveness_correlation'"
+      - "generate_description: 'motivation_rest_effectiveness_relationship_analysis'"
+      - "display_message: '동기 수준이 높을 때 휴식이 학습 효율을 더 크게 향상시키는 패턴을 분석합니다.'"
+    confidence: 0.90
+    rationale: "S6: 동기와 휴식 효과는 상호작용"
+  
+  # ========== S7: 외부 요인 통합 분석 관련 룰 ==========
+  
+  - rule_id: "S7_R1_school_schedule_fatigue_correlation"
+    priority: 94
+    description: "학교 일정과 피로 연관성 분석"
+    conditions:
+      - field: "school_event_schedule"
+        operator: "!="
+        value: null
+      - field: "fatigue_index"
+        operator: "!="
+        value: null
+    action:
+      - "load_data: 'agent02_exam_schedule'"  # 시험 일정 연계
+      - "analyze: 'exam_period_fatigue_pattern'"
+      - "analyze: 'vacation_recovery_pattern'"
+      - "generate_description: 'school_schedule_fatigue_correlation_analysis'"
+      - "display_message: '시험 기간에는 피로가 쌓이고, 방학 기간에는 회복되는 패턴을 분석합니다.'"
+    confidence: 0.92
+    rationale: "S7: 학교 일정이 피로에 큰 영향"
+  
+  - rule_id: "S7_R2_academy_schedule_rest_pattern"
+    priority: 93
+    description: "학원 일정과 휴식 패턴 연관성 분석"
+    conditions:
+      - field: "academy_class_schedule"
+        operator: "!="
+        value: null
+      - field: "rest_patterns"
+        operator: "!="
+        value: null
+    action:
+      - "load_data: 'agent01_onboarding'"  # 학원 정보 연계
+      - "analyze: 'academy_day_rest_frequency'"
+      - "analyze: 'academy_class_fatigue_impact'"
+      - "generate_description: 'academy_schedule_rest_pattern_analysis'"
+      - "display_message: '학원 수업이 있는 날 집중력이 떨어져 집에서 휴식이 증가하는 패턴을 분석합니다.'"
+    confidence: 0.91
+    rationale: "S7: 학원 일정이 휴식 패턴에 영향"
+  
+  - rule_id: "S7_R3_sleep_pattern_integration"
+    priority: 92
+    description: "수면 패턴 통합 분석 및 피로도 예측 모델 반영"
+    conditions:
+      - field: "sleep_hours"
+        operator: "!="
+        value: null
+      - field: "sleep_quality"
+        operator: "!="
+        value: null
+      - field: "fatigue_index"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'sleep_fatigue_prediction_model'"
+      - "calculate: 'sleep_impact_on_fatigue'"
+      - "recommend: 'sleep_improvement_strategy'"
+      - "generate_description: 'sleep_pattern_integration_analysis'"
+      - "display_message: '수면 시간과 수면 질이 피로도에 미치는 영향을 분석하여 수면 개선 전략을 제안합니다.'"
+    confidence: 0.90
+    rationale: "S7: 수면은 피로의 기초 요인"
+  
+  - rule_id: "S7_R4_wake_pattern_optimization"
+    priority: 91
+    description: "기상 패턴과 학습 시간대 최적화"
+    conditions:
+      - field: "wake_time"
+        operator: "!="
+        value: null
+      - field: "optimal_focus_time"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'wake_time_focus_alignment'"
+      - "classify: 'chronotype'"  # 아침형/올빼미형 분류
+      - "recommend: 'optimal_learning_schedule'"
+      - "generate_description: 'wake_pattern_optimization_analysis'"
+      - "display_message: '기상 시간과 최적 집중 시간대를 분석하여 개인별 학습 스케줄을 최적화합니다.'"
+    confidence: 0.89
+    rationale: "S7: 생체 리듬에 맞는 학습이 효율적"
+  
+  # ========== S8: 종합 분석 및 코칭 관련 룰 ==========
+  
+  - rule_id: "S8_R1_comprehensive_rest_routine_analysis"
+    priority: 98
+    description: "휴식 루틴 종합 분석 및 최적화 제안"
+    conditions:
+      - field: "rest_count"
+        operator: ">="
+        value: 20
+      - field: "comprehensive_analysis_requested"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'comprehensive_rest_pattern'"
+      - "analyze: 'fatigue_accumulation_status'"
+      - "analyze: 'rest_effectiveness_evaluation'"
+      - "analyze: 'personalized_optimization_opportunities'"
+      - "generate_description: 'comprehensive_rest_routine_analysis_report'"
+      - "display_message: '휴식 패턴, 피로 누적 상태, 휴식 효과성을 종합적으로 분석하여 최적화 방안을 제시합니다.'"
+    confidence: 0.96
+    rationale: "S8: 종합 분석으로 전체적 개선 방향 제시"
+  
+  - rule_id: "S8_R2_rest_routine_coaching_template"
+    priority: 97
+    description: "맞춤형 휴식 루틴 코칭 템플릿 생성"
+    conditions:
+      - field: "rest_type"
+        operator: "!="
+        value: null
+      - field: "fatigue_index"
+        operator: "!="
+        value: null
+      - field: "learning_style"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'personalized_coaching_message'"
+      - "recommend: 'custom_rest_routine'"
+      - "suggest: 'rest_activity_schedule'"
+      - "generate_description: 'rest_routine_coaching_template'"
+      - "display_message: '학생의 휴식 유형, 피로도, 학습 스타일을 종합하여 맞춤형 휴식 루틴과 코칭 메시지를 제공합니다.'"
+    confidence: 0.95
+    rationale: "S8: 개인화된 코칭이 효과적"
+  
+  - rule_id: "S8_R3_storytelling_fatigue_normalization"
+    priority: 96
+    description: "시기별 보편적 현상 스토리텔링으로 고립감 해소"
+    conditions:
+      - field: "fatigue_accumulation_detected"
+        operator: "=="
+        value: true
+      - field: "emotional_state"
+        operator: "in"
+        value: ["불안", "포기", "자책"]
+    action:
+      - "generate: 'normalization_story'"
+      - "provide: 'seasonal_fatigue_explanation'"
+      - "suggest: 'peer_comparison_context'"
+      - "generate_description: 'storytelling_fatigue_normalization'"
+      - "display_message: '피로 누적은 시기별로 보편적인 현상임을 설명하여 고립감을 해소하고 지속적인 관심이 있음을 전달합니다.'"
+    confidence: 0.94
+    rationale: "S8: 정서적 지원이 중요"
+  
+  - rule_id: "S8_R4_positive_behavior_induction"
+    priority: 95
+    description: "더 나은 모습을 스스로 선택하고 자긍심을 느끼는 방향의 행동 유도"
+    conditions:
+      - field: "rest_improvement_achieved"
+        operator: "=="
+        value: true
+      - field: "learning_efficiency_improved"
+        operator: "=="
+        value: true
+    action:
+      - "recognize: 'improvement_achievement'"
+      - "reinforce: 'positive_behavior'"
+      - "boost: 'self_esteem'"
+      - "generate_description: 'positive_behavior_induction'"
+      - "display_message: '휴식 루틴 개선으로 학습 효율이 향상되었습니다. 스스로 더 나은 선택을 하고 있는 것을 인정하고 자긍심을 느끼도록 격려합니다.'"
+    confidence: 0.93
+    rationale: "S8: 긍정적 강화로 동기 유지"
+  
+  - rule_id: "S8_R5_agent_integration_summary"
+    priority: 94
+    description: "다른 에이전트로 정보 전달 (귀가검사 등)"
+    conditions:
+      - field: "daily_summary_requested"
+        operator: "=="
+        value: true
+      - field: "rest_routine_analysis_completed"
+        operator: "=="
+        value: true
+    action:
+      - "generate: 'rest_routine_summary'"
+      - "send_to: 'agent_return_home_check'"  # 귀가검사 에이전트
+      - "include: 'fatigue_index'"
+      - "include: 'recovery_score'"
+      - "include: 'emotional_stability'"
+      - "generate_description: 'agent_integration_summary'"
+      - "display_message: '오늘 하루의 휴식 루틴 효과를 요약하여 귀가검사 에이전트로 전달합니다. 피로 누적 지수, 회복 점수, 감정 안정도를 포함합니다.'"
+    confidence: 0.92
+    rationale: "S8: 에이전트 간 정보 공유로 통합 관리"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '휴식 루틴 정보를 분석 중입니다. 추가 정보가 필요할 수 있습니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용 - 조건 불일치 시 사용"

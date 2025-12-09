@@ -1,0 +1,45 @@
+[REVIEW_INTRO]
+
+{{student_name}}님, 복습이 필요한 노트들을 찾았습니다.
+
+[URGENT_REVIEW]
+
+🔴 긴급 복습 필요 ({{urgent_count}}개):
+{{urgent_notes_list}}
+
+[RECOMMENDED_REVIEW]
+
+🟡 복습 권장 ({{recommended_count}}개):
+{{recommended_notes_list}}
+
+[REVIEW_REASON]
+
+📊 복습 권장 이유:
+{{review_reasoning}}
+
+[SCHEDULE]
+
+📅 추천 복습 일정:
+{{review_schedule}}
+
+[STRATEGY]
+
+💡 효과적인 복습 방법:
+{{persona_specific_review_strategy}}
+
+[MOTIVATION]
+
+{{motivation_message}}
+
+[CLOSING]
+
+복습 계획을 세워드릴까요?
+
+<!--
+파일: templates/N4/review_recommendation.txt
+상황: N4 - 복습 권장 판단
+변수: student_name, urgent_count, urgent_notes_list, recommended_count,
+      recommended_notes_list, review_reasoning, review_schedule,
+      persona_specific_review_strategy, motivation_message
+용도: 오래된 노트 복습 권장 및 일정 안내
+-->

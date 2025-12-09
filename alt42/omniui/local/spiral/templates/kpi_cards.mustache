@@ -1,0 +1,229 @@
+{{!
+    KPI Dashboard Cards Template
+    
+    @package    local_spiral
+    @copyright  2024 MathKing
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="kpi-dashboard mb-4">
+    <!-- Summary Section -->
+    <div class="alert alert-{{#has_alerts}}warning{{/has_alerts}}{{^has_alerts}}info{{/has_alerts}} mb-4">
+        <h5 class="alert-heading">
+            <i class="fa fa-tachometer-alt mr-2"></i>
+            {{#str}}kpi_dashboard_title, local_spiral{{/str}}
+        </h5>
+        <p class="mb-2">{{summary}}</p>
+        <small class="text-muted">
+            {{#str}}last_updated, local_spiral{{/str}}: {{last_updated}}
+        </small>
+    </div>
+
+    <!-- KPI Cards Grid -->
+    <div class="row">
+        {{#cards}}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card kpi-card h-100 border-{{color}}">
+                <div class="card-header bg-{{color}} text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">
+                            <i class="{{icon}} mr-2"></i>
+                            {{title}}
+                        </h6>
+                        {{#trend}}
+                        <div class="kpi-trend">
+                            {{#if trend.up}}
+                                <i class="fa fa-arrow-up text-success" title="{{#str}}trend_up, local_spiral{{/str}}"></i>
+                            {{/if}}
+                            {{#if trend.down}}
+                                <i class="fa fa-arrow-down text-danger" title="{{#str}}trend_down, local_spiral{{/str}}"></i>
+                            {{/if}}
+                            {{#if trend.stable}}
+                                <i class="fa fa-minus text-muted" title="{{#str}}trend_stable, local_spiral{{/str}}"></i>
+                            {{/if}}
+                        </div>
+                        {{/trend}}
+                    </div>
+                </div>
+                
+                <div class="card-body text-center">
+                    <div class="kpi-value">
+                        <span class="display-4 font-weight-bold text-{{color}}">{{value}}</span>
+                        <span class="h5 text-muted">{{unit}}</span>
+                    </div>
+                    
+                    {{#alert}}
+                    <div class="alert alert-{{alert}} mt-3 mb-2 py-2">
+                        <small>
+                            <i class="fa fa-exclamation-triangle mr-1"></i>
+                            {{#str}}kpi_alert_threshold, local_spiral{{/str}}
+                        </small>
+                    </div>
+                    {{/alert}}
+                    
+                    <p class="card-text small text-muted mt-2">{{description}}</p>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="progress" style="height: 5px;">
+                        {{#if color.success}}
+                        <div class="progress-bar bg-success" style="width: 100%"></div>
+                        {{/if}}
+                        {{#if color.warning}}
+                        <div class="progress-bar bg-warning" style="width: 70%"></div>
+                        {{/if}}
+                        {{#if color.danger}}
+                        <div class="progress-bar bg-danger" style="width: 30%"></div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/cards}}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fa fa-bolt mr-2"></i>
+                        {{#str}}quick_actions, local_spiral{{/str}}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group mr-2" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshKPIs()">
+                            <i class="fa fa-refresh mr-1"></i>
+                            {{#str}}refresh_kpis, local_spiral{{/str}}
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="showKPITrends()">
+                            <i class="fa fa-chart-line mr-1"></i>
+                            {{#str}}view_trends, local_spiral{{/str}}
+                        </button>
+                    </div>
+                    
+                    {{#has_alerts}}
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="resolveAlerts()">
+                            <i class="fa fa-tools mr-1"></i>
+                            {{#str}}resolve_alerts, local_spiral{{/str}}
+                        </button>
+                    </div>
+                    {{/has_alerts}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// KPI Dashboard JavaScript Functions
+function refreshKPIs() {
+    // Show loading state
+    const dashboard = document.querySelector('.kpi-dashboard');
+    dashboard.style.opacity = '0.6';
+    
+    // AJAX call to refresh KPIs
+    fetch(M.cfg.wwwroot + '/local/spiral/ajax/refresh_kpis.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            sesskey: M.cfg.sesskey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); // Refresh page to show updated KPIs
+        } else {
+            console.error('Failed to refresh KPIs:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error refreshing KPIs:', error);
+    })
+    .finally(() => {
+        dashboard.style.opacity = '1';
+    });
+}
+
+function showKPITrends() {
+    // Open trends modal or navigate to trends page
+    window.open(M.cfg.wwwroot + '/local/spiral/kpi_trends.php', '_blank');
+}
+
+function resolveAlerts() {
+    // Navigate to alerts resolution page
+    window.location.href = M.cfg.wwwroot + '/local/spiral/resolve_alerts.php';
+}
+
+// Auto-refresh KPIs every 5 minutes
+setInterval(function() {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    
+    // Refresh on 0, 5, 10, 15, 20... minute marks
+    if (minutes % 5 === 0 && now.getSeconds() === 0) {
+        refreshKPIs();
+    }
+}, 1000);
+</script>
+
+<style>
+.kpi-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.kpi-value {
+    margin: 1rem 0;
+}
+
+.kpi-trend i {
+    font-size: 1.2em;
+}
+
+.progress {
+    border-radius: 0;
+}
+
+.card-header.bg-success {
+    background-color: #28a745 !important;
+}
+
+.card-header.bg-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+
+.card-header.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.card-header.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.border-success {
+    border-color: #28a745 !important;
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+.border-info {
+    border-color: #17a2b8 !important;
+}
+</style>

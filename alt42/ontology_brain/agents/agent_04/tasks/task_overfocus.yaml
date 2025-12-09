@@ -1,0 +1,76 @@
+# Task: 과도 집중 (Overfocus)
+
+id: "task_overfocus"
+version: "1.0.0"
+
+# 목표
+goal: "한 주제에 과도하게 집중하는 학생에게 균형 잡힌 학습 유도"
+
+# KPI
+kpi:
+  - "time_on_single_topic"
+  - "topic_diversity"
+  - "balance_score"
+
+# 트리거 조건 (DSL)
+triggers:
+  - "cond.focus.single_topic_45min"
+  - "cond.focus.topic_imbalance"
+
+# 사전조건
+preconditions:
+  - "evidence.window.duration_min >= 45"
+  - "evidence.metrics.time_on_single_topic_min IS NOT NULL"
+
+# 사후조건
+postconditions:
+  - "report.generated == true"
+  - "directive.priority >= 0.6"
+
+# 컨텍스트 태그
+context_tags:
+  - "curriculum"
+  - "balance"
+  - "pacing"
+
+# 템플릿 우선순위
+templates:
+  - id: "report_overfocus"
+    type: "report"
+    priority: 1.0
+    params:
+      chart: "topic_distribution"
+      lookback_hours: 2
+
+  - id: "directive_switch_topic"
+    type: "directive"
+    priority: 0.9
+    params:
+      mode: "suggest_change"
+      break_min: 5
+
+# 규칙 참조
+rules:
+  - "rule.curriculum.overfocus_report"
+  - "rule.curriculum.switch_directive"
+
+# 페르소나 연관도
+persona_relevance:
+  P_perfectionist: 1.0
+  P_anxious: 0.9
+  P_motivated: 0.7
+  P_avoidant: 0.3
+  P_struggling: 0.4
+
+# 예상 효과
+expected_outcomes:
+  - "topic_diversity_increase"
+  - "balanced_progress"
+  - "reduced_fatigue"
+
+# 메타데이터
+metadata:
+  created: "2025-12-08"
+  author: "system"
+  tags: ["core", "balance", "pacing"]
+

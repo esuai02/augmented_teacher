@@ -1,0 +1,7 @@
+{# 기본 격려 메시지 템플릿 #}
+{# 사용 변수: student_name, correct_count, total_count #}
+
+{{student_name}}님, 잘하고 있어요!
+{{correct_count}}/{{total_count}} 문제를 해결했습니다.
+
+실수는 배움의 과정이에요. 계속 노력하면 분명 나아질 거예요!

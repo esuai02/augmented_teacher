@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent10">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 10 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 10 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 10: Concept Notes 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConceptLearningPattern">
+    <rdfs:label xml:lang="ko">ConceptLearningPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 학습 패턴을 온톨로지로 표현 (Agent 10 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 10: Concept Notes 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ConceptLearningPattern">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingAmount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StayTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TTSUsage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RevisitPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StepByStepUnderstanding"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptUnderstandingStyle"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningPreferences"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TextbookComposition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingHabit"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingPreference"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingTool"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ConceptRoutineOptimization">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptSummary"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptUnderstanding"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptCheck"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TTSLog"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingLog"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StayLog"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorOccurrenceSection"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalSequence"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeAllocation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityForm"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusBlockStructure"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ConceptLearningSustainability">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorCause"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnderstandingDeviation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RevisitReason"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnderstandingStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InputDependency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineSustainabilityRisk"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SustainabilityImprovementStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HabitFormation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ToolUsage"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

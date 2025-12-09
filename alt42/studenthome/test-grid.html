@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grid Test</title>
+    <style>
+        .modes-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background: #f0f0f0;
+            padding: 20px;
+            margin: 20px;
+        }
+        
+        .mode-card {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            min-height: 180px;
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .mode-card.exam {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        .mode-card.custom {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .mode-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .mode-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Grid Test - 6개 카드가 모두 보여야 합니다</h1>
+    
+    <h2>선생님 모드</h2>
+    <div class="modes-grid">
+        <div class="mode-card curriculum">
+            <div class="mode-icon">📚</div>
+            <div class="mode-title">커리큘럼 중심모드</div>
+        </div>
+        <div class="mode-card exam">
+            <div class="mode-icon">✏️</div>
+            <div class="mode-title">시험대비 중심모드</div>
+        </div>
+        <div class="mode-card custom">
+            <div class="mode-icon">🎯</div>
+            <div class="mode-title">맞춤학습 중심모드</div>
+        </div>
+        <div class="mode-card mission">
+            <div class="mode-icon">⚡</div>
+            <div class="mode-title">단기미션 중심모드</div>
+        </div>
+        <div class="mode-card reflection">
+            <div class="mode-icon">🧠</div>
+            <div class="mode-title">자기성찰 중심모드</div>
+        </div>
+        <div class="mode-card selfled">
+            <div class="mode-icon">🚀</div>
+            <div class="mode-title">자기주도 중심모드</div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('카드 수:', document.querySelectorAll('.mode-card').length);
+    </script>
+</body>
+</html>

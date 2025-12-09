@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>하이튜터링 사용 안내</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .url-example {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .parameter {
+            margin: 15px 0;
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 8px;
+        }
+        .parameter strong {
+            color: #2b6cb0;
+        }
+        .error {
+            color: #e53e3e;
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            color: #25543e;
+            background: #c6f6d5;
+            border: 1px solid #9ae6b4;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 하이튜터링 사용 안내</h1>
+        
+        <div class="error">
+            <strong>오류:</strong> 학생 ID가 필요합니다.
+        </div>
+        
+        <h2>올바른 URL 형식</h2>
+        <div class="url-example">
+            https://mathking.kr/moodle/local/augmented_teacher/alt42/teachingsupport/teachingagent.php?userid=1&studentid=827
+        </div>
+        
+        <h2>파라미터 설명</h2>
+        <div class="parameter">
+            <strong>userid</strong>: 선생님 ID (로그인된 사용자 ID)
+            <br>예: userid=1
+        </div>
+        
+        <div class="parameter">
+            <strong>studentid</strong>: 학생 ID (필수)
+            <br>예: studentid=827
+        </div>
+        
+        <div class="success">
+            <strong>올바른 접속 방법:</strong>
+            <br>1. 선생님 계정으로 로그인
+            <br>2. 학생 ID를 확인
+            <br>3. 위 URL 형식으로 접속
+        </div>
+        
+        <h2>사용 순서</h2>
+        <ol>
+            <li>문제 이미지 업로드</li>
+            <li>문제 유형 선택</li>
+            <li>"🚀 하이튜터링 시작" 클릭</li>
+            <li>자동으로 모든 과정 진행</li>
+            <li>완료 후 설명 페이지 자동 열림</li>
+        </ol>
+    </div>
+</body>
+</html>

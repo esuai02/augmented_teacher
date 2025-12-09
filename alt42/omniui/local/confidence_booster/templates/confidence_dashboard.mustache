@@ -1,0 +1,317 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    
+    Confidence Booster Dashboard Template
+}}
+<div class="confidence-dashboard">
+    <div class="dashboard-header">
+        <h2>{{#str}}dashboard_title, local_confidence_booster{{/str}}</h2>
+        <div class="student-info">
+            <span class="student-name">{{studentname}}</span>
+            <span class="badge badge-info feedback-badge" style="display: none;">0</span>
+        </div>
+    </div>
+    
+    <div class="dashboard-content">
+        <!-- 도전 퀘스트 배너 -->
+        <div class="challenge-container"></div>
+        
+        <!-- KPI 카드 섹션 -->
+        <div class="kpi-cards row">
+            <div class="col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon">📝</div>
+                    <div class="kpi-value summary-count">{{summary_count}}</div>
+                    <div class="kpi-label">오늘의 요약</div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon">📊</div>
+                    <div class="kpi-value error-classified-count">{{error_count}}</div>
+                    <div class="kpi-label">분류된 오답</div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon">💪</div>
+                    <div class="kpi-value confidence-score">{{confidence}}</div>
+                    <div class="kpi-label">자신감 지수</div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon">🎯</div>
+                    <div class="kpi-value challenge-status">
+                        {{#challenge_attempted}}
+                            <span class="badge badge-success">완료</span>
+                        {{/challenge_attempted}}
+                        {{^challenge_attempted}}
+                            <span class="badge badge-warning">대기중</span>
+                        {{/challenge_attempted}}
+                    </div>
+                    <div class="kpi-label">주간 도전</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 최근 요약 섹션 -->
+        <div class="recent-summaries-section">
+            <h3>최근 작성한 요약</h3>
+            <div class="summaries-list">
+                {{#summaries}}
+                <div class="summary-item">
+                    <div class="summary-header">
+                        <span class="summary-title">{{title}}</span>
+                        <span class="summary-score badge badge-primary">{{score}}/5</span>
+                    </div>
+                    <div class="summary-preview">{{preview}}</div>
+                    <div class="summary-footer">
+                        <span class="summary-date">{{date}}</span>
+                        {{#has_feedback}}
+                        <a href="#" class="view-feedback-link" data-id="{{id}}">피드백 보기</a>
+                        {{/has_feedback}}
+                    </div>
+                </div>
+                {{/summaries}}
+                {{^summaries}}
+                <div class="empty-message">
+                    아직 작성한 요약이 없습니다. 개념 학습 후 요약을 작성해보세요!
+                </div>
+                {{/summaries}}
+            </div>
+        </div>
+        
+        <!-- 오답 분석 차트 -->
+        <div class="error-analysis-section">
+            <h3>오답 패턴 분석</h3>
+            <div class="error-chart">
+                {{#error_stats}}
+                <div class="error-bar">
+                    <span class="error-type">{{type_label}}</span>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: {{percentage}}%">{{count}}</div>
+                    </div>
+                </div>
+                {{/error_stats}}
+                {{^error_stats}}
+                <div class="empty-message">
+                    아직 분류된 오답이 없습니다.
+                </div>
+                {{/error_stats}}
+            </div>
+        </div>
+        
+        <!-- 성장 그래프 -->
+        <div class="growth-chart-section">
+            <h3>주간 성장 추이</h3>
+            <canvas id="growth-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+.confidence-dashboard {
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.dashboard-header h2 {
+    color: #495057;
+    margin: 0;
+}
+
+.student-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.feedback-badge {
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.kpi-cards {
+    margin-bottom: 30px;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.kpi-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.kpi-label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.recent-summaries-section,
+.error-analysis-section,
+.growth-chart-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recent-summaries-section h3,
+.error-analysis-section h3,
+.growth-chart-section h3 {
+    color: #495057;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.summary-item {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s;
+}
+
+.summary-item:hover {
+    background-color: #f8f9fa;
+}
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.summary-title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.summary-preview {
+    color: #6c757d;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.summary-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.summary-date {
+    color: #6c757d;
+}
+
+.view-feedback-link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.view-feedback-link:hover {
+    text-decoration: underline;
+}
+
+.error-bar {
+    margin-bottom: 15px;
+}
+
+.error-type {
+    display: inline-block;
+    width: 80px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.progress {
+    display: inline-block;
+    width: calc(100% - 90px);
+    height: 25px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    line-height: 25px;
+    transition: width 0.3s;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 40px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.challenge-notification {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.challenge-notification h4 {
+    color: white;
+    margin-bottom: 10px;
+}
+
+.challenge-notification .btn {
+    background: white;
+    color: #667eea;
+    border: none;
+    font-weight: bold;
+}
+
+.challenge-notification .btn:hover {
+    background: #f8f9fa;
+}
+
+#growth-chart {
+    max-height: 300px;
+}
+</style>

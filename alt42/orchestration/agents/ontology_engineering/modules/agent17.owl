@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent17">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 17 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 17 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 17: Remaining Activities 온톨로지 관계 -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FlowInterruptionRecovery">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RemainingTimeBased"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationFlow"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BottleneckIdentification"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryRoutineStructure"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStabilityInterval"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FlowInterruptionCause"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RhythmRecovery"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActivityReallocation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AvailableTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CognitiveLoad"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityDifficulty"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Priority"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeSlotReallocation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatiguePreventionRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RemainingLearningTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EnergyLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SustainableReallocation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LongTermRhythmMaintenance">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RhythmPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalLoop"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationMaintenanceTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineCollapseHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineReturnPersistence"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryPatternForToday"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermRhythmStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TodayRecoveryPattern"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RemainingActivities">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FlowInterruptionRecovery"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityReallocation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermRhythmMaintenance"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

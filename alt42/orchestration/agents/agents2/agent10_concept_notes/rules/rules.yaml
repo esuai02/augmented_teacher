@@ -1,0 +1,798 @@
+# Rules for Agent 10 - Concept Notes Analysis
+# Generated at: 2025-01-27
+# Purpose: 현직 수학선생님 수준의 개념노트 분석 및 평가 (90% 수준)
+# Source: teacher_level_evaluation.md 기반 확장
+
+version: "2.0"
+scenario: "concept_notes"
+description: "개념노트(화이트보드 필기) 데이터 기반 개념 이해도 분석, 오답 원인 진단, 개인화 피드백 제공, 루틴 최적화 제안"
+
+rules:
+  # ========== S0: 데이터 수집 및 기준값 설정 룰 ==========
+  
+  - rule_id: "S0_R1_unit_baseline_collection"
+    priority: 99
+    description: "단원별 평균 필기량/학습시간 기준값 수집 (선생님 체크리스트/텍스트 입력)"
+    conditions:
+      - field: "unit_baseline_data"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "new_unit_started"
+          operator: "=="
+          value: true
+        - field: "teacher_baseline_update"
+          operator: "=="
+          value: true
+    action:
+      - "load_db: 'math_unit_relations.yaml'"
+      - "collect_info: 'unit_baseline_data'"
+      - "display_message: '단원별 평균 필기량과 학습시간 기준값을 설정하여 정확한 분석을 합니다.'"
+      - "teacher_checklist: '함수 단원 평균 필기량: ___회, 평균 학습시간: ___시간'"
+      - "teacher_text_input: '단원별 기준값을 입력해주세요 (예: 함수 단원 평균 필기량 200회, 평균 학습시간 3시간)'"
+    confidence: 0.95
+    rationale: "S0: 단원별 기준값이 있어야 학생의 필기량/시간을 비교 분석 가능"
+  
+  - rule_id: "S0_R2_student_level_collection"
+    priority: 98
+    description: "학생 수준 정보 수집 (agent01에서 가져오거나 수집)"
+    conditions:
+      - field: "student_math_level"
+        operator: "=="
+        value: null
+      - field: "student_math_confidence"
+        operator: "=="
+        value: null
+    action:
+      - "load_from_agent: 'agent01_onboarding'"
+      - "collect_info: 'student_math_level'"
+      - "collect_info: 'student_math_confidence'"
+      - "collect_info: 'student_learning_style'"
+      - "display_message: '학생의 수학 수준과 학습 스타일을 파악하여 맞춤형 분석을 합니다.'"
+    confidence: 0.94
+    rationale: "S0: 학생 수준 정보는 개인화 피드백의 기초"
+  
+  - rule_id: "S0_R3_learning_stage_baseline_collection"
+    priority: 97
+    description: "학습 단계별 이상적 필기량/시간 기준값 수집"
+    conditions:
+      - field: "stage_baseline_data"
+        operator: "=="
+        value: null
+    action:
+      - "collect_info: 'stage_baseline_data'"
+      - "teacher_checklist: '개념요약 단계 평균 필기량: ___회, 평균 시간: ___분'"
+      - "teacher_checklist: '개념이해 단계 평균 필기량: ___회, 평균 시간: ___분'"
+      - "teacher_checklist: '개념체크 단계 평균 필기량: ___회, 평균 시간: ___분'"
+      - "teacher_checklist: '예제퀴즈 단계 평균 필기량: ___회, 평균 시간: ___분'"
+      - "teacher_text_input: '각 학습 단계별 이상적 필기량과 시간을 입력해주세요'"
+    confidence: 0.93
+    rationale: "S0: 단계별 기준값으로 각 단계의 완성도 평가 가능"
+  
+  # ========== S1: 오답 발생 시 원인 진단 룰 ==========
+  
+  - rule_id: "S1_R1_wrong_answer_detection"
+    priority: 96
+    description: "개념테스트 오답 발생 감지 및 이전 단계 필기 데이터 로드"
+    conditions:
+      - field: "concept_test_wrong_answer"
+        operator: "=="
+        value: true
+      - field: "wrong_answer_concept"
+        operator: "!="
+        value: null
+    action:
+      - "load_concept_notes: 'wrong_answer_concept'"
+      - "analyze: 'previous_stage_notes'"
+      - "analyze: 'note_completeness'"
+      - "analyze: 'note_pattern'"
+      - "display_message: '오답이 발생한 개념의 이전 단계 필기 데이터를 분석하여 원인을 찾습니다.'"
+    confidence: 0.92
+    rationale: "S1: 오답 발생 시 가장 중요한 진단 시작점"
+  
+  - rule_id: "S1_R2_computational_error_diagnosis"
+    priority: 95
+    description: "계산 실수 원인 진단 (필기에서 풀이 과정 확인)"
+    conditions:
+      - field: "wrong_answer_type"
+        operator: "=="
+        value: "computational"
+      - OR:
+        - field: "note_has_solution_process"
+          operator: "=="
+          value: true
+        - field: "teacher_classification"
+          operator: "=="
+          value: "computational"
+    action:
+      - "analyze: 'solution_process_in_notes'"
+      - "analyze: 'calculation_pattern'"
+      - "identify: 'recurring_mistake_pattern'"
+      - "generate_feedback: '계산 실수 패턴 발견: {mistake_pattern}. 반복 연습이 필요합니다.'"
+      - "recommend_action: '반복 연습 모듈 연결 (agent04)'"
+      - "display_message: '필기에서 풀이 과정을 확인한 결과 계산 실수 패턴이 발견되었습니다. 반복 연습을 통해 개선하세요.'"
+    confidence: 0.90
+    rationale: "S1: 계산 실수는 풀이 과정 확인으로 진단 가능"
+  
+  - rule_id: "S1_R3_conceptual_error_diagnosis"
+    priority: 94
+    description: "개념 오류 원인 진단 (필기에서 핵심 개념 누락 확인)"
+    conditions:
+      - field: "wrong_answer_type"
+        operator: "=="
+        value: "conceptual"
+      - OR:
+        - field: "note_missing_key_concept"
+          operator: "=="
+          value: true
+        - field: "teacher_classification"
+          operator: "=="
+          value: "conceptual"
+    action:
+      - "analyze: 'key_concept_coverage'"
+      - "analyze: 'concept_structure_in_notes'"
+      - "identify: 'missing_concepts'"
+      - "generate_feedback: '핵심 개념 누락 발견: {missing_concepts}. 개념 재학습이 필요합니다.'"
+      - "recommend_action: '개념 재학습 모듈 연결 (agent10 자체 루프)'"
+      - "display_message: '필기에서 핵심 개념이 누락되어 있습니다. 개념 재학습을 통해 보완하세요.'"
+    confidence: 0.91
+    rationale: "S1: 개념 오류는 필기에서 핵심 개념 누락으로 진단"
+  
+  - rule_id: "S1_R4_application_error_diagnosis"
+    priority: 93
+    description: "적용 오류 원인 진단 (필기는 있으나 문제 적용 실패)"
+    conditions:
+      - field: "wrong_answer_type"
+        operator: "=="
+        value: "application"
+      - AND:
+        - field: "note_has_concept"
+          operator: "=="
+          value: true
+        - field: "note_missing_application"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'concept_to_problem_gap'"
+      - "analyze: 'application_examples_in_notes'"
+      - "generate_feedback: '개념은 이해했으나 문제 적용이 어려운 상태입니다. 유형 연습이 필요합니다.'"
+      - "recommend_action: '유형 연습 모듈 연결 (agent04)'"
+      - "display_message: '개념 필기는 있으나 문제 적용에서 실패했습니다. 유형 연습을 통해 개선하세요.'"
+    confidence: 0.89
+    rationale: "S1: 적용 오류는 개념-문제 간 연결 부족으로 진단"
+  
+  - rule_id: "S1_R5_stage_connection_analysis"
+    priority: 92
+    description: "단계별 필기와 오답 연결 분석 (개념요약→이해→체크→퀴즈→테스트)"
+    conditions:
+      - field: "wrong_answer_detected"
+        operator: "=="
+        value: true
+      - field: "stage_notes_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'summary_stage_completeness'"
+      - "analyze: 'understanding_stage_completeness'"
+      - "analyze: 'check_stage_completeness'"
+      - "analyze: 'quiz_stage_completeness'"
+      - "identify: 'weak_stage'"
+      - "generate_feedback: '{weak_stage} 단계 필기가 부족하여 테스트에서 오답이 발생했습니다. 해당 단계를 보완하세요.'"
+      - "display_message: '단계별 필기 완성도를 분석한 결과 {weak_stage} 단계가 부족합니다.'"
+    confidence: 0.88
+    rationale: "S1: 단계별 연결 분석으로 정확한 원인 파악"
+  
+  - rule_id: "S1_R6_error_type_classification_collection"
+    priority: 91
+    description: "오답 유형 분류 수집 (선생님 체크리스트 또는 학생 설문)"
+    conditions:
+      - field: "wrong_answer_detected"
+        operator: "=="
+        value: true
+      - field: "error_type_classified"
+        operator: "=="
+        value: false
+    action:
+      - "teacher_checklist: '이 오답의 원인은? (계산 실수/개념 오류/적용 오류)'"
+      - "student_survey: '이 문제를 틀렸을 때 이유는? (A) 계산 실수 (B) 이해 못함 (C) 적용 못함'"
+      - "analyze: 'auto_classification_from_notes'"
+      - "validate: 'error_type'"
+      - "display_message: '오답 유형을 분류하여 정확한 개선 방안을 제시합니다.'"
+    confidence: 0.87
+    rationale: "S1: 오답 유형 분류는 맞춤형 개선 방안의 기초"
+  
+  # ========== S2: 필기 패턴 심층 분석 룰 ==========
+  
+  - rule_id: "S2_R1_stroke_interval_analysis"
+    priority: 90
+    description: "필기 간격 분석 (생각 시간 파악, 막힘 구간 감지)"
+    conditions:
+      - field: "note_data_available"
+        operator: "=="
+        value: true
+      - field: "stroke_timestamps_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'stroke_intervals'"
+      - "identify: 'long_intervals'"
+      - "detect: 'stuck_points'"
+      - "generate_feedback: '필기 간격이 긴 구간({stuck_points})이 발견되었습니다. 해당 부분을 다시 학습하세요.'"
+      - "display_message: '필기 간격 분석 결과 생각하는 시간이 긴 구간을 발견했습니다.'"
+    confidence: 0.86
+    rationale: "S2: 필기 간격은 막힘 구간 파악의 핵심 지표"
+  
+  - rule_id: "S2_R2_eraser_count_analysis"
+    priority: 89
+    description: "지우기 횟수 분석 (이해도 불안정 지표)"
+    conditions:
+      - field: "note_data_available"
+        operator: "=="
+        value: true
+      - field: "eraser_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'eraser_count'"
+      - "compare: 'eraser_count_vs_baseline'"
+      - "identify: 'unstable_concepts'"
+      - "generate_feedback: '지우기 횟수가 많은 개념({unstable_concepts})은 이해도가 불안정합니다. 반복 학습이 필요합니다.'"
+      - "display_message: '지우기 횟수 분석 결과 이해도가 불안정한 개념을 발견했습니다.'"
+    confidence: 0.85
+    rationale: "S2: 지우기 횟수는 이해도 불안정의 지표"
+  
+  - rule_id: "S2_R3_stroke_order_analysis"
+    priority: 88
+    description: "필기 순서 분석 (개념 구조 이해 순서 확인)"
+    conditions:
+      - field: "note_data_available"
+        operator: "=="
+        value: true
+      - field: "stroke_order_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'stroke_order'"
+      - "compare: 'ideal_concept_order'"
+      - "identify: 'order_deviation'"
+      - "generate_feedback: '필기 순서가 개념 구조와 다릅니다. 정의→성질→활용 순서로 정리하세요.'"
+      - "display_message: '필기 순서 분석 결과 개념 구조 이해가 부족할 수 있습니다.'"
+    confidence: 0.84
+    rationale: "S2: 필기 순서는 개념 구조 이해의 지표"
+  
+  - rule_id: "S2_R4_stroke_position_analysis"
+    priority: 87
+    description: "필기 위치 분석 (중요 개념 강조 여부)"
+    conditions:
+      - field: "note_data_available"
+        operator: "=="
+        value: true
+      - field: "stroke_position_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'stroke_positions'"
+      - "identify: 'concentrated_areas'"
+      - "evaluate: 'key_concept_emphasis'"
+      - "generate_feedback: '필기가 집중된 영역이 중요 개념과 일치합니다. 잘 정리되었습니다.'"
+      - "display_message: '필기 위치 분석 결과 중요 개념 강조 여부를 확인했습니다.'"
+    confidence: 0.83
+    rationale: "S2: 필기 위치는 중요 개념 강조 여부 지표"
+  
+  - rule_id: "S2_R5_time_efficiency_analysis"
+    priority: 86
+    description: "시간 효율성 분석 (필기량/시간 비율, 집중도 지표)"
+    conditions:
+      - field: "note_stroke_count"
+        operator: "!="
+        value: null
+      - field: "note_used_time"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'stroke_per_minute'"
+      - "compare: 'efficiency_vs_baseline'"
+      - "evaluate: 'concentration_level'"
+      - "generate_feedback: '필기량 대비 시간이 {efficiency_status}입니다. 집중도를 높이기 위해 {recommendation}.'"
+      - "display_message: '시간 효율성 분석 결과 집중도 수준을 평가했습니다.'"
+    confidence: 0.82
+    rationale: "S2: 시간 효율성은 집중도와 학습 품질의 지표"
+  
+  # ========== S3: 학습 단계별 분석 룰 ==========
+  
+  - rule_id: "S3_R1_stage_completeness_analysis"
+    priority: 85
+    description: "각 학습 단계별 필기 완성도 분석"
+    conditions:
+      - field: "stage_notes_available"
+        operator: "=="
+        value: true
+      - field: "stage_baseline_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'summary_stage_completeness'"
+      - "analyze: 'understanding_stage_completeness'"
+      - "analyze: 'check_stage_completeness'"
+      - "analyze: 'quiz_stage_completeness'"
+      - "identify: 'incomplete_stages'"
+      - "generate_feedback: '{incomplete_stages} 단계 필기가 부족합니다. 보완이 필요합니다.'"
+      - "display_message: '학습 단계별 완성도를 분석했습니다.'"
+    confidence: 0.90
+    rationale: "S3: 단계별 완성도는 전체 학습 품질의 기초"
+  
+  - rule_id: "S3_R2_stage_connection_quality"
+    priority: 84
+    description: "단계 간 연계성 분석 (이전 단계 완성도가 다음 단계에 미치는 영향)"
+    conditions:
+      - field: "multiple_stages_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'stage_to_stage_transfer'"
+      - "evaluate: 'connection_quality'"
+      - "identify: 'weak_connections'"
+      - "generate_feedback: '{weak_connections} 단계 간 연결이 약합니다. 중간 단계를 보완하세요.'"
+      - "display_message: '단계 간 연계성을 분석하여 학습 흐름을 평가했습니다.'"
+    confidence: 0.88
+    rationale: "S3: 단계 간 연계성은 학습 전이의 핵심"
+  
+  - rule_id: "S3_R3_tts_usage_analysis"
+    priority: 83
+    description: "TTS 활용 분석 (청각 학습 의존도 파악)"
+    conditions:
+      - field: "tts_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'tts_play_count'"
+      - "analyze: 'tts_timing'"
+      - "evaluate: 'auditory_learning_dependency'"
+      - "generate_feedback: 'TTS 활용 패턴을 분석한 결과 {auditory_dependency_level} 청각 학습 의존도를 보입니다.'"
+      - "recommend_action: '청각 학습 스타일에 맞는 루틴 조정'"
+      - "display_message: 'TTS 활용 분석 결과 청각 학습 의존도를 파악했습니다.'"
+    confidence: 0.85
+    rationale: "S3: TTS 활용은 학습 스타일 파악의 지표"
+  
+  - rule_id: "S3_R4_page_dwell_time_analysis"
+    priority: 82
+    description: "페이지별 체류 시간 분석 (막힘 구간 감지)"
+    conditions:
+      - field: "page_dwell_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'page_dwell_times'"
+      - "compare: 'dwell_time_vs_stroke_count'"
+      - "identify: 'stuck_pages'"
+      - "generate_feedback: '{stuck_pages} 페이지에서 체류 시간이 길고 필기량이 적습니다. 막힘 구간일 수 있습니다.'"
+      - "display_message: '페이지별 체류 시간 분석 결과 막힘 구간을 발견했습니다.'"
+    confidence: 0.84
+    rationale: "S3: 페이지별 체류 시간은 막힘 구간 파악의 지표"
+  
+  # ========== S4: 단원별 분석 룰 ==========
+  
+  - rule_id: "S4_R1_unit_completeness_vs_baseline"
+    priority: 81
+    description: "단원별 필기량/시간을 기준값과 비교 분석"
+    conditions:
+      - field: "unit_baseline_data"
+        operator: "!="
+        value: null
+      - field: "unit_notes_available"
+        operator: "=="
+        value: true
+    action:
+      - "compare: 'unit_stroke_count_vs_baseline'"
+      - "compare: 'unit_time_vs_baseline'"
+      - "evaluate: 'unit_completeness'"
+      - "generate_feedback: '{unit_name} 단원의 필기량이 기준값 대비 {completeness_level}입니다.'"
+      - "display_message: '단원별 완성도를 기준값과 비교하여 분석했습니다.'"
+    confidence: 0.89
+    rationale: "S4: 기준값 비교로 정확한 완성도 평가"
+  
+  - rule_id: "S4_R2_unit_prerequisite_check"
+    priority: 80
+    description: "선행 단원 필기 완성도 검증 (단원 간 연계성)"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "prerequisite_units"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'math_unit_relations.yaml'"
+      - "check: 'prerequisite_unit_completeness'"
+      - "identify: 'incomplete_prerequisites'"
+      - "generate_feedback: '선행 단원({incomplete_prerequisites}) 필기가 부족합니다. 먼저 보완하세요.'"
+      - "display_message: '선행 단원 완성도를 검증하여 학습 순서를 확인했습니다.'"
+    confidence: 0.87
+    rationale: "S4: 선행 단원 완성도는 후속 학습의 기초"
+  
+  - rule_id: "S4_R3_unit_revisit_pattern_analysis"
+    priority: 79
+    description: "단원 재방문 패턴 분석 (불안감, 확신 부족, 이해도 불균형 감지)"
+    conditions:
+      - field: "unit_revisit_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'revisit_frequency'"
+      - "analyze: 'revisit_timing'"
+      - "evaluate: 'revisit_reason'"
+      - "generate_feedback: '{unit_name} 단원을 {revisit_frequency}번 재방문했습니다. {revisit_reason}.'"
+      - "display_message: '재방문 패턴 분석 결과 학습 안정성을 평가했습니다.'"
+    confidence: 0.85
+    rationale: "S4: 재방문 패턴은 이해도와 학습 안정성의 지표"
+  
+  - rule_id: "S4_R4_unit_difficulty_assessment"
+    priority: 78
+    description: "단원 난이도 대비 필기 분석 (어려운 단원은 필기 많아야 정상)"
+    conditions:
+      - field: "unit_difficulty_data"
+        operator: "!="
+        value: null
+      - field: "unit_stroke_count"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'math_unit_relations.yaml'"
+      - "compare: 'stroke_count_vs_difficulty'"
+      - "evaluate: 'appropriate_effort_level'"
+      - "generate_feedback: '{unit_name}는 난이도가 높은 단원인데 필기량이 {effort_level}입니다.'"
+      - "display_message: '단원 난이도 대비 필기량을 분석했습니다.'"
+    confidence: 0.86
+    rationale: "S4: 난이도 대비 분석으로 학습 노력 적절성 평가"
+  
+  # ========== S5: 개인화 피드백 제공 룰 ==========
+  
+  - rule_id: "S5_R1_level_based_feedback"
+    priority: 77
+    description: "학생 수준별 피드백 차별화 (하위권: 격려, 상위권: 도전)"
+    conditions:
+      - field: "student_math_level"
+        operator: "!="
+        value: null
+      - field: "analysis_result_available"
+        operator: "=="
+        value: true
+    action:
+      - "select_feedback_tone: 'student_math_level'"
+      - "generate_feedback: 'level_appropriate_message'"
+      - "display_message: '{student_math_level} 수준에 맞는 피드백을 제공합니다.'"
+    confidence: 0.88
+    rationale: "S5: 수준별 차별화로 효과적인 피드백"
+  
+  - rule_id: "S5_R2_style_based_feedback"
+    priority: 76
+    description: "학습 스타일별 피드백 (시각형: 필기 강조, 청각형: TTS 활용 강조)"
+    conditions:
+      - field: "student_learning_style"
+        operator: "!="
+        value: null
+      - field: "feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "select_feedback_approach: 'student_learning_style'"
+      - "generate_feedback: 'style_appropriate_message'"
+      - "display_message: '{student_learning_style} 학습 스타일에 맞는 피드백을 제공합니다.'"
+    confidence: 0.87
+    rationale: "S5: 학습 스타일 반영으로 맞춤형 피드백"
+  
+  - rule_id: "S5_R3_confidence_based_feedback"
+    priority: 75
+    description: "자신감 수준별 피드백 (낮은 자신감: 격려 강화)"
+    conditions:
+      - field: "student_math_confidence"
+        operator: "<="
+        value: 5
+      - field: "feedback_needed"
+        operator: "=="
+        value: true
+    action:
+      - "boost_mode: 'encouragement'"
+      - "generate_feedback: 'confidence_boosting_message'"
+      - "display_message: '자신감이 낮은 학생에게 격려 중심 피드백을 제공합니다.'"
+    confidence: 0.89
+    rationale: "S5: 자신감 수준에 따른 정서 지원"
+  
+  - rule_id: "S5_R4_realtime_feedback"
+    priority: 74
+    description: "필기 중간 실시간 피드백 제공 (필기 패턴 실시간 감지)"
+    conditions:
+      - field: "realtime_analysis_enabled"
+        operator: "=="
+        value: true
+      - field: "abnormal_pattern_detected"
+        operator: "=="
+        value: true
+    action:
+      - "detect: 'realtime_pattern'"
+      - "generate_feedback: 'immediate_coaching_message'"
+      - "display_message: '필기 패턴을 실시간으로 분석하여 즉시 피드백을 제공합니다.'"
+    confidence: 0.83
+    rationale: "S5: 실시간 피드백으로 즉각적 개선"
+  
+  # ========== S6: 루틴 최적화 제안 룰 ==========
+  
+  - rule_id: "S6_R1_optimal_stage_timing"
+    priority: 73
+    description: "개인별 이상적 단계별 시간 비율 산정"
+    conditions:
+      - field: "student_learning_speed"
+        operator: "!="
+        value: null
+      - field: "stage_performance_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'optimal_stage_ratios'"
+      - "calculate: 'personalized_timing'"
+      - "generate_recommendation: '개념요약 {time1}분, 개념이해 {time2}분, 개념체크 {time3}분이 적당합니다.'"
+      - "display_message: '학생별 학습 속도를 반영한 이상적 시간 비율을 제안합니다.'"
+    confidence: 0.86
+    rationale: "S6: 개인별 최적 시간 비율로 효율성 향상"
+  
+  - rule_id: "S6_R2_stage_sequence_optimization"
+    priority: 72
+    description: "학습 단계 순서 최적화 (수준별 단계 생략/추가 제안)"
+    conditions:
+      - field: "student_math_level"
+        operator: "!="
+        value: null
+      - field: "stage_performance_data"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate: 'stage_necessity'"
+      - "recommend: 'optimized_sequence'"
+      - "generate_recommendation: '{student_math_level} 수준에 맞춰 {optimized_sequence} 순서를 제안합니다.'"
+      - "display_message: '학생 수준에 맞는 최적의 단계 순서를 제안합니다.'"
+    confidence: 0.85
+    rationale: "S6: 수준별 단계 순서 최적화로 효율성 향상"
+  
+  - rule_id: "S6_R3_review_cycle_optimization"
+    priority: 71
+    description: "복습 주기 최적화 (개념별 망각 곡선 기반)"
+    conditions:
+      - field: "concept_mastery_data"
+        operator: "!="
+        value: null
+      - field: "forgetting_curve_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'concept_retention'"
+      - "calculate: 'optimal_review_cycles'"
+      - "generate_recommendation: '{concept_name}는 {review_day}일 후 복습하세요.'"
+      - "display_message: '개념별 망각 곡선을 반영한 복습 주기를 제안합니다.'"
+    confidence: 0.84
+    rationale: "S6: 복습 주기 최적화로 장기 기억 강화"
+  
+  - rule_id: "S6_R4_routine_effectiveness_evaluation"
+    priority: 70
+    description: "주기적 루틴 효과 평가 및 개선"
+    conditions:
+      - field: "routine_period_elapsed"
+        operator: ">="
+        value: 7
+      - field: "routine_performance_data"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate: 'routine_effectiveness'"
+      - "identify: 'improvement_points'"
+      - "recommend: 'routine_adjustments'"
+      - "generate_recommendation: '현재 루틴의 효과를 평가한 결과 {improvement_points}를 개선하세요.'"
+      - "display_message: '주기적으로 루틴 효과를 평가하여 개선점을 제안합니다.'"
+    confidence: 0.82
+    rationale: "S6: 지속적 루틴 개선으로 학습 효과 극대화"
+  
+  # ========== S7: 복습 제안 룰 ==========
+  
+  - rule_id: "S7_R1_review_candidate_identification"
+    priority: 69
+    description: "복습 필요 개념 식별 (필기량 적거나 오래된 항목)"
+    conditions:
+      - field: "concept_notes_available"
+        operator: "=="
+        value: true
+    action:
+      - "identify: 'low_stroke_concepts'"
+      - "identify: 'old_concepts'"
+      - "prioritize: 'review_candidates'"
+      - "generate_recommendation: '{review_candidates} 개념을 우선 복습하세요.'"
+      - "display_message: '복습이 필요한 개념을 식별했습니다.'"
+    confidence: 0.88
+    rationale: "S7: 복습 후보 식별로 효율적 학습"
+  
+  - rule_id: "S7_R2_summary_card_suggestion"
+    priority: 68
+    description: "요약 카드 제안 (필기가 많았던 개념 정리)"
+    conditions:
+      - field: "high_stroke_concepts"
+        operator: "!="
+        value: null
+    action:
+      - "identify: 'summary_card_candidates'"
+      - "generate_recommendation: '필기가 많았던 {summary_card_candidates} 개념을 요약 카드로 정리하세요.'"
+      - "display_message: '요약 카드로 정리하면 효과적인 개념을 제안합니다.'"
+    confidence: 0.86
+    rationale: "S7: 요약 카드로 학습 효율성 향상"
+  
+  - rule_id: "S7_R3_review_session_creation"
+    priority: 67
+    description: "복습 세션 생성 (시간과 개념 선정)"
+    conditions:
+      - field: "review_candidates"
+        operator: "!="
+        value: null
+      - field: "available_time"
+        operator: "!="
+        value: null
+    action:
+      - "create: 'review_session'"
+      - "schedule: 'review_timing'"
+      - "select: 'review_concepts'"
+      - "generate_recommendation: '{available_time} 동안 {review_concepts}를 복습하세요.'"
+      - "display_message: '개인화된 복습 세션을 생성했습니다.'"
+    confidence: 0.85
+    rationale: "S7: 체계적 복습 세션으로 학습 효과 향상"
+  
+  # ========== S8: 다른 에이전트와의 연계 룰 ==========
+  
+  - rule_id: "S8_R1_feedback_report_to_other_agents"
+    priority: 66
+    description: "오답 원인 분석 리포트를 다른 에이전트에 전달"
+    conditions:
+      - field: "wrong_answer_analysis_complete"
+        operator: "=="
+        value: true
+      - field: "target_agent"
+        operator: "!="
+        value: null
+    action:
+      - "generate_report: 'wrong_answer_analysis'"
+      - "send_to_agent: 'target_agent'"
+      - "include: 'error_type'"
+      - "include: 'recommended_action'"
+      - "display_message: '오답 원인 분석 리포트를 {target_agent}에 전달했습니다.'"
+    confidence: 0.87
+    rationale: "S8: 에이전트 간 연계로 통합적 개선"
+  
+  - rule_id: "S8_R2_concept_data_request_response"
+    priority: 65
+    description: "다른 에이전트의 개념 데이터 요청에 응답"
+    conditions:
+      - field: "data_request_received"
+        operator: "=="
+        value: true
+      - field: "requested_concept"
+        operator: "!="
+        value: null
+    action:
+      - "load_concept_data: 'requested_concept'"
+      - "analyze: 'requested_analysis'"
+      - "send_response: 'concept_data'"
+      - "display_message: '{requested_concept} 개념 데이터를 {requesting_agent}에 제공했습니다.'"
+    confidence: 0.86
+    rationale: "S8: 에이전트 간 데이터 공유로 통합 분석"
+  
+  - rule_id: "S8_R3_emotion_context_provision"
+    priority: 64
+    description: "감정 에이전트에 개념노트 맥락 제공"
+    conditions:
+      - field: "emotion_analysis_requested"
+        operator: "=="
+        value: true
+      - field: "concept_context_available"
+        operator: "=="
+        value: true
+    action:
+      - "extract: 'concept_context'"
+      - "send_to_agent: 'agent05_learning_emotion'"
+      - "include: 'learning_difficulty_context'"
+      - "display_message: '개념노트 맥락을 감정 분석 에이전트에 제공했습니다.'"
+    confidence: 0.85
+    rationale: "S8: 맥락 제공으로 정확한 감정 분석"
+  
+  # ========== 복합 상황 대응 룰 ==========
+  
+  - rule_id: "C1_low_stroke_recent_concept"
+    priority: 95
+    description: "최근 필기 최근 + 필기량 하위 복합 상황 (가벼운 탐색 → 보강 권장)"
+    conditions:
+      - AND:
+        - field: "tlaststroke_recent"
+          operator: "=="
+          value: true
+        - field: "nstroke_low"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'light_exploration_pattern'"
+      - "generate_feedback: '최근 필기가 적었던 개념을 10분 복습으로 보완하세요.'"
+      - "recommend_action: 'short_review_session'"
+      - "display_message: '가벼운 탐색 패턴이 감지되었습니다. 보강 학습을 권장합니다.'"
+    confidence: 0.90
+    rationale: "복합 패턴 분석으로 정확한 상황 파악"
+  
+  - rule_id: "C2_old_concept_medium_stroke"
+    priority: 94
+    description: "오래된 항목 + 필기량 중간 복합 상황 (회상 복습 후보)"
+    conditions:
+      - AND:
+        - field: "timecreated_old"
+          operator: "=="
+          value: true
+        - field: "nstroke_medium"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'recall_review_candidate'"
+      - "generate_feedback: '오래된 개념이지만 필기량이 중간입니다. 회상 복습이 필요합니다.'"
+      - "recommend_action: 'recall_review_session'"
+      - "display_message: '회상 복습 후보 개념을 식별했습니다.'"
+    confidence: 0.89
+    rationale: "시간과 필기량 복합 분석으로 복습 우선순위 결정"
+  
+  - rule_id: "C3_high_stroke_concentration_or_difficulty"
+    priority: 93
+    description: "필기량 상위 항목 복합 분석 (집중 vs 난해 구간 분별)"
+    conditions:
+      - field: "nstroke_high"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'context_to_determine'"
+      - "evaluate: 'concentration_vs_difficulty'"
+      - "generate_feedback: '필기가 많았던 개념을 요약 카드로 정리해봅시다.'"
+      - "display_message: '필기량이 많은 개념의 맥락을 분석하여 집중인지 난해인지 판단합니다.'"
+    confidence: 0.88
+    rationale: "맥락 분석으로 정확한 해석"
+  
+  - rule_id: "C4_multiple_wrong_answers_pattern"
+    priority: 92
+    description: "여러 오답 발생 패턴 분석 (공통 원인 추론)"
+    conditions:
+      - field: "wrong_answer_count"
+        operator: ">="
+        value: 3
+      - field: "wrong_answer_pattern_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'common_error_pattern'"
+      - "identify: 'root_cause'"
+      - "generate_feedback: '여러 오답에서 공통된 원인({root_cause})이 발견되었습니다. 집중 개선이 필요합니다.'"
+      - "display_message: '여러 오답의 공통 패턴을 분석하여 근본 원인을 찾았습니다.'"
+    confidence: 0.91
+    rationale: "패턴 분석으로 근본 원인 파악"
+  
+  - rule_id: "C5_prerequisite_failure_chain"
+    priority: 91
+    description: "선행 단원 실패가 후속 단원에 미치는 영향 분석"
+    conditions:
+      - field: "prerequisite_unit_incomplete"
+        operator: "=="
+        value: true
+      - field: "current_unit_struggling"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'failure_chain'"
+      - "identify: 'root_prerequisite'"
+      - "generate_feedback: '선행 단원({root_prerequisite}) 부족이 현재 단원 학습에 영향을 미치고 있습니다. 선행 단원부터 보완하세요.'"
+      - "display_message: '단원 간 실패 연쇄를 분석하여 근본 원인을 찾았습니다.'"
+    confidence: 0.90
+    rationale: "연쇄 분석으로 근본 원인 파악"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '개념노트 데이터를 분석 중입니다. 추가 정보가 필요할 수 있습니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용 - 조건 불일치 시 사용"

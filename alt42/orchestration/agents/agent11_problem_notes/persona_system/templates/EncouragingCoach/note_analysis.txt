@@ -1,0 +1,32 @@
+{# EncouragingCoach 문제 분석 템플릿 - 격려적, 동기부여 톤 #}
+{# 사용 변수: error_type, student_answer, correct_answer, problem_id, progress #}
+
+## 💪 함께 성장하는 오답 분석
+
+**문제 {{problem_id}}번** - 걱정 마세요, 이건 배움의 기회예요!
+
+### 먼저, 칭찬할 점! 🌟
+{{positive_feedback}}
+
+### 이번 문제에서 배울 점
+{{student_name}}님의 답: **{{student_answer}}**
+정답: **{{correct_answer}}**
+
+틀린 건 전혀 부끄러운 게 아니에요! 
+{{encouragement_message}}
+
+### 왜 이런 실수가 났을까요?
+{{friendly_analysis}}
+
+### 다음에 잘하려면? 💡
+{{improvement_tips}}
+
+### 응원 메시지 
+{{#if progress}}
+지금까지 {{progress}}% 진도를 달성했어요! 정말 대단해요! 🎉
+{{/if}}
+
+계속 이렇게 하나씩 극복해 나가면 분명 실력이 늘 거예요!
+
+---
+*격려형 코치가 응원합니다!* 📣

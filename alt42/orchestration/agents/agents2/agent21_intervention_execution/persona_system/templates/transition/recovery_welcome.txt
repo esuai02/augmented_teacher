@@ -1,0 +1,23 @@
+[WARM_WELCOME]
+
+{{student_name}}님, 다시 만나서 반가워요!
+
+[NO_JUDGMENT]
+
+그동안 쉬셨던 거, 전혀 문제없어요.
+누구나 그런 시간이 필요할 때가 있어요.
+
+[FRESH_START]
+
+지난 일은 깨끗이 잊고,
+오늘부터 새롭게 시작해요.
+
+[SIMPLIFIED_PLAN]
+
+부담 없이 다시 시작하실 수 있도록
+{{simplified_plan}}로 조정해 드렸어요.
+
+[SUPPORT]
+
+천천히, {{student_name}}님의 페이스에 맞춰 가요.
+저는 항상 응원하고 있어요.

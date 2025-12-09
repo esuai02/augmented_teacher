@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Panel Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .test-card {
+            padding: 15px;
+            background: #f0f4f8;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .test-card:hover {
+            background: #e2e8f0;
+            border-color: #4a5568;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .card-type {
+            font-size: 12px;
+            color: #718096;
+        }
+        .info-box {
+            background: #e6f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>플러그인 슬라이딩 패널 테스트</h1>
+        
+        <div class="info-box">
+            <strong>테스트 방법:</strong>
+            <ul>
+                <li>아래 테스트 카드를 클릭하면 우측에서 1/3 크기의 슬라이딩 패널이 열립니다.</li>
+                <li>각 플러그인 타입별로 다른 콘텐츠가 표시됩니다.</li>
+                <li>패널의 X 버튼을 클릭하거나 오버레이를 클릭하면 패널이 닫힙니다.</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h2>플러그인 타입별 테스트</h2>
+            
+            <div class="test-cards">
+                <!-- Internal Link 테스트 -->
+                <div class="test-card" onclick="testPlugin('internal_link', {
+                    internal_url: '../studenthome/index.php',
+                    plugin_name: '학생홈 페이지'
+                })">
+                    <div class="card-icon">🏠</div>
+                    <div class="card-title">Internal Link</div>
+                    <div class="card-type">내부 PHP 파일</div>
+                </div>
+                
+                <!-- External Link 테스트 -->
+                <div class="test-card" onclick="testPlugin('external_link', {
+                    external_url: 'https://www.google.com',
+                    plugin_name: 'Google 검색'
+                })">
+                    <div class="card-icon">🌐</div>
+                    <div class="card-title">External Link</div>
+                    <div class="card-type">외부 웹사이트</div>
+                </div>
+                
+                <!-- Default Card with URL 테스트 -->
+                <div class="test-card" onclick="testPlugin('default_card', {
+                    url: 'test_content.html',
+                    plugin_name: '테스트 콘텐츠'
+                })">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Default Card</div>
+                    <div class="card-type">HTML 파일</div>
+                </div>
+                
+                <!-- Agent 테스트 -->
+                <div class="test-card" onclick="testPlugin('agent', {
+                    fileName: 'test_agent.php',
+                    plugin_name: '테스트 에이전트'
+                })">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">Agent</div>
+                    <div class="card-type">에이전트 파일</div>
+                </div>
+                
+                <!-- Send Message 테스트 -->
+                <div class="test-card" onclick="testPlugin('send_message', {
+                    message_content: '안녕하세요! 이것은 테스트 메시지입니다.',
+                    message_type: 'info',
+                    plugin_name: '알림 메시지'
+                })">
+                    <div class="card-icon">💬</div>
+                    <div class="card-title">Send Message</div>
+                    <div class="card-type">팝업 메시지</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>다양한 URL 테스트</h2>
+            
+            <div class="test-cards">
+                <div class="test-card" onclick="testPlugin('internal_link', {
+                    internal_url: 'weekly/weekly.js',
+                    plugin_name: 'JavaScript 파일'
+                })">
+                    <div class="card-icon">📜</div>
+                    <div class="card-title">JS File</div>
+                    <div class="card-type">스크립트 파일</div>
+                </div>
+                
+                <div class="test-card" onclick="testPlugin('internal_link', {
+                    internal_url: 'styles.css',
+                    plugin_name: 'CSS 스타일시트'
+                })">
+                    <div class="card-icon">🎨</div>
+                    <div class="card-title">CSS File</div>
+                    <div class="card-type">스타일 파일</div>
+                </div>
+                
+                <div class="test-card" onclick="testPlugin('internal_link', {
+                    internal_url: 'README.md',
+                    plugin_name: '문서 파일'
+                })">
+                    <div class="card-icon">📄</div>
+                    <div class="card-title">Markdown</div>
+                    <div class="card-type">문서 파일</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="successMessage" class="success-message"></div>
+    </div>
+    
+    <script>
+        // executePluginAction 함수를 여기에 직접 복사
+        function executePluginAction(pluginId, config) {
+            console.log('Executing plugin action:', pluginId, config);
+            
+            // 모든 플러그인 타입에 대해 슬라이딩 패널로 열기
+            let url = null;
+            let title = config.plugin_name || '플러그인';
+            
+            if (pluginId === 'default_card') {
+                // 기본 카드에 URL이 설정되어 있으면 슬라이딩 패널로 열기
+                if (config.url) {
+                    url = config.url;
+                }
+            } else if (pluginId === 'external_link') {
+                if (config.external_url || config.url) {
+                    url = config.external_url || config.url;
+                }
+            } else if (pluginId === 'internal_link') {
+                if (config.internal_url || config.url) {
+                    url = config.internal_url || config.url;
+                }
+            } else if (pluginId === 'send_message') {
+                // 메시지 발송 기능 - 별도 처리
+                alert(`메시지: ${config.message_content}\n타입: ${config.message_type}`);
+                showSuccess('메시지 팝업이 표시되었습니다!');
+                return;
+            } else if (pluginId === 'agent') {
+                // 기존 파일 기반 에이전트
+                if (config.fileName) {
+                    // 기본 URL 경로에 파일명 추가
+                    const baseUrl = 'https://mathking.kr/moodle/local/augmented_teacher/alt42/teacherhome/agents/';
+                    url = baseUrl + config.fileName;
+                }
+            }
+            
+            // URL이 있으면 알림 표시 (실제로는 슬라이딩 패널로 열림)
+            if (url) {
+                showSuccess(`슬라이딩 패널이 열립니다!\n제목: ${title}\nURL: ${url}`);
+                console.log('Would open sliding panel with:', { url, title });
+                
+                // 실제 환경에서는 openAgentPanel(url, title) 호출
+                if (window.parent && window.parent.openAgentPanel) {
+                    window.parent.openAgentPanel(url, title);
+                }
+            }
+        }
+        
+        function testPlugin(pluginId, config) {
+            executePluginAction(pluginId, config);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,2147 @@
+<?php 
+include_once("/home/moodle/public_html/moodle/config.php"); 
+global $DB, $USER;
+require_login();
+
+// Get parameters
+$studentid = $_GET["id"]; 
+$cid = $_GET["cid"]; 
+$access = $_GET["access"];
+if($studentid == NULL) $studentid = $USER->id;
+
+// Check user role and permissions
+$userrole = $DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22'"); 
+$role = $userrole->data;
+
+if($USER->id != $studentid && $role === 'student') {
+    echo '<br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;다른 사용자의 정보에 접근하실 수 없습니다.';
+    exit;
+}
+
+// Get user data
+$timecreated = time();
+$username = $DB->get_record_sql("SELECT id, hideinput, lastname, firstname, timezone FROM mdl_user WHERE id='$studentid' ORDER BY id DESC LIMIT 1");
+$studentname = $username->firstname.$username->lastname;
+$tabtitle = $username->lastname;
+
+// Get user additional data
+$userdata2 = $DB->get_records_sql("SELECT data,fieldid FROM mdl_user_info_data where userid='$studentid' AND (fieldid='107' OR fieldid='88' OR fieldid='89' OR fieldid='82' OR fieldid='90' OR fieldid='64')"); 
+$thisuser = json_decode(json_encode($userdata2), True);
+foreach($thisuser as $value) {
+    if($value['fieldid'] == 107) $usersex = $value['data'];
+    if($value['fieldid'] == 88) $institute = $value['data'];
+    if($value['fieldid'] == 89) $birthyear = $value['data'];
+    if($value['fieldid'] == 82) $AutopilotMode = $value['data'];
+    if($value['fieldid'] == 90) $usrdata = $value['data'];
+    if($value['fieldid'] == 64) $tsymbol = $value['data'];			
+} 
+
+// Redirect for teacher accessing via 'my'
+if($access === 'my' && $role !== 'student') {
+    header('Location: https://mathking.kr/moodle/local/augmented_teacher/teachers/timetable.php?id='.$USER->id.'&tb=7');
+}
+
+// Log access for students
+if($role === 'student') {
+    $DB->execute("INSERT INTO {abessi_missionlog} (userid,page,timecreated) VALUES('$studentid','studentindex','$timecreated')");
+}
+
+// Time calculations
+$timestart = time() - 604800 * 2;
+$aweekago = time() - 604800;
+$timestart2 = time() - 43200;
+$timestart3 = time() - 86400;
+
+// Get review notes
+$reviewnotes = $DB->get_records_sql("SELECT * FROM mdl_abessi_messages WHERE userid='$studentid' AND timemodified > '$aweekago' AND mtype='audio' ORDER BY timemodified DESC LIMIT 30"); 
+$rvresult = json_decode(json_encode($reviewnotes), True);
+$reviewhistory = '';
+foreach($rvresult as $rvvalue) {
+    $url = $rvvalue['url'];
+    $cnttitle = $rvvalue['contentstitle'];
+    $nreview = $rvvalue['nreview'];
+    $nlastview = round(($timecreated - $rvvalue['timemodified']) / 86400, 0);
+    $reviewhistory .= '<tr><td><a href="https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?'.$url.'" target="_blank">🎧 복습 : '.$cnttitle.' ('.$nreview.') </a></td></tr>';
+}
+
+// Get mission lists
+$trecent2 = time() - 31104000;  // 1 year ago
+$missionlist = $DB->get_records_sql("SELECT * FROM mdl_abessi_mission WHERE timecreated>'$trecent2' AND userid='$studentid' ORDER by norder ASC");
+$result = json_decode(json_encode($missionlist), True);
+
+// Initialize mission type arrays
+$mt01 = $mt02 = $mt03 = $mt04 = $mt05 = $mt06 = $mt07 = $mt08 = '';
+
+foreach($result as $value) {
+    $mtid = 0;
+    $mid = $value['id'];
+    $subject = $value['subject'];	
+    $deadline = $value['deadline']; 	
+    $unixtimedeadline = strtotime($deadline);	
+    if($unixtimedeadline > time() + 31536000 || $unixtimedeadline < time() - 31536000) continue;
+    $passgrade = $value['grade'];
+    $mtname = $DB->get_record_sql("SELECT * FROM mdl_abessi_curriculum WHERE id='$subject'");
+    $contentslist = $mtname->contentslist;
+    $subjectname = $mtname->name;
+    $mtid = $mtname->mtid;
+    $subjectname = str_replace("개념 :", "", $subjectname);
+    $subjectname = str_replace("심화 :", "", $subjectname);
+    $subjectname = str_replace("내신 :", "", $subjectname);
+    $subjectname = str_replace("수능 :", "", $subjectname);
+    
+    if($value['complete'] == 0) {
+        if($mtid == 1 || $mtid == 7) {
+            $mt01 .= '<tr><td><a href="https://mathking.kr/moodle/local/augmented_teacher/books/chapter.php?cid='.$subject.'&nch=1&studentid='.$studentid.'&type=init" target="_blank"><img loading="lazy" style="margin-bottom:4px;" src="https://mathking.kr/moodle/local/augmented_teacher/IMAGES/gpt3.png" width="20"> GPT '.$subjectname.' </a> &nbsp; <a href="https://mathking.kr/moodle/local/augmented_teacher/books/ankisystem.php?dmn=math&sbjt=h3&studentid='.$studentid.'&nch=9" target="_blank"><img src="https://ankiweb.net/logo.png" width="20"></a></td>
+            <td width="4%" style=""></td><td width="30%" align="left" style="font-size:12pt">  </td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td>
+            <td width="4%"><div class="form-check"> 완료 &nbsp;<label style="margin-bottom:5px;" class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 2) {
+            if(strpos($subjectname, '초등') !== false) {
+                $mt02 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+            } else {
+                $mt02 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span style="margin-bottom:5px;" class="form-check-sign"></span></label></div></td></tr>';
+            }
+        } elseif($mtid == 3) {
+            $mt03 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label style="margin-bottom:5px;" class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 4) {
+            $mt04 .= '<tr><td width="30%" align="left" style="font-size:12pt"><img loading="lazy" style="margin-bottom:5px;" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1654400635.png" width="20"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'"><b>'.$subjectname.'</b></td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 완료 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(1,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        }
+    } else {
+        if($mtid == 1 || $mtid == 7) {
+            $mt05 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">개념 : '.$subjectname.'</a> &nbsp; <a href="https://mathking.kr/moodle/local/augmented_teacher/books/ankisystem.php?dmn=math&sbjt=h3&studentid='.$studentid.'&nch=9" target="_blank"><img src="https://ankiweb.net/logo.png" width="20"></a></td><td width="4%" style=""></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td>
+            <td width="4%"><div class="form-check"> 추가 &nbsp;<label style="" class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 2) {
+            if(strpos($subjectname, '초등') !== false) {
+                $mt06 .= '<tr><td width="30%" align="left" style="font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'">심화 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+            } else {
+                $mt06 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">심화 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+            }
+        } elseif($mtid == 3) {
+            $mt07 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/local/augmented_teacher/students/missionhome.php?id='.$studentid.'&mtid='.$mtid.'&cid='.$subject.'&tb=90">내신 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label style="" class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span class="form-check-sign"></span></label></div></td></tr>';
+        } elseif($mtid == 4) {
+            $mt08 .= '<tr><td width="30%" align="left" style="color:grey;font-size:10pt"><img loading="lazy" style="" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1655184717.png" width="15"> <a href="https://mathking.kr/moodle/mod/checklist/view.php?id='.$contentslist.'&studentid='.$studentid.'">수능 : '.$subjectname.'</td><td width="4%"></td><td width="20%" style="font-size:10pt">합격 : '.$passgrade.'점</td><td width="4%"><div class="form-check"> 추가 &nbsp;<label class="form-check-label"><input type="checkbox" onclick="changecheckbox(13,'.$studentid.','.$mid.', this.checked)"/><span style="" class="form-check-sign"></span></label></div></td></tr>';
+        }
+    }
+}
+
+// Additional navigation for teachers
+if($role !== 'student') {
+    $inspect_fixnotes = ' &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a style="text-decoration:none;color:white;font-size:18px;" href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid='.$studentid.'" target="_blank">귀가평가</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a style="text-decoration:none;color:white;font-size:14px;" href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid='.$studentid.'" target="_blank">오답노트 검사</a> ';
+}
+
+// Save last accessed course for each mission type
+if($cid) {
+    // Save to user preferences or session
+    $_SESSION['last_advanced_course'] = $cid;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title><?php echo $tabtitle; ?> - 학습 홈</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="../assets/img/icon.ico" type="image/x-icon"/>
+    
+    <!-- Fonts and icons -->
+    <script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Open+Sans:300,400,600,700"]},
+            custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['../assets/css/fonts.css']},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/azzara.min.css">
+    <link rel="stylesheet" href="../assets/css/demo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .header-top {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .user-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .user-info h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .user-info p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        .content-wrapper {
+            padding: 0 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .view-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .view-btn {
+            padding: 8px 16px;
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .view-btn:hover {
+            background: #f1f3f4;
+        }
+        
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Tab View Styles */
+        .tab-view {
+            display: none;
+        }
+        
+        .tab-view.active {
+            display: block;
+        }
+        
+        .tab-header {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Scroll View Styles */
+        .scroll-view {
+            display: none;
+        }
+        
+        .scroll-view.active {
+            display: block;
+        }
+        
+        /* Mission Section Styles */
+        .mission-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+        
+        .mission-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mission-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .badge-concept {
+            background: #E05D22;
+            color: white;
+        }
+        
+        .badge-advanced {
+            background: #f093fb;
+            color: white;
+        }
+        
+        .badge-exam {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .badge-sat {
+            background: #fa709a;
+            color: white;
+        }
+        
+        .add-mission-btn {
+            padding: 8px 20px;
+            background: #3383FF;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .add-mission-btn:hover {
+            background: #2968d6;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        
+        .mission-list {
+            margin-top: 15px;
+        }
+        
+        .mission-list table {
+            width: 100%;
+        }
+        
+        .mission-list tr {
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .mission-list tr:last-child {
+            border-bottom: none;
+        }
+        
+        .mission-list td {
+            padding: 12px 5px;
+            vertical-align: middle;
+        }
+        
+        .mission-link {
+            color: #3383FF;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .mission-link:hover {
+            color: #2968d6;
+            text-decoration: underline;
+        }
+        
+        .review-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .review-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .review-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .review-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .review-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .form-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .form-check-label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .empty-state img {
+            width: 80px;
+            opacity: 0.5;
+            margin-bottom: 15px;
+        }
+        
+        /* Additional Info Section */
+        .info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .info-header {
+            background: #0082D8;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .info-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .info-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+        
+        .info-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .header-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tab-btn {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            .mission-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        /* Interactive Goal Panel Styles */
+        .goal-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            z-index: 9999;
+            transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .goal-panel.active {
+            right: 0;
+        }
+
+        .panel-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        .panel-content {
+            position: absolute;
+            right: 0;
+            width: 550px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .goal-panel.active .panel-content {
+            transform: translateX(0);
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-title h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .goal-type-selector {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .type-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .type-btn.active {
+            background: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .type-btn i {
+            font-size: 24px;
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .type-btn span {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .type-btn small {
+            display: block;
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .conversation-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.assistant {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .assistant-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .assistant .message-bubble {
+            background: #f1f3f4;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .user .message-bubble {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #667eea;
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-action-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .input-area {
+            padding: 15px 20px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .smart-suggestions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            min-height: 32px;
+        }
+
+        .suggestion-chip {
+            padding: 6px 12px;
+            background: #f0f4ff;
+            color: #667eea;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .goal-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .goal-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .progress-indicator {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            width: 25%;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .step {
+            font-size: 12px;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .step.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .status-badge.complete {
+            background: #d4f4dd;
+            color: #059669;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-badge.required {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .panel-content {
+                width: 100%;
+            }
+            
+            .goal-type-selector {
+                padding: 15px;
+            }
+            
+            .type-btn {
+                padding: 12px 8px;
+            }
+            
+            .type-btn small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-top">
+        <div class="user-header">
+            <div class="user-info">
+                <h2><?php echo $username->lastname; ?>님 안녕하세요!</h2>
+                <p>배움의 본능이 일깨워진 심장이 뛰기 시작한다면 수학에도 봄날이 올거예요.</p>
+            </div>
+            <div class="header-nav">
+                <button type="button" class="nav-btn" onclick="openGoalPanel('daily')">
+                    <i class="fas fa-calendar-day"></i> 오늘목표
+                </button>
+                <button type="button" class="nav-btn" onclick="openGoalPanel('weekly')">
+                    <i class="fas fa-calendar-week"></i> 주간계획
+                </button>
+                <button type="button" class="nav-btn" onclick="openGoalPanel('quarterly')">
+                    <i class="fas fa-calendar-alt"></i> 분기목표
+                </button>
+                <a href="mynote.php?id=<?php echo $studentid; ?>" class="nav-btn">
+                    <i class="fas fa-book"></i> 마이노트
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="view-controls">
+            <button class="view-btn active" onclick="switchView('tab')">탭 뷰</button>
+            <button class="view-btn" onclick="switchView('scroll')">스크롤 뷰</button>
+        </div>
+
+        <!-- Tab View -->
+        <div id="tabView" class="tab-view active">
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="openTab('concept')">
+                    <span class="mission-badge badge-concept">개념</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('advanced')">
+                    <span class="mission-badge badge-advanced">심화</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('exam')">
+                    <span class="mission-badge badge-exam">내신</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('sat')">
+                    <span class="mission-badge badge-sat">수능</span>
+                </button>
+                <button class="tab-btn" onclick="openTab('ktm')">KTM 서술평가</button>
+            </div>
+
+            <!-- Concept Tab -->
+            <div id="concept" class="tab-content active">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-concept">개념</span>
+                            개념학습 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=7&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/topiclearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt01): ?>
+                            <table><?php echo $mt01; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 개념학습 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <?php if($reviewhistory): ?>
+                    <div class="review-section">
+                        <div class="review-title">📚 개념복습 추천</div>
+                        <div class="review-list">
+                            <table width="100%"><?php echo $reviewhistory; ?></table>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Completed Concept Missions -->
+                <?php if($mt05): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 개념학습 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt05; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Advanced Tab -->
+            <div id="advanced" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-advanced">심화</span>
+                            심화학습 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=2&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/deeperlearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt02): ?>
+                            <table><?php echo $mt02; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 심화학습 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed Advanced Missions -->
+                <?php if($mt06): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 심화학습 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt06; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Exam Tab -->
+            <div id="exam" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-exam">내신</span>
+                            내신대비 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=3&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt03): ?>
+                            <table><?php echo $mt03; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 내신대비 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed Exam Missions -->
+                <?php if($mt07): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 내신대비 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt07; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- SAT Tab -->
+            <div id="sat" class="tab-content">
+                <div class="mission-section">
+                    <div class="mission-header">
+                        <div class="mission-title">
+                            <span class="mission-badge badge-sat">수능</span>
+                            수능대비 미션
+                        </div>
+                        <div>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=4&cid=0" class="add-mission-btn">
+                                추가 <i class="flaticon-plus"></i>
+                            </a>
+                            <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                                도움말
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mission-list">
+                        <?php if($mt04): ?>
+                            <table><?php echo $mt04; ?></table>
+                        <?php else: ?>
+                            <div class="empty-state">
+                                <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                                <p>진행중인 수능대비 미션이 없습니다.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Completed SAT Missions -->
+                <?php if($mt08): ?>
+                <div class="mission-section">
+                    <div class="mission-title" style="color: #999;">완료된 수능대비 미션</div>
+                    <div class="mission-list">
+                        <table><?php echo $mt08; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- KTM Tab -->
+            <div id="ktm" class="tab-content">
+                <div class="info-section">
+                    <div class="info-header">
+                        <h3>KTM 서술평가</h3>
+                        <div class="info-links">
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/synergetic_step.php?userid=<?php echo $studentid; ?>" target="_blank">출제목록</a>
+                            <?php if($role !== 'student'): ?>
+                                <a href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid=<?php echo $studentid; ?>" target="_blank">귀가평가</a>
+                                <a href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid=<?php echo $studentid; ?>" target="_blank">오답노트 검사</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div>
+                        <?php include("SPEC Intelligence.php"); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll View -->
+        <div id="scrollView" class="scroll-view">
+            <!-- Concept Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-concept">개념</span>
+                        개념학습 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=7&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/topiclearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt01): ?>
+                        <table><?php echo $mt01; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 개념학습 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <?php if($reviewhistory): ?>
+                <div class="review-section">
+                    <div class="review-title">📚 개념복습 추천</div>
+                    <div class="review-list">
+                        <table width="100%"><?php echo $reviewhistory; ?></table>
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Advanced Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-advanced">심화</span>
+                        심화학습 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=2&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="http://mathking.kr/moodle/local/augmented_teacher/twinery/deeperlearning.html" target="_blank" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt02): ?>
+                        <table><?php echo $mt02; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 심화학습 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Exam Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-exam">내신</span>
+                        내신대비 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=3&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt03): ?>
+                        <table><?php echo $mt03; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 내신대비 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- SAT Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge badge-sat">수능</span>
+                        수능대비 미션
+                    </div>
+                    <div>
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=<?php echo $studentid; ?>&mtid=4&cid=0" class="add-mission-btn">
+                            추가 <i class="flaticon-plus"></i>
+                        </a>
+                        <a href="#" class="add-mission-btn" style="background: #6c757d;">
+                            도움말
+                        </a>
+                    </div>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt04): ?>
+                        <table><?php echo $mt04; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXArti1634548406001.png" alt="Empty">
+                            <p>진행중인 수능대비 미션이 없습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Long-term Planning Section -->
+            <div class="mission-section">
+                <div class="mission-header">
+                    <div class="mission-title">
+                        <span class="mission-badge" style="background: #6c757d; color: white;">후속</span>
+                        장기계획
+                    </div>
+                    <a href="https://mathking.kr/moodle/local/augmented_teacher/students/fullplan.php?id=<?php echo $studentid; ?>" class="add-mission-btn">
+                        장기계획 설정 <i class="flaticon-plus"></i>
+                    </a>
+                </div>
+                <div class="mission-list">
+                    <?php if($mt05 || $mt06 || $mt07 || $mt08): ?>
+                        <table><?php echo $mt05.$mt06.$mt07.$mt08; ?></table>
+                    <?php else: ?>
+                        <div class="empty-state">
+                            <p>완료된 미션을 후속 계획으로 설정할 수 있습니다.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- KTM Section -->
+            <div class="info-section">
+                <div class="info-header">
+                    <h3>KTM 서술평가</h3>
+                    <div class="info-links">
+                        <a href="https://mathking.kr/moodle/local/augmented_teacher/students/synergetic_step.php?userid=<?php echo $studentid; ?>" target="_blank">출제목록</a>
+                        <?php if($role !== 'student'): ?>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid=<?php echo $studentid; ?>" target="_blank">귀가평가</a>
+                            <a href="https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid=<?php echo $studentid; ?>" target="_blank">오답노트 검사</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div>
+                    <?php include("SPEC Intelligence.php"); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../assets/js/ready.min.js"></script>
+
+    <script>
+        // View switching
+        function switchView(viewType) {
+            const tabView = document.getElementById('tabView');
+            const scrollView = document.getElementById('scrollView');
+            const viewBtns = document.querySelectorAll('.view-btn');
+            
+            viewBtns.forEach(btn => btn.classList.remove('active'));
+            
+            if(viewType === 'tab') {
+                tabView.classList.add('active');
+                scrollView.classList.remove('active');
+                viewBtns[0].classList.add('active');
+                localStorage.setItem('indexPreferredView', 'tab');
+            } else {
+                tabView.classList.remove('active');
+                scrollView.classList.add('active');
+                viewBtns[1].classList.add('active');
+                localStorage.setItem('indexPreferredView', 'scroll');
+            }
+        }
+
+        // Tab switching
+        function openTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            
+            // Find and activate the corresponding button
+            const tabIndex = {
+                'concept': 0,
+                'advanced': 1,
+                'exam': 2,
+                'sat': 3,
+                'ktm': 4
+            };
+            
+            if(tabBtns[tabIndex[tabName]]) {
+                tabBtns[tabIndex[tabName]].classList.add('active');
+            }
+            
+            localStorage.setItem('indexActiveTab', tabName);
+        }
+
+        // Checkbox functions
+        function changecheckbox(Eventid, Userid, Missionid, Checkvalue) {
+            var checkimsi = 0;
+            if(Checkvalue == true) {
+                checkimsi = 1;
+            }
+            $.ajax({
+                url: "check.php",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "eventid": Eventid,
+                    "userid": Userid,
+                    "missionid": Missionid,
+                    "checkimsi": checkimsi
+                },
+                success: function(data) {
+                    location.reload();
+                }
+            });
+        }
+
+        // Load user preferences on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load preferred view
+            const preferredView = localStorage.getItem('indexPreferredView');
+            if(preferredView) {
+                switchView(preferredView);
+            }
+            
+            // Load active tab
+            const activeTab = localStorage.getItem('indexActiveTab');
+            if(activeTab) {
+                openTab(activeTab);
+            }
+        });
+    </script>
+    
+    <!-- Interactive Goal Panel -->
+    <div id="goalPanel" class="goal-panel">
+        <div class="panel-overlay" onclick="closeGoalPanel()"></div>
+        <div class="panel-content">
+            <!-- Panel Header -->
+            <div class="panel-header">
+                <div class="header-title">
+                    <h3>목표 설정 도우미</h3>
+                    <span class="subtitle">AI가 목표 설정을 도와드려요</span>
+                </div>
+                <button class="close-btn" onclick="closeGoalPanel()">×</button>
+            </div>
+            
+            <!-- Goal Type Selector -->
+            <div class="goal-type-selector">
+                <button class="type-btn active" data-type="daily" onclick="switchGoalType('daily')">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>오늘목표</span>
+                    <small>오늘 할 일</small>
+                </button>
+                <button class="type-btn" data-type="weekly" onclick="switchGoalType('weekly')">
+                    <i class="fas fa-calendar-week"></i>
+                    <span>주간목표</span>
+                    <small>7일 실행 계획</small>
+                </button>
+                <button class="type-btn" data-type="quarterly" onclick="switchGoalType('quarterly')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>분기목표</span>
+                    <small>3개월 장기 계획</small>
+                </button>
+            </div>
+            
+            <!-- Conversational Interface -->
+            <div class="conversation-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Dynamic messages will be inserted here -->
+                </div>
+                
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="smart-suggestions" id="smartSuggestions">
+                        <!-- Dynamic suggestions -->
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="text" 
+                               id="goalInput" 
+                               class="goal-input" 
+                               placeholder="목표를 입력하세요..."
+                               autocomplete="off"
+                               onkeypress="if(event.key === 'Enter') processGoalInput()">
+                        <button class="send-btn" onclick="processGoalInput()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-steps">
+                    <span class="step active">목표 유형</span>
+                    <span class="step">내용 입력</span>
+                    <span class="step">세부 설정</span>
+                    <span class="step">확인</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interactive Goal Panel JavaScript -->
+    <script>
+    // Goal Panel State Management
+    class GoalPanelManager {
+        constructor(studentId) {
+            this.studentId = studentId;
+            this.state = {
+                isOpen: false,
+                currentType: 'daily',
+                currentStep: 1,
+                conversation: [],
+                goalData: {
+                    daily: { tasks: [], completed: false },
+                    weekly: { goals: [], dates: [], completed: false },
+                    quarterly: { goal: '', deadline: '', details: [], completed: false }
+                },
+                existingGoals: {},
+                questionIndex: 0
+            };
+            
+            this.templates = {
+                daily: {
+                    greeting: "안녕하세요! 오늘 하루 목표를 함께 세워볼까요? ☀️",
+                    questions: [
+                        "오늘 가장 중요한 일 3가지는 무엇인가요?",
+                        "각 작업에 얼마나 시간이 필요한가요?",
+                        "언제 시작하실 예정인가요?"
+                    ],
+                    suggestions: [
+                        "수학 문제집 10페이지 풀기",
+                        "영어 단어 50개 암기",
+                        "과학 실험 보고서 작성",
+                        "독서 1시간"
+                    ]
+                },
+                weekly: {
+                    greeting: "이번 주 계획을 함께 세워볼까요? 📅 일주일간의 목표를 설정해봅시다.",
+                    questions: [
+                        "이번 주에 꼭 완성해야 할 가장 중요한 것은 무엇인가요?",
+                        "월요일부터 금요일까지 각 요일별로 할 일을 나누어볼까요?",
+                        "우선순위가 가장 높은 3가지는 무엇인가요?"
+                    ],
+                    suggestions: [
+                        "월: 수학 개념 정리",
+                        "화: 영어 에세이 작성",
+                        "수: 과학 실험 준비",
+                        "목: 역사 발표 준비"
+                    ]
+                },
+                quarterly: {
+                    greeting: "안녕하세요! 분기목표 설정을 도와드릴게요. 🎯 앞으로 3개월간의 큰 목표를 세워봅시다.",
+                    questions: [
+                        "앞으로 3개월 동안 달성하고 싶은 가장 중요한 목표는 무엇인가요?",
+                        "이 목표를 달성하기 위한 구체적인 마일스톤을 3가지 알려주세요.",
+                        "목표 달성 기한을 언제로 설정하시겠어요?"
+                    ],
+                    suggestions: [
+                        "수학 성적 20점 올리기",
+                        "영어 회화 중급 레벨 달성",
+                        "코딩 프로젝트 완성하기",
+                        "체력 증진 - 5km 달리기"
+                    ]
+                }
+            };
+            
+            this.init();
+        }
+        
+        init() {
+            this.loadExistingGoals();
+        }
+        
+        loadExistingGoals() {
+            // Load existing goals from the server
+            const self = this;
+            $.ajax({
+                url: 'check.php',
+                method: 'POST',
+                data: {
+                    eventid: 99, // Special event ID for fetching goals
+                    userid: this.studentId
+                },
+                success: function(response) {
+                    if (response && typeof response === 'object') {
+                        self.state.existingGoals = response;
+                    }
+                },
+                error: function() {
+                    console.log('Could not load existing goals');
+                }
+            });
+        }
+        
+        openPanel(type = 'daily') {
+            this.state.isOpen = true;
+            this.state.currentType = type;
+            this.state.currentStep = 1;
+            this.state.questionIndex = 0;
+            
+            document.getElementById('goalPanel').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Set active type button
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.type === type) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            this.startConversation(type);
+            this.updateProgressBar(25);
+        }
+        
+        closePanel() {
+            if (this.hasUnsavedChanges()) {
+                if (!confirm('저장하지 않은 변경사항이 있습니다. 정말 닫으시겠습니까?')) {
+                    return;
+                }
+            }
+            
+            this.state.isOpen = false;
+            document.getElementById('goalPanel').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        switchGoalType(type) {
+            this.state.currentType = type;
+            this.state.questionIndex = 0;
+            
+            // Update active button
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.type === type) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            this.startConversation(type);
+        }
+        
+        startConversation(type) {
+            const template = this.templates[type];
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Clear previous conversation
+            chatMessages.innerHTML = '';
+            this.state.conversation = [];
+            
+            // Add greeting message
+            this.addAssistantMessage(template.greeting);
+            
+            // Check for existing goals
+            const hasExisting = this.checkExistingGoal(type);
+            if (hasExisting) {
+                setTimeout(() => {
+                    this.addAssistantMessage(
+                        `현재 설정된 ${this.getTypeName(type)}이(가) 있습니다. 수정하시겠습니까, 아니면 새로 만드시겠습니까?`,
+                        [
+                            {text: '수정하기', action: 'edit'},
+                            {text: '새로 만들기', action: 'new'}
+                        ]
+                    );
+                }, 1000);
+            } else {
+                // Start with first question
+                setTimeout(() => {
+                    this.askNextQuestion();
+                }, 1500);
+            }
+            
+            // Update suggestions
+            this.updateSuggestions(template.suggestions);
+        }
+        
+        addAssistantMessage(text, quickActions = []) {
+            const message = document.createElement('div');
+            message.className = 'message assistant';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'assistant-avatar';
+            avatar.innerHTML = '🤖';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = text;
+            
+            if (quickActions.length > 0) {
+                const actions = document.createElement('div');
+                actions.className = 'quick-actions';
+                
+                quickActions.forEach(action => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quick-action-btn';
+                    btn.textContent = action.text;
+                    btn.onclick = () => this.handleQuickAction(action);
+                    actions.appendChild(btn);
+                });
+                
+                bubble.appendChild(actions);
+            }
+            
+            message.appendChild(avatar);
+            message.appendChild(bubble);
+            
+            document.getElementById('chatMessages').appendChild(message);
+            this.scrollToBottom();
+        }
+        
+        addUserMessage(text) {
+            const message = document.createElement('div');
+            message.className = 'message user';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = text;
+            
+            message.appendChild(bubble);
+            
+            document.getElementById('chatMessages').appendChild(message);
+            this.scrollToBottom();
+        }
+        
+        processGoalInput() {
+            const input = document.getElementById('goalInput');
+            const value = input.value.trim();
+            
+            if (!value) return;
+            
+            // Add user message
+            this.addUserMessage(value);
+            
+            // Clear input
+            input.value = '';
+            
+            // Process based on current context
+            this.handleUserInput(value);
+        }
+        
+        handleUserInput(input) {
+            const type = this.state.currentType;
+            
+            // Store input based on current question
+            this.storeGoalData(type, input);
+            
+            // Provide feedback
+            setTimeout(() => {
+                this.provideAIFeedback(input);
+            }, 500);
+        }
+        
+        storeGoalData(type, input) {
+            const data = this.state.goalData[type];
+            
+            if (type === 'daily') {
+                data.tasks.push(input);
+            } else if (type === 'weekly') {
+                data.goals.push(input);
+            } else if (type === 'quarterly') {
+                if (this.state.questionIndex === 0) {
+                    data.goal = input;
+                } else if (this.state.questionIndex === 1) {
+                    data.details.push(input);
+                } else if (this.state.questionIndex === 2) {
+                    data.deadline = input;
+                }
+            }
+        }
+        
+        provideAIFeedback(input) {
+            const feedback = this.analyzeGoalQuality(input);
+            
+            if (feedback.needsImprovement) {
+                this.addAssistantMessage(
+                    `좋은 시작이에요! ${feedback.suggestion}`,
+                    [
+                        {text: '수정하기', action: 'revise'},
+                        {text: '계속하기', action: 'continue'}
+                    ]
+                );
+            } else {
+                this.addAssistantMessage(`훌륭해요! ${feedback.praise}`);
+                
+                // Move to next question or complete
+                this.state.questionIndex++;
+                const template = this.templates[this.state.currentType];
+                
+                if (this.state.questionIndex < template.questions.length) {
+                    setTimeout(() => {
+                        this.askNextQuestion();
+                    }, 1000);
+                } else {
+                    // All questions answered, show summary
+                    setTimeout(() => {
+                        this.showGoalSummary();
+                    }, 1000);
+                }
+            }
+            
+            // Update progress
+            const progress = Math.min(100, 25 + (this.state.questionIndex * 25));
+            this.updateProgressBar(progress);
+        }
+        
+        analyzeGoalQuality(input) {
+            const analysis = {
+                needsImprovement: false,
+                suggestion: '',
+                praise: ''
+            };
+            
+            // Check for SMART criteria
+            if (input.length < 10) {
+                analysis.needsImprovement = true;
+                analysis.suggestion = '더 구체적으로 만들어볼까요? 예를 들어, "수학 문제집 2단원 10페이지 완성" 같은 형식은 어떨까요?';
+            } else if (!this.containsNumbers(input) && this.state.currentType !== 'quarterly') {
+                analysis.needsImprovement = true;
+                analysis.suggestion = '측정 가능한 목표를 위해 숫자를 포함시켜보세요. 예: "영어 단어 30개 암기"';
+            } else {
+                const praises = [
+                    '구체적이고 명확한 목표네요!',
+                    '아주 잘 설정하셨어요!',
+                    '훌륭한 목표입니다!',
+                    '실천 가능한 좋은 목표예요!'
+                ];
+                analysis.praise = praises[Math.floor(Math.random() * praises.length)];
+            }
+            
+            return analysis;
+        }
+        
+        askNextQuestion() {
+            const template = this.templates[this.state.currentType];
+            const question = template.questions[this.state.questionIndex];
+            
+            if (question) {
+                this.addAssistantMessage(question);
+                
+                // Update suggestions based on question
+                this.updateContextualSuggestions();
+            }
+        }
+        
+        updateSuggestions(suggestions) {
+            const container = document.getElementById('smartSuggestions');
+            container.innerHTML = '';
+            
+            suggestions.forEach(text => {
+                const chip = document.createElement('div');
+                chip.className = 'suggestion-chip';
+                chip.textContent = text;
+                chip.onclick = () => {
+                    document.getElementById('goalInput').value = text;
+                    this.processGoalInput();
+                };
+                container.appendChild(chip);
+            });
+        }
+        
+        updateContextualSuggestions() {
+            const type = this.state.currentType;
+            const questionIndex = this.state.questionIndex;
+            
+            let suggestions = [];
+            
+            if (type === 'daily') {
+                if (questionIndex === 0) {
+                    suggestions = [
+                        "수학 2단원 복습",
+                        "영어 에세이 초안 작성",
+                        "과학 실험 보고서",
+                        "운동 30분"
+                    ];
+                } else if (questionIndex === 1) {
+                    suggestions = ["30분", "1시간", "2시간", "3시간"];
+                } else if (questionIndex === 2) {
+                    suggestions = ["오전 9시", "오전 10시", "오후 2시", "오후 4시"];
+                }
+            } else if (type === 'weekly') {
+                if (questionIndex === 0) {
+                    suggestions = [
+                        "중간고사 대비 완료",
+                        "프로젝트 50% 진행",
+                        "영어 Chapter 3 마스터",
+                        "수학 문제집 1권 완료"
+                    ];
+                } else if (questionIndex === 1) {
+                    suggestions = [
+                        "월: 개념 정리",
+                        "화: 문제 풀이",
+                        "수: 오답 정리",
+                        "목: 심화 학습"
+                    ];
+                }
+            } else if (type === 'quarterly') {
+                if (questionIndex === 0) {
+                    suggestions = [
+                        "전 과목 평균 90점 달성",
+                        "토익 800점 달성",
+                        "코딩 포트폴리오 완성",
+                        "대학 입시 준비 완료"
+                    ];
+                } else if (questionIndex === 1) {
+                    suggestions = [
+                        "1개월차: 기초 다지기",
+                        "2개월차: 심화 학습",
+                        "3개월차: 실전 연습",
+                        "매주 모의고사"
+                    ];
+                }
+            }
+            
+            this.updateSuggestions(suggestions);
+        }
+        
+        showGoalSummary() {
+            const type = this.state.currentType;
+            const data = this.state.goalData[type];
+            
+            let summaryHtml = `<h4>📝 ${this.getTypeName(type)} 설정 완료!</h4><br>`;
+            
+            if (type === 'daily') {
+                summaryHtml += '<strong>오늘의 목표:</strong><ul>';
+                data.tasks.forEach(task => {
+                    summaryHtml += `<li>${task}</li>`;
+                });
+                summaryHtml += '</ul>';
+            } else if (type === 'weekly') {
+                summaryHtml += '<strong>주간 목표:</strong><ul>';
+                data.goals.forEach(goal => {
+                    summaryHtml += `<li>${goal}</li>`;
+                });
+                summaryHtml += '</ul>';
+            } else if (type === 'quarterly') {
+                summaryHtml += `<strong>분기 목표:</strong> ${data.goal}<br>`;
+                if (data.details.length > 0) {
+                    summaryHtml += '<strong>세부 계획:</strong><ul>';
+                    data.details.forEach(detail => {
+                        summaryHtml += `<li>${detail}</li>`;
+                    });
+                    summaryHtml += '</ul>';
+                }
+                if (data.deadline) {
+                    summaryHtml += `<strong>목표 기한:</strong> ${data.deadline}`;
+                }
+            }
+            
+            this.addAssistantMessage(summaryHtml);
+            
+            // Add save button
+            setTimeout(() => {
+                this.addAssistantMessage(
+                    '목표를 저장하시겠습니까?',
+                    [
+                        {text: '저장하기', action: 'save'},
+                        {text: '수정하기', action: 'edit_summary'}
+                    ]
+                );
+            }, 1000);
+            
+            this.updateProgressBar(100);
+        }
+        
+        handleQuickAction(action) {
+            if (action.action === 'save') {
+                this.saveGoals();
+            } else if (action.action === 'continue') {
+                this.state.questionIndex++;
+                this.askNextQuestion();
+            } else if (action.action === 'revise') {
+                this.addAssistantMessage('다시 입력해주세요. 더 구체적으로 작성해보세요!');
+            } else if (action.action === 'new') {
+                this.state.goalData[this.state.currentType] = 
+                    this.state.currentType === 'daily' ? { tasks: [], completed: false } :
+                    this.state.currentType === 'weekly' ? { goals: [], dates: [], completed: false } :
+                    { goal: '', deadline: '', details: [], completed: false };
+                this.state.questionIndex = 0;
+                this.askNextQuestion();
+            } else if (action.action === 'edit') {
+                this.loadExistingGoalData();
+            }
+        }
+        
+        saveGoals() {
+            const type = this.state.currentType;
+            const data = this.state.goalData[type];
+            const studentId = this.studentId;
+            
+            // Prepare data based on type
+            let saveData = {
+                eventid: 2,
+                userid: studentId,
+                checkimsi: 1
+            };
+            
+            if (type === 'daily') {
+                saveData.type = '오늘목표';
+                saveData.inputtext = data.tasks.join(' / ');
+            } else if (type === 'weekly') {
+                saveData.type = '주간목표';
+                saveData.inputtext = data.goals.join(' / ');
+            } else if (type === 'quarterly') {
+                saveData.type = '시험목표';
+                saveData.inputtext = data.goal;
+                saveData.deadline = data.deadline;
+            }
+            
+            // Save to server
+            $.ajax({
+                url: 'check.php',
+                method: 'POST',
+                data: saveData,
+                success: () => {
+                    this.addAssistantMessage('목표가 성공적으로 저장되었습니다! 🎉 화이팅하세요!');
+                    
+                    // Mark as completed
+                    data.completed = true;
+                    
+                    // Close panel after 2 seconds
+                    setTimeout(() => {
+                        this.closePanel();
+                        location.reload();
+                    }, 2000);
+                },
+                error: () => {
+                    this.addAssistantMessage('저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            });
+        }
+        
+        checkExistingGoal(type) {
+            // Check if there are existing goals for this type
+            return this.state.existingGoals && this.state.existingGoals[type];
+        }
+        
+        loadExistingGoalData() {
+            // Load and display existing goal data for editing
+            const type = this.state.currentType;
+            const existing = this.state.existingGoals[type];
+            
+            if (existing) {
+                this.addAssistantMessage(`현재 설정된 ${this.getTypeName(type)}: "${existing}"`);
+                setTimeout(() => {
+                    this.addAssistantMessage('수정할 내용을 입력해주세요.');
+                }, 1000);
+            }
+        }
+        
+        updateProgressBar(percentage) {
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            // Update step indicators
+            const steps = document.querySelectorAll('.step');
+            const currentStep = Math.floor((percentage / 100) * 4);
+            
+            steps.forEach((step, index) => {
+                if (index <= currentStep) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+        
+        scrollToBottom() {
+            const messages = document.getElementById('chatMessages');
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        getTypeName(type) {
+            const names = {
+                daily: '오늘목표',
+                weekly: '주간목표',
+                quarterly: '분기목표'
+            };
+            return names[type] || type;
+        }
+        
+        containsNumbers(str) {
+            return /\d/.test(str);
+        }
+        
+        hasUnsavedChanges() {
+            return Object.keys(this.state.goalData).some(type => {
+                const data = this.state.goalData[type];
+                if (type === 'daily') return data.tasks.length > 0 && !data.completed;
+                if (type === 'weekly') return data.goals.length > 0 && !data.completed;
+                if (type === 'quarterly') return data.goal !== '' && !data.completed;
+                return false;
+            });
+        }
+    }
+    
+    // Initialize Goal Panel Manager
+    let goalManager;
+    document.addEventListener('DOMContentLoaded', () => {
+        const studentId = <?php echo $studentid; ?>;
+        goalManager = new GoalPanelManager(studentId);
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && goalManager.state.isOpen) {
+                goalManager.closePanel();
+            }
+        });
+    });
+    
+    // Global functions for HTML onclick
+    function openGoalPanel(type) {
+        if (!goalManager) {
+            const studentId = <?php echo $studentid; ?>;
+            goalManager = new GoalPanelManager(studentId);
+        }
+        goalManager.openPanel(type);
+    }
+    
+    function closeGoalPanel() {
+        if (goalManager) {
+            goalManager.closePanel();
+        }
+    }
+    
+    function processGoalInput() {
+        if (goalManager) {
+            goalManager.processGoalInput();
+        }
+    }
+    
+    function switchGoalType(type) {
+        if (goalManager) {
+            goalManager.switchGoalType(type);
+        }
+    }
+    </script>
+</body>
+</html>

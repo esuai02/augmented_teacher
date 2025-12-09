@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상담관리 클린업 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .console-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>상담관리 (Consultation) 클린업 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1. Console 출력 검증</h2>
+        <p>콘솔 로그가 제거되었는지 확인합니다.</p>
+        <button onclick="testConsoleOutput()">콘솔 출력 테스트</button>
+        <div id="consoleResult" class="test-result info">테스트를 실행하려면 버튼을 클릭하세요</div>
+        <div id="consoleOutput" class="console-output" style="display:none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 상담관리 데이터 구조 검증</h2>
+        <p>getConsultationData() 함수가 정상 작동하는지 확인합니다.</p>
+        <button onclick="testConsultationData()">데이터 구조 테스트</button>
+        <div id="dataResult" class="test-result info">테스트를 실행하려면 버튼을 클릭하세요</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 모듈 함수 검증</h2>
+        <p>각 모듈의 함수들이 정상 작동하는지 확인합니다.</p>
+        <button onclick="testModuleFunctions()">모듈 함수 테스트</button>
+        <div id="moduleResult" class="test-result info">테스트를 실행하려면 버튼을 클릭하세요</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. 플러그인 시스템 검증</h2>
+        <p>플러그인 시스템이 정상적으로 초기화되는지 확인합니다.</p>
+        <button onclick="testPluginSystem()">플러그인 시스템 테스트</button>
+        <div id="pluginResult" class="test-result info">테스트를 실행하려면 버튼을 클릭하세요</div>
+    </div>
+
+    <!-- 필요한 스크립트 로드 -->
+    <script src="plugin_settings_client.js"></script>
+    <script src="module_loader.js"></script>
+    <script src="quarterly/quarterly.js"></script>
+    <script src="weekly/weekly.js"></script>
+    <script src="script.js"></script>
+    
+    <script>
+        // 콘솔 출력 캡처
+        const originalLog = console.log;
+        const capturedLogs = [];
+        
+        console.log = function(...args) {
+            capturedLogs.push(args.join(' '));
+            originalLog.apply(console, args);
+        };
+        
+        // 1. Console 출력 테스트
+        function testConsoleOutput() {
+            const result = document.getElementById('consoleResult');
+            const output = document.getElementById('consoleOutput');
+            
+            // 캡처된 로그 초기화
+            capturedLogs.length = 0;
+            
+            // 테스트할 함수들 실행
+            if (window.quarterlyModule && window.quarterlyModule.setQuarterlyGoals) {
+                window.quarterlyModule.setQuarterlyGoals();
+            }
+            if (window.quarterlyModule && window.quarterlyModule.manageParentConsultation) {
+                window.quarterlyModule.manageParentConsultation();
+            }
+            if (window.weeklyModule && window.weeklyModule.setWeeklyGoals) {
+                window.weeklyModule.setWeeklyGoals();
+            }
+            
+            // 결과 확인
+            if (capturedLogs.length === 0) {
+                result.className = 'test-result success';
+                result.textContent = '✓ 성공: Console.log 문이 모두 제거되었습니다.';
+                output.style.display = 'none';
+            } else {
+                result.className = 'test-result error';
+                result.textContent = `✗ 실패: ${capturedLogs.length}개의 console.log 문이 발견되었습니다.`;
+                output.style.display = 'block';
+                output.textContent = capturedLogs.join('\n');
+            }
+        }
+        
+        // 2. 상담관리 데이터 구조 테스트
+        function testConsultationData() {
+            const result = document.getElementById('dataResult');
+            
+            try {
+                const data = getConsultationData();
+                
+                if (data && data.title === '상담관리' && data.tabs && data.tabs.length > 0) {
+                    const tabCount = data.tabs.length;
+                    const hasNewStudent = data.tabs.some(tab => tab.id === 'new_student');
+                    const hasRegularConsult = data.tabs.some(tab => tab.id === 'regular_consult');
+                    
+                    if (hasNewStudent && hasRegularConsult) {
+                        result.className = 'test-result success';
+                        result.textContent = `✓ 성공: 상담관리 데이터 구조가 정상입니다. (${tabCount}개 탭)`;
+                    } else {
+                        result.className = 'test-result error';
+                        result.textContent = '✗ 실패: 필수 탭이 누락되었습니다.';
+                    }
+                } else {
+                    result.className = 'test-result error';
+                    result.textContent = '✗ 실패: 상담관리 데이터 구조가 올바르지 않습니다.';
+                }
+            } catch (error) {
+                result.className = 'test-result error';
+                result.textContent = `✗ 오류: ${error.message}`;
+            }
+        }
+        
+        // 3. 모듈 함수 테스트
+        function testModuleFunctions() {
+            const result = document.getElementById('moduleResult');
+            const errors = [];
+            
+            // quarterlyModule 테스트
+            if (window.quarterlyModule) {
+                try {
+                    if (typeof window.quarterlyModule.getData === 'function') {
+                        window.quarterlyModule.getData();
+                    } else {
+                        errors.push('quarterlyModule.getData 함수가 없습니다');
+                    }
+                } catch (error) {
+                    errors.push(`quarterlyModule 오류: ${error.message}`);
+                }
+            } else {
+                errors.push('quarterlyModule이 정의되지 않았습니다');
+            }
+            
+            // weeklyModule 테스트
+            if (window.weeklyModule) {
+                try {
+                    if (typeof window.weeklyModule.getData === 'function') {
+                        window.weeklyModule.getData();
+                    } else {
+                        errors.push('weeklyModule.getData 함수가 없습니다');
+                    }
+                } catch (error) {
+                    errors.push(`weeklyModule 오류: ${error.message}`);
+                }
+            } else {
+                errors.push('weeklyModule이 정의되지 않았습니다');
+            }
+            
+            // 결과 표시
+            if (errors.length === 0) {
+                result.className = 'test-result success';
+                result.textContent = '✓ 성공: 모든 모듈 함수가 정상 작동합니다.';
+            } else {
+                result.className = 'test-result error';
+                result.textContent = `✗ 실패: ${errors.join(', ')}`;
+            }
+        }
+        
+        // 4. 플러그인 시스템 테스트
+        function testPluginSystem() {
+            const result = document.getElementById('pluginResult');
+            
+            if (window.ktmPluginClient) {
+                result.className = 'test-result success';
+                result.textContent = '✓ 성공: 플러그인 시스템이 정상적으로 초기화되었습니다.';
+            } else {
+                result.className = 'test-result error';
+                result.textContent = '✗ 실패: 플러그인 시스템을 찾을 수 없습니다.';
+            }
+        }
+        
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('DOMContentLoaded', () => {
+            // 콘솔 복원
+            setTimeout(() => {
+                console.log = originalLog;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

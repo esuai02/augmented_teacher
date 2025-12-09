@@ -1,0 +1,201 @@
+# Agent 01~21 Datatype 참조 매핑 테이블
+# 마스터 소스 에이전트와 참조 에이전트 간의 데이터 매핑 정의
+
+version: 1.0
+last_updated: 2025-01-XX
+
+# 마스터 데이터 소스 정의
+master_sources:
+  emotion:
+    agent_id: agent05
+    agent_name: 학습감정 분석
+    description: 감정/정서 관련 데이터의 마스터 소스
+    key_fields:
+      - emotion_code
+      - emotion_stability
+      - emotion_recovery_speed
+      - emotion_energy_level
+      - persona_emotion_patterns
+
+  routine:
+    agent_id: agent18
+    agent_name: 시그너처 루틴 탐색
+    description: 루틴/리듬/몰입 관련 데이터의 마스터 소스
+    key_fields:
+      - routine_pattern_stability
+      - routine_collapse_frequency
+      - routine_recovery_success_rate
+      - immersion_maintenance_time
+      - rhythm_sync_rate
+
+  interaction_timing:
+    agent_id: agent07
+    agent_name: 상호작용 타게팅
+    description: 피드백/상호작용 타이밍 관련 데이터의 마스터 소스
+    key_fields:
+      - interaction_timing
+      - feedback_optimal_cycle
+      - interaction_effectiveness
+
+  concentration:
+    agent_id: agent04
+    agent_name: 문제활동
+    description: 집중도/몰입 관련 데이터의 마스터 소스 (Agent 18과 공유)
+    key_fields:
+      - concentration_score
+      - immersion_curve
+      - concentration_recovery_speed
+
+# 에이전트별 참조 매핑
+agent_references:
+  agent04:
+    references:
+      - source: agent05
+        fields:
+          - emotion_after_wrong_answer: "오답 후 감정 반응"
+          - persona_emotion_behavior_match: "페르소나 감정-행동 일치도"
+          - emotion_immersion_correlation: "감정-몰입 상관도"
+          - difficulty_emotion_correlation: "난이도-감정 상관도"
+      - source: agent18
+        fields:
+          - routine_maintenance_time: "루틴 유지시간"
+          - routine_collapse_trigger: "루틴 붕괴 트리거"
+
+  agent07:
+    references:
+      - source: agent05
+        fields:
+          - emotion_drop_detection: "감정 급락 감지"
+          - current_emotion_tone: "학생의 현재 감정톤"
+          - emotion_stabilization_point: "감정 안정 시점"
+          - emotion_curve_change_after_interaction: "상호작용 직후 감정곡선 변화량"
+      - source: agent04
+        fields:
+          - concentration_maintenance_time: "집중 유지시간 평균"
+      - source: agent18
+        fields:
+          - immersion_maintenance_after_interaction: "상호작용 후 몰입 유지시간"
+
+  agent12:
+    references:
+      - source: agent05
+        fields:
+          - emotion_stability_before_rest: "휴식 직전 감정 안정도"
+          - speech_emotion_analysis: "발화 감정 분석 결과"
+          - emotion_stabilization_time_after_rest: "휴식 후 감정 안정화 시간"
+          - emotion_recovery_speed_during_rest: "휴식 중 감정 회복속도"
+          - emotion_recovery_time_after_rest: "휴식 후 감정 회복시간"
+      - source: agent18
+        fields:
+          - pomodoro_rhythm_sync_rate: "포모도르 주기와의 동기율"
+          - routine_maintenance_rate: "휴식 루틴 유지율"
+
+  agent13:
+    references:
+      - source: agent05
+        fields:
+          - emotion_state_before_dropout: "이탈 전 감정 상태"
+          - emotion_slope_at_dropout: "이탈 시점 감정기울기"
+          - emotion_stability_after_reentry: "복귀 직후 감정 안정도"
+          - emotion_energy_decrease_rate: "감정 에너지 감소율"
+          - emotion_stability_variance: "감정 안정도 변동계수"
+          - consecutive_dropout_after_recovery_failure: "감정 회복 실패 후 연속이탈 횟수"
+          - emotion_recovery_time_after_routine_collapse: "루틴 붕괴 후 감정 회복시간"
+          - average_emotion_stability_during_routine: "루틴 유지 중 감정 안정도 평균"
+          - emotion_change_after_intervention: "개입 후 감정 변화폭"
+          - emotion_dropout_correlation: "감정-이탈 상관계수"
+      - source: agent18
+        fields:
+          - routine_collapse_frequency: "루틴 붕괴 빈도"
+          - routine_recovery_success_rate: "루틴 붕괴 후 복귀 성공률"
+          - routine_pattern_stability_index: "루틴 패턴 안정도 지수"
+
+  agent17:
+    references:
+      - source: agent05
+        fields:
+          - current_emotion_code: "현재 감정 코드"
+          - emotion_energy_level: "정서 에너지 레벨"
+          - emotion_recovery_success_rate: "감정 회복 성공률"
+          - emotion_state_at_routine_recovery: "루틴 복귀 시 감정 상태"
+          - emotion_stability_change_after_adjustment: "조정 후 정서 안정도 변화"
+      - source: agent18
+        fields:
+          - emotion_rhythm_sync_rate: "정서–리듬 동기율"
+          - routine_collapse_frequency_weekly: "루틴 붕괴 발생 횟수 (주간)"
+          - routine_recovery_success_rate: "루틴 복귀 성공률"
+          - routine_recovery_speed_after_adjustment: "조정 후 루틴 복귀 속도"
+
+  agent20:
+    references:
+      - source: agent05
+        fields:
+          - recent_emotion_change_range: "최근 감정 변화폭"
+          - current_emotion_code: "현재 감정 코드"
+          - emotion_stability: "감정 안정도"
+          - emotion_stability_increase_after_intervention: "개입 후 감정 안정도 상승폭"
+          - emotion_stability_maintenance_time_after_intervention: "개입 후 감정 안정 유지시간"
+      - source: agent07
+        fields:
+          - interaction_timing: "상호작용 타이밍"
+          - feedback_optimal_cycle: "피드백 적정 주기"
+
+  agent21:
+    references:
+      - source: agent05
+        fields:
+          - emotion_code_before_intervention: "개입 전 감정 코드"
+          - emotion_code_after_intervention: "개입 직후 감정 코드"
+          - emotion_change_range: "감정 변화 폭"
+          - emotion_stabilization_time: "감정 안정화 시간"
+          - emotion_recovery_success_rate: "감정 회복 성공률"
+          - average_emotion_stability_after_intervention: "개입 후 감정 안정도 평균값"
+      - source: agent07
+        fields:
+          - interaction_timing: "상호작용 타이밍"
+          - feedback_effectiveness: "피드백 효과성"
+
+# 참조 규칙
+reference_rules:
+  - rule: "감정 관련 데이터는 반드시 agent05를 참조해야 함"
+  - rule: "루틴 관련 데이터는 반드시 agent18을 참조해야 함"
+  - rule: "피드백 타이밍 관련 데이터는 agent07을 참조해야 함"
+  - rule: "집중도 관련 데이터는 agent04 또는 agent18을 참조할 수 있음"
+  - rule: "참조 형식: ref(agent_id.field_name)"
+
+# 마이그레이션 가이드
+migration_guide:
+  phase1:
+    description: "높은 중복 에이전트 정리 (완료)"
+    agents:
+      - agent04
+      - agent07
+      - agent12
+      - agent13
+      - agent17
+      - agent20
+      - agent21
+    status: completed
+
+  phase2:
+    description: "중간 중복 에이전트 정리 (예정)"
+    agents:
+      - agent02
+      - agent03
+      - agent06
+      - agent08
+      - agent14
+      - agent15
+      - agent16
+    status: pending
+
+  phase3:
+    description: "낮은 중복 에이전트 정리 (예정)"
+    agents:
+      - agent01
+      - agent09
+      - agent10
+      - agent11
+      - agent19
+    status: pending
+

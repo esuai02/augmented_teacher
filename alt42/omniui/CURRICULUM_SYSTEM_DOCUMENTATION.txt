@@ -1,0 +1,427 @@
+================================================================================
+                    커리큘럼 오케스트레이터 시스템 문서
+                    Curriculum Orchestrator System Documentation
+================================================================================
+
+작성일: 2024년
+버전: 1.0.0
+시스템명: MathKing 커리큘럼 오케스트레이터 (Curriculum Orchestrator)
+
+================================================================================
+1. 시스템 개요
+================================================================================
+
+1.1 목적
+--------
+- 시험 D-30부터 학생별 맞춤형 학습 커리큘럼을 자동으로 생성하고 관리
+- 선행학습과 복습을 7:3 비율로 자동 분배하여 효율적인 학습 유도
+- 오답노트와 개념학습을 통합한 체계적인 학습 관리
+- 교사의 수동 커리큘럼 작성 부담을 줄이고 학생 학습 효과 극대화
+
+1.2 핵심 기능
+------------
+• 시험일 기준 D-day 자동 계산 및 일일 학습 계획 생성
+• 선행학습(개념, 예제) 70% : 복습(오답노트) 30% 자동 분배
+• 학생별 맞춤형 난이도 조정 및 우선순위 관리
+• 실시간 학습 진행률 추적 및 KPI 대시보드
+• 미이행 항목 자동 재분배 (크론 작업)
+• 교사-학생 양방향 학습 모니터링
+
+1.3 시스템 특징
+--------------
+✓ 하드코딩 없음 - 모든 데이터는 DB에서 동적 조회
+✓ 태그 기반 콘텐츠 분류 - 유연한 학습 자료 관리
+✓ 독립 실행형 - 기존 Moodle/MathKing 시스템 수정 없이 작동
+✓ 반응형 UI - Bootstrap 5 기반 모바일/태블릿 지원
+✓ 실시간 업데이트 - AJAX 기반 페이지 새로고침 없이 작동
+
+================================================================================
+2. 시스템 URL 및 파일 구조
+================================================================================
+
+2.1 주요 URL
+-----------
+[교사용]
+• 대시보드: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_teacher_dashboard.php
+• API 엔드포인트: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_api.php
+
+[학생용]
+• 오늘의 학습: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_student_today.php
+
+[관리용]
+• DB 설정: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_db_setup_direct.php
+• 크론 작업: /moodle/local/augmented_teacher/alt42/omniui/curriculum_cron.php (서버 크론탭 설정 필요)
+
+2.2 파일 구조
+------------
+/mnt/c/Users/hnsn9/OneDrive/Desktop/alt42/omniui/
+├── curriculum_orchestrator_config.php    # 시스템 설정 및 상수 정의
+├── curriculum_planner_service.php        # 핵심 비즈니스 로직 클래스
+├── curriculum_teacher_dashboard.php      # 교사 대시보드 UI
+├── curriculum_student_today.php          # 학생 오늘 학습 UI
+├── curriculum_api.php                    # REST API 엔드포인트
+├── curriculum_db_setup.php               # DB 테이블 생성 스크립트
+├── curriculum_db_setup_direct.php        # 웹 실행용 DB 설정
+├── curriculum_cron.php                   # 자동화 크론 작업
+├── curriculum_tables.sql                 # SQL 테이블 정의
+└── CURRICULUM_SYSTEM_DOCUMENTATION.txt   # 본 문서
+
+================================================================================
+3. 데이터베이스 구조
+================================================================================
+
+3.1 데이터베이스 연결 정보
+-------------------------
+Host: 58.180.27.46
+Database: mathking
+User: moodle
+Password: @MCtrigd7128
+Charset: utf8mb4
+Prefix: mdl_
+
+3.2 커리큘럼 시스템 전용 테이블 (8개)
+------------------------------------
+
+[1] mdl_curriculum_config - 시스템 설정
+----------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• config_key: VARCHAR(100) - 설정 키
+• config_value: TEXT - 설정 값
+• courseid: BIGINT(10) - 코스별 설정 (NULL이면 전역)
+• description: TEXT - 설명
+• timecreated, timemodified: BIGINT(10)
+
+주요 설정값:
+- default_ratio_lead: 70 (선행학습 기본 비율)
+- default_ratio_review: 30 (복습 기본 비율)
+- default_daily_minutes: 120 (일일 학습시간)
+- min_item_minutes: 10 (최소 학습 단위)
+- max_item_minutes: 30 (최대 학습 단위)
+
+[2] mdl_curriculum_plan - 커리큘럼 계획
+---------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• userid: BIGINT(10) - 학생 ID
+• courseid: BIGINT(10) - 코스 ID
+• exam_date: DATE - 시험일
+• exam_type: VARCHAR(50) - 시험 종류 (중간고사/기말고사/모의고사/수능)
+• exam_name: VARCHAR(255) - 시험명
+• created_by: BIGINT(10) - 생성 교사 ID
+• ratio_lead: INT(3) - 선행학습 비율
+• ratio_review: INT(3) - 복습 비율
+• daily_minutes: INT(5) - 일일 학습 분
+• status: VARCHAR(20) - 상태 (draft/published/active/completed/cancelled)
+• start_date, end_date: DATE - 시작/종료일
+• total_days: INT(5) - 총 일수
+• metadata: TEXT - 추가 메타데이터 (JSON)
+• timecreated, timemodified: BIGINT(10)
+
+[3] mdl_curriculum_items - 학습 항목
+------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• planid: BIGINT(10) - 계획 ID
+• day_index: INT(5) - 일차 (1부터 시작)
+• sequence: INT(5) - 순서
+• item_type: VARCHAR(20) - 항목 타입 (concept/review/practice/test)
+• ref_type: VARCHAR(20) - 참조 타입 (concept/question/test/video)
+• ref_id: BIGINT(10) - 참조 ID
+• title: VARCHAR(255) - 제목
+• description: TEXT - 설명
+• est_minutes: INT(5) - 예상 소요시간
+• actual_minutes: INT(5) - 실제 소요시간
+• status: VARCHAR(20) - 상태 (pending/completed/skipped)
+• due_date: DATE - 마감일
+• completed_date: DATETIME - 완료일시
+• difficulty: INT(1) - 난이도 (1-4)
+• priority: INT(1) - 우선순위 (1-10)
+• tags: TEXT - 태그 (JSON 배열)
+• metadata: TEXT - 메타데이터 (JSON)
+• timecreated, timemodified: BIGINT(10)
+
+[4] mdl_curriculum_progress - 진행 상황
+---------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• planid: BIGINT(10) - 계획 ID
+• userid: BIGINT(10) - 사용자 ID
+• day_index: INT(5) - 일차
+• date: DATE - 날짜
+• planned_items: INT(5) - 계획된 항목 수
+• completed_items: INT(5) - 완료된 항목 수
+• planned_minutes: INT(5) - 계획된 시간
+• actual_minutes: INT(5) - 실제 학습 시간
+• completion_rate: DECIMAL(5,2) - 완료율 (%)
+• lead_completed: INT(5) - 완료된 선행학습
+• review_completed: INT(5) - 완료된 복습
+• notes: TEXT - 메모
+• timecreated, timemodified: BIGINT(10)
+
+[5] mdl_curriculum_kpi - KPI 메트릭
+-----------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• planid: BIGINT(10) - 계획 ID
+• metric_date: DATE - 측정일
+• completion_rate: DECIMAL(5,2) - 전체 완료율
+• review_resolution_rate: DECIMAL(5,2) - 오답 해결률
+• daily_achievement_rate: DECIMAL(5,2) - 일일 달성률
+• estimated_completion_date: DATE - 예상 완료일
+• days_ahead_behind: INT(5) - 진도 차이 (양수: 빠름, 음수: 늦음)
+• total_study_minutes: INT(10) - 총 학습 시간
+• average_daily_minutes: DECIMAL(7,2) - 일평균 학습 시간
+• streak_days: INT(5) - 연속 학습일
+• metadata: TEXT - 추가 메트릭 (JSON)
+• timecreated: BIGINT(10)
+
+[6] mdl_curriculum_review_pool - 오답노트 풀
+--------------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• userid: BIGINT(10) - 사용자 ID
+• courseid: BIGINT(10) - 코스 ID
+• question_id: BIGINT(10) - 문제 ID
+• question_type: VARCHAR(50) - 문제 유형
+• chapter_id: BIGINT(10) - 챕터 ID
+• error_count: INT(5) - 오답 횟수
+• last_error_date: DATETIME - 마지막 오답일
+• resolution_status: VARCHAR(20) - 해결 상태 (unresolved/resolved/reviewing)
+• difficulty: INT(1) - 난이도
+• priority_score: DECIMAL(5,2) - 우선순위 점수 (0-100)
+• tags: TEXT - 태그
+• notes: TEXT - 메모
+• timecreated, timemodified: BIGINT(10)
+
+[7] mdl_curriculum_concept_map - 개념 맵
+----------------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• courseid: BIGINT(10) - 코스 ID
+• concept_id: BIGINT(10) - 개념 ID
+• concept_name: VARCHAR(255) - 개념명
+• chapter_id: BIGINT(10) - 챕터 ID
+• prereq_of: TEXT - 선수 개념 (JSON 배열)
+• depends_on: TEXT - 의존 개념 (JSON 배열)
+• difficulty: INT(1) - 난이도
+• importance: INT(1) - 중요도 (1-10)
+• est_minutes: INT(5) - 예상 학습시간
+• tags: TEXT - 태그
+• metadata: TEXT - 메타데이터
+• timecreated, timemodified: BIGINT(10)
+
+[8] mdl_curriculum_log - 활동 로그
+----------------------------------
+• id: BIGINT(10) PRIMARY KEY AUTO_INCREMENT
+• planid: BIGINT(10) - 계획 ID
+• userid: BIGINT(10) - 사용자 ID
+• action: VARCHAR(50) - 액션 (create_plan/publish_plan/complete_item 등)
+• target_type: VARCHAR(50) - 대상 타입
+• target_id: BIGINT(10) - 대상 ID
+• old_value: TEXT - 이전 값
+• new_value: TEXT - 새 값
+• metadata: TEXT - 추가 정보
+• ip_address: VARCHAR(45) - IP 주소
+• user_agent: TEXT - 브라우저 정보
+• timecreated: BIGINT(10) - 생성 시간
+
+3.3 기존 MathKing 테이블 연동
+-----------------------------
+• mdl_user - 사용자 정보
+• mdl_user_info_data - 사용자 추가정보 (역할 구분)
+• mdl_course - 코스 정보
+• mdl_abessi_attendance_record - 출결 기록 (참고용)
+• mdl_abessi_missionlog - 미션/활동 로그 (참고용)
+
+================================================================================
+4. API 엔드포인트
+================================================================================
+
+Base URL: https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_api.php
+
+4.1 커리큘럼 생성
+----------------
+POST /curriculum_api.php?action=create_plan
+Parameters:
+- userid: 학생 ID
+- courseid: 코스 ID
+- exam_date: 시험일 (YYYY-MM-DD)
+- exam_type: 시험 종류
+- exam_name: 시험명 (선택)
+- ratio_lead: 선행학습 비율 (기본 70)
+- ratio_review: 복습 비율 (기본 30)
+- daily_minutes: 일일 학습시간 (기본 120)
+
+Response:
+{
+  "success": true,
+  "data": {
+    "plan_id": 123,
+    "total_days": 30
+  },
+  "message": "커리큘럼이 성공적으로 생성되었습니다."
+}
+
+4.2 커리큘럼 미리보기
+--------------------
+GET /curriculum_api.php?action=preview_plan&plan_id=123
+
+Response:
+{
+  "success": true,
+  "data": {
+    "plan": {...},
+    "daily_items": [...],
+    "stats": {...}
+  }
+}
+
+4.3 커리큘럼 배포
+----------------
+POST /curriculum_api.php?action=publish_plan
+Parameters:
+- plan_id: 계획 ID
+
+4.4 오늘 학습 항목 조회
+----------------------
+GET /curriculum_api.php?action=get_today_items
+
+4.5 항목 완료 처리
+-----------------
+POST /curriculum_api.php?action=complete_item
+Parameters:
+- item_id: 항목 ID
+- actual_minutes: 실제 학습시간
+
+4.6 KPI 조회
+-----------
+GET /curriculum_api.php?action=get_kpi&plan_id=123
+
+4.7 학습 통계 조회
+-----------------
+GET /curriculum_api.php?action=get_stats&user_id=123&period=week
+
+================================================================================
+5. 주요 기능 워크플로우
+================================================================================
+
+5.1 커리큘럼 생성 프로세스
+-------------------------
+1. 교사가 curriculum_teacher_dashboard.php 접속
+2. "새 커리큘럼 생성" 버튼 클릭
+3. 학생, 코스, 시험일, 시험종류 선택
+4. 선행:복습 비율 조정 (슬라이더)
+5. 생성 버튼 클릭 → API 호출
+6. 시스템이 D-day 계산하여 일별 학습 항목 자동 생성
+7. 미리보기로 확인
+8. "학생에게 배포" 클릭하여 활성화
+
+5.2 학생 학습 프로세스
+---------------------
+1. 학생이 curriculum_student_today.php 접속
+2. 오늘의 학습 목록 확인 (개념학습 + 오답복습)
+3. 각 항목 학습 수행
+4. "완료" 버튼 클릭
+5. 실제 학습시간 입력
+6. 진행률 실시간 업데이트
+7. 완료 시 축하 메시지 표시
+
+5.3 자동화 프로세스 (크론)
+-------------------------
+매일 아침 6시 자동 실행:
+1. 미완료 항목을 다음날로 재분배
+2. KPI 메트릭 계산 및 업데이트
+3. D-day 알림 발송 (D-30, D-14, D-7, D-3, D-1)
+4. 90일 이상 오래된 로그 정리
+5. 완료된 계획 상태 업데이트
+6. 일일 통계 리포트 생성
+
+================================================================================
+6. 시스템 설정 및 운영
+================================================================================
+
+6.1 초기 설정
+------------
+1. DB 테이블 생성:
+   https://mathking.kr/moodle/local/augmented_teacher/alt42/omniui/curriculum_db_setup_direct.php
+
+2. 크론 설정 (서버):
+   crontab -e
+   0 6 * * * /usr/bin/php /path/to/curriculum_cron.php
+
+6.2 권한 관리
+------------
+• 교사: 커리큘럼 생성, 수정, 배포, 모든 학생 조회
+• 학생: 자신의 커리큘럼만 조회 및 완료 처리
+• 권한 체크: mdl_user_info_data.fieldid = 22 (role != 'student' → 교사)
+
+6.3 성능 최적화
+--------------
+• 인덱스: 모든 foreign key, status, date 필드
+• 캐싱: 1시간 단위 설정값 캐싱
+• 배치 처리: 일별 항목 생성 시 배치 INSERT
+• AJAX: 실시간 업데이트로 페이지 새로고침 최소화
+
+================================================================================
+7. 확장 가능성
+================================================================================
+
+7.1 계획된 확장 기능
+-------------------
+• AI 기반 학습 패턴 분석 및 추천
+• 그룹 스터디 / 반별 커리큘럼 관리
+• 부모님 리포트 자동 발송
+• 모바일 앱 연동 (Push 알림)
+• 학습 자료 자동 매칭 시스템
+• 게이미피케이션 (배지, 레벨, 리더보드)
+
+7.2 연동 가능 시스템
+-------------------
+• Moodle 퀴즈 시스템
+• 외부 문제은행 API
+• 동영상 강의 플랫폼
+• 학원 관리 시스템 (SMS 발송 등)
+
+================================================================================
+8. 문제 해결 가이드
+================================================================================
+
+8.1 테이블이 없다는 오류
+-----------------------
+해결: curriculum_db_setup_direct.php 실행
+
+8.2 권한 오류
+-----------
+확인: $_SESSION['user_id'] 존재 여부
+해결: 로그인 페이지로 리다이렉트
+
+8.3 데이터가 표시되지 않음
+-------------------------
+확인: 
+- 계획 status가 'published' 또는 'active'인지
+- due_date가 오늘 날짜와 일치하는지
+- courseid가 올바른지
+
+8.4 크론이 실행되지 않음
+-----------------------
+확인: crontab -l로 설정 확인
+테스트: php curriculum_cron.php 직접 실행
+
+================================================================================
+9. 개발자 정보
+================================================================================
+
+시스템 설계: MathKing 개발팀
+구현 도구: Claude Code / Cursor
+프레임워크: PHP 7.4+, Bootstrap 5, jQuery 3.6
+데이터베이스: MySQL 5.7+ / MariaDB 10.3+
+테스트 환경: MathKing Production Server
+
+================================================================================
+10. 버전 히스토리
+================================================================================
+
+v1.0.0 (2024)
+- 초기 버전 릴리즈
+- 기본 커리큘럼 생성 및 관리 기능
+- 교사 대시보드, 학생 오늘 학습 화면
+- KPI 대시보드 및 진행률 추적
+- 자동 재분배 크론 작업
+
+================================================================================
+                              - END OF DOCUMENT -
+================================================================================

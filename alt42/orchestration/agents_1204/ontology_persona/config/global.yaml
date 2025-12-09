@@ -1,0 +1,154 @@
+# Mathking Global Configuration
+# 전역 시스템 설정
+
+version: "1.0.0"
+
+# LLM 설정
+llm:
+  provider: "openai"  # openai, anthropic, custom
+  model: "gpt-4o-mini"
+  api_endpoint: "${OPENAI_API_ENDPOINT}"
+  api_key: "${OPENAI_API_KEY}"
+  max_tokens: 1024
+  temperature: 0.2
+  timeout_sec: 30
+  retry_attempts: 3
+  fallback_model: "gpt-3.5-turbo"
+
+# 경로 설정
+paths:
+  ontology: "ontology/ontology.jsonld"
+  knowledge: "knowledge/"
+  persona_db: "persona/db/"
+  agents: "agents/"
+  logs: "logs/"
+  config: "config/"
+
+# 데이터베이스 설정 (기존 Moodle DB)
+database:
+  type: "mysql"
+  host: "${DB_HOST}"
+  port: 3306
+  name: "${DB_NAME}"
+  user: "${DB_USER}"
+  password: "${DB_PASSWORD}"
+  prefix: "mdl_"
+  charset: "utf8mb4"
+  pool_size: 10
+
+# 페르소나 테이블 (기존)
+persona_tables:
+  activestate: "mdl_prsn_activestate"
+  contents: "mdl_prsn_contents"
+  reaction: "mdl_prsn_reaction"
+  relation: "mdl_prsn_relation"
+  selection: "mdl_prsn_selection"
+  usermap: "mdl_prsn_usermap"
+
+# RAG 설정
+rag:
+  enabled: true
+  index_path: "data/rag_index/"
+  chunk_size: 512
+  chunk_overlap: 50
+  top_k: 3
+  embedding_model: "text-embedding-ada-002"
+  similarity_threshold: 0.7
+
+# Heartbeat 설정
+heartbeat:
+  enabled: true
+  default_interval_min: 30
+  max_concurrent_agents: 5
+  queue_size: 100
+
+# 의사결정 제약
+decision:
+  min_confidence_threshold: 0.6
+  max_tokens_per_decision: 1024
+  idempotency_window_min: 5
+  max_directives_per_session: 10
+  max_reports_per_session: 5
+
+# 페르소나 시스템
+persona:
+  similarity_method: "cosine"  # cosine, euclidean, manhattan
+  embedding_dim: 768
+  default_strength_modifier: 0.0
+  min_similarity_threshold: 0.3
+
+# 우선순위 가중치
+priority_weights:
+  urgency: 0.3
+  severity: 0.3
+  opportunity: 0.2
+  persona_fit: 0.2
+
+# 로깅 설정
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "json"
+  decisions_path: "logs/decisions/"
+  reports_path: "logs/reports/"
+  replays_path: "logs/replays/"
+  audits_path: "logs/audits/"
+  retention_days: 90
+  max_file_size_mb: 100
+
+# 캐싱 설정
+cache:
+  enabled: true
+  type: "memory"  # memory, redis, file
+  ttl_sec: 3600
+  max_size_mb: 500
+
+# 보안 설정
+security:
+  pii_masking: true
+  mask_fields: ["name", "email", "phone"]
+  audit_all_decisions: true
+  require_auth: true
+  jwt_secret: "${JWT_SECRET}"
+  jwt_expiry_hours: 24
+
+# 성능 설정
+performance:
+  max_parallel_tasks: 5
+  timeout_agent_sec: 60
+  timeout_llm_sec: 30
+  enable_profiling: false
+
+# 기능 플래그
+features:
+  enable_llm_fallback: true
+  enable_rule_engine: true
+  enable_reporting: true
+  enable_directives: true
+  enable_actions: false  # v2에서 활성화
+  enable_experiments: false
+
+# 실험 설정 (A/B 테스트)
+experiments:
+  enabled: false
+  default_variant: "control"
+  variants:
+    - "control"
+    - "treatment_a"
+    - "treatment_b"
+
+# 모니터링 설정
+monitoring:
+  enabled: true
+  metrics_interval_sec: 60
+  alert_on_error: true
+  alert_webhook: "${ALERT_WEBHOOK_URL}"
+
+# 개발 모드
+dev_mode:
+  enabled: false
+  mock_llm: false
+  debug_logging: true
+  skip_validation: false
+
+# 환경 변수 참조
+env_file: "config/secrets.env"

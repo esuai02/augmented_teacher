@@ -1,0 +1,89 @@
+# Agent Curriculum Configuration
+# 커리큘럼 에이전트 설정
+
+agent_id: "agent_curriculum"
+version: "1.0.0"
+
+# Orchestration 매핑
+orchestration:
+  id: "agent04"
+  name: "문제활동"
+  folder: "agent_04"
+
+# 기본 정보
+metadata:
+  name: "커리큘럼 에이전트"
+  category: "curriculum"
+  description: "진도 관리 및 학습 경로 최적화"
+  status: "active"
+  priority: 1
+
+# Heartbeat 설정
+heartbeat:
+  interval_min: 30
+  enabled: true
+  triggers:
+    - "class_start"
+    - "class_end_30min"
+    - "weekly_first_class"
+
+# 권한 설정
+permissions:
+  can_generate_reports: true
+  can_generate_directives: true
+  can_modify_curriculum: false  # v2에서 활성화
+  max_directive_strength: 0.9
+
+# 트리거 조건
+triggers:
+  - id: "trigger_progress_lag"
+    condition: "evidence.metrics.progress_delta <= -0.15"
+    priority: 1.0
+
+  - id: "trigger_overload"
+    condition: "state.load == 'high' OR evidence.metrics.retry_count >= 3"
+    priority: 0.9
+
+  - id: "trigger_overfocus"
+    condition: "evidence.metrics.time_on_single_topic_min >= 45"
+    priority: 0.7
+
+# 연관 태스크
+tasks:
+  - task_lagging
+  - task_overfocus
+  - task_balanced_progress
+
+# 컨텍스트 태그
+context_tags:
+  - "curriculum"
+  - "progress"
+  - "pacing"
+
+# 페르소나 매핑
+persona_affinity:
+  high: ["P_avoidant", "P_struggling"]
+  medium: ["P_consistent", "P_motivated"]
+  low: ["P_advanced", "P_self_directed"]
+
+# KPI 추적
+kpis:
+  - "progress_rate"
+  - "time_on_task"
+  - "completion_ratio"
+  - "curriculum_alignment"
+
+# 리포팅 설정
+reporting:
+  default_lookback_days: 7
+  include_charts: true
+  chart_types:
+    - "progress_vs_avg"
+    - "time_distribution"
+    - "difficulty_progression"
+
+# 안전 제약
+safety:
+  max_difficulty_jump: 2
+  min_rest_between_sessions_min: 5
+  max_consecutive_failures: 3

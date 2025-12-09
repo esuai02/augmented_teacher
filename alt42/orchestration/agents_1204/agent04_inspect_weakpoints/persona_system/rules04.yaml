@@ -1,0 +1,655 @@
+# ============================================
+# Agent04 오답노트 페르소나 기반 룰 엔진
+# ============================================
+# 오답 정리 및 복습 시 발생하는 인지관성(Cognitive Inertia) 패턴을
+# 탐지하고 맞춤형 개입 전략을 제공합니다.
+#
+# 참조 구조: agent11_problem_notes/rules/rules.yaml
+#
+# @package AugmentedTeacher\Agent04\PersonaSystem
+# @version 2.0
+# @since 2025-12-03
+# ============================================
+
+version: "2.0"
+scenario: "wrong_answer_note"
+description: "오답노트 작성 및 활용 시 인지관성 패턴 탐지 및 개입 룰"
+
+# ============================================
+# 메타데이터
+# ============================================
+metadata:
+  sub_items:
+    - note_efficacy            # S1: 오답노트 효능감 인식
+    - solution_note            # S2: 풀이노트
+    - exam_preparation         # S3: 평가준비
+    - essay_evaluation         # S4: 서술평가
+    - return_note_response     # S5: 반송 오답노트 대응
+
+  categories:
+    - avoidance                # 회피 성향
+    - surface_analysis         # 표면적 분석
+    - ineffective_method       # 비효과적 방법
+    - emotional_block          # 감정적 장벽
+    - follow_up_failure        # 후속 조치 실패
+    - organization_issue       # 정리 문제
+
+# ============================================
+# 룰 정의
+# ============================================
+rules:
+
+  # ========== S1: 오답노트 효능감 인식 (note_efficacy) ==========
+
+  - rule_id: "S1_R1_uselessness_belief"
+    priority: 100
+    description: "오답노트가 도움이 안 된다고 믿어 작성을 거부하는 패턴 탐지"
+    persona_id: 1
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "note_efficacy"
+      - field: "note_creation_refusal_rate"
+        operator: ">"
+        value: 0.7
+      - field: "belief_statement"
+        operator: "contains"
+        value: "소용없어"
+    action:
+      - "detect: 'uselessness_belief_pattern'"
+      - "strategy: 'one_week_experiment'"
+      - "message: '오답노트 작성 1주 → 해당 유형 재시험 → 점수 변화 확인'"
+      - "check_point: '1주 실험을 완료했는지, 점수 변화가 있었는지 확인'"
+      - "teacher_dialog: '선생님, 1주 동안 오답노트를 써봤어요. 점수가 올랐는지 같이 확인해주세요!'"
+    confidence: 0.90
+    rationale: "S1: 효능감 부재로 인한 회피는 실증적 경험으로 개선"
+
+  - rule_id: "S1_R2_time_waste_concern"
+    priority: 100
+    description: "오답노트 작성이 시간 낭비라고 생각하여 빠르게 넘어가는 패턴 탐지"
+    persona_id: 2
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "note_efficacy"
+      - field: "note_creation_time"
+        operator: "<"
+        value: 60
+      - field: "quick_skip_rate"
+        operator: ">"
+        value: 0.6
+    action:
+      - "detect: 'time_waste_concern_pattern'"
+      - "strategy: 'five_minute_note'"
+      - "message: '틀린 문제당 5분만 투자 → 핵심만 간단히 정리'"
+      - "check_point: '5분 규칙을 지켰는지, 핵심을 담았는지 확인'"
+      - "teacher_dialog: '선생님, 5분 안에 오답 핵심만 정리했어요. 효율적으로 한 건지 확인해주세요!'"
+    confidence: 0.85
+    rationale: "S1: 시간 효율성 걱정은 최소 시간 투자 전략으로 해결"
+
+  - rule_id: "S1_R3_laziness_priority"
+    priority: 80
+    description: "오답노트 작성이 귀찮아서 대충 작성하거나 안 하는 패턴 탐지"
+    persona_id: 3
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "note_efficacy"
+      - field: "note_completeness_score"
+        operator: "<"
+        value: 0.4
+      - field: "effort_indicator"
+        operator: "<"
+        value: "minimal"
+    action:
+      - "detect: 'laziness_priority_pattern'"
+      - "strategy: 'note_template'"
+      - "message: '빈칸만 채우면 되는 템플릿 활용 → 작성 부담 감소'"
+      - "check_point: '템플릿을 사용했는지, 완성도가 높아졌는지 확인'"
+      - "teacher_dialog: '선생님, 오답 템플릿을 사용하니 훨씬 쉬워졌어요. 제대로 작성했는지 봐주세요!'"
+    confidence: 0.75
+    rationale: "S1: 작성 부담은 구조화된 템플릿으로 경감"
+
+  - rule_id: "S1_R4_perfectionism_burden"
+    priority: 100
+    description: "오답노트를 완벽하게 쓰려는 부담에 시작을 못 하는 패턴 탐지"
+    persona_id: 4
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "note_efficacy"
+      - field: "start_delay_time"
+        operator: ">"
+        value: 600
+      - field: "perfectionism_indicator"
+        operator: "=="
+        value: true
+    action:
+      - "detect: 'perfectionism_burden_pattern'"
+      - "strategy: 'just_start_writing'"
+      - "message: '못 생겨도 일단 쓰기 → 나중에 보완하기'"
+      - "check_point: '일단 작성했는지, 부담이 줄었는지 확인'"
+      - "teacher_dialog: '선생님, 완벽하지 않아도 일단 써봤어요. 나중에 보완할 부분을 알려주세요!'"
+    confidence: 0.85
+    rationale: "S1: 완벽주의 부담은 '일단 시작' 접근으로 극복"
+
+  # ========== S2: 풀이노트 (solution_note) ==========
+
+  - rule_id: "S2_R1_answer_copy_only"
+    priority: 100
+    description: "정답만 베끼고 풀이 과정을 분석하지 않는 패턴 탐지"
+    persona_id: 5
+    category: "surface_analysis"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "solution_note"
+      - field: "process_analysis_present"
+        operator: "=="
+        value: false
+      - field: "answer_only_rate"
+        operator: ">"
+        value: 0.8
+    action:
+      - "detect: 'answer_copy_only_pattern'"
+      - "strategy: 'process_required'"
+      - "message: '풀이 과정 단계별로 쓰기 → 각 단계마다 왜? 메모'"
+      - "check_point: '과정을 단계별로 썼는지, 왜?를 적었는지 확인'"
+      - "teacher_dialog: '선생님, 풀이 과정을 단계별로 쓰고 왜 그런지 적었어요. 맞게 분석했는지 봐주세요!'"
+    confidence: 0.90
+    rationale: "S2: 답만 베끼는 것은 학습 효과 없음, 과정 분석 필수"
+
+  - rule_id: "S2_R2_cause_not_analyzed"
+    priority: 100
+    description: "왜 틀렸는지 원인을 파악하지 않고 그냥 넘어가는 패턴 탐지"
+    persona_id: 6
+    category: "surface_analysis"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "solution_note"
+      - field: "error_cause_identified"
+        operator: "=="
+        value: false
+      - field: "skip_without_analysis_rate"
+        operator: ">"
+        value: 0.6
+    action:
+      - "detect: 'cause_not_analyzed_pattern'"
+      - "classify: 'error_cause_type'"
+      - "strategy: 'error_cause_classification'"
+      - "message: '계산실수/개념오해/문제이해실패 중 선택 → 구체적 원인 1줄 적기'"
+      - "check_point: '원인을 분류했는지, 구체적으로 적었는지 확인'"
+      - "teacher_dialog: '선생님, 틀린 원인을 분류해봤어요. 개념오해 때문인 것 같은데 맞는지 확인해주세요!'"
+    confidence: 0.90
+    rationale: "S2: 원인 분석 없이는 같은 실수 반복"
+
+  - rule_id: "S2_R3_own_solution_ignored"
+    priority: 100
+    description: "자신의 틀린 풀이를 분석하지 않고 정답 풀이만 보는 패턴 탐지"
+    persona_id: 7
+    category: "ineffective_method"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "solution_note"
+      - field: "own_solution_analysis_present"
+        operator: "=="
+        value: false
+      - field: "answer_only_review_rate"
+        operator: ">"
+        value: 0.7
+    action:
+      - "detect: 'own_solution_ignored_pattern'"
+      - "strategy: 'solution_comparison'"
+      - "message: '틀린 풀이 vs 정답 풀이 비교 → 둘을 나란히 적기 → 어디서 갈라졌는지 표시'"
+      - "check_point: '비교를 했는지, 갈라진 지점을 찾았는지 확인'"
+      - "teacher_dialog: '선생님, 제 풀이와 정답 풀이를 비교했어요. 갈라진 지점을 찾았는데 맞는지 확인해주세요!'"
+    confidence: 0.85
+    rationale: "S2: 자신의 오류 지점을 파악해야 근본적 개선 가능"
+
+  - rule_id: "S2_R4_no_retry"
+    priority: 100
+    description: "오답노트를 쓰고도 다시 풀어보지 않는 패턴 탐지"
+    persona_id: 8
+    category: "follow_up_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "solution_note"
+      - field: "retry_after_note"
+        operator: "=="
+        value: false
+      - field: "note_without_retry_rate"
+        operator: ">"
+        value: 0.8
+    action:
+      - "detect: 'no_retry_pattern'"
+      - "strategy: 'retry_required'"
+      - "message: '오답노트 작성 후 반드시 혼자 다시 풀기 → 정답이면 ✔️ 표시'"
+      - "check_point: '재풀이를 했는지, 혼자 풀 수 있게 됐는지 확인'"
+      - "teacher_dialog: '선생님, 오답노트 쓰고 다시 풀어봤어요. 이번엔 혼자 풀 수 있었어요!'"
+    confidence: 0.90
+    rationale: "S2: 재풀이 없이는 이해 확인 불가"
+
+  # ========== S3: 평가준비 (exam_preparation) ==========
+
+  - rule_id: "S3_R1_note_neglect"
+    priority: 100
+    description: "오답노트를 써놓고 시험 전에 보지 않는 패턴 탐지"
+    persona_id: 9
+    category: "follow_up_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "exam_preparation"
+      - field: "note_review_before_exam"
+        operator: "=="
+        value: false
+      - field: "days_since_last_review"
+        operator: ">"
+        value: 14
+    action:
+      - "detect: 'note_neglect_pattern'"
+      - "strategy: 'exam_review_schedule'"
+      - "message: '시험 3일 전부터 오답노트 매일 15분 복습 → 체크리스트 활용'"
+      - "check_point: '복습 일정을 지켰는지, 오답 유형을 기억하는지 확인'"
+      - "teacher_dialog: '선생님, 시험 전 3일 동안 오답노트를 매일 복습했어요. 준비가 잘 됐는지 확인해주세요!'"
+    confidence: 0.90
+    rationale: "S3: 오답노트의 가치는 시험 전 활용에서 발휘"
+
+  - rule_id: "S3_R2_new_problem_obsession"
+    priority: 100
+    description: "오답 복습 대신 새 문제만 풀려고 하는 패턴 탐지"
+    persona_id: 10
+    category: "ineffective_method"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "exam_preparation"
+      - field: "new_problem_vs_review_ratio"
+        operator: ">"
+        value: 0.9
+      - field: "review_time_allocation"
+        operator: "<"
+        value: 0.1
+    action:
+      - "detect: 'new_problem_obsession_pattern'"
+      - "strategy: 'seven_three_ratio'"
+      - "message: '시험 준비 시간의 70% 오답 복습, 30% 새 문제'"
+      - "check_point: '비율을 지켰는지, 오답 유형이 익숙해졌는지 확인'"
+      - "teacher_dialog: '선생님, 7:3 비율로 공부했어요. 오답 유형이 확실히 익숙해진 것 같아요!'"
+    confidence: 0.85
+    rationale: "S3: 새 문제보다 기존 오답 복습이 시험 대비에 효과적"
+
+  - rule_id: "S3_R3_key_point_missing"
+    priority: 80
+    description: "오답노트에서 시험에 나올 핵심을 추출하지 못하는 패턴 탐지"
+    persona_id: 11
+    category: "organization_issue"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "exam_preparation"
+      - field: "key_point_extraction"
+        operator: "=="
+        value: false
+      - field: "summary_quality_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'key_point_missing_pattern'"
+      - "strategy: 'three_line_summary'"
+      - "message: '오답노트마다 시험 직전 볼 핵심 3줄 따로 정리'"
+      - "check_point: '핵심 3줄을 정리했는지, 시험 직전에 활용했는지 확인'"
+      - "teacher_dialog: '선생님, 각 오답노트의 핵심 3줄을 정리했어요. 잘 추출한 건지 확인해주세요!'"
+    confidence: 0.75
+    rationale: "S3: 핵심 요약은 시험 직전 빠른 복습에 필수"
+
+  # ========== S4: 서술평가 (essay_evaluation) ==========
+
+  - rule_id: "S4_R1_essay_avoidance"
+    priority: 100
+    description: "서술형 오답은 분석이 어려워서 건너뛰는 패턴 탐지"
+    persona_id: 12
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "essay_evaluation"
+      - field: "essay_analysis_skip_rate"
+        operator: ">"
+        value: 0.7
+      - field: "difficulty_avoidance"
+        operator: "=="
+        value: true
+    action:
+      - "detect: 'essay_avoidance_pattern'"
+      - "strategy: 'essay_breakdown'"
+      - "message: '채점 기준별로 내 답안 분석 → 빠진 요소 표시'"
+      - "check_point: '채점 기준을 확인했는지, 빠진 요소를 찾았는지 확인'"
+      - "teacher_dialog: '선생님, 서술형 답안을 채점 기준별로 분석해봤어요. 빠진 요소가 맞는지 확인해주세요!'"
+    confidence: 0.90
+    rationale: "S4: 서술형 회피는 취약점 방치로 이어짐"
+
+  - rule_id: "S4_R2_logic_structure_ignored"
+    priority: 100
+    description: "서술형 답안의 논리적 흐름을 분석하지 않는 패턴 탐지"
+    persona_id: 13
+    category: "surface_analysis"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "essay_evaluation"
+      - field: "logic_flow_analysis"
+        operator: "=="
+        value: false
+      - field: "structure_understanding_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'logic_structure_ignored_pattern'"
+      - "strategy: 'logic_flow_diagram'"
+      - "message: '모범 답안의 논리 흐름을 도식화 → 내 답안과 비교'"
+      - "check_point: '흐름도를 그렸는지, 논리적 연결을 이해했는지 확인'"
+      - "teacher_dialog: '선생님, 모범 답안의 논리 흐름도를 그려봤어요. 제 이해가 맞는지 확인해주세요!'"
+    confidence: 0.85
+    rationale: "S4: 논리 구조 이해는 서술형 고득점의 핵심"
+
+  - rule_id: "S4_R3_partial_score_analysis_failure"
+    priority: 80
+    description: "서술형에서 어디서 감점됐는지 파악하지 못하는 패턴 탐지"
+    persona_id: 14
+    category: "surface_analysis"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "essay_evaluation"
+      - field: "deduction_point_identified"
+        operator: "=="
+        value: false
+      - field: "partial_score_understanding"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect: 'partial_score_analysis_failure_pattern'"
+      - "strategy: 'deduction_point_marking'"
+      - "message: '각 문장마다 감점 여부 확인 → 감점 이유 옆에 메모'"
+      - "check_point: '감점 포인트를 찾았는지, 이유를 이해했는지 확인'"
+      - "teacher_dialog: '선생님, 감점된 부분을 표시하고 이유를 적어봤어요. 분석이 맞는지 확인해주세요!'"
+    confidence: 0.75
+    rationale: "S4: 감점 포인트 파악은 점수 향상의 출발점"
+
+  - rule_id: "S4_R4_model_answer_ignored"
+    priority: 100
+    description: "모범답안을 제대로 분석하지 않고 넘어가는 패턴 탐지"
+    persona_id: 15
+    category: "ineffective_method"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "essay_evaluation"
+      - field: "model_answer_analysis_depth"
+        operator: "<"
+        value: 0.3
+      - field: "quick_skim_only"
+        operator: "=="
+        value: true
+    action:
+      - "detect: 'model_answer_ignored_pattern'"
+      - "strategy: 'model_answer_tracing'"
+      - "message: '모범답안을 직접 손으로 따라 쓰기 → 왜 이렇게 썼는지 메모'"
+      - "check_point: '따라쓰기를 했는지, 이해가 향상됐는지 확인'"
+      - "teacher_dialog: '선생님, 모범답안을 따라 쓰면서 분석했어요. 서술 방식을 제대로 이해했는지 확인해주세요!'"
+    confidence: 0.85
+    rationale: "S4: 모범답안 분석은 서술력 향상의 핵심"
+
+  # ========== S5: 반송 오답노트 대응 (return_note_response) ==========
+
+  - rule_id: "S5_R1_return_ignored"
+    priority: 100
+    description: "선생님이 반송한 오답노트를 수정하지 않는 패턴 탐지"
+    persona_id: 16
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "return_note_response"
+      - field: "returned_note_modified"
+        operator: "=="
+        value: false
+      - field: "days_since_return"
+        operator: ">"
+        value: 3
+    action:
+      - "detect: 'return_ignored_pattern'"
+      - "strategy: 'twenty_four_hour_modification'"
+      - "message: '반송받으면 24시간 내 수정 → 선생님 피드백 반영'"
+      - "check_point: '24시간 내에 수정했는지, 피드백을 반영했는지 확인'"
+      - "teacher_dialog: '선생님, 반송된 오답노트를 수정했어요. 피드백을 제대로 반영했는지 확인해주세요!'"
+    confidence: 0.90
+    rationale: "S5: 반송 무시는 학습 기회 상실"
+
+  - rule_id: "S5_R2_feedback_misunderstanding"
+    priority: 100
+    description: "선생님의 피드백 내용을 이해하지 못하는 패턴 탐지"
+    persona_id: 17
+    category: "ineffective_method"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "return_note_response"
+      - field: "feedback_comprehension_score"
+        operator: "<"
+        value: 0.5
+      - field: "ask_for_clarification"
+        operator: "=="
+        value: false
+    action:
+      - "detect: 'feedback_misunderstanding_pattern'"
+      - "strategy: 'feedback_analysis'"
+      - "message: '피드백을 문장별로 나누어 이해 → 모르면 바로 질문'"
+      - "check_point: '피드백을 분석했는지, 이해가 됐는지 확인'"
+      - "teacher_dialog: '선생님, 피드백 중 이 부분이 이해가 안 돼요. 좀 더 설명해주실 수 있나요?'"
+    confidence: 0.85
+    rationale: "S5: 피드백 미이해는 질문으로 해결"
+
+  - rule_id: "S5_R3_defensive_reaction"
+    priority: 80
+    description: "피드백에 대해 방어적으로 반응하며 수정을 거부하는 패턴 탐지"
+    persona_id: 18
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "return_note_response"
+      - field: "defensive_response_indicator"
+        operator: "=="
+        value: true
+      - field: "modification_resistance"
+        operator: ">"
+        value: 0.6
+    action:
+      - "detect: 'defensive_reaction_pattern'"
+      - "strategy: 'open_mindset'"
+      - "message: '피드백은 성장 기회로 인식 → 일단 수용 후 의문점 질문'"
+      - "check_point: '열린 마음으로 받아들였는지, 성장 포인트를 찾았는지 확인'"
+      - "teacher_dialog: '선생님, 피드백을 받아들이고 수정했어요. 더 개선할 점이 있으면 알려주세요!'"
+    confidence: 0.75
+    rationale: "S5: 방어적 태도는 성장을 저해"
+
+  - rule_id: "S5_R4_repeated_same_mistakes"
+    priority: 100
+    description: "같은 피드백을 여러 번 받는데도 개선하지 못하는 패턴 탐지"
+    persona_id: 19
+    category: "follow_up_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "return_note_response"
+      - field: "same_feedback_count"
+        operator: ">="
+        value: 3
+      - field: "improvement_on_feedback"
+        operator: "=="
+        value: false
+    action:
+      - "detect: 'repeated_same_mistakes_pattern'"
+      - "strategy: 'feedback_checklist'"
+      - "message: '받은 피드백 목록 만들기 → 오답노트 쓸 때마다 체크'"
+      - "check_point: '체크리스트를 만들었는지, 같은 실수가 줄었는지 확인'"
+      - "teacher_dialog: '선생님, 피드백 체크리스트를 만들어서 매번 확인하고 있어요. 실수가 줄었는지 봐주세요!'"
+    confidence: 0.90
+    rationale: "S5: 반복 실수는 체계적 점검으로 방지"
+
+  - rule_id: "S5_R5_partial_modification"
+    priority: 80
+    description: "피드백의 일부만 수정하고 나머지는 무시하는 패턴 탐지"
+    persona_id: 20
+    category: "ineffective_method"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "return_note_response"
+      - field: "feedback_implementation_rate"
+        operator: "<"
+        value: 0.6
+      - field: "partial_modification"
+        operator: "=="
+        value: true
+    action:
+      - "detect: 'partial_modification_pattern'"
+      - "strategy: 'full_feedback_implementation'"
+      - "message: '피드백 항목마다 수정 완료 표시 → 모두 체크 후 제출'"
+      - "check_point: '모든 피드백을 반영했는지 확인'"
+      - "teacher_dialog: '선생님, 피드백 항목을 하나씩 체크하며 전부 수정했어요. 빠진 게 없는지 확인해주세요!'"
+    confidence: 0.75
+    rationale: "S5: 부분 수정은 완전한 개선이 아님"
+
+  # ============================================
+  # 복합 룰 (Complex Rules)
+  # ============================================
+
+  - rule_id: "C1_avoidance_surface_combination"
+    priority: 95
+    description: "회피와 표면적 분석이 결합된 복합 패턴"
+    category: "complex"
+    conditions:
+      - OR:
+          - AND:
+              - field: "category"
+                operator: "=="
+                value: "avoidance"
+              - field: "pattern_count"
+                operator: ">="
+                value: 2
+          - AND:
+              - field: "category"
+                operator: "=="
+                value: "surface_analysis"
+              - field: "consecutive_occurrences"
+                operator: ">="
+                value: 3
+    action:
+      - "analyze: 'avoidance_surface_combination'"
+      - "strategy: 'comprehensive_note_guidance'"
+      - "message: '오답노트 작성 워크숍 → 템플릿 + 원인분석 + 재풀이 통합 훈련'"
+      - "recommend: 'structured_note_training'"
+    confidence: 0.90
+    rationale: "회피와 표면적 분석 결합은 오답노트 무용화의 주원인"
+
+  - rule_id: "C2_emotional_block_chain"
+    priority: 95
+    description: "감정적 장벽이 다른 문제로 확산되는 패턴"
+    category: "complex"
+    conditions:
+      - AND:
+          - field: "category"
+            operator: "=="
+            value: "emotional_block"
+          - field: "spread_to_other_areas"
+            operator: "=="
+            value: true
+    action:
+      - "analyze: 'emotional_block_chain'"
+      - "strategy: 'emotional_support_first'"
+      - "message: '감정 먼저 다루기 → 작은 성공 경험 → 자신감 회복 후 본격 분석'"
+      - "recommend: 'psychological_support_program'"
+    confidence: 0.88
+    rationale: "감정적 장벽은 학습 전반에 영향"
+
+  - rule_id: "C3_follow_up_failure_chronic"
+    priority: 92
+    description: "후속 조치 실패가 만성화된 패턴"
+    category: "complex"
+    conditions:
+      - AND:
+          - field: "category"
+            operator: "=="
+            value: "follow_up_failure"
+          - field: "chronic_pattern_duration"
+            operator: ">"
+            value: 30
+    action:
+      - "analyze: 'follow_up_failure_chronic'"
+      - "strategy: 'habit_formation_program'"
+      - "message: '오답노트 습관 형성 프로그램 → 매일 5분 복습 → 21일 챌린지'"
+      - "recommend: 'habit_building_challenge'"
+    confidence: 0.85
+    rationale: "만성적 후속 조치 실패는 습관 재형성 필요"
+
+  - rule_id: "C4_multiple_category_crisis"
+    priority: 98
+    description: "3개 이상 카테고리에서 문제가 발생하는 심각한 상황"
+    category: "complex"
+    conditions:
+      - AND:
+          - field: "problem_categories_count"
+            operator: ">="
+            value: 3
+          - field: "note_effectiveness_score"
+            operator: "<"
+            value: 0.3
+    action:
+      - "analyze: 'multiple_category_crisis'"
+      - "strategy: 'comprehensive_intervention'"
+      - "message: '오답노트 종합 진단 → 개인 맞춤 개선 플랜 → 1:1 코칭'"
+      - "recommend: 'one_on_one_coaching'"
+    confidence: 0.95
+    rationale: "다중 카테고리 문제는 집중적 개입 필요"
+
+  - rule_id: "C5_feedback_loop_breakdown"
+    priority: 90
+    description: "선생님-학생 피드백 순환이 작동하지 않는 패턴"
+    category: "complex"
+    conditions:
+      - AND:
+          - field: "feedback_response_rate"
+            operator: "<"
+            value: 0.3
+          - field: "communication_breakdown"
+            operator: "=="
+            value: true
+    action:
+      - "analyze: 'feedback_loop_breakdown'"
+      - "strategy: 'communication_restoration'"
+      - "message: '피드백 소통 복원 → 짧은 피드백으로 시작 → 점진적 확대'"
+      - "recommend: 'gradual_feedback_rebuilding'"
+    confidence: 0.85
+    rationale: "피드백 순환 복원은 오답노트 효과의 핵심"
+
+  # ============================================
+  # 기본 룰 (Default Rule)
+  # ============================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "analyze: 'basic_note_quality_check'"
+    - "message: '오답노트를 잘 작성하고 있네요! 궁금한 점이 있으면 언제든 질문해주세요.'"
+  confidence: 0.5
+  rationale: "매칭되는 패턴이 없을 때 기본 지원"

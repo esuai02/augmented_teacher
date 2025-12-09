@@ -1,0 +1,45 @@
+# C_crisis Recovery Transition Templates
+# 위기 상태에서 회복 전환 템플릿
+# Variables: {{student_name}}, {{improvement_sign}}
+
+---
+
+## noticing_improvement
+조금 나아진 것 같아요.
+숨이 더 편해지셨나요?
+
+---
+
+## gentle_check
+지금 기분이 어떠세요?
+아까보다 조금 나아졌나요?
+
+---
+
+## acknowledge_progress
+잘하셨어요.
+이렇게 힘든 순간을 버텨내신 거예요.
+대단해요.
+
+---
+
+## gradual_return
+천천히요, 서두르지 마세요.
+필요한 만큼 시간을 가지세요.
+
+---
+
+## safety_plan
+나중에 이런 순간이 또 오면
+어떻게 하면 좋을지 같이 생각해볼까요?
+
+미리 준비해두면 도움이 돼요.
+
+---
+
+## closing_support
+오늘 정말 힘드셨을 텐데
+잘 버텨주셨어요.
+
+언제든 힘들면 다시 이야기해요.
+항상 여기 있을게요.

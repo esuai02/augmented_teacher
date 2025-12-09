@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수학 메타인지 도우미</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg my-8">
+        <h1 class="text-2xl font-bold text-center text-gray-800">수학 공부 도우미</h1>
+        <p class="text-center text-gray-600 mt-2">내가 겪고 있는 상황을 선택해봐요!</p>
+        
+        <div class="mt-6 grid grid-cols-1 gap-4" id="problem-buttons">
+            <button class="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 flex items-center text-left">
+                <div class="text-4xl mr-4">😵</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-gray-800">집중이 잘 안돼요</h3>
+                    <p class="text-gray-600 text-sm">수학 문제를 풀 때 다른 생각이 자꾸 떠올라요</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            
+            <button class="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 flex items-center text-left">
+                <div class="text-4xl mr-4">🤔</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-gray-800">이해가 어려워요</h3>
+                    <p class="text-gray-600 text-sm">공식은 외웠는데 문제에 적용하기 어려워요</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            
+            <button class="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 flex items-center text-left">
+                <div class="text-4xl mr-4">😓</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-gray-800">금방 잊어버려요</h3>
+                    <p class="text-gray-600 text-sm">오늘 배운 내용을 내일이면 까먹어요</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+            
+            <button class="bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-all duration-200 flex items-center text-left">
+                <div class="text-4xl mr-4">😱</div>
+                <div class="flex-1">
+                    <h3 class="font-bold text-lg text-gray-800">양이 너무 많아요</h3>
+                    <p class="text-gray-600 text-sm">시험 범위가 많아서 어떻게 공부해야 할지 모르겠어요</p>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+            </button>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-500">버튼을 클릭하면 해당 문제에 맞는 학습 방법을 안내해 드립니다.</p>
+        </div>
+    </div>
+    
+    <script>
+        // 버튼에 이벤트 리스너 추가
+        document.querySelectorAll("#problem-buttons button").forEach(button => {
+            button.addEventListener("click", function() {
+                alert("선택한 문제에 대한 학습 방법을 준비 중입니다! 조금만 기다려주세요.");
+            });
+        });
+    </script>
+</body>
+</html> 

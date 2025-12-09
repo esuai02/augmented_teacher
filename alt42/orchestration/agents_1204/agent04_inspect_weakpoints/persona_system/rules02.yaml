@@ -1,0 +1,917 @@
+# ============================================
+# Agent04 유형학습 페르소나 기반 룰 엔진
+# ============================================
+# 유형별 문제 학습 시 발생하는 인지관성(Cognitive Inertia) 패턴을
+# 탐지하고 맞춤형 개입 전략을 제공합니다.
+#
+# @package AugmentedTeacher\Agent04\PersonaSystem
+# @version 2.0
+# @since 2025-12-03
+# ============================================
+
+version: "2.0"
+scenario: "type_learning"
+description: "유형학습 중 인지관성 패턴 탐지 및 개입 룰"
+
+# ============================================
+# 메타데이터
+# ============================================
+metadata:
+  sub_items:
+    - type_efficacy          # S1: 대표유형 효능감 인식
+    - weekly_goal            # S2: 주간목표
+    - daily_goal             # S3: 오늘목표
+    - pomodoro_selection     # S4: 포모도로
+    - method_selection       # S5: 방법선택
+    - order_selection        # S6: 순서선택
+    - interval_selection     # S7: 시간간격 선택
+    - supplementary_learning # S8: 보충학습
+    - hint_setting           # S9: 힌트설정
+    - qa_interaction         # S10: 질의응답
+
+  categories:
+    - goal_setting           # 목표 설정 문제
+    - planning_failure       # 계획 실패
+    - method_confusion       # 방법 혼란
+    - time_management        # 시간 관리 실패
+    - dependency             # 의존성
+    - avoidance              # 회피 성향
+    - inefficiency           # 비효율적 학습
+
+# ============================================
+# 룰 정의
+# ============================================
+rules:
+
+  # ------------------------------------------
+  # S1: 대표유형 효능감 인식 (type_efficacy)
+  # ------------------------------------------
+  - rule_id: "S1_R1_type_fear"
+    priority: 100
+    description: "새로운 문제 유형을 마주하면 시도 전에 포기하는 패턴 탐지"
+    persona_id: 1
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "type_efficacy"
+      - field: "new_type_attempt_rate"
+        operator: "lt"
+        value: 0.3
+      - field: "skip_before_try_count"
+        operator: "gt"
+        value: 3
+    action:
+      type: "intervention"
+      strategy: "type_familiarization"
+      message: "새 유형은 먼저 해설 읽기 → 비슷한 쉬운 문제 3개 먼저 풀기 → 자신감 쌓고 어려운 문제 도전"
+      check_point: "쉬운 문제 3개를 풀었는지, 자신감이 생겼는지 확인"
+      teacher_dialog: "선생님, 새 유형이 무서웠는데 쉬운 문제 3개를 먼저 풀었어요. 이제 좀 자신감이 생겼는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "새 유형에 대한 두려움을 점진적 노출로 완화"
+
+  - rule_id: "S1_R2_past_failure_fixation"
+    priority: 100
+    description: "예전에 틀렸던 유형을 계속 못 할 것이라 믿는 패턴 탐지"
+    persona_id: 2
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "type_efficacy"
+      - field: "failed_type_retry_rate"
+        operator: "lt"
+        value: 0.2
+      - field: "negative_self_statement"
+        operator: "contains"
+        value: "못해"
+    action:
+      type: "intervention"
+      strategy: "retry_challenge"
+      message: "예전에 틀렸던 유형 1개 선택 → 다시 공부하고 풀기 → 성공하면 '극복 일지'에 기록"
+      check_point: "극복 일지에 기록했는지, 성공 경험을 했는지 확인"
+      teacher_dialog: "선생님, 예전에 못 풀던 유형을 다시 도전해서 성공했어요! 극복 일지에 기록했는데 봐주세요!"
+    confidence: 0.85
+    rationale: "과거 실패의 고착을 성공 경험으로 재구성"
+
+  - rule_id: "S1_R3_self_underestimation"
+    priority: 80
+    description: "실제로는 잘하면서도 유형 학습 능력이 부족하다고 믿는 패턴 탐지"
+    persona_id: 3
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "type_efficacy"
+      - field: "actual_success_rate"
+        operator: "gt"
+        value: 0.6
+      - field: "self_efficacy_score"
+        operator: "lt"
+        value: 0.4
+    action:
+      type: "intervention"
+      strategy: "evidence_collection"
+      message: "지난주 맞힌 유형 문제들 다시 보기 → '내가 잘한 것' 리스트 작성"
+      check_point: "리스트에 3개 이상 적었는지, 객관적으로 평가했는지 확인"
+      teacher_dialog: "선생님, '내가 잘한 것' 리스트를 만들었어요. 제가 생각보다 잘하고 있는 건지 확인해주세요!"
+    confidence: 0.80
+    rationale: "객관적 증거로 자기 인식의 왜곡을 교정"
+
+  # ------------------------------------------
+  # S2: 주간목표 (weekly_goal)
+  # ------------------------------------------
+  - rule_id: "S2_R1_unrealistic_goal"
+    priority: 100
+    description: "달성 불가능한 높은 주간 목표를 세우고 좌절하는 패턴 탐지"
+    persona_id: 4
+    category: "goal_setting"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "weekly_goal"
+      - field: "weekly_goal_achievement_rate"
+        operator: "lt"
+        value: 0.4
+      - field: "goal_amount"
+        operator: "gt"
+        value: "average_capability * 1.5"
+    action:
+      type: "intervention"
+      strategy: "seventy_percent_rule"
+      message: "할 수 있다고 생각하는 양의 70%만 목표로 설정 → 달성 후 추가 목표"
+      check_point: "목표의 70%를 달성했는지, 추가 목표를 세웠는지 확인"
+      teacher_dialog: "선생님, 이번 주는 70% 목표로 세웠어요. 무리하지 않고 달성했는데, 다음 주 목표도 같이 봐주세요!"
+    confidence: 0.85
+    rationale: "현실적 목표 설정으로 성공 경험 축적"
+
+  - rule_id: "S2_R2_goal_absence"
+    priority: 100
+    description: "구체적인 주간 목표 없이 막연히 공부하는 패턴 탐지"
+    persona_id: 5
+    category: "planning_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "weekly_goal"
+      - field: "has_weekly_goal"
+        operator: "eq"
+        value: false
+      - field: "study_direction_clarity"
+        operator: "lt"
+        value: 0.3
+    action:
+      type: "intervention"
+      strategy: "smart_goal"
+      message: "SMART 목표 설정 → 구체적, 측정 가능, 달성 가능, 관련성, 시간 제한 → 5가지 충족하는 목표 작성"
+      check_point: "목표가 SMART 기준을 충족하는지 확인"
+      teacher_dialog: "선생님, SMART 기준으로 주간 목표를 세웠어요. 잘 세웠는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "체계적 목표 설정 프레임워크 제공"
+
+  - rule_id: "S2_R3_goal_rigidity"
+    priority: 80
+    description: "상황이 바뀌어도 처음 세운 목표를 고집하는 패턴 탐지"
+    persona_id: 6
+    category: "goal_setting"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "weekly_goal"
+      - field: "goal_modification_count"
+        operator: "eq"
+        value: 0
+      - field: "situation_change_detected"
+        operator: "eq"
+        value: true
+    action:
+      type: "intervention"
+      strategy: "midweek_review"
+      message: "주 중간에 목표 달성도 확인 → 필요시 목표 조정"
+      check_point: "수요일에 점검했는지, 합리적으로 조정했는지 확인"
+      teacher_dialog: "선생님, 수요일에 점검해보니 목표를 조정할 필요가 있었어요. 제 조정이 적절한지 확인해주세요!"
+    confidence: 0.75
+    rationale: "유연한 목표 관리 능력 개발"
+
+  # ------------------------------------------
+  # S3: 오늘목표 (daily_goal)
+  # ------------------------------------------
+  - rule_id: "S3_R1_overload_goal"
+    priority: 100
+    description: "하루에 소화할 수 없는 양의 유형을 학습하려는 패턴 탐지"
+    persona_id: 7
+    category: "goal_setting"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "daily_goal"
+      - field: "daily_new_types_planned"
+        operator: "gt"
+        value: 5
+      - field: "daily_completion_rate"
+        operator: "lt"
+        value: 0.5
+    action:
+      type: "intervention"
+      strategy: "three_type_rule"
+      message: "하루 새 유형은 최대 3개까지 → 나머지는 복습에 할당"
+      check_point: "3유형 규칙을 지켰는지, 복습 시간을 확보했는지 확인"
+      teacher_dialog: "선생님, 오늘 새 유형 3개만 공부하고 복습 시간을 확보했어요. 적당한 양인지 확인해주세요!"
+    confidence: 0.85
+    rationale: "인지 부하 관리로 학습 효율 극대화"
+
+  - rule_id: "S3_R2_planless_start"
+    priority: 100
+    description: "오늘 뭘 할지 정하지 않고 일단 책을 펴는 패턴 탐지"
+    persona_id: 8
+    category: "planning_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "daily_goal"
+      - field: "has_daily_plan"
+        operator: "eq"
+        value: false
+      - field: "session_start_without_goal"
+        operator: "eq"
+        value: true
+    action:
+      type: "intervention"
+      strategy: "three_minute_plan"
+      message: "공부 시작 전 3분간 오늘 목표 3가지 적기 → 완료 시 체크"
+      check_point: "3분 계획을 세웠는지, 목표를 달성했는지 확인"
+      teacher_dialog: "선생님, 오늘 시작 전에 3분 계획을 세웠어요. 목표 3가지를 다 달성했는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "최소한의 계획으로 학습 방향성 확보"
+
+  - rule_id: "S3_R3_no_completion_check"
+    priority: 80
+    description: "오늘 목표를 세웠지만 달성 여부를 확인하지 않는 패턴 탐지"
+    persona_id: 9
+    category: "planning_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "daily_goal"
+      - field: "has_daily_plan"
+        operator: "eq"
+        value: true
+      - field: "completion_check_done"
+        operator: "eq"
+        value: false
+    action:
+      type: "intervention"
+      strategy: "end_review"
+      message: "학습 종료 5분 전 목표 달성 체크 → 미달성 시 내일 목표에 반영"
+      check_point: "종료 점검을 했는지, 미달성 항목을 반영했는지 확인"
+      teacher_dialog: "선생님, 종료 점검을 했더니 1개는 내일로 미뤄야 할 것 같아요. 괜찮을까요?"
+    confidence: 0.75
+    rationale: "목표-실행-평가의 완전한 사이클 구축"
+
+  # ------------------------------------------
+  # S4: 포모도로 (pomodoro_selection)
+  # ------------------------------------------
+  - rule_id: "S4_R1_break_skip"
+    priority: 100
+    description: "포모도로 휴식 시간을 건너뛰고 계속 공부하다 번아웃되는 패턴 탐지"
+    persona_id: 10
+    category: "time_management"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "pomodoro_selection"
+      - field: "break_skip_rate"
+        operator: "gt"
+        value: 0.5
+      - field: "late_session_efficiency"
+        operator: "lt"
+        value: 0.4
+    action:
+      type: "intervention"
+      strategy: "mandatory_break_alarm"
+      message: "25분 후 반드시 5분 휴식 알람 설정 → 휴식 중 일어나 스트레칭"
+      check_point: "알람을 설정했는지, 휴식을 지켰는지 확인"
+      teacher_dialog: "선생님, 오늘 포모도로 4세트 하면서 휴식을 모두 지켰어요. 집중력이 더 좋아진 것 같아요!"
+    confidence: 0.85
+    rationale: "규칙적 휴식으로 지속 가능한 집중력 유지"
+
+  - rule_id: "S4_R2_pomodoro_abandonment"
+    priority: 100
+    description: "25분을 채우지 못하고 중간에 포기하는 패턴 탐지"
+    persona_id: 11
+    category: "time_management"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "pomodoro_selection"
+      - field: "pomodoro_completion_rate"
+        operator: "lt"
+        value: 0.5
+      - field: "average_focus_duration"
+        operator: "lt"
+        value: 15
+    action:
+      type: "intervention"
+      strategy: "mini_pomodoro"
+      message: "처음엔 15분으로 시작 → 성공하면 5분씩 늘려 25분까지"
+      check_point: "15분을 완료했는지, 점진적으로 늘리고 있는지 확인"
+      teacher_dialog: "선생님, 15분 포모도로로 시작했더니 성공했어요! 이제 20분으로 늘려볼까요?"
+    confidence: 0.85
+    rationale: "점진적 목표로 성공 경험 축적"
+
+  - rule_id: "S4_R3_distraction_vulnerable"
+    priority: 80
+    description: "포모도로 중 외부 방해에 쉽게 집중이 끊기는 패턴 탐지"
+    persona_id: 12
+    category: "time_management"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "pomodoro_selection"
+      - field: "interruption_count_per_session"
+        operator: "gt"
+        value: 3
+      - field: "distraction_source"
+        operator: "contains"
+        value: "phone"
+    action:
+      type: "intervention"
+      strategy: "distraction_blocking"
+      message: "포모도로 시작 시 핸드폰 무음 + 다른 방 → 방해 요소 메모해두고 휴식 시간에 처리"
+      check_point: "방해 차단을 실천했는지, 집중 시간이 늘었는지 확인"
+      teacher_dialog: "선생님, 핸드폰을 다른 방에 두고 공부했더니 집중이 잘 됐어요!"
+    confidence: 0.75
+    rationale: "환경 통제로 외부 방해 최소화"
+
+  # ------------------------------------------
+  # S5: 방법선택 (method_selection)
+  # ------------------------------------------
+  - rule_id: "S5_R1_blind_repetition"
+    priority: 100
+    description: "효과적인 방법 없이 같은 유형을 무작정 반복만 하는 패턴 탐지"
+    persona_id: 13
+    category: "inefficiency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "method_selection"
+      - field: "same_method_repetition"
+        operator: "gt"
+        value: 5
+      - field: "improvement_rate"
+        operator: "lt"
+        value: 0.1
+    action:
+      type: "intervention"
+      strategy: "method_experiment"
+      message: "같은 유형 3문제를 다른 방법으로 풀기 → 가장 효율적인 방법 선택"
+      check_point: "3가지 방법을 시도했는지, 최적 방법을 찾았는지 확인"
+      teacher_dialog: "선생님, 같은 유형을 3가지 방법으로 풀어봤어요. 어떤 방법이 가장 좋은지 확인해주세요!"
+    confidence: 0.85
+    rationale: "메타인지적 방법 탐색으로 효율적 학습"
+
+  - rule_id: "S5_R2_familiar_method_fixation"
+    priority: 80
+    description: "더 효율적인 방법이 있어도 익숙한 방법만 고집하는 패턴 탐지"
+    persona_id: 14
+    category: "method_confusion"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "method_selection"
+      - field: "new_method_trial_rate"
+        operator: "lt"
+        value: 0.1
+      - field: "alternative_methods_available"
+        operator: "eq"
+        value: true
+    action:
+      type: "intervention"
+      strategy: "new_method_challenge"
+      message: "일주일에 1개 새로운 풀이법 시도 → 효과 비교 기록"
+      check_point: "새 방법을 시도했는지, 비교 기록을 했는지 확인"
+      teacher_dialog: "선생님, 이번 주 새 풀이법을 시도해봤어요. 기존 방법과 비교해서 어떤지 봐주세요!"
+    confidence: 0.75
+    rationale: "학습 방법의 레퍼토리 확장"
+
+  - rule_id: "S5_R3_method_confusion"
+    priority: 100
+    description: "여러 방법 중 어떤 것을 선택해야 할지 결정하지 못하는 패턴 탐지"
+    persona_id: 15
+    category: "method_confusion"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "method_selection"
+      - field: "decision_time"
+        operator: "gt"
+        value: 180
+      - field: "method_switching_during_problem"
+        operator: "gt"
+        value: 2
+    action:
+      type: "intervention"
+      strategy: "decision_tree"
+      message: "유형별 최적 풀이법 정리표 만들기 → 문제 보면 트리 따라 방법 선택"
+      check_point: "결정 트리를 만들었는지, 활용하고 있는지 확인"
+      teacher_dialog: "선생님, 방법 결정 트리를 만들었어요. 제가 정리한 게 맞는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "체계적 의사결정 프레임워크 구축"
+
+  # ------------------------------------------
+  # S6: 순서선택 (order_selection)
+  # ------------------------------------------
+  - rule_id: "S6_R1_easy_first_only"
+    priority: 100
+    description: "항상 쉬운 유형만 먼저 풀고 어려운 유형을 미루는 패턴 탐지"
+    persona_id: 16
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "order_selection"
+      - field: "easy_first_rate"
+        operator: "gt"
+        value: 0.9
+      - field: "hard_type_completion_rate"
+        operator: "lt"
+        value: 0.3
+    action:
+      type: "intervention"
+      strategy: "sandwich_order"
+      message: "쉬움 → 어려움 → 쉬움 순서로 배치 → 어려운 것을 중간에 끼워넣기"
+      check_point: "샌드위치 순서를 지켰는지, 어려운 유형을 풀었는지 확인"
+      teacher_dialog: "선생님, 샌드위치 순서로 공부했더니 어려운 유형도 풀 수 있었어요!"
+    confidence: 0.85
+    rationale: "어려운 문제 회피를 구조적으로 방지"
+
+  - rule_id: "S6_R2_order_indifference"
+    priority: 80
+    description: "문제 풀이 순서를 전혀 고려하지 않고 무작위로 푸는 패턴 탐지"
+    persona_id: 17
+    category: "planning_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "order_selection"
+      - field: "has_order_strategy"
+        operator: "eq"
+        value: false
+      - field: "random_order_pattern"
+        operator: "eq"
+        value: true
+    action:
+      type: "intervention"
+      strategy: "strategic_order"
+      message: "난이도 파악 후 순서 결정 → 집중력 높을 때 어려운 것 배치"
+      check_point: "전략적으로 순서를 정했는지, 효율이 높아졌는지 확인"
+      teacher_dialog: "선생님, 오늘 순서를 전략적으로 정하고 공부했어요. 효율이 좋아졌는지 확인해주세요!"
+    confidence: 0.75
+    rationale: "전략적 순서 배치로 학습 효율 향상"
+
+  - rule_id: "S6_R3_sequential_fixation"
+    priority: 60
+    description: "무조건 문제 번호 순서대로만 풀려고 하는 패턴 탐지"
+    persona_id: 18
+    category: "method_confusion"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "order_selection"
+      - field: "strict_sequential_order"
+        operator: "eq"
+        value: true
+      - field: "stuck_time_on_problem"
+        operator: "gt"
+        value: 600
+    action:
+      type: "intervention"
+      strategy: "flexible_order"
+      message: "어려우면 표시하고 다음으로 → 나중에 돌아오기"
+      check_point: "유연하게 순서를 바꿨는지, 막힘 없이 진행했는지 확인"
+      teacher_dialog: "선생님, 어려운 문제는 표시하고 넘어갔다가 나중에 풀었어요. 이 방법이 괜찮은가요?"
+    confidence: 0.70
+    rationale: "유연한 문제 해결 전략 개발"
+
+  # ------------------------------------------
+  # S7: 시간간격 선택 (interval_selection)
+  # ------------------------------------------
+  - rule_id: "S7_R1_cramming"
+    priority: 100
+    description: "간격 없이 한꺼번에 몰아서 공부하고 금방 잊어버리는 패턴 탐지"
+    persona_id: 19
+    category: "inefficiency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "interval_selection"
+      - field: "massed_practice_rate"
+        operator: "gt"
+        value: 0.8
+      - field: "retention_rate_7days"
+        operator: "lt"
+        value: 0.4
+    action:
+      type: "intervention"
+      strategy: "spaced_repetition"
+      message: "같은 유형을 1일, 3일, 7일 간격으로 복습 → 복습 일정표 작성"
+      check_point: "간격 반복을 지켰는지, 기억이 더 오래가는지 확인"
+      teacher_dialog: "선생님, 간격 반복 일정표를 만들어서 복습했어요. 기억이 더 잘 되는 것 같아요!"
+    confidence: 0.90
+    rationale: "간격 효과(spacing effect)를 활용한 장기 기억 강화"
+
+  - rule_id: "S7_R2_long_session_inefficiency"
+    priority: 100
+    description: "오래 앉아있지만 실제 집중 시간은 짧은 패턴 탐지"
+    persona_id: 20
+    category: "time_management"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "interval_selection"
+      - field: "total_session_time"
+        operator: "gt"
+        value: 180
+      - field: "effective_focus_ratio"
+        operator: "lt"
+        value: 0.4
+    action:
+      type: "intervention"
+      strategy: "focus_time_tracking"
+      message: "타이머로 실제 집중 시간 기록 → 집중력 떨어지면 휴식 후 재시작"
+      check_point: "집중 시간을 측정했는지, 적절히 휴식을 취했는지 확인"
+      teacher_dialog: "선생님, 집중 시간을 측정해봤더니 실제로 45분밖에 안 됐어요. 어떻게 늘릴 수 있을까요?"
+    confidence: 0.85
+    rationale: "실제 집중 시간 인식으로 효율적 학습"
+
+  - rule_id: "S7_R3_review_interval_neglect"
+    priority: 80
+    description: "복습 타이밍을 놓쳐 배운 내용을 금방 잊어버리는 패턴 탐지"
+    persona_id: 21
+    category: "planning_failure"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "interval_selection"
+      - field: "review_schedule_adherence"
+        operator: "lt"
+        value: 0.3
+      - field: "forgetting_curve_steep"
+        operator: "eq"
+        value: true
+    action:
+      type: "intervention"
+      strategy: "review_reminder"
+      message: "학습 후 1일, 7일 복습 알람 설정 → 알람 울리면 바로 복습"
+      check_point: "알람을 설정했는지, 알람에 맞춰 복습했는지 확인"
+      teacher_dialog: "선생님, 복습 알람을 설정하고 지켜봤어요. 이전보다 기억이 더 잘 나요!"
+    confidence: 0.80
+    rationale: "망각 곡선에 맞춘 최적 복습 타이밍"
+
+  # ------------------------------------------
+  # S8: 보충학습 (supplementary_learning)
+  # ------------------------------------------
+  - rule_id: "S8_R1_supplementary_avoidance"
+    priority: 100
+    description: "부족한 부분이 있어도 보충 학습을 미루거나 피하는 패턴 탐지"
+    persona_id: 22
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "supplementary_learning"
+      - field: "weak_area_study_rate"
+        operator: "lt"
+        value: 0.2
+      - field: "supplementary_delay_days"
+        operator: "gt"
+        value: 7
+    action:
+      type: "intervention"
+      strategy: "supplementary_first"
+      message: "새 유형 학습 전 부족한 유형 1개 먼저 보충 → 보충 완료 체크"
+      check_point: "보충을 먼저 했는지, 기본기가 탄탄해졌는지 확인"
+      teacher_dialog: "선생님, 새 유형 전에 부족한 유형을 먼저 보충했어요. 기본기가 좋아졌는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "취약점 우선 해결로 학습 토대 강화"
+
+  - rule_id: "S8_R2_excessive_supplementary"
+    priority: 80
+    description: "필요 없는 것까지 모두 보충하려다 시간을 낭비하는 패턴 탐지"
+    persona_id: 23
+    category: "inefficiency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "supplementary_learning"
+      - field: "supplementary_scope"
+        operator: "gt"
+        value: "necessary_scope * 2"
+      - field: "time_efficiency"
+        operator: "lt"
+        value: 0.5
+    action:
+      type: "intervention"
+      strategy: "priority_supplementary"
+      message: "틀린 문제 분석 후 가장 약한 유형 3개만 선택 → 집중 보충"
+      check_point: "3개를 선택했는지, 효율적으로 보충했는지 확인"
+      teacher_dialog: "선생님, 가장 약한 유형 3개만 골라서 집중 보충했어요. 선택이 맞는지 확인해주세요!"
+    confidence: 0.75
+    rationale: "선택과 집중으로 효율적 보충"
+
+  - rule_id: "S8_R3_ineffective_supplementary"
+    priority: 80
+    description: "보충 학습을 하지만 효과적인 방법을 모르는 패턴 탐지"
+    persona_id: 24
+    category: "method_confusion"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "supplementary_learning"
+      - field: "supplementary_effort"
+        operator: "gt"
+        value: 0.7
+      - field: "supplementary_effectiveness"
+        operator: "lt"
+        value: 0.3
+    action:
+      type: "intervention"
+      strategy: "three_step_supplementary"
+      message: "1)개념 다시 읽기 2)예제 따라 풀기 3)비슷한 문제 3개 풀기"
+      check_point: "3단계를 따랐는지, 이해가 향상됐는지 확인"
+      teacher_dialog: "선생님, 보충 3단계대로 공부했어요. 이해가 좋아졌는지 확인해주세요!"
+    confidence: 0.80
+    rationale: "체계적 보충 방법론 제공"
+
+  # ------------------------------------------
+  # S9: 힌트설정 (hint_setting)
+  # ------------------------------------------
+  - rule_id: "S9_R1_hint_dependency"
+    priority: 100
+    description: "힌트 없이는 문제를 시도조차 하지 않으려는 패턴 탐지"
+    persona_id: 25
+    category: "dependency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "hint_setting"
+      - field: "hint_before_attempt_rate"
+        operator: "gt"
+        value: 0.7
+      - field: "independent_solve_rate"
+        operator: "lt"
+        value: 0.2
+    action:
+      type: "intervention"
+      strategy: "five_minute_first"
+      message: "힌트 보기 전 최소 5분 혼자 시도 → 5분 후에도 모르면 힌트 1개만"
+      check_point: "5분을 시도했는지, 힌트 사용을 줄였는지 확인"
+      teacher_dialog: "선생님, 힌트 보기 전에 5분 먼저 시도했어요. 혼자 푼 문제가 늘었는지 확인해주세요!"
+    confidence: 0.85
+    rationale: "독립적 문제 해결 능력 개발"
+
+  - rule_id: "S9_R2_hint_refusal"
+    priority: 80
+    description: "필요한 상황에서도 힌트를 보지 않고 시간을 낭비하는 패턴 탐지"
+    persona_id: 26
+    category: "inefficiency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "hint_setting"
+      - field: "stuck_time_without_hint"
+        operator: "gt"
+        value: 600
+      - field: "hint_usage_rate"
+        operator: "lt"
+        value: 0.1
+    action:
+      type: "intervention"
+      strategy: "ten_minute_rule"
+      message: "10분 막히면 힌트 보기 → 힌트 보고 풀면 나중에 혼자 다시 풀기"
+      check_point: "10분 규칙을 지켰는지, 효율이 높아졌는지 확인"
+      teacher_dialog: "선생님, 10분 막혀서 힌트를 봤어요. 나중에 혼자 다시 풀어볼게요!"
+    confidence: 0.75
+    rationale: "효율적 힌트 활용으로 시간 낭비 방지"
+
+  - rule_id: "S9_R3_hint_overuse"
+    priority: 100
+    description: "힌트를 너무 쉽게 보고 학습 효과가 떨어지는 패턴 탐지"
+    persona_id: 27
+    category: "dependency"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "hint_setting"
+      - field: "hint_per_problem"
+        operator: "gt"
+        value: 2
+      - field: "quick_hint_check_rate"
+        operator: "gt"
+        value: 0.6
+    action:
+      type: "intervention"
+      strategy: "hint_coupon"
+      message: "하루 힌트 사용 3회로 제한 → 정말 필요할 때만 사용"
+      check_point: "힌트 사용을 3회 이내로 제한했는지 확인"
+      teacher_dialog: "선생님, 오늘 힌트를 2번만 사용했어요. 스스로 푸는 능력이 늘었나요?"
+    confidence: 0.85
+    rationale: "힌트 제한으로 자기 주도 학습 강화"
+
+  # ------------------------------------------
+  # S10: 질의응답 (qa_interaction)
+  # ------------------------------------------
+  - rule_id: "S10_R1_question_fear"
+    priority: 100
+    description: "유형 학습 중 모르는 것이 있어도 질문하기를 두려워하는 패턴 탐지"
+    persona_id: 28
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "qa_interaction"
+      - field: "question_frequency"
+        operator: "lt"
+        value: 0.1
+      - field: "confusion_without_asking"
+        operator: "gt"
+        value: 5
+    action:
+      type: "intervention"
+      strategy: "question_note"
+      message: "모르는 것 바로 적기 → 질문 시간에 노트 보며 질문"
+      check_point: "질문 노트를 작성했는지, 실제로 질문했는지 확인"
+      teacher_dialog: "선생님, 질문 노트에 적어뒀던 것들을 질문할게요!"
+    confidence: 0.85
+    rationale: "질문 부담 경감 및 체계적 질문 습관 형성"
+
+  - rule_id: "S10_R2_question_procrastination"
+    priority: 80
+    description: "질문을 나중에 하려다 결국 안 하게 되는 패턴 탐지"
+    persona_id: 29
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "qa_interaction"
+      - field: "question_intent_count"
+        operator: "gt"
+        value: 3
+      - field: "actual_question_count"
+        operator: "lt"
+        value: 1
+    action:
+      type: "intervention"
+      strategy: "immediate_question"
+      message: "의문이 생기면 24시간 내 질문 → 질문 예약 시스템 활용"
+      check_point: "24시간 내에 질문했는지 확인"
+      teacher_dialog: "선생님, 어제 모르는 게 생겨서 바로 질문하러 왔어요!"
+    confidence: 0.75
+    rationale: "즉시 질문으로 학습 공백 최소화"
+
+  - rule_id: "S10_R3_unclear_question"
+    priority: 80
+    description: "질문을 하지만 무엇이 모르는지 명확하게 표현하지 못하는 패턴 탐지"
+    persona_id: 30
+    category: "method_confusion"
+    conditions:
+      - field: "sub_item"
+        operator: "eq"
+        value: "qa_interaction"
+      - field: "question_clarity_score"
+        operator: "lt"
+        value: 0.4
+      - field: "question_reformulation_count"
+        operator: "gt"
+        value: 2
+    action:
+      type: "intervention"
+      strategy: "question_formula"
+      message: "'[유형] 중에서 [구체적 부분]이 [왜/어떻게] 모르겠어요' 형식으로 질문"
+      check_point: "질문 공식을 사용했는지, 명확하게 질문했는지 확인"
+      teacher_dialog: "선생님, 이차방정식 유형 중에서 판별식 사용 시점이 왜 이렇게 정해지는지 모르겠어요!"
+    confidence: 0.80
+    rationale: "구조화된 질문으로 명확한 의사소통"
+
+  # ============================================
+  # 복합 룰 (Complex Rules)
+  # ============================================
+  - rule_id: "C1_multiple_planning_failures"
+    priority: 95
+    description: "목표 설정과 계획 실패가 동시에 발생하는 복합 패턴"
+    category: "complex"
+    conditions:
+      or:
+        - and:
+            - field: "category"
+              operator: "eq"
+              value: "goal_setting"
+            - field: "pattern_count"
+              operator: "gte"
+              value: 2
+        - and:
+            - field: "category"
+              operator: "eq"
+              value: "planning_failure"
+            - field: "consecutive_failures"
+              operator: "gte"
+              value: 3
+    action:
+      type: "comprehensive_intervention"
+      strategy: "planning_system_overhaul"
+      message: "목표-계획 통합 워크숍 진행 → SMART 목표 + 3분 계획 + 종료 점검 일체화"
+    confidence: 0.90
+    rationale: "계획 관련 복합 문제의 체계적 해결"
+
+  - rule_id: "C2_time_management_crisis"
+    priority: 95
+    description: "시간 관리와 비효율적 학습이 결합된 복합 패턴"
+    category: "complex"
+    conditions:
+      and:
+        - field: "category"
+          operator: "in"
+          value: ["time_management", "inefficiency"]
+        - field: "combined_severity"
+          operator: "gte"
+          value: 0.7
+    action:
+      type: "comprehensive_intervention"
+      strategy: "time_efficiency_program"
+      message: "시간 효율 진단 → 포모도로 + 간격 반복 + 집중 시간 측정 통합 적용"
+    confidence: 0.88
+    rationale: "시간 활용 전반의 효율화"
+
+  - rule_id: "C3_dependency_avoidance_cycle"
+    priority: 92
+    description: "의존성과 회피가 상호 강화되는 악순환 패턴"
+    category: "complex"
+    conditions:
+      and:
+        - field: "dependency_score"
+          operator: "gt"
+          value: 0.6
+        - field: "avoidance_score"
+          operator: "gt"
+          value: 0.6
+    action:
+      type: "comprehensive_intervention"
+      strategy: "independence_building"
+      message: "자기주도 학습 단계별 프로그램 → 쉬운 것부터 독립적으로 → 점진적 난이도 상승"
+    confidence: 0.85
+    rationale: "의존-회피 악순환 끊기"
+
+  - rule_id: "C4_method_selection_paralysis"
+    priority: 90
+    description: "방법 혼란으로 인한 학습 정체 패턴"
+    category: "complex"
+    conditions:
+      and:
+        - field: "category"
+          operator: "eq"
+          value: "method_confusion"
+        - field: "learning_progress"
+          operator: "lt"
+          value: 0.3
+        - field: "time_spent"
+          operator: "gt"
+          value: "expected_time * 1.5"
+    action:
+      type: "comprehensive_intervention"
+      strategy: "method_decision_support"
+      message: "방법 결정 트리 + 방법 실험 + 효과 비교 기록 통합 시스템"
+    confidence: 0.85
+    rationale: "방법 선택 장애 극복"
+
+  - rule_id: "C5_comprehensive_learning_dysfunction"
+    priority: 98
+    description: "3개 이상의 카테고리에서 문제가 발생하는 심각한 학습 장애"
+    category: "complex"
+    conditions:
+      and:
+        - field: "problem_categories_count"
+          operator: "gte"
+          value: 3
+        - field: "overall_learning_efficiency"
+          operator: "lt"
+          value: 0.3
+    action:
+      type: "comprehensive_intervention"
+      strategy: "learning_reset"
+      message: "학습 진단 종합 검사 → 개인 맞춤 학습 플랜 재설계 → 1:1 코칭 배정"
+    confidence: 0.95
+    rationale: "심층 진단 및 맞춤형 개입 필요"
+
+  # ============================================
+  # 기본 룰 (Default Rule)
+  # ============================================
+  - rule_id: "default_rule"
+    priority: 0
+    description: "매칭되는 룰이 없을 때 적용되는 기본 응답"
+    conditions: []
+    action:
+      type: "default"
+      strategy: "general_support"
+      message: "유형학습을 열심히 하고 있네요! 혹시 어려운 점이 있으면 언제든 말씀해주세요."
+    confidence: 1.0
+    rationale: "기본 지원 메시지"

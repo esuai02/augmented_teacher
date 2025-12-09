@@ -1,0 +1,82 @@
+﻿/* 여기에 각 요소에 대한 스타일을 추가합니다. */
+
+/* 예시 */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9fafb;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #fff;
+    padding: 1em;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand .icon {
+    font-size: 1.5em;
+    color: #2563eb;
+}
+
+.navbar-menu a {
+    margin-left: 1em;
+    text-decoration: none;
+    color: #4b5563;
+}
+
+.navbar-menu a.active {
+    color: #fff;
+    background-color: #2563eb;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+}
+
+.card {
+    background-color: #fff;
+    padding: 1em;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75em 1em;
+    background-color: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0.5em;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+}
+
+.btn-disabled {
+    background-color: #d1d5db;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+.alert {
+    padding: 1em;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+}
+
+.alert-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}

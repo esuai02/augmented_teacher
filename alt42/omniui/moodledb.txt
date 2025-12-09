@@ -1,0 +1,7605 @@
+students/index.php
+1. DB 관련 상세정보
+로그 기록
+
+
+abessi_missionlog : 학생(studentid)이 페이지(studentindex)에 접속할 때 기록.
+
+
+사용자 정보
+
+
+mdl_user : 학생 이름(firstname, lastname) 조회.
+
+
+개념 노트
+
+
+abessi_messages : 최근 일주일간(mtype='audio') 복습 기록 조회 (제목, URL, 복습 횟수, 최근 시점).
+
+
+미션 관리
+
+
+abessi_mission : 최근 1년 이내 생성된 미션 목록 불러오기. (과목, 마감일, 합격 기준 점수, 완료 여부 등)
+
+
+abessi_curriculum : 미션에 해당하는 과목명/내용목록(contentslist) 확인.
+
+
+체크/완료 처리
+
+
+check.php 와 연동, 미션 완료/추가 상태 업데이트.
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+학생 개별 학습 진행 현황과 복습/미션 상태를 통합적으로 확인하고, 추가 미션을 설정하거나 완료 표시할 수 있는 메인 학습 화면.
+
+
+기능
+
+
+개념/심화/내신/수능 과목별 미션 목록 출력.
+
+
+최근 일주일간의 오디오 복습 내역(🎧 복습 기록) 표시.
+
+
+합격 점수 기준 제시 및 체크박스로 미션 완료 여부 갱신.
+
+
+미완료된 미션은 진행용 링크 제공, 완료된 미션은 ‘추가 학습’으로 표시.
+
+
+교사/관리자 권한일 경우 “귀가평가”, “오답노트 검사” 메뉴 노출.
+
+
+KTM 서술평가, SPEC Intelligence 결과 연동.
+
+
+장기 학습계획(후속 미션) 설정 가능.
+
+
+
+3. 포함된 연관 파일
+PHP 파일
+
+
+navbar.php : 상단 내비게이션 UI.
+
+
+SPEC Intelligence.php : 학습 평가/진단 기능.
+
+
+quicksidebar.php : 빠른 접근 사이드바.
+
+
+../LLM/postit.php : LLM 기반 학습 보조 기능.
+
+
+check.php, database.php : AJAX 요청 처리 (미션 완료/출결 등 업데이트).
+
+
+JS/CSS 라이브러리
+
+
+jQuery, Bootstrap, jQuery UI, Chart.js, DataTables, Fullcalendar, SweetAlert, Select2 등.
+
+
+
+4. 인터페이스 설명
+메인 구조
+
+
+카드(Card) 형태의 학습 관리 화면.
+
+
+카테고리 구분
+
+
+상단 탭 형식:
+
+
+📚 개념
+
+
+📘 심화
+
+
+📖 내신
+
+
+🎓 수능
+
+
+🔄 후속 (장기계획)
+
+
+표시 내용
+
+
+각 카테고리별 미션 리스트, 복습 추천 목록.
+
+
+합격 점수 기준과 체크박스(완료/추가 표시).
+
+
+미션명 클릭 시 해당 학습 콘텐츠(책, 문제집, 체크리스트, GPT 보조 학습 등)로 이동.
+
+
+교사 권한
+
+
+귀가평가/오답노트 검사/출제목록 관리 등 추가 메뉴 표시.
+
+
+부가 기능
+
+
+KTM 서술평가, SPEC Intelligence 결과 표기.
+
+
+하단에 장기계획(Fullplan) 설정 기능.
+
+
+
+5. 파일의 링크
+기본 페이지:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/mystudy.php?userid=학생ID
+
+
+주요 연결 링크 예시:
+
+
+개념 미션 추가: /students/selectmission.php?id=학생ID&mtid=7&cid=0
+
+
+심화/내신/수능 미션 추가: /students/selectmission.php?id=학생ID&mtid=2|3|4&cid=0
+
+
+오답노트 검사: /students/dashboard_fixnotes.php?userid=학생ID
+
+
+귀가평가: /students/beactivelearner.php?userid=학생ID
+
+
+장기계획 설정: /students/fullplan.php?id=학생ID
+
+
+
+
+--------------------------------------------------------------------------------
+
+
+alt42/teachingsupport/student_inbox.php
+1. DB 관련 상세정보
+사용자 / 권한
+
+
+mdl_user : 학생(studentid)과 연결된 교사(teacherid) 조회.
+
+
+mdl_user_info_data : 현재 로그인한 사용자의 역할(role, fieldid=22) 확인.
+
+
+메시지/풀이 상호작용
+
+
+ktm_teaching_interactions : 학생 풀이 요청 및 교사 응답 기록 저장.
+
+
+status='completed', solution_text 존재 여부를 기준으로 완료된 상호작용 수 집계.
+
+
+ktm_interaction_read_status : 메시지 읽음 상태 관리.
+
+
+interaction_id, student_id, is_read 필드 포함.
+
+
+테이블이 없으면 동적으로 생성 시도.
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+학생이 자신이 보낸 풀이 요청과 교사로부터 받은 해설/풀이 메시지를 한 화면에서 통합적으로 관리.
+
+
+주요 기능
+
+
+받은 메시지와 보낸 요청을 통합 메시지함 형식으로 표시.
+
+
+이미지 업로드를 통한 풀이 요청 전송 기능 제공.
+
+
+풀이 보기 모달: 문제 이미지, 풀이 텍스트, 해설 이미지, 오디오 강의 재생 지원.
+
+
+교사/관리자 권한 사용자에게 AI 답변 생성 버튼 노출.
+
+
+풀이가 불완전하거나 추가 설명이 필요할 때 재요청 기능 제공.
+
+
+메시지 읽음 처리 및 진행 상태(대기, 처리중, 완료) 관리.
+
+
+
+3. 포함된 연관 파일
+PHP 백엔드 연동
+
+
+get_student_messages.php : 학생이 받은 메시지 불러오기.
+
+
+get_sent_requests.php : 학생이 보낸 풀이 요청 불러오기.
+
+
+save_interaction.php : 새 풀이 요청 저장.
+
+
+get_dialogue_data.php : 특정 상호작용의 문제/풀이/오디오 데이터 조회.
+
+
+mark_message_read.php : 메시지 읽음 처리.
+
+
+submit_re_request.php : 재요청 저장.
+
+
+관련 모듈
+
+
+teachingagent.php : 교사용 AI 풀이 지원(관리자/교사 권한).
+
+
+외부 라이브러리
+
+
+Bootstrap, FontAwesome, MathJax, WebFont, Polyfill.
+
+
+
+4. 인터페이스 설명
+상단 내비게이션
+
+
+🏠 홈, 👩🏻‍🎨 내공부방, 📝 오늘, 📅 일정, 🎯 목표, 📩 메시지(현재), 📅 수학일기
+
+
+메시지함 레이아웃
+
+
+새로고침 / 풀이 요청하기 / (교사용) AI 답변 생성 버튼.
+
+
+풀이 요청 폼: 문제 이미지 업로드, 문제 유형 선택, 추가 요청사항 입력 후 제출.
+
+
+메시지 목록:
+
+
+보낸 메시지(학생 요청) → 상태(대기, 처리중, 완료)와 썸네일/시간 표시.
+
+
+받은 메시지(교사 응답) → 해설보기 버튼, 선생님 정보, 재요청 버튼, 읽음 처리.
+
+
+풀이 모달
+
+
+문제 이미지 + 텍스트, 해설 이미지, 풀이 텍스트, 오디오 강의 동기화.
+
+
+오디오 재생/일시정지, 속도 조절(0.75x~1.5x), 진행 바 제공.
+
+
+풀이 텍스트는 교사/학생 대화 형식으로 표시.
+
+
+재요청 모달
+
+
+학생이 원하는 보충 설명 사유를 입력 후 교사에게 재전송 가능.
+
+
+
+5. 파일의 링크
+기본 페이지 (학생 메시지함):
+
+ https://mathking.kr/moodle/local/augmented_teacher/alt42/teachingsupport/student_inbox.php?studentid=학생ID
+
+
+주요 연동 링크:
+
+
+메시지 불러오기: get_student_messages.php?studentid=...
+
+
+보낸 요청 조회: get_sent_requests.php?studentid=...
+
+
+풀이 보기(모달): get_dialogue_data.php?cid=상호작용ID&ctype=interaction
+
+
+AI 답변 생성: teachingagent.php?userid=교사ID&studentid=학생ID
+
+
+--------------------------------------------------------------------------------
+
+students/edittoday.php
+1. DB 관련 상세정보
+로그 기록
+
+
+{abessi_missionlog} : 학생이 특정 페이지(studentedittoday)에 접속할 때 로그 저장 (userid, page, timecreated).
+
+
+목표/계획 관리
+
+
+mdl_abessi_today : 오늘목표, 주간목표, 시험목표, 시간접기 등 학생 학습 목표를 저장.
+
+
+mdl_abessi_cognitivetalk : 인지 대화 피드백 기록.
+
+
+mdl_abessi_schedule : 학생의 학습 스케줄 기록.
+
+
+mdl_abessi_messages : 메시지/노트 데이터 (status 필드 = weekly/summary 등).
+
+
+mdl_abessi_knowhow, mdl_abessi_knowhowlog : 학생이 선택한 학습 방법/노하우 기록.
+
+
+퀴즈/테스트
+
+
+mdl_quiz, mdl_quiz_attempts : 퀴즈 정보와 시도 기록(성적, 상태, 시간).
+
+
+mdl_course_modules : 퀴즈와 강좌 모듈 연결.
+
+
+사용자 정보
+
+
+user : 학생의 로그인 기록(lastlogin 등) 갱신.
+
+
+
+2. 파일의 목적과 기능
+주요 목적
+
+
+학생이 자신의 오늘 목표 / 주간 목표를 직접 입력·수정할 수 있는 페이지.
+
+
+핵심 기능
+
+
+최근 입력된 목표 및 활동 기록을 불러오기.
+
+
+오늘목표, 주간목표, 시간접기 등 목표 유형 선택 가능.
+
+
+목표 저장 시 AJAX로 database.php 호출 → DB 업데이트.
+
+
+최근 퀴즈(내신, 표준, 인지촉진) 성적을 불러와 시각적으로 정리.
+
+
+SMART/HARD 목표 프레임워크와 연결된 피드백 제공.
+
+
+brainalignment.php(GPT 도우미)와 연동해 학습 반성/피드백 프롬프트 출력.
+
+
+복습계획 버튼을 통한 주간 복습 세부 입력 가능(스위트 얼럿 팝업).
+
+
+
+3. 포함된 연관 파일
+PHP 연동
+
+
+navbar.php : 상단 네비게이션.
+
+
+index_embed.php, schedule_embed.php : 목차·계획 및 시간표 임베딩.
+
+
+quicksidebar.php : 퀵 사이드바.
+
+
+../LLM/postit.php : LLM 연계 포스트잇 모듈.
+
+
+백엔드 처리
+
+
+database.php : 목표 저장 처리.
+
+
+check.php, check_today.php : 체크박스·피드백 상태 저장.
+
+
+brainalignment.php : GPT 기반 학습 반성 대화 모듈.
+
+
+프론트엔드 라이브러리
+
+
+jQuery, Bootstrap, Moment.js, Datatables, Select2, SweetAlert, Summernote 등.
+
+
+
+4. 인터페이스 설명
+목표 입력 영역
+
+
+목표 텍스트 입력란 + 목표 유형 선택 드롭다운(오늘/주간/시간접기).
+
+
+학습 단계 선택 (개념/심화/내신/기타).
+
+
+데드라인 설정 (날짜 선택기).
+
+
+"저장하기" 버튼 클릭 시 목표 DB 저장.
+
+
+보조 인터페이스
+
+
+복습계획 버튼: 팝업에서 복습 단원 수와 시간 선택 가능.
+
+
+Flywheel 버튼: 평가 준비/서술평가/부스터 스텝 학습법 가이드 제공.
+
+
+목표, 활동 버튼: 상세 페이지로 이동.
+
+
+결과 표시
+
+
+최근 주간목표 및 오늘목표 목록 테이블.
+
+
+퀴즈 성적 구분: 내신/표준/인지촉진 (오늘 vs 지난 시험, 색상 점 아이콘).
+
+
+GPT 연계 반성창(iframe으로 brainalignment.php 임베드).
+
+
+
+5. 파일의 링크
+기본 파일:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/edittoday.php?id=학생ID
+
+
+주요 연동 링크:
+
+
+목표 반성 피드백: LLM/brainalignment.php?userid=...
+
+
+전체계획 보기: weeklyplans.php?id=...
+
+
+오늘/주간 목표 상세: dailygoals.php, todayplans.php
+
+
+습관 분석: viewreplays.php
+
+
+퀴즈 결과분석: cognitivism.php?attemptid=...
+
+
+--------------------------------------------------------------------------------
+
+teachers/timescaffolding.php
+1. DB 관련 상세정보
+사용자/역할
+
+
+mdl_user : 학생 이름, 로그인 기록 조회.
+
+
+mdl_user_info_data : 역할(role) 확인 (fieldid=22 → 학생/교사 구분).
+
+
+목표/계획
+
+
+mdl_abessi_today : 오늘목표, 주간목표, 검사요청 저장.
+
+
+mdl_abessi_progress : 분기목표(plantype='분기목표') 관리.
+
+
+mdl_abessi_chapterlog : 최근 학습 단원 기록.
+
+
+학습 활동 추적
+
+
+mdl_abessi_tracking : 활동 상태(begin, complete, homework 등), 시간, 결과, 피드백 기록.
+
+
+mdl_abessi_reflections : 활동에 대한 반성 기록.
+
+
+mdl_abessi_missionlog : 휴식 이벤트(예: eventid=7128) 기록.
+
+
+기타
+
+
+mdl_abessi_mathtalk : 녹음 동의 여부 저장(type='agreement').
+
+
+mdl_abessi_indicators : 분석값 저장(pmresult, 포모도로 npomodoro, kpomodoro 등).
+
+
+
+2. 파일의 목적과 기능
+학생의 학습 일지(수학일기) 페이지.
+
+
+오늘/주간 목표와 활동을 불러오고, 진행 상황·결과·피드백을 시각적으로 보여줌.
+
+
+목표 달성 여부, 예상/실제 소요시간 비교, 만족도 결과를 기록.
+
+
+Chart.js 그래프로 세션별 소요시간과 노트 작성시간 시각화.
+
+
+클립보드 복사 버튼을 통해 학부모 상담용 보고 텍스트 자동 생성.
+
+
+메모장(포스트잇) 기능, 이미지 업로드, 녹음(학생 동의 기반) 지원.
+
+
+콜백 알림(점검 알림) 설정 가능 → 학습 중 점검 루틴 관리.
+
+
+
+3. 포함된 연관 파일
+DB/백엔드 처리
+
+
+check.php : 활동/목표 상태 업데이트.
+
+
+database.php : 목표 저장.
+
+
+uploadimage.php : 이미지 업로드.
+
+
+upload_recording.php, recording_api.php : 녹음 업로드/관리.
+
+
+stickynotes_api.php, callback_api.php, consent_api.php : 메모·알림·동의 API.
+
+
+연결 페이지
+
+
+timelineWeek.php, timeline.php : 주간/일간 활동 타임라인.
+
+
+weeklyplans.php, dailygoals.php, todayplans.php : 계획 관리 페이지.
+
+
+challenge_report.php : 활동 결과 보고 페이지.
+
+
+synergetic.php, timescaffolding.php : 교사용 활동 분석 페이지.
+
+
+mypersonas.php, attendancerecords.php : 학생 성향/출결.
+
+
+프론트엔드 라이브러리
+
+
+jQuery, Bootstrap, SweetAlert, Chart.js, Animate.css, FontAwesome 등.
+
+
+
+4. 인터페이스 설명
+상단 정보
+
+
+학생 이름, 출결, 페르소나, 포모도로 오디오 안내, 교사용 분석 페이지 바로가기 버튼.
+
+
+활동 목록 테이블
+
+
+대기/오늘/지난 활동 구분 표시.
+
+
+각 활동에 Plan(예정 시간)과 Final(실제 시간), 상태(만족도/완료 여부) 표시.
+
+
+활동 옆에 오답/직접 입력 버튼, 코멘트/피드백 입력 가능.
+
+
+그래프
+
+
+세션별 소요시간, 노트 작성시간 2개 라인차트.
+
+
+메모장 (포스트잇)
+
+
+학생/교사 메모 분리 표시, 색상 선택 가능.
+
+
+이미지 업로드·붙여넣기 지원, 메모 알림(⏰) 및 전체 삭제 가능.
+
+
+녹음 기능
+
+
+동의한 학생만 사용 가능.
+
+
+녹음 시작/정지, 녹음 목록, 자동 침묵 감지(5분 무음 시 자동 종료).
+
+
+기타 컨트롤
+
+
+목표 입력 팝업(SweetAlert) → 내용/시간/상태 입력 후 DB 저장.
+
+
+복사 버튼 → 오늘·주간 목표 및 활동 요약을 클립보드 복사.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/diary.php?userid={학생ID}
+
+
+주요 연동 링크:
+
+
+활동 결과 보고: cjnstudents/challenge_report.php
+
+
+주간/일일 계획: weeklyplans.php, dailygoals.php, todayplans.php
+
+
+교사용 분석: teachers/timescaffolding.php, teachers/synergetic.php
+
+
+학생 성향/출결: mypersonas.php, attendancerecords.php
+
+
+--------------------------------------------------------------------------------
+
+students/timeline.php
+1. DB 관련 상세정보
+학생/사용자 정보
+
+
+mdl_user: 학생의 이름(lastname, firstname) 조회.
+
+
+목표 기록
+
+
+mdl_abessi_today: 오늘목표/검사요청 기록 조회 (최근 1건).
+
+
+시간표
+
+
+mdl_abessi_schedule: pinned=1 조건으로 최근 스케줄 조회.
+
+
+요일별 시작 시간(start1~7), 학습시간(duration1~7) 불러옴.
+
+
+활동 로그
+
+
+mdl_logstore_standard_log:
+
+
+특정 기간(initialT ~ finalT) 동안의 학습 활동 로그(퀴즈 시작/제출/검토, 개념학습, 노트 작성 등) 조회.
+
+
+퀴즈 시도
+
+
+mdl_quiz, mdl_quiz_attempts:
+
+
+최근 한 달 내 퀴즈 시도 정보, 점수(sumgrades/tgrades), 시도 횟수, 문제 수 등을 가져옴.
+
+
+
+2. 파일의 목적과 기능
+학생별 학습 활동 타임라인 페이지.
+
+
+오늘의 시간표 시작/종료시간을 기준으로 공부 진행을 추적.
+
+
+활동 로그(로그인, 퀴즈 시작, 제출, 검토, 개념공부, 노트필기, 로그아웃)를 카드 형태로 시각화.
+
+
+최근 퀴즈 결과 중 85점 이상, 문제 3개 초과인 시험만 표로 정리하여 성취도 확인.
+
+
+오늘이 수업 없는 날일 경우 안내문구 표시.
+
+
+
+3. 포함된 연관 파일
+DB 연결/환경 설정
+
+
+config_abessi.php : Moodle DB 설정 불러오기.
+
+
+프론트엔드 라이브러리
+
+
+Bootstrap (bootstrap.min.css, bootstrap.min.js)
+
+
+jQuery (jquery.3.2.1.min.js)
+
+
+Ready Pro (ready.min.js, demo.css)
+
+
+jQuery UI, jQuery Scrollbar, Bootstrap Toggle 등.
+
+
+연동 페이지
+
+
+p_schedule.php : 일정 조회
+
+
+timelineWeek.php : 주간 계획
+
+
+timeline.php : 오늘 학습 타임라인
+
+
+timescaffolding.php : 교사용 학습일지
+
+
+weekly letter.php : 상담(주간 피드백)
+
+
+
+4. 인터페이스 설명
+상단 메뉴(고정형)
+
+
+일정 / 계획 / 일지 / 오늘 / 상담 버튼 제공.
+
+
+학생 이름 + 현황판 타이틀
+
+
+예: 홍길동의 학습 현황판
+
+
+시간 안내
+
+
+오늘 수업 시작시간과 종료시간 표시 (or 수업 없음 메시지).
+
+
+퀴즈 성적표
+
+
+날짜, 퀴즈명, 시도 횟수, 점수(85점 이상만 표시).
+
+
+활동 타임라인 카드
+
+
+로그인, 개념공부, 퀴즈 시작/제출/검토, 노트필기, 로그아웃 등이 카드 형태로 시간순 출력.
+
+
+
+5. 파일의 링크
+메인 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/timeline.php?id={studentid}&tb=43200
+
+
+상단 메뉴 연동:
+
+
+일정: /students/p_schedule.php?id={studentid}&eid=1
+
+
+계획: /students/timelineWeek.php?id={studentid}&tb=604800
+
+
+일지: /teachers/timescaffolding.php?userid={studentid}&mode=parental
+
+
+오늘: /students/timeline.php?id={studentid}&tb=43200
+
+
+상담: /alt42/mentoring/weekly%20letter.php?userid={studentid}
+
+
+--------------------------------------------------------------------------------
+
+students/searchmynote.php
+1. DB 관련 상세정보
+사용자/역할
+
+
+mdl_user_info_data: fieldid=22 → 로그인한 사용자의 역할(role) 조회.
+
+
+mdl_abessi_chapterlog: 학생(studentid)의 최근 학습 단원 기록 조회.
+
+
+검색 기록
+
+
+mdl_abessi_search: 최근 입력된 검색어(text1, text2, text3, courseid)를 조회하여 기본 검색어로 활용.
+
+
+학습 자료/노트
+
+
+mdl_checklist_item: 체크리스트 항목(type=1, displaytext에 검색어 포함) 검색.
+
+
+mdl_course_modules: 체크리스트와 연결된 강좌 모듈(courseid 추출).
+
+
+mdl_abessi_messages: 특정 콘텐츠(contentsid) 관련 학습 노트/보드 URL 조회.
+
+
+mdl_icontent_pages: 전자책 페이지(pageicontent, title, 이미지) 조회.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생이 입력한 키워드를 기반으로 개인 노트/학습 자료를 검색하고 표시하는 페이지.
+
+
+기능
+
+
+최근 입력한 검색어를 불러오거나 새 검색어로 노트를 탐색.
+
+
+검색 대상 과목(초등/중등/고등)을 지정해 범위 제한.
+
+
+체크리스트, 전자책 콘텐츠, 학습 노트(mynote, whiteboard 등)와 연결된 자료를 찾아 제공.
+
+
+검색 결과에 대표 이미지 미리보기(tooltip) 제공.
+
+
+검색 내역을 링크로 저장/공유하거나 초기화 가능.
+
+
+
+3. 포함된 연관 파일
+백엔드/DB 처리
+
+
+config.php: Moodle DB 설정 불러오기.
+
+
+search.php: AJAX 기반으로 검색어 저장/처리.
+
+
+연결 페이지
+
+
+books/mynote.php: 학생 개인 노트 확인.
+
+
+whiteboard/board_topic.php: 학습 보드 표시.
+
+
+books/chapter.php: 특정 단원 학습 자료 이동.
+
+
+프론트엔드 라이브러리
+
+
+jQuery, Bootstrap, jQuery UI, Select2, SweetAlert, Chart.js, DataTables, Summernote 등.
+
+
+
+4. 인터페이스 설명
+검색 입력 영역
+
+
+최대 3개의 검색어 입력창(word1, word2, word3).
+
+
+과목 선택 드롭다운(초등/중등/고등).
+
+
+검색 버튼(searchnote() AJAX 호출)과 초기화 버튼 제공.
+
+
+검색 결과 영역
+
+
+선택한 과목명 + 검색어 표시.
+
+
+결과 리스트를 테이블로 표시, 각 항목 클릭 시 학습 자료 페이지 이동.
+
+
+Tooltip3 기능: 마우스 오버 시 학습 이미지(전자책 콘텐츠) 미리보기 표시.
+
+
+보조 인터페이스
+
+
+최근 학습 단원으로 이동할 수 있는 아이콘 버튼(🔄 circulation).
+
+
+검색 링크 재활용 가능(“링크” 버튼).
+
+
+Bootstrap 기반 카드와 테이블 스타일 적용.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/searchmynote.php?id={studentid}
+
+
+주요 연결 링크:
+
+
+검색 결과 노트: /books/mynote.php?{url}
+
+
+학습 보드: /whiteboard/board_topic.php?id={redirect}&studentid={studentid}
+
+
+전자책 단원: /books/chapter.php?cid={cid}&cntid={cntid}&nch={nch}&studentid={studentid}&type=init
+
+
+최근 검색 링크: /students/searchmynote.php?word1=...&word2=...&word3=...&courseid=...
+
+
+--------------------------------------------------------------------------------
+
+students/roadmap.php
+1. DB 관련 상세정보
+학생/사용자
+
+
+mdl_user: 학생 이름 조회(lastname, firstname).
+
+
+mdl_abessi_missionlog: 학습 페이지 접속 기록(studentschedule 페이지).
+
+
+목표 및 계획
+
+
+mdl_abessi_progress: 분기목표·방향설정 등 장기 계획(memo, deadline, complete 여부) 관리.
+
+
+mdl_abessi_today: 최근 1개월 간 주간목표 기록(text, planscore, timecreated).
+
+
+문항/시도
+
+
+mdl_question, mdl_question_attempts, mdl_question_attempt_steps: 최근 일주일 내 시도한 문항(MX 포함 이름)과 피드백 기록 조회.
+
+
+지표
+
+
+mdl_abessi_indicators: 시도 문항 수(nattempts) 업데이트.
+
+
+
+2. 파일의 목적과 기능
+학생의 분기목표 관리 페이지.
+
+
+주요 기능:
+
+
+최근 등록된 분기목표/방향설정 확인 및 체크박스로 완료/숨김 처리.
+
+
+랜덤꿈 챌린지(Random Dream Challenge) 제공 → 꿈 직업 목록/설명과 외부 링크를 랜덤으로 연결해 동기부여.
+
+
+주간목표 기록 히스토리를 함께 표시 → 주간 성취도(아이콘) 및 타임라인 연동.
+
+
+GPT 연계(gpttalk.php, gptrecord.php)를 통해 학생의 목표에 대한 자동 질문/답변 기록.
+
+
+교사용 버튼: “분기목표 원활도 평가(WeeklyGrade)” 팝업 → Booster step(이탈→시작→연결→루틴→안정) 단계로 평가.
+
+
+
+3. 포함된 연관 파일
+UI/컴포넌트
+
+
+navbar.php, quicksidebar.php: 상단/사이드 인터페이스.
+
+
+GPT 연계
+
+
+../books/gpttalk.php, ../books/gptrecord.php: GPT 기반 대화/기록 기능.
+
+
+데이터 처리
+
+
+database.php: 목표 저장.
+
+
+check.php: 목표 완료/숨김 상태 업데이트.
+
+
+외부 학습 도구
+
+
+visionmapping.php: LLM 기반 비전 매핑(랜덤꿈 챌린지 시 연동).
+
+
+board_brainstorm.php: 주간목표 메모(화이트보드).
+
+
+프론트엔드 라이브러리
+
+
+jQuery, Bootstrap, SweetAlert, Select2, Moment.js, Chart.js, Datatables, Summernote 등.
+
+
+
+4. 인터페이스 설명
+분기목표 입력 영역
+
+
+목표 유형 선택(기본값: 분기목표).
+
+
+데드라인 입력(DatePicker).
+
+
+목표 텍스트 입력.
+
+
+저장 버튼 클릭 시, 랜덤꿈 유지/갱신 여부를 SweetAlert으로 확인 → DB 업데이트 + 외부 꿈 링크 열기.
+
+
+목표 리스트
+
+
+최근 3개 분기목표/방향설정 출력.
+
+
+목표 내용, D-Day, 체크박스(완료/숨김) 제공.
+
+
+주간목표 히스토리
+
+
+최근 1개월 주간목표를 달력날짜와 함께 표시.
+
+
+성취도(planscore)에 따라 아이콘(0~5단계) 출력.
+
+
+랜덤꿈 챌린지
+
+
+꿈 직업 이미지/설명 + 외부 Gamma.app 문서 링크 제공.
+
+
+새 목표 입력 시 연동.
+
+
+교사용 버튼
+
+
+“분기목표 원활도 평가” 팝업(SweetAlert) → Booster Step 5단계 중 선택 후 DB 저장.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/studentschedule.php?id={studentid}
+
+
+주요 연동 링크:
+
+
+목표 저장: /students/database.php
+
+
+완료/숨김 업데이트: /students/check.php
+
+
+GPT 대화: /books/gpttalk.php, /books/gptrecord.php
+
+
+비전 매핑: /LLM/visionmapping.php?userid={studentid}
+
+
+주간목표 화이트보드: /whiteboard/board_brainstorm.php?id=weekly_user{studentid}_date{날짜}
+
+
+랜덤꿈 링크: https://gamma.app/docs/... (랜덤 URL 선택)
+
+
+--------------------------------------------------------------------------------
+students/Alphi/growthmindset.php
+1. DB 관련 상세정보
+사용자 정보
+
+
+mdl_user: id, lastname, firstname, timezone, hideinput → 특정 학생 이름, 기본설정 가져오기.
+
+
+mdl_user_info_data: fieldid=22 조건으로 사용자 역할(role) 조회. (SQL 인젝션 방지 위해 바인딩 사용).
+
+
+studentid와 로그인한 $USER->id를 활용해 현재 접속한 학생의 데이터 및 교사/관리자 권한 구분.
+
+
+
+2. 파일의 목적과 기능
+성장형 마인드셋 10분 프로그램 페이지 구현.
+
+
+학생이 10분 동안 성장형 마인드셋 활동을 체험할 수 있는 학습 툴.
+
+
+마인드셋 교육 영상, 수학 영역별 동기부여 콘텐츠, 학습 게임, 인지관성 분석, 자가진단 메뉴 제공.
+
+
+별/광속/스크롤 애니메이션 및 프로그레스 바를 통해 몰입형 인터페이스 제공.
+
+
+mode=autoclick 옵션 시 랜덤 수학 영역 마인드셋을 자동 실행.
+
+
+
+3. 포함된 연관 파일
+DB 연결
+
+
+/home/moodle/public_html/moodle/config.php
+
+
+외부 연계
+
+
+다양한 claude.ai 공개 링크(학습 에이전트, 인지관성 점검, 성장 게임 등).
+
+
+YouTube 학습 영상 링크.
+
+
+연관 Moodle 모듈
+
+
+self_diagnosis.php (자가진단)
+
+
+mypersonas.php (페르소나)
+
+
+inspiregrowth.php (도전문제)
+
+
+today.php (오늘 학습 현황)
+
+
+
+4. 인터페이스 설명
+사이드바 네비게이션
+
+
+홈, 자가진단, 인지관성, 공부과학, 페르소나, 도전문제, AI 에이전트 메뉴.
+
+
+메인 콘텐츠
+
+
+홈 탭: 성장형 마인드셋 소개 영상 2개, 수학 마인드셋 이미지, 영역별 버튼.
+
+
+저널 탭: 인지관성 점검·피드백 도구 (Claude AI 링크).
+
+
+게임 탭: 도파민, 성장 마인드셋, 지능, 학습심리 등 주제별 학습 게임 카드.
+
+
+기타 탭(준비중): 성장 통계, 커뮤니티, 내정보.
+
+
+Math Mindset Modal: 수학 영역별 시·스토리 형식의 성장 메시지를 크레딧 애니메이션과 함께 제공. (10분 타이머, 별/광속 애니메이션, 휴식 메시지 포함).
+
+
+
+5. 파일의 링크
+기본 접근:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/mindset.php?id={studentid}&mode={옵션}
+
+
+주요 연결:
+
+
+자가진단: /students/Alphi/self_diagnosis.php?id={studentid}
+
+
+페르소나: /cjnstudents/mypersonas.php?userid={studentid}
+
+
+도전문제: /books/inspiregrowth.php?userid={studentid}
+
+
+오늘 학습: /students/today.php?id={studentid}&tb=604800
+
+
+외부 링크: claude.ai, YouTube 동영상 등
+
+
+
+--------------------------------------------------------------------------------
+students/schedule.php
+1. DB 관련 상세정보
+사용자 정보
+
+
+mdl_user: 학생 이름(lastname, firstname), timezone 조회.
+
+
+mdl_logstore_standard_log: 학생 최근 접속 기록(maxtc).
+
+
+학습 시간 관련
+
+
+block_use_stats_totaltime: 누적 학습 총 시간(totaltime).
+
+
+시간표(Schedule)
+
+
+mdl_abessi_schedule:
+
+
+학생 개인 시간표(start1~7, duration1~7, room1~7, memo1~9, start11~17 등).
+
+
+type(기본/특강/임시), pinned=1인 최신 스케줄 불러오기.
+
+
+weektotal(주간 총 학습시간), memo9(총 시간), memo8(메모), date(임시 적용 기간).
+
+
+로그 기록
+
+
+mdl_abessi_missionlog: 학생이 해당 페이지(studentschedule) 열람할 때 기록.
+
+
+
+2. 파일의 목적과 기능
+학생 개인 학습 시간표 관리 페이지
+
+
+요일별 시작 시간 / 공부시간 / 공부장소 / 참고사항 / 상담시간 표시.
+
+
+현재 요일($nday)에 따라 오늘 학습시간과 누적 학습시간 계산.
+
+
+시간표 유형(기본·특강·임시) 및 수정 여부를 표시하고, 체크박스로 변경 가능.
+
+
+학습 총 시간, 주간 총 학습시간, 접속 로그 등 학습 진행 상황을 종합 표시.
+
+
+출결 현황 iframe(attendancerecords.php)으로 연결.
+
+
+팝업창, AJAX 요청(database.php, check.php)을 통해 수강등록/출결/상태 변경 가능.
+
+
+
+3. 포함된 연관 파일
+공통 UI
+
+
+navbar.php, quicksidebar.php
+
+
+데이터 처리
+
+
+database.php: 출결·등록 관련 DB 저장.
+
+
+check.php: 체크박스 입력/상태 변경 처리.
+
+
+databasewrite.php: 미션 입력 기록.
+
+
+연동된 페이지
+
+
+attendancerecords.php: 출석/참석 기록 iframe.
+
+
+editschedule.php: 시간표 변경 페이지.
+
+
+dailylog.php: 학습 일지 팝업.
+
+
+JS/플러그인
+
+
+jQuery, Bootstrap, SweetAlert, Datatables, Moment.js, Select2, Summernote, FullCalendar 등 다수 포함.
+
+
+
+4. 인터페이스 설명
+상단 카드 헤더
+
+
+이전/다음 스케줄 이동 버튼.
+
+
+시간표 총 학습시간(memo9), 수정일, 메모, 적용기간 표시.
+
+
+시간표 유형(기본/특강/임시) 토글 체크박스.
+
+
+"시간표 변경" 링크 → 수정 페이지 연결.
+
+
+시간표 테이블
+
+
+요일별(월~일) 시작시간, 공부시간, 공부장소, 참고사항, 상담시간 표시.
+
+
+현재 요일은 강조(배경색 #ff99cc).
+
+
+하단 정보
+
+
+알림/보강 공지, 서울-사용자 timezone 시차 표시.
+
+
+누적 학습 시간 / 주간 누적 학습시간 / 총 시간 비교.
+
+
+기능 버튼
+
+
+팝업(학습일지 열람), 수강 등록, 납부 상태 업데이트, 체크/숨김, 시간표 유형 변경 등 Ajax 기반 실시간 반영.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/schedule.php?id={studentid}&eid={스케줄ID}
+
+
+주요 연결 링크:
+
+
+출석 기록: /students/attendancerecords.php?userid={studentid}
+
+
+시간표 변경: /students/editschedule.php?id={studentid}&nweek=4&eid={sch_id}
+
+
+학습일지: /students/dailylog.php?id={studentid}&nweek=12 (팝업)
+
+
+출결·수강등록 처리: /students/database.php
+
+
+체크 처리: /students/check.php
+
+
+
+--------------------------------------------------------------------------------
+students/scaffolding.php
+
+1. DB 관련 상세정보
+이 파일은 학생의 기본 프로필 및 학습 속성을 불러오기 위해 mdl_user_info_data 테이블을 광범위하게 조회합니다. 주요 필드는 다음과 같습니다:
+개인/연락처
+
+
+institute(88): 학교
+
+
+birthdate(89): 출생년도
+
+
+email1(112), email2(113): 부모 이메일
+
+
+phone1(54), phone2(85), phone3(55): 학생/부모 연락처
+
+
+brotherhood(44): 형제관계
+
+
+academy(46): 학원명
+
+
+location(68): 지역
+
+
+사용자 속성
+
+
+roleinfo(22): 사용자 유형(student/teacher/manager)
+
+
+fluency(60): 시스템 사용 능숙도
+
+
+goalstability(80): 목표설정 안정도
+
+
+effectivelearning(81): 학습효율 단계
+
+
+lmode(90): 학습 모드 (자율/능동/도제/신규)
+
+
+evaluate(92): 평가 방식 (완결형/도전형)
+
+
+curriculum(70): 커리큘럼 속성 (성장형/표준형/쇠퇴형)
+
+
+nboosters(86): 부스터 활동 횟수
+
+
+inspecttime(72): 점검 주기
+
+
+학습 데이터
+
+
+termhours(107), vachours(108): 학기/방학 중 주별 공부시간
+
+
+univ(105): 대학 목표
+
+
+curtype(106): 커리큘럼 유형
+
+
+Preseta(93), Presetb(94), Presetc(95), Presetd(96): 목표 PRESET (개념/심화/내신/수능)
+
+
+mathlevel(114): 학습 수준
+
+
+classtype(115): 보충 과정
+
+
+progresstype(116): 학습 진도 (초등/중등/고등/수능)
+
+
+
+2. 파일의 목적과 기능
+학생의 기본 정보 및 학습 속성 프로필을 조회/수정할 수 있는 페이지.
+
+
+DB에 저장된 학생 정보를 불러와 입력폼 및 select box에 출력.
+
+
+관리자가 학생 개별 속성(학교, 연락처, 목표, 학습모드, PRESET 등)을 확인하고 수정 가능.
+
+
+“저장하기” 버튼을 통해 AJAX 요청(database.php)으로 DB에 업데이트.
+
+
+개인정보 수정 및 시간설계 페이지로 이동할 수 있는 링크 제공.
+
+
+
+3. 포함된 연관 파일
+DB 처리
+
+
+database.php: 저장 처리
+
+
+check.php: 체크 상태 변경
+
+
+관련 페이지
+
+
+today.php: 학생 당일 학습 현황
+
+
+userlist.php: 항목별 수정 상세 페이지
+
+
+fullplan.php: 시간 설계
+
+
+editadvanced.php: Moodle 기본 개인정보 수정
+
+
+외부 리소스
+
+
+Bootstrap, jQuery, SweetAlert, Select2, Moment.js, Chart.js, Datatables, Summernote 등 다양한 프론트엔드 라이브러리
+
+
+
+4. 인터페이스 설명
+상단 헤더: KAIST TOUCH MATH powered by CJN 슬로건 표시.
+
+
+세 개의 테이블 영역으로 구분:
+
+
+기본정보: 학교, 출생년도, 이메일, 연락처, 형제관계, 소속기관, 지역, 사용자 유형
+
+
+학습조건: 사용법 능숙도, 목표설정 안정도, 학습효율 단계, 학습모드, 평가방식, 커리큘럼 속성, 부스터 활동 횟수, 점검 주기, 학기/방학 공부시간
+
+
+목표 PRESET: 대학목표, 커리큘럼 유형, 개념/심화/내신/수능 미션 PRESET, 학습진도, 기본강좌, 보충강좌, 학습수준
+
+
+버튼 및 링크
+
+
+“저장하기”: 변경된 입력값을 DB에 저장.
+
+
+개인정보 수정(Moodle 기본 프로필), 시간설계(fullplan) 바로가기.
+
+
+추가 시각 요소
+
+
+난이도, 상태를 나타내는 애니메이션/이미지 출력.
+
+
+Tooltip 기능으로 설명/이미지 보조 표시.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/userlist.php?id={studentid}
+
+
+주요 연동 링크:
+
+
+오늘 학습 현황: /students/today.php?id={studentid}&tb=604800
+
+
+개인정보 수정: /user/editadvanced.php?id={studentid}
+
+
+시간 설계: /students/fullplan.php?id={studentid}
+
+
+세부 수정: /students/userlist.php?id={studentid}&info={field} (학교, 이메일, 연락처 등 개별 항목)
+
+
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index.php
+
+1. DB 관련 상세정보
+사용되는 주요 테이블
+
+
+mdl_user : 학생 기본정보(id, firstname, lastname, email).
+
+
+mdl_user_info_data : 사용자 확장정보 (특히 fieldid=22 → 역할: student/teacher/admin).
+
+
+user_learning_selections : 최근 학습 선택 기록 저장 (last_path, last_unit, last_topic, selection_data, timecreated, timemodified).
+
+
+persona_modes : 학생 학습 모드(persona 학습 스타일) 기록 (student_mode, timecreated).
+
+
+쿼리 동작
+
+
+현재 로그인 사용자와 GET 파라미터(userid) 비교 → 접근 권한 확인.
+
+
+user_learning_selections에서 index1~index4(개념/심화/내신/수능)별 마지막 학습 정보 가져오기.
+
+
+persona_modes에서 가장 최근 학습 모드 조회.
+
+
+시간 처리
+
+
+timecreated, timemodified 중 최신 타임스탬프를 선택해 "오늘/어제/n일 전/n주 전" 등으로 변환.
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+학생 개인화 학습 홈(KTM 홈)을 제공하여 최근 학습 기록과 주요 메뉴로 바로가기 기능을 지원.
+
+
+기능
+
+
+권한 검증 (학생은 자기 정보만, 교사/관리자는 학생 계정 열람 가능).
+
+
+최근 학습 이어하기(개념/심화/내신/수능) 카드 표시.
+
+
+학습 기록 없을 경우 → 환영 메시지 출력.
+
+
+메인 학습 메뉴 카드 제공 (개념, 심화, 내신, 수능).
+
+
+현재 학습 모드(persona mode) 표시 및 선택 유도.
+
+
+AI 학습 도우미 챗봇 패널 포함 (모드별 맞춤 환영 메시지, 대화 인터페이스).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 연결 설정.
+
+
+index1.php ~ index4.php : 개념, 심화, 내신, 수능 학습 페이지.
+
+
+books/chapter.php : 교재 챕터별 개념학습 페이지.
+
+
+missionhome.php : 미션 기반 학습 페이지.
+
+
+selectmode.php : 학습 모드 선택 페이지.
+
+
+chatbot_api.php / chatbot_api_simple.php : 학습 도우미 챗봇 API 처리.
+
+
+execute_chatbot_sql.php : 챗봇 관련 DB 테이블 초기화용 스크립트.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기, 학습모드 선택 버튼.
+
+
+최근 학습 섹션
+
+
+개념/심화/내신/수능 4개 영역 카드 표시.
+
+
+가장 최근 학습은 강조 스타일(most-recent) 적용.
+
+
+학습 기록 없는 경우 안내 메시지 출력.
+
+
+메인 메뉴 카드
+
+
+📚 개념학습, 🚀 심화학습, 📝 내신준비, 🎯 수능대비 → 클릭 시 해당 index 페이지 이동.
+
+
+챗봇 인터페이스
+
+
+우측 하단 버튼(📚 학습 도우미) → 패널 열림.
+
+
+현재 학습 모드 표시, 모드별 맞춤형 환영 멘트 제공.
+
+
+대화창 + 입력창 + 전송 버튼.
+
+
+응답 실패 시 관리자용 설정 안내 메시지 출력.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/alt42/studenthome/index.php?userid=학생ID
+
+최근 학습 이어가기에서 학습 페이지 이동 시:
+
+
+개념학습 → /books/chapter.php?cid=...&userid=...
+
+
+심화/내신/수능 → /students/missionhome.php?mtid=...&cid=...&userid=...
+
+
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index1.php
+
+1. DB 관련 상세정보
+참조 테이블
+
+
+mdl_user_info_data : 현재 로그인한 사용자의 역할(Role) 확인 (fieldid=22 → student/teacher/admin).
+
+
+user_learning_selections : 특정 사용자(userid)와 페이지(page_type = index1, index2 등)의 마지막 학습 선택 정보 저장
+ (컬럼: last_path, last_unit, last_topic, selection_data, timecreated 등).
+
+
+동작
+
+
+URL 파라미터 userid로 조회, 없으면 현재 로그인 사용자 ID 사용.
+
+
+last_selection으로 최근 학습 기록을 불러와서 자동 복원 또는 직접 학습 페이지로 이동.
+
+
+선택 정보를 save_selection.php에 JSON으로 전달하여 DB에 저장.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생 개개인이 개념학습(Concept Learning) 을 체계적으로 진행할 수 있도록 메뉴와 최근 학습 복원 기능을 제공.
+
+
+기능
+
+
+로그인 및 권한 제어.
+
+
+학년별/과목별 개념학습 선택(초등·중등·고등).
+
+
+최근 학습 자동 복원(이전 학습 과목 자동 선택 및 바로 학습 진입).
+
+
+학습 타이머(공부 시간 기록) 및 진행도 저장(localStorage).
+
+
+미니맵으로 주요 학습 페이지 이동.
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 연결 설정.
+
+
+save_selection.php : 선택한 학습 정보를 DB에 저장하는 백엔드 처리 파일.
+
+
+books/chapter.php : 실제 교재별 개념학습 화면(과목별 cid 매핑으로 연결).
+
+
+index2.php ~ index4.php : 심화학습, 내신준비, 수능대비 페이지.
+
+
+indexm.php : 메타인지 학습 페이지.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기, 학습 경로(미니맵).
+
+
+학습 타이머(⏱️)와 진행도(%) 표시.
+
+
+메인 화면 (레벨 0)
+
+
+환영 메시지 + 학년 선택 버튼(초등/중등/고등).
+
+
+학년별 과목 카드 그리드(예: 초등 4-1, 중등 2-1, 고등 미적분 I 등).
+
+
+과목 선택 시
+
+
+DB 및 localStorage에 선택 정보 저장.
+
+
+books/chapter.php?cid=... 링크로 이동하여 실제 개념학습 진행.
+
+
+미니맵(dropdown)
+
+
+홈, 개념학습, 심화학습, 내신준비, 수능대비, 메타인지 바로가기 제공.
+
+
+진행도
+
+
+localStorage에 진행률과 시간 저장 → 새로고침/재방문 시 복원.
+
+
+
+5. 파일의 링크
+기본 접근 URL:
+https://mathking.kr/moodle/local/augmented_teacher/students/index1.php?userid=학생ID
+
+과목 선택 후 실제 학습 이동:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/books/chapter.php?cid=과목CID&type=init
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index2.php
+
+1. DB 관련 상세정보
+참조 테이블
+
+
+mdl_user_info_data : 로그인한 사용자의 역할(Role) 확인 (fieldid=22 → student/teacher/admin).
+
+
+user_learning_selections : 특정 사용자(userid)와 페이지(page_type=index2)의 최근 학습 선택을 저장/복원
+ (컬럼: last_path, last_unit, last_topic, selection_data, timecreated 등).
+
+
+로직
+
+
+URL의 userid GET 파라미터를 확인, 없으면 현재 로그인한 사용자 ID 사용.
+
+
+last_selection을 불러와 최근 학습 기록이 있으면 자동 복원, direct=true일 경우 즉시 해당 과목/챌린지로 이동.
+
+
+선택 내용은 save_selection.js를 통해 Ajax 요청으로 DB에 기록됨.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생이 심화학습(Advanced Learning) 을 선택·진행할 수 있도록 과목 선택 → 문제풀이 → 챌린지 모드 → 리더보드 흐름을 제공.
+
+
+기능
+
+
+학년/과목 선택 (초등·중등·고등 심화).
+
+
+난이도별 문제풀이(중급·상급·최상급).
+
+
+챌린지 모드: 제한 시간 내 문제 풀이, 점수 획득, 리더보드 경쟁.
+
+
+성취도 팝업(정답/실패 시 보상·점수 관리).
+
+
+학습 시간 기록, 점수/연속 학습일 관리(localStorage).
+
+
+최근 학습 복원(이전 과목/난이도 자동 하이라이트 또는 챌린지 모드 진입).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 연결 설정.
+
+
+save_selection.js : 사용자 선택사항 저장 Ajax 처리.
+
+
+missionhome.php : 중등·고등 심화 과목의 미션 기반 학습 페이지.
+
+
+checklist/view.php : 초등 심화 과목의 학습 체크리스트 페이지.
+
+
+index1.php, index3.php, index4.php, indexm.php : 다른 학습 모드(개념, 내신, 수능, 메타인지) 페이지.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기.
+
+
+학습 시간(⏱️), 점수(🏆), 연속 학습일(🔥) 표시.
+
+
+리더보드 버튼, 미니맵 버튼(학습 목차).
+
+
+레벨 0 (대시보드)
+
+
+학년 선택 버튼(초등/중등/고등).
+
+
+학년별 과목 카드(grid).
+
+
+챌린지 모드 시작 버튼.
+
+
+레벨 1 (문제 선택)
+
+
+난이도 버튼(중급/상급/최상급).
+
+
+문제 목록 카드(grid) → 클릭 시 문제 시작(점수 부여).
+
+
+레벨 2 (챌린지 모드)
+
+
+제한 시간 타이머 바.
+
+
+문제 영역(문제, 풀이 작성, 제출/힌트 버튼).
+
+
+리더보드(상위 랭킹 + 내 기록 표시).
+
+
+부가 요소
+
+
+성취도 팝업(문제 성공/실패 결과).
+
+
+미니맵(dropdown): 개념/심화/내신/수능/메타인지 페이지 이동.
+
+
+진행 상황(점수, streak, best score 등) localStorage에 저장/복원.
+
+
+
+5. 파일의 링크
+심화학습 메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/index2.php?userid=학생ID
+
+선택된 과목에 따라 이동:
+
+
+초등 심화 → /mod/checklist/view.php?id=과목ID
+
+
+중등/고등 심화 → /students/missionhome.php?mtid=2&cid=과목ID&tb=90
+
+
+경시 대비(KMC/KMO/특목고) → /mod/checklist/... 링크
+
+
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index2.php
+
+1. DB 관련 상세정보
+참조 테이블
+
+
+mdl_user_info_data : 로그인한 사용자의 역할(Role) 확인 (fieldid=22 → student/teacher/admin).
+
+
+user_learning_selections : 특정 사용자(userid)와 페이지(page_type=index2)의 최근 학습 선택을 저장/복원
+ (컬럼: last_path, last_unit, last_topic, selection_data, timecreated 등).
+
+
+로직
+
+
+URL의 userid GET 파라미터를 확인, 없으면 현재 로그인한 사용자 ID 사용.
+
+
+last_selection을 불러와 최근 학습 기록이 있으면 자동 복원, direct=true일 경우 즉시 해당 과목/챌린지로 이동.
+
+
+선택 내용은 save_selection.js를 통해 Ajax 요청으로 DB에 기록됨.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생이 심화학습(Advanced Learning) 을 선택·진행할 수 있도록 과목 선택 → 문제풀이 → 챌린지 모드 → 리더보드 흐름을 제공.
+
+
+기능
+
+
+학년/과목 선택 (초등·중등·고등 심화).
+
+
+난이도별 문제풀이(중급·상급·최상급).
+
+
+챌린지 모드: 제한 시간 내 문제 풀이, 점수 획득, 리더보드 경쟁.
+
+
+성취도 팝업(정답/실패 시 보상·점수 관리).
+
+
+학습 시간 기록, 점수/연속 학습일 관리(localStorage).
+
+
+최근 학습 복원(이전 과목/난이도 자동 하이라이트 또는 챌린지 모드 진입).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 연결 설정.
+
+
+save_selection.js : 사용자 선택사항 저장 Ajax 처리.
+
+
+missionhome.php : 중등·고등 심화 과목의 미션 기반 학습 페이지.
+
+
+checklist/view.php : 초등 심화 과목의 학습 체크리스트 페이지.
+
+
+index1.php, index3.php, index4.php, indexm.php : 다른 학습 모드(개념, 내신, 수능, 메타인지) 페이지.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기.
+
+
+학습 시간(⏱️), 점수(🏆), 연속 학습일(🔥) 표시.
+
+
+리더보드 버튼, 미니맵 버튼(학습 목차).
+
+
+레벨 0 (대시보드)
+
+
+학년 선택 버튼(초등/중등/고등).
+
+
+학년별 과목 카드(grid).
+
+
+챌린지 모드 시작 버튼.
+
+
+레벨 1 (문제 선택)
+
+
+난이도 버튼(중급/상급/최상급).
+
+
+문제 목록 카드(grid) → 클릭 시 문제 시작(점수 부여).
+
+
+레벨 2 (챌린지 모드)
+
+
+제한 시간 타이머 바.
+
+
+문제 영역(문제, 풀이 작성, 제출/힌트 버튼).
+
+
+리더보드(상위 랭킹 + 내 기록 표시).
+
+
+부가 요소
+
+
+성취도 팝업(문제 성공/실패 결과).
+
+
+미니맵(dropdown): 개념/심화/내신/수능/메타인지 페이지 이동.
+
+
+진행 상황(점수, streak, best score 등) localStorage에 저장/복원.
+
+
+
+5. 파일의 링크
+심화학습 메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/index2.php?userid=학생ID
+
+선택된 과목에 따라 이동:
+
+
+초등 심화 → /mod/checklist/view.php?id=과목ID
+
+
+중등/고등 심화 → /students/missionhome.php?mtid=2&cid=과목ID&tb=90
+
+
+경시 대비(KMC/KMO/특목고) → /mod/checklist/... 링크
+
+
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index3.php
+
+1. DB 관련 상세정보
+사용 DB 테이블
+
+
+mdl_user_info_data : 로그인한 사용자의 역할(Role) 확인 (fieldid=22 값 기반).
+
+
+user_learning_selections : 특정 사용자(userid)와 페이지(page_type=index3)의 최근 학습 선택 상태 저장/불러오기
+ → 과목, 단원, 시험유형, 학습경로, 선택 데이터(selection_data) 등.
+
+
+로직 흐름
+
+
+$_GET["userid"] 파라미터 확인, 없으면 현재 로그인한 $USER->id 사용.
+
+
+최근 학습 선택(last_selection) 불러오기 → last=true 또는 direct=true일 경우 복원 실행.
+
+
+JS의 save_selection.js 를 통해 선택한 과목/시험 유형/단원 등을 DB에 저장.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생들이 내신 시험 대비를 효율적으로 준비할 수 있도록 시험 범위·일정·단원별 학습·기출문제·오답노트·시험일정 관리까지 지원하는 대시보드 역할.
+
+
+핵심 기능
+
+
+학년별 과목 선택(초등/중등/고등 내신).
+
+
+시험 유형 선택(중간/기말/모의고사, 단원평가).
+
+
+단원별 학습 → 학습 진도 관리 (진도율 원형 그래프).
+
+
+기출문제 → 시험지 정보(문항수/시간/평균점수), 이미지 뷰어(탭 모드/스크롤 모드).
+
+
+오답노트 → 최근 오답 목록, 오답 통계, 취약 단원 분석.
+
+
+시험 정보 입력 폼 → 시험 범위, 시험일정, 공부계획, 교재·온라인콘텐츠·프린트물, 선생님 발언·소문, 출제경향, 목표점수까지 단계별 저장.
+
+
+시험 일정 관리 → 달력(Calendar)에 시험일 표시, D-day 및 카운트다운 제공.
+
+
+다크모드/라이트모드, 문제 이미지 전체화면, 오답 관리 등 학습 편의기능.
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 접속 설정.
+
+
+js/save_selection.js : Ajax를 통한 사용자 선택/진도 저장 처리.
+
+
+missionhome.php : 중등/고등 내신 학습 경로 진입용.
+
+
+books/chapter.php : 초등 내신 단원별 학습 진입용.
+
+
+index.php, index1.php, index2.php, index4.php, indexm.php : 다른 학습 모드(메인, 개념학습, 심화학습, 수능대비, 메타인지) 페이지.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기.
+
+
+시험 관련 정보(남은 기간 D-day, 평균 점수, 학습 진도율).
+
+
+오답노트 바로가기, 미니맵(학습 목차).
+
+
+레벨 0 (대시보드)
+
+
+학년 선택 버튼(초등/중등/고등).
+
+
+과목 카드(Grid) 표시.
+
+
+시험 유형 카드(중간/기말/모의고사, 단원평가).
+
+
+“시험일정 및 정보 관리” 버튼.
+
+
+레벨 1 (시험 준비 화면)
+
+
+시험 유형별 대비 화면.
+
+
+탭 메뉴: 단원별 학습, 기출문제, 오답노트.
+
+
+단원 학습 → 단원 카드와 학습 진도 원형 차트.
+
+
+기출문제 → 연도·학교·평균점수 표시 카드 + 이미지 뷰어(다크/라이트 모드, 탭/스크롤 전환).
+
+
+오답노트 → 최근 오답 리스트, 오답 통계, 취약 단원 표시.
+
+
+레벨 2 (시험 정보 입력 폼)
+
+
+단계별 입력 (시험 범위 → 시험일정 → 공부 계획 → 교재/콘텐츠 → 선생님 발언/소문 → 출제경향 → 목표점수).
+
+
+저장 시 localStorage에 기록 → 시험 대비 계획 관리.
+
+
+부가 요소
+
+
+학습 진행도 저장/복원(localStorage).
+
+
+시험 일정 달력(Calendar UI): 시험일 표시, 클릭 시 상세 정보 및 D-day 표시.
+
+
+이미지 뷰어(문제 풀이 이미지 확대, 전체화면, 모드 전환).
+
+
+
+5. 파일의 링크
+내신준비 메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/index3.php?userid=학생ID
+
+과목 선택 후 이동:
+
+
+초등 내신 → /books/chapter.php?cid=과목ID&type=init
+
+
+중등/고등 내신 → /students/missionhome.php?mtid=3&cid=과목ID&tb=90
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/index4.php
+
+1. DB 관련 상세정보
+사용 DB 테이블
+
+
+mdl_user_info_data : 로그인한 사용자의 역할(Role)을 가져옴 (fieldid=22 기준).
+
+
+user_learning_selections : 특정 사용자(userid)와 페이지(page_type=index4)의 최근 학습 선택 기록을 저장/불러오기.
+ → 선택된 카테고리(개념/유형/기출), 과목명, 학습 경로, 세부 selection_data 포함.
+
+
+처리 로직
+
+
+$_GET["userid"] 파라미터 → 학생 ID로 설정. 없으면 $USER->id 사용.
+
+
+최근 학습 정보(last_selection) 조회.
+
+
+last=true 또는 direct=true일 경우 → 마지막 학습 과목을 자동 복원하거나 바로 학습으로 이동.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생들이 수능 수학 대비 학습을 개념 → 유형 → 기출까지 체계적으로 수행하고, 필요 시 AI 기반 옴니모드로 맞춤형 학습을 할 수 있도록 지원.
+
+
+주요 기능
+
+
+수능 대비 홈 화면(대시보드) 제공.
+
+
+학습 카테고리 선택: 개념, 유형, 기출.
+
+
+과목 선택: 수학I, 수학II, 미적분, 확률과통계, 기하.
+
+
+학습 진행 상태 저장/복원 (save_selection.js 사용).
+
+
+옴니모드:
+
+
+AI 기반 맞춤형 학습.
+
+
+화이트보드 캔버스(펜/지우개/전체지우기).
+
+
+문제 풀이 입력 및 제출.
+
+
+AI 선생님 챗봇 인터페이스(대화형 피드백).
+
+
+컨트롤 바(다음 문제, 풀이 보기, 문제 재분석).
+
+
+집중도 & 뽀모도로 관리:
+
+
+25분 학습 → 자동 5분 휴식 모드.
+
+
+학습 시간/휴식 시간 카운트 및 집중도(%) 표시.
+
+
+휴식 화면 및 알림 제공.
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 설정 및 DB 연결.
+
+
+js/save_selection.js : 학습 선택/진도 정보를 DB에 저장하는 스크립트.
+
+
+관련 페이지:
+
+
+index.php : 메인 홈.
+
+
+index1.php : 개념학습.
+
+
+index2.php : 심화학습.
+
+
+index3.php : 내신준비.
+
+
+indexm.php : 메타인지.
+
+
+학습 진입용 외부 링크:
+
+
+/books/chapter.php : 개념 학습(수학I, 수학II, 미적분 등).
+
+
+/mod/checklist/ : 유형별 학습 및 기출문제 학습.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기.
+
+
+학습 시간 타이머, 집중도 표시.
+
+
+미니맵(학습 경로 표시 및 페이지 간 이동).
+
+
+레벨 0 (대시보드)
+
+
+학습 카테고리 카드(개념, 유형, 기출).
+
+
+"옴니모드" 버튼 → AI 맞춤 학습 진입.
+
+
+레벨 1 (과목 선택 화면)
+
+
+선택한 카테고리에 맞는 과목 카드 표시.
+
+
+과목 클릭 시 해당 학습 페이지로 이동.
+
+
+레벨 2 (옴니모드 학습)
+
+
+좌측: 화이트보드(문제 표시, 펜/지우개 툴, 답안 입력).
+
+
+우측: AI 선생님 영역(아바타 + 대화창).
+
+
+하단: 컨트롤 바(다음 문제, 풀이 보기, 문제 재분석, AI 정확도, 해결 시간).
+
+
+휴식 모드
+
+
+뽀모도로 학습(25분 집중 → 5분 휴식).
+
+
+휴식 화면 표시 + 집중도 회복.
+
+
+
+5. 파일의 링크
+수능대비 페이지 (학생별 ID 필요):
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/index4.php?userid=학생ID
+
+학습 진입 URL (예시):
+
+
+개념 학습(수학I):
+ https://mathking.kr/moodle/local/augmented_teacher/books/chapter.php?cid=61&nch=1&type=init
+
+
+유형 학습(수학II):
+ https://mathking.kr/moodle/mod/checklist/index.php?id=302
+
+
+기출 학습(미적분):
+ https://mathking.kr/moodle/mod/checklist/view.php?id=92614
+
+
+
+
+--------------------------------------------------------------------------------
+/students/index42.php
+
+1. DB 관련 상세정보
+사용 DB 테이블
+
+
+mdl_user : 학생 기본 정보(id, 이름, timezone, hideinput 등).
+
+
+mdl_user_info_data : 사용자 부가 정보
+ (성별=107, 소속=88, 출생년도=89, AutopilotMode=82, 개인 데이터=90, 상징=64, 역할=22).
+
+
+mdl_abessi_messages : 최근 일주일간 학생의 오디오 복습 노트(mtype='audio').
+
+
+mdl_abessi_mission : 학생이 수행 중이거나 완료한 학습 미션 목록.
+ → 연결된 커리큘럼(mdl_abessi_curriculum)에서 과목명, mtid(미션 타입), contentslist 가져옴.
+
+
+abessi_missionlog : 학생이 페이지에 접근한 기록(로그).
+
+
+로직 흐름
+
+
+URL 파라미터 id(학생 ID), cid(과목 ID), access 확인 → 없으면 로그인한 사용자 $USER->id 사용.
+
+
+역할이 student일 경우, 다른 학생 ID 접근 차단.
+
+
+access=my 이면서 role ≠ student → 교사용 시간표 페이지로 리다이렉트.
+
+
+학생이면 abessi_missionlog에 접속 기록 저장.
+
+
+미션 데이터 불러오기 후, 진행 중 미션/완료 미션을 개념·심화·내신·수능으로 분류하여 최대 3개까지만 표시. 초과분은 “더보기”로 토글 가능.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생별 학습 상황을 통합 관리하는 개인 학습 홈(내공부방) 제공.
+
+
+기능
+
+
+학생 개별 미션 관리(개념·심화·내신·수능).
+
+
+최근 완료된 미션 및 추가 미션 관리.
+
+
+복습 추천(최근 오디오 학습 기록 기반).
+
+
+KTM 서술평가 연동(출제목록, 귀가평가, 오답노트 검사).
+
+
+교사용 부가 기능(학생 평가/오답노트 검사).
+
+
+뷰 전환: 탭 뷰(Tab View) ↔ 스크롤 뷰(Scroll View).
+
+
+시각화 기능: 시험결과, 학생 정보, 학습 집중도·이탈·지루함 지수, 뽀모도로 학습 통계.
+
+
+목표 설정 패널: AI 기반 대화형 목표 관리(오늘·주간·분기 목표).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경/DB 연결 설정.
+
+
+check.php : 미션 완료 여부 Ajax 업데이트.
+
+
+save_goal_interactive.php, get_goals_ajax.php : 목표 설정/불러오기 API.
+
+
+SPEC Intelligence.php : KTM 서술평가 연동 모듈.
+
+
+missionhome.php, chapter42.php, mod/checklist/view.php : 각 학습 미션 실제 진입 페이지.
+
+
+students/selectmission.php : 새로운 미션 추가.
+
+
+외부 자원: Bootstrap, Azzara UI, jQuery, FontAwesome, Chart.js 등.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+🏠 홈, 👩🏻‍🎨 내공부방, 📝 오늘, 📅 일정, 🎯 목표, 📩 메시지, 📅 수학일기
+
+
+뷰 전환 버튼(탭 ↔ 스크롤).
+
+
+탭 뷰(Tab View)
+
+
+카테고리 탭: 개념, 심화, 내신, 수능, KTM 서술평가
+
+
+추가 탭: 시험결과, 정보, 시각데이터
+
+
+각 탭에서 진행 중 미션, 완료 미션, 복습 추천 표시.
+
+
+스크롤 뷰(Scroll View)
+
+
+개념 → 심화 → 내신 → 수능 → 장기계획 → KTM 순서대로 세로 나열.
+
+
+시각데이터 탭
+
+
+집중도/이탈/지루함 라인 차트.
+
+
+뽀모도로 데이터 시각화(오늘·주간·월간·집중 시수).
+
+
+시간 범위/모드 선택(주간, 오늘까지, DMN, 온라인 등).
+
+
+목표 설정 패널
+
+
+오늘목표/주간목표/분기목표 구분.
+
+
+AI 대화형 인터페이스로 질문-응답 기반 목표 수립.
+
+
+SMART 목표 피드백, 진행 단계 표시, 저장 API 연동.
+
+
+
+5. 파일의 링크
+학습 홈(내공부방) 메인:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/index42.php?id=학생ID
+
+미션 추가:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/selectmission.php?id=학생ID&mtid=[1~4]&cid=0
+
+KTM 서술평가 출제목록:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/synergetic_step.php?userid=학생ID
+
+교사용 귀가평가/오답노트 검사:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/beactivelearner.php?userid=학생ID
+https://mathking.kr/moodle/local/augmented_teacher/students/dashboard_fixnotes.php?userid=학생ID
+
+
+
+--------------------------------------------------------------------------------
+/students/today42.php
+
+1. DB 관련 상세정보
+사용 DB 테이블
+
+
+mdl_abessi_chapterlog : 학생의 최근 학습 챕터 로그.
+
+
+mdl_user_info_data : 사용자 부가 정보 (역할=22, 성별=107, 소속=88, 출생년도=89, Autopilot=82, 개인데이터=90, 상징=64 등).
+
+
+mdl_user : 학생 기본정보(id, firstname, lastname, hideinput, timezone).
+
+
+mdl_abessi_mbtilog : 학생 MBTI 관련 최신 기록.
+
+
+mdl_quiz, mdl_quiz_attempts, mdl_course_modules : 최근 퀴즈 응시 내역, 점수, 상태.
+
+
+mdl_abessi_messages : 화이트보드 학습 기록(필기, 리뷰, 평가, 플래그 상태 등).
+
+
+mdl_question : 문제 본문 및 이미지.
+
+
+mdl_abessi_missionlog : 출석·미션 수행 기록(오늘 접속, 시험/활동 로그).
+
+
+mdl_abessi_today : 학생의 주간/오늘 목표 설정 데이터.
+
+
+mdl_logstore_standard_log : 마지막 활동 로그(접속 시간).
+
+
+mdl_abessi_mission, mdl_abessi_attendance : 시험 관련 미션, 보강·출석 관리.
+
+
+abessi_indicators : 학습 지표(오늘·주간 퀴즈 평균, 집중도, 평점, 학습시간 등).
+
+
+저장되는 주요 데이터
+
+
+퀴즈 성적(점수, 시도횟수, 상태, 피드백).
+
+
+화이트보드 학습 기록(펜 획수, 상태, 교사 검토 여부, 평가점수, 복습 예약 여부).
+
+
+오늘/주간/분기 목표 진행도 및 평가.
+
+
+주간·누적 학습시간, 집중도 지표.
+
+
+출석 및 보강시간 기록.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생의 오늘 학습 현황을 종합적으로 보여주고,
+ 퀴즈·화이트보드 학습·목표 달성률·시간관리·보강 상황을 통합적으로 관리할 수 있도록 지원.
+
+
+기능
+
+
+오늘·주간 학습시간 및 집중도 시각화.
+
+
+최근 퀴즈 결과(내신/표준/인지촉진/준비학습) 표시.
+
+
+화이트보드 학습 기록 및 오답노트 관리.
+
+
+오늘 목표/주간 목표 확인, AI 보조 질문·도움 요청 버튼 제공.
+
+
+보강시간 자동 계산 및 남은 시간 알림.
+
+
+교사 계정으로 접속 시 → 퀴즈 삭제/시간 추가/오답 클리어 등 관리 기능 활성화.
+
+
+뷰 전환 기능: 스크롤 뷰 ↔ 탭 뷰.
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle DB 연결.
+
+
+check.php, database.php : Ajax 요청 처리(퀴즈 시간 변경, 목표 제출, 학습 체크 상태 업데이트).
+
+
+checkrubric.php : 루브릭 관련 평가 업데이트.
+
+
+../whiteboard/status_icons.php : 화이트보드 상태 아이콘 표시.
+
+
+../LLM/postit.php : AI 기반 목표/학습 지원 기능 포함.
+
+
+연결 페이지:
+
+
+index.php, index42.php, schedule42.php, goals42.php 등 학생 학습 홈/일정/목표 페이지.
+
+
+studenthome/contextual_agents/beforegoinghome/index.php : 귀가 전 검사 화면.
+
+
+whiteboard/board.php, whiteboard/replay.php, board_review.php : 학습 노트 및 리플레이.
+
+
+teachers/analysis/user_analysis.php, teachers/timescaffolding_stat.php : 학습 분석/시간 관리 통계.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션
+
+
+홈, 내공부방, 오늘(활성), 일정, 목표, 메시지, 수학일기.
+
+
+뷰 전환 버튼(아이콘: 폴더 ↔ 그리드).
+
+
+섹션 구조
+
+
+시각자료 탭 :
+
+
+주간/오늘 학습시간 게이지바.
+
+
+학습 분석/시간 관리 통계 iframe.
+
+
+시험결과 탭 :
+
+
+최근 퀴즈 기록 테이블 (내신/표준/인지촉진/준비학습 분류).
+
+
+점수 상태(우수/양호/개선필요) 색상 아이콘.
+
+
+오답노트 탭 :
+
+
+화이트보드 기록(필기 횟수, 상태, 검토 여부).
+
+
+문제 미리보기 이미지 tooltip, 노트·인쇄·리플레이 링크.
+
+
+교사용 오답 클리어 버튼 제공.
+
+
+목표/계획 관리
+
+
+오늘 목표 텍스트 표시, 화이트보드로 바로가기.
+
+
+질문하기/도움요청 버튼, 교사용 보강추가 버튼.
+
+
+DMN 휴식·오프라인·귀가검사 체크박스.
+
+
+
+5. 파일의 링크
+오늘 학습 현황 페이지 (학생별 ID 필요):
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/today42.php?id=학생ID
+
+연관 링크 예시:
+
+
+학습 홈 → /students/index42.php?id=학생ID
+
+
+학습 분석 → /teachers/analysis/user_analysis.php?userid=학생ID
+
+
+시간 통계 → /teachers/timescaffolding_stat.php?userid=학생ID
+
+
+퀴즈 리뷰 → /mod/quiz/review.php?attempt=ATTEMPTID&studentid=학생ID
+
+
+화이트보드 보기 → /whiteboard/board.php?id=WBOARDID
+
+
+
+--------------------------------------------------------------------------------
+/students/schedule42.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 기본 정보(id, 이름, timezone).
+
+
+mdl_user_info_data : 사용자 부가정보 (fieldid=22 → role).
+
+
+mdl_abessi_missionlog : 학생의 페이지 접근 로그 (role=student일 경우 기록).
+
+
+mdl_abessi_schedule : 학생의 주간 시간표 데이터 (요일별 시작시간, 공부시간, 장소, 메모, 상담시간, pinned 플래그 포함).
+
+
+mdl_abessi_attendance : 학생 출결 기록(정상/지각/결석, 유형, 사유, 메모).
+
+
+처리 로직
+
+
+로그인 사용자와 studentid 불일치 시 접근 차단(학생 권한일 경우).
+
+
+주간 총 학습시간, 오늘 학습시간, 누적 학습시간 계산.
+
+
+출결 최근 20건 조회 후 표시.
+
+
+관리자/교사 계정은 시간표 수정 및 출결 입력 가능.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생별 주간 학습 시간표와 출결 현황을 확인·관리하고, 통계를 시각적으로 제공.
+
+
+기능
+
+
+주간 시간표 조회(요일별 시작시간, 공부시간, 장소, 참고사항, 상담시간).
+
+
+오늘/누적/주간 학습시간 계산 및 표시.
+
+
+출결 기록 조회 및 입력 기능(관리자/교사 전용).
+
+
+주간 학습시간 통계 그래프(Chart.js 활용).
+
+
+학생이 직접 접근 시 미션로그 기록.
+
+
+뷰 전환(탭 뷰 ↔ 스크롤 뷰) 및 사용자 선호 뷰 저장(localStorage).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경설정 및 DB 연결.
+
+
+database.php : Ajax 요청 처리 (출결 입력 저장, eventid=95).
+
+
+editschedule.php : 시간표 수정 페이지.
+
+
+../LLM/postit.php : AI/LLM 관련 메모 및 학습 보조 기능 연계.
+
+
+../assets/css/bootstrap.min.css, ../assets/js/core/*.js : UI 및 JS 라이브러리.
+
+
+외부 라이브러리: Font Awesome, SweetAlert2, Chart.js.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정(활성), 목표, 메시지, 수학일기.
+
+
+뷰 전환 버튼(폴더 ↔ 스트림 아이콘).
+
+
+탭 뷰(Tab View)
+
+
+시간표 탭 : 주간 시간표 표 형식 출력, 오늘 요일 강조, 관리자/교사는 시간표 수정 버튼 제공.
+
+
+출결현황 탭 : 최근 20건 출결 내역 테이블, 교사용 출결 입력 폼.
+
+
+통계 탭 : 주간 총/오늘/누적 학습시간, 출석 기록 횟수 요약 + 주간 학습시간 그래프(막대 차트).
+
+
+스크롤 뷰(Scroll View)
+ 모든 섹션(시간표, 통계, 출결)을 한 페이지에 나열.
+
+
+기타
+
+
+사용자 timezone과 서울 기준 시차 계산 후 표시.
+
+
+Empty State(시간표/출결 없음) 안내 아이콘 및 메시지.
+
+
+로컬스토리지에 탭 선택, 뷰 모드 저장 → 재접속 시 자동 복원.
+
+
+키보드 화살표로 탭 전환 가능.
+
+
+
+5. 파일의 링크
+기본 접근:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/schedule42.php?id=학생ID
+
+시간표 수정 (관리자/교사 전용):
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/editschedule.php?id=학생ID&eid=스케줄ID
+
+
+
+
+--------------------------------------------------------------------------------
+/students/goals42.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 기본 정보(id, 이름, timezone, hideinput).
+
+
+mdl_user_info_data : 사용자 부가정보(fieldid=22 → role).
+
+
+mdl_abessi_missionlog : 학생의 페이지 접근 로그 기록(page='goals').
+
+
+mdl_abessi_today : 오늘목표/주간목표 기록 저장(text, type, timecreated).
+
+
+mdl_abessi_progress : 분기목표/로드맵, 데드라인(deadline), 메모(memo), 랜덤꿈(dreamchallenge, dreamurl).
+
+
+mdl_quiz, mdl_quiz_attempts, mdl_course_modules : 퀴즈/시험 시도 기록, 점수(sumgrades/tgrades), 시작·종료 시각, 문제 수(layout).
+
+
+주요 로직
+
+
+학생 id 불일치 시 접근 차단(학생 계정일 경우).
+
+
+오늘/주간 목표 조회 및 입력(ajax 저장).
+
+
+분기목표 설정 시 랜덤 꿈 챌린지 제안 및 저장.
+
+
+최근 퀴즈 기록 불러오기 → 내신/표준/기타 분류 + 오늘/주간 성적 집계.
+
+
+입력 편집 시 즉시 저장(SweetAlert2 알림, Ajax → database.php).
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생 개인의 일일·주간·분기 목표 관리와 퀴즈 성적 추적을 위한 대시보드 제공.
+
+
+기능
+
+
+오늘목표/주간목표 기록 열람 및 실시간 편집 저장.
+
+
+분기목표 설정 + 랜덤 꿈 챌린지 제공(학생의 장기 진로 탐색 지원).
+
+
+최근 퀴즈(내신/표준/기타) 점수 기록과 주간/일일 평균 성적 통계 표시.
+
+
+목표 기록 히스토리 페이징(더보기 버튼).
+
+
+UI 모드 전환(Tab View ↔ Scroll View) 및 사용자 선호 저장(localStorage).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle 환경 및 DB 연결.
+
+
+database.php : Ajax 저장 처리(eventid=2 → 목표 저장, 8 → 분기목표 저장, 301 → 꿈 챌린지 업데이트).
+
+
+../LLM/postit.php : AI/메모 기능 연동.
+
+
+../assets/css/bootstrap.min.css, ../assets/js/core/*.js : UI 구성 리소스.
+
+
+외부 라이브러리 : jQuery, Bootstrap, Font Awesome, SweetAlert2.
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+
+
+홈, 내공부방, 오늘, 일정, 목표(활성), 메시지, 수학일기.
+
+
+뷰 전환 버튼(폴더 ↔ 스트림).
+
+
+탭 뷰(Tab View)
+
+
+오늘목표 탭 : 최근 기록 테이블 + 오늘 목표 입력 영역.
+
+
+주간목표 탭 : 주간 목표 기록 테이블 + 주간 목표 입력 영역.
+
+
+분기목표 탭 : 로드맵(최근 3개) 표시 + 분기목표 입력 폼(랜덤 꿈 챌린지 포함).
+
+
+테스트현황 탭 : 최근 퀴즈 성적 분류(내신/표준), 오늘 평균/주간 평균 점수 통계.
+
+
+스크롤 뷰(Scroll View)
+ 위의 탭 콘텐츠를 하나의 페이지에 순차적으로 나열.
+
+
+특징
+
+
+목표 입력 영역은 클릭 시 인라인 편집 가능.
+
+
+랜덤 꿈 챌린지 버튼으로 새로운 꿈 추천 및 저장 가능.
+
+
+“더보기” 버튼으로 과거 목표 히스토리 추가 로딩.
+
+
+
+5. 파일의 링크
+목표 관리 메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/goals42.php?id=학생ID
+
+
+
+--------------------------------------------------------------------------------
+/alt42/teachingsupport/student_inbox.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 기본 정보(id, teacherid 필드).
+
+
+mdl_user_info_data : 사용자 부가 정보(fieldid=22 → role).
+
+
+ktm_teaching_interactions : 교사–학생 간 풀이 상호작용 기록 (status, solution_text 포함).
+
+
+ktm_interaction_read_status : 읽음 상태 관리 테이블 (자동 생성).
+ (interaction_id, student_id, is_read, timeread 저장)
+
+
+주요 로직
+
+
+학생 id 불러오기 ($_GET['studentid'] ?? $USER->id).
+
+
+학생 정보 검증 후, 교사 id 및 사용자 role 조회.
+
+
+상호작용 메시지 총 개수, 읽은 개수, 안 읽은 개수 계산.
+
+
+읽음 상태 테이블 없으면 자동 생성.
+
+
+메시지 API(get_student_messages.php, get_sent_requests.php)로 불러온 후 통합 리스트로 표시.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생과 교사 간 풀이 메시지 교환함으로, 학생의 풀이 요청·교사의 해설 응답·AI 답변 등을 한 화면에서 관리.
+
+
+기능
+
+
+학생이 문제 이미지 업로드 후 풀이 요청 제출.
+
+
+교사의 해설 메시지 수신 및 읽음 처리.
+
+
+AI 자동 답변 생성(교사/관리자 전용 버튼).
+
+
+메시지 상태 관리(대기 중, 완료, 재요청 등).
+
+
+오디오/텍스트 동기화된 해설 모달 제공(문제·풀이 이미지·음성·텍스트 동시 표시).
+
+
+메시지 읽음/재요청/풀이보기 등 인터랙션 제공.
+
+
+
+3. 포함된 연관 파일
+get_student_messages.php : 학생이 받은 메시지 API.
+
+
+get_sent_requests.php : 학생이 보낸 풀이 요청 API.
+
+
+save_interaction.php : 풀이 요청 저장 처리.
+
+
+get_dialogue_data.php : 풀이 해설 데이터 불러오기.
+
+
+mark_message_read.php : 메시지 읽음 처리.
+
+
+submit_re_request.php : 해설 재요청 처리.
+
+
+teachingagent.php : AI 풀이 답변 생성(교사용).
+
+
+
+4. 인터페이스 설명
+상단 네비게이션 바
+ 홈, 내공부방, 오늘, 일정, 목표, 메시지(활성), 수학일기 버튼.
+ 뷰 전환 아이콘(탭 ↔ 리스트).
+
+
+헤더
+ “📬 나의 풀이 메시지함” + 학생 이름 표시.
+
+
+메인 대시보드
+
+
+버튼: 🔄 새로고침 / 📤 풀이 요청하기 / 🤖 AI 답변 생성(교사용).
+
+
+풀이 요청 폼: 문제 이미지 업로드, 문제 유형 선택, 추가 요청사항 입력.
+
+
+메시지 목록: 보낸 메시지(학생 요청) + 받은 메시지(교사 응답) 통합 표시.
+
+
+썸네일 이미지 툴팁
+
+
+상태 아이콘(대기·완료·읽음)
+
+
+풀이보기 버튼 → 해설 모달 오픈
+
+
+재요청 버튼, 읽음 처리 버튼
+
+
+풀이 해설 모달
+
+
+왼쪽: 문제 이미지/텍스트, 해설 이미지
+
+
+오른쪽: 해설 텍스트(수식 지원, 대화형 표시), 오디오 플레이어(재생/속도/진행률)
+
+
+블러 처리로 집중 모드 지원(재생 중만 블러 → 일시정지 시 해제).
+
+
+재요청 모달
+
+
+학생이 이해 안 된 부분 작성 후 전송.
+
+
+
+5. 파일의 링크
+학생 메시지함 메인:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/alt42/teachingsupport/student_inbox.php?studentid=학생ID
+
+관련 API/기능 링크:
+
+
+풀이 요청 저장 → save_interaction.php
+
+
+교사 답변 확인 → get_student_messages.php
+
+
+보낸 요청 확인 → get_sent_requests.php
+
+
+해설 보기 → get_dialogue_data.php?cid=INTERACTION_ID&ctype=interaction
+
+
+AI 해설 생성(교사용) → teachingagent.php?userid=교사ID&studentid=학생ID
+
+
+
+--------------------------------------------------------------------------------
+/alt42/teachingsupport/teachingagent.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생/교사 기본 정보(id, 이름, role).
+
+
+ktm_teaching_interactions : 문제풀이 상호작용(문제유형, 이미지, 해설, 나레이션, 음성 URL, 상태 등).
+
+
+ktm_interaction_read_status : 메시지 읽음 상태(학생별 읽음/미읽음 관리).
+
+
+저장/갱신 데이터
+
+
+문제 제출 시 interaction 레코드 생성(create_interaction).
+
+
+AI 해설 생성 후 → solution/narration/audioUrl 업데이트.
+
+
+메시지 전송 완료 후 → 상태(completed)로 갱신.
+
+
+재요청 시 → modificationPrompt 필드 업데이트.
+
+
+
+2. 파일의 목적과 기능
+목적
+ 교사와 학생이 문제풀이 요청–AI 해설 생성–음성 나레이션–메시지 전송 과정을 원활히 수행할 수 있도록 지원.
+
+
+기능
+
+
+학생 모드 : 문제 이미지를 업로드 → 제출 후 교사 답변 대기.
+
+
+교사 모드 :
+
+
+업로드된 문제 분석(분석 → 해설 → 나레이션 → 음성 변환).
+
+
+풀이 과정을 학생 메시지함에 전송.
+
+
+풀이 요청 히스토리 확인 및 재풀이 요청 처리.
+
+
+공통 기능
+
+
+문제 유형 선택(내신, 학교프린트, MathKing, 시중교재).
+
+
+추가 요청사항(“다른 풀이 방법도 알려주세요” 등) 입력 가능.
+
+
+이미지 드래그/업로드 미리보기.
+
+
+수식(MathJax) 렌더링 지원.
+
+
+해설을 대화 형식(교사/학생 발화)과 단계별 섹션으로 표시.
+
+
+해설 오디오 동기화 재생(재생/정지, 구간 이동, 속도 조절).
+
+
+새로운 풀이 요청 목록 자동 새로고침(1분 주기).
+
+
+
+3. 포함된 연관 파일
+save_interaction.php : 상호작용 데이터 생성/업데이트.
+
+
+analyze_problem.php : 문제 분석(AI 해설 생성).
+
+
+generate_narration_dialog.php : 해설 나레이션 스크립트 생성.
+
+
+generate_tts.php : 나레이션 TTS 음성 생성.
+
+
+send_message.php : 학생 메시지 전송.
+
+
+get_new_requests.php : 새로운 풀이 요청 조회.
+
+
+get_interaction_data.php : 상호작용 상세 데이터 조회.
+
+
+get_dialogue_data.php : 해설 대화 데이터(문제·풀이·음성) 불러오기.
+
+
+interaction_history.php : 교사용 Q&A 현황판.
+
+
+
+4. 인터페이스 설명
+상단 상태바
+
+
+교사/학생 이름, 문제 유형 선택, 처리 상태 표시.
+
+
+교사용 “📊 우리반 질의응답 현황판” 바로가기 버튼.
+
+
+메인 패널
+
+
+문제 업로드 영역 : 이미지 업로드/드래그, 미리보기, 추가 요청 입력, 제출 버튼.
+
+
+AI 해설 영역(교사용) :
+
+
+해설 텍스트 표시(수식 포함).
+
+
+나레이션 스크립트 + 오디오 플레이어(재생/정지, 속도 조절).
+
+
+“학생에게 전송”, “컨텐츠 저장” 버튼.
+
+
+학생 모드 : 제출 완료 메시지와 상태 안내만 표시.
+
+
+최근 문제 해설 기록(교사용)
+
+
+“🆕 새로운 풀이요청” 목록: 요청 시간, 학생명, 이미지, 추가 요청사항 표시.
+
+
+“✅ 풀이 시작하기” 버튼 클릭 시 자동으로 업로드 영역에 불러와 해설 프로세스 실행.
+
+
+강의 모달(교사용)
+
+
+문제 이미지/텍스트 + 해설 대화 표시.
+
+
+오디오와 해설 텍스트 동기화(진행률에 맞춰 문장 하이라이트).
+
+
+재생/일시정지, 구간이동, 속도 조절(0.75x ~ 1.5x).
+
+
+
+5. 파일의 링크
+메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/alt42/teachingsupport/hightutoring.php?userid=교사ID&studentid=학생ID&role=student|teacher
+
+주요 연동 링크:
+
+
+새로운 요청 목록 → get_new_requests.php?teacherid=교사ID
+
+
+상호작용 데이터 → get_interaction_data.php?interactionid=ID
+
+
+해설 보기 모달 → get_dialogue_data.php?cid=ID&ctype=interaction
+
+
+현황판 → interaction_history.php?userid=교사ID&studentid=학생ID
+
+
+
+--------------------------------------------------------------------------------
+/teachers/timescaffolding42.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 기본 정보(이름, 성, id).
+
+
+mdl_user_info_data : 사용자 역할(role, fieldid=22).
+
+
+mdl_abessi_mathtalk : 상담 녹음 동의 여부 저장(type=agreement).
+
+
+mdl_abessi_tracking : 학습 활동 기록(상태, 텍스트, 시작/종료 시간, 평가 결과 등).
+
+
+mdl_abessi_today : 오늘 목표, 주간 목표, 검사요청 기록.
+
+
+mdl_abessi_chapterlog : 단원/챕터 학습 로그.
+
+
+mdl_abessi_progress : 분기별 학습 목표(plantype='분기목표').
+
+
+mdl_abessi_missionlog : 미션/이벤트 로그(휴식 여부 확인).
+
+
+mdl_abessi_reflections : 학습 반성/피드백 기록.
+
+
+mdl_abessi_indicators : 지표 저장(pmresult, 포모도로 세션 수, 평균시간 등).
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생의 학습 활동을 포모도로 기반 학습일지(수학일기) 형식으로 기록·시각화하여 학습 패턴을 추적하고, 교사와 학부모가 확인/피드백할 수 있도록 지원.
+
+
+주요 기능
+
+
+활동(개념학습, 오답노트, 과제, 시험 등) 기록과 상태 관리(begin, complete, waiting).
+
+
+오늘/주간/분기 목표 조회 및 입력 지원.
+
+
+실시간 활동 카운트다운(남은 시간 표시, 종료 시 자동 처리).
+
+
+활동별 시간계획 vs 실제 수행시간 비교 및 이탈 여부 표시.
+
+
+활동별 피드백/코멘트 입력 기능.
+
+
+Chart.js 기반 학습시간 그래프 시각화 (세션별 소요시간, 노트 작성시간).
+
+
+Sticky Note 메모장 기능(교사/학생 메모 구분, 색상 선택, 알림 콜백, 이미지 업로드 지원).
+
+
+녹음 동의 시 상담 녹음 및 파일 관리 기능 지원.
+
+
+클립보드 복사 버튼 → 활동 요약 자동 생성 후 블로그용 학습일지 스토리텔링 요청 문구 포함.
+
+
+
+3. 포함된 연관 파일
+check.php : 활동 상태 업데이트, 시간 연장, 코멘트 저장, 과제/일정 입력 등 처리.
+
+
+challenge_report.php : 마무리 점검(활동 평가 리포트) 페이지.
+
+
+synergetic.php : 특정 활동 기간 내 기록 조회(활동 로그).
+
+
+mypersonas.php : 학생 페르소나 페이지.
+
+
+attendancerecords.php : 출결 기록.
+
+
+weeklyplans.php, dailygoals.php, todayplans.php, edittoday.php : 목표/계획 관리 페이지.
+
+
+stickynotes_api.php : 메모 CRUD 처리.
+
+
+callback_api.php : 콜백 알림 관리.
+
+
+uploadimage.php, upload_recording.php : 이미지/녹음 업로드 처리.
+
+
+recording_api.php, consent_api.php : 녹음 데이터/동의 처리.
+
+
+
+4. 인터페이스 설명
+상단 모던 헤더
+
+
+홈, 내공부방, 오늘, 일정, 목표, 메시지, 수학일기 메뉴 버튼.
+
+
+상태체크 박스 : 책/프린트 공부, DMN 휴식 선택 가능.
+
+
+메인 영역
+
+
+최근 단원 이동/계획 입력/오답노트 및 직접 입력 버튼.
+
+
+오늘/주간 목표 표시 및 링크.
+
+
+활동 리스트 : 시간, 계획시간(Plan), 실제시간(Final), 상태, 피드백, 보고서 링크, 활동로그 링크.
+
+
+활동 종료 시 자동 마무리 페이지 이동.
+
+
+그래프
+
+
+Chart.js 기반 2개 그래프 나란히 배치:
+
+
+세션별 소요시간
+
+
+노트 작성시간
+
+
+Sticky Notes 메모장
+
+
+교사/학생 메모 영역 구분.
+
+
+색상 태그 선택, 수정·삭제·알림 설정(⏰), 이미지 업로드, 전체 삭제 가능.
+
+
+녹음 인터페이스
+
+
+녹음 버튼(시작/정지), 녹음 목록 조회, 자동 종료(5분 무음 시).
+
+
+녹음 동의 모달 → 동의 시 녹음 기능 활성화.
+
+
+클립보드 복사 버튼
+
+
+대기/오늘/지난 활동, 오늘·주간 목표를 텍스트로 정리하여 복사.
+
+
+
+5. 파일의 링크
+메인 수학일기 페이지
+
+
+https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding42.php?userid=학생ID
+
+관련 페이지 링크
+
+
+챕터학습: /books/chapter42.php
+
+
+주간목표: /students/weeklyplans.php
+
+
+오늘목표: /students/todayplans.php
+
+
+마무리 리포트: /cjnstudents/challenge_report.php
+
+
+출결: /students/attendancerecords.php
+
+
+상담(주간레터): /alt42/mentoring/weekly letter.php
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/selectmode.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user_info_data : 사용자 역할(Role) 저장 (fieldid=22).
+
+
+mdl_abessi_mbtilog : 학생 MBTI 기록 저장 (type='present').
+
+
+persona_modes : 교사와 학생의 모드 매칭 저장
+ (teacher_id, student_id, teacher_mode, student_mode, timecreated).
+
+
+쿼리 처리
+
+
+$_POST['action'] == 'save_modes' 요청 시 teacher_mode, student_mode 저장/업데이트.
+
+
+기존 매칭 존재 시 update_record, 없으면 insert_record로 신규 생성.
+
+
+저장 시 로그 기록(error_log)으로 확인 가능.
+
+
+
+2. 파일의 목적과 기능
+목적
+ AI 기반 교사-학생 학습 모드 매칭을 지원하여 학습 스타일과 성격(MBTI)에 맞춘 맞춤형 학습 전략을 설계.
+
+
+기능
+
+
+교사/학생 각각의 학습 모드 선택 및 저장.
+
+
+학생의 MBTI 기반 모드 추천 및 하이라이팅.
+
+
+모드 선택 시 자동 저장(AJAX → selectmode.php).
+
+
+모드별 상세 설명(대상, 실행 포인트, Mathking 활용법, 관리 포인트) 제공.
+
+
+MBTI-모드 조합 설명 카드 제공(재미있는 사실·동기부여 메시지 포함).
+
+
+선택된 모드에 맞는 GPT 에이전트 링크로 바로 연결 가능.
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle DB 및 OpenAI API 설정.
+
+
+contextual_agents/intro_modes/*.php : 모드별 소개 페이지 (예: curriculumcentered.php, examcentered.php).
+
+
+mbti_types.php : MBTI 검사 및 업데이트 페이지.
+
+
+GPT 에이전트 링크 (chatgpt.com/g/*) : 교사/학생 모드별 AI 상담 에이전트.
+
+
+연관 DB 테이블: persona_modes, abessi_mbtilog.
+
+
+
+4. 인터페이스 설명
+사이드바
+
+
+홈 버튼, 교사/학생 모드 전환 버튼(학생은 교사 모드 비활성).
+
+
+상단 뷰 토글
+
+
+Tab View ↔ Scroll View 전환 버튼.
+
+
+메인 콘텐츠
+
+
+모드 카드 그리드
+
+
+9가지 모드(커리큘럼 중심, 맞춤학습, 시험대비, 단기미션, 자기성찰, 자기주도, 도제학습, 시간성찰, 탐구학습).
+
+
+아이콘, 타겟 학생 유형, MBTI 뱃지, “자세히” 버튼, 🤖 에이전트 버튼 포함.
+
+
+선택 시 초록색 테두리 + 체크 표시.
+
+
+학생 모드 섹션
+
+
+“MBTI 검사/업데이트” 버튼으로 검사 페이지 연결.
+
+
+상세 보기 모달
+
+
+대상, 설명, 현실조언(강한 메시지), 실행 포인트, Mathking 활용법, 관리 포인트 표시.
+
+
+Iframe 모달
+
+
+학생 모드 선택 시 해당 모드의 별도 PHP 소개 페이지를 iframe으로 로드.
+
+
+MBTI 설명 카드
+
+
+MBTI 유형과 선택한 모드의 궁합, 재미있는 사실, 동기부여 메시지 표시.
+
+
+상태 메시지 영역
+
+
+모드 선택/자동 저장 상태를 실시간 알림.
+
+
+
+5. 파일의 링크
+메인 페이지:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/alt42/selectmode.php?userid=학생ID
+
+MBTI 검사:
+
+
+https://mathking.kr/moodle/local/augmented_teacher/students/mbti_types.php?studentid=학생ID
+
+모드 소개 예시:
+
+
+/moodle/local/augmented_teacher/alt42/studenthome/contextual_agents/intro_modes/curriculumcentered.php?userid=학생ID
+
+GPT 에이전트 링크:
+
+
+학생 커리큘럼 모드: https://chatgpt.com/g/g-68ac3032ea988191967b64767b991212
+
+
+교사 커리큘럼 모드: https://chatgpt.com/g/g-68ac30293ca08191812d5005018220d6
+ (기타 모드별 에이전트도 각각 연결)
+
+
+
+--------------------------------------------------------------------------------
+/alt42/studenthome/indexm.php
+
+1. DB 관련 상세정보
+사용되는 테이블
+
+
+mdl_user_info_data : fieldid=22 필드에서 사용자 역할(Role: teacher/student 등)을 가져옴.
+
+
+DB 처리
+
+
+현재 로그인한 사용자의 userid를 기본값으로 설정.
+
+
+GET 파라미터(userid)로 특정 학생 ID를 지정할 수 있음.
+
+
+DB 연결 외에 별도 insert/update 처리 로직은 없음. (역할 확인만 수행)
+
+
+
+2. 파일의 목적과 기능
+목적
+ 메타인지 학습 시스템의 메인 대시보드 페이지로서, 학생/교사의 학습 흐름을 대시보드/메뉴/채팅 방식으로 통합 제공.
+
+
+주요 기능
+
+
+좌측 사이드바에서 학습 카테고리 선택 (개념공부, 문제풀이, 학습관리, 시험대비, 실전연습, 출결관리).
+
+
+카테고리별 서브카테고리 탭과 학습 콘텐츠 로드.
+
+
+대시보드 모드: 카테고리별 학습 진행률 카드 표시(목표, 정답률, 진도율, 출석률 등).
+
+
+메뉴 모드: 기능별 학습 도구(포모도로, 개념노트, AI 대화 등) 메뉴 제공.
+
+
+상담 모드(채팅 패널): AI 메타인지 도우미와의 대화 기능.
+
+
+연쇄상호작용 알림: 유사 학습 패턴 학생 연결 시뮬레이션(30% 확률), 협동 세션 참여 안내.
+
+
+미니맵 기능: 학습 목차 바로가기 메뉴 제공(index1~index4, indexm).
+
+
+
+3. 포함된 연관 파일
+config.php : Moodle DB 연결 및 환경 설정.
+
+
+/studenthome/index.php : 홈 대시보드 진입점.
+
+
+/studenthome/wxsperta/wxsperta.php : 알림 관련 페이지.
+
+
+/studenthome/selectmode.php : 페르소나/모드 선택 페이지.
+
+
+/studenthome/index1.php ~ index4.php, indexm.php : 학습 목차별 서브 페이지.
+
+
+
+4. 인터페이스 설명
+좌측 사이드바
+
+
+홈 링크, 알림(🔔), 모드 설정(⚙️).
+
+
+학습 카테고리: 📚 개념공부, ✏️ 문제풀이, 📊 학습관리, 📝 시험대비, 🎯 실전연습, 📅 출결관리.
+
+
+모바일 화면에서는 토글 버튼으로 열고 닫을 수 있음.
+
+
+우측 콘텐츠 영역
+
+
+상단 헤더 : 현재 선택된 섹션 표시(아이콘, 타이틀, 설명), 모드 전환 버튼(💡 대시보드 / 📋 메뉴 / 💬 상담), 미니맵 버튼.
+
+
+서브카테고리 탭 : 선택된 카테고리에 따라 세부 탭(예: 포모도로, 개념노트, 음성대화 등).
+
+
+대시보드 뷰 : 진행률 바와 함께 오늘의 목표, 정답률, 주간 학습량, 시험 준비 상태, 출석 현황 등 카드 표시.
+
+
+메뉴 뷰 : 해당 카테고리/서브카테고리별 학습 도구 메뉴 아이템 표시.
+
+
+채팅 패널 : 오른쪽에서 슬라이드 방식으로 열림. AI 학습 도우미와 대화 가능.
+
+
+특징
+
+
+반응형 디자인(모바일/태블릿 최적화).
+
+
+연쇄상호작용(Chain Interaction) 시뮬레이션 → 협력 학습 체험 기능.
+
+
+
+5. 파일의 링크
+메타인지 홈 (이 파일):
+
+ https://mathking.kr/moodle/local/augmented_teacher/alt42/studenthome/indexm.php?userid=학생ID
+
+
+관련 링크:
+
+
+알림: /wxsperta/wxsperta.php?userid=학생ID
+
+
+모드 선택: /studenthome/selectmode.php?userid=학생ID
+
+
+개념학습: /studenthome/index1.php
+
+
+심화학습: /studenthome/index2.php
+
+
+내신준비: /studenthome/index3.php
+
+
+수능대비: /studenthome/index4.php
+
+
+메타인지(현재 페이지): /studenthome/indexm.php
+
+
+
+--------------------------------------------------------------------------------
+students/p_schedule.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user: 학생 이름(lastname, firstname) 조회.
+
+
+mdl_abessi_missionlog: 학생이 시간표 페이지(studentschedule) 접속 시 로그 기록 (userid, page, timecreated).
+
+
+mdl_abessi_schedule:
+
+
+학생별 pinned=1(고정된 최신) 시간표 조회.
+
+
+시간 정보(start1~7, start11~17), 공부 시간(duration1~7), 메모(memo1~9), 스케줄 유형(type), 날짜(date), 생성시간(timecreated) 등을 불러옴.
+
+
+처리 로직
+
+
+$nedit (eid 파라미터) 값에 따라 특정 인덱스의 시간표 레코드 선택.
+
+
+일자별 공부 시간 합산(weektotal)과 오늘까지의 누적 공부시간(untiltoday) 계산.
+
+
+
+2. 파일의 목적과 기능
+학생의 주간 시간표(schedule) 조회 및 편집을 위한 페이지.
+
+
+모드 구분:
+
+
+일반 모드(view): 저장된 시간표 데이터를 읽어서 요일별 시작 시간과 공부시간을 표시.
+
+
+편집 모드(edit): 입력 폼과 select box로 요일별 시작 시간과 공부시간을 수정 후 저장 가능.
+
+
+저장 기능:
+
+
+database.php로 AJAX 요청을 보내 시간표 수정 내용을 DB에 반영.
+
+
+
+3. 포함된 연관 파일
+DB 저장 처리
+
+
+database.php: 시간표 수정/저장 AJAX 요청 처리.
+
+
+연결된 페이지
+
+
+p_schedule.php: 현재 파일(학생 스케줄 관리).
+
+
+timelineWeek.php: 주간 계획 확인.
+
+
+timeline.php: 당일 학습 계획 확인.
+
+
+timescaffolding.php: 교사용 학습 일지(멘토링).
+
+
+weekly letter.php: 상담/피드백 페이지.
+
+
+외부 리소스
+
+
+Bootstrap, jQuery, jQuery UI, Select2, Moment.js, Datatables, SweetAlert, Fullcalendar 등 다양한 UI/플러그인 포함.
+
+
+
+4. 인터페이스 설명
+상단 고정 메뉴(top-menu)
+
+
+버튼 5개: 일정 / 계획 / 일지 / 오늘 / 상담.
+
+
+각각 다른 학습·상담 페이지로 이동.
+
+
+스케줄 카드(card)
+
+
+제목: “스케줄 조회” 또는 “스케줄 편집”.
+
+
+일반 모드: 요일별(월~일) 시작 시간과 공부시간을 표 형식으로 표시.
+
+
+편집 모드: 요일별 시간 입력(timepicker) + 공부시간 선택(select box) 가능, 하단에 저장하기 버튼 제공.
+
+
+저장 로직
+
+
+JavaScript 함수 editschedule()가 실행되어 AJAX를 통해 database.php에 데이터 전송.
+
+
+성공 시 “저장 완료!” 알림.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/p_schedule.php?id={studentid}&eid={nedit}
+
+
+주요 파라미터:
+
+
+id: 학생 ID
+
+
+eid: 시간표 인덱스 번호
+
+
+mode=edit: 편집 모드 진입
+
+
+연결 링크:
+
+
+계획 페이지: /students/timelineWeek.php?id={studentid}&tb=604800
+
+
+당일 학습: /students/timeline.php?id={studentid}&tb=43200
+
+
+교사용 일지: /teachers/timescaffolding.php?userid={studentid}&mode=parental
+
+
+상담: /alt42/mentoring/weekly letter.php?userid={studentid}
+
+
+--------------------------------------------------------------------------------
+students/timelineWeek.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 이름(lastname, firstname) 조회.
+
+
+mdl_abessi_progress : 학생의 미션/목표 데이터 조회 (plantype, memo, deadline, complete, hide).
+
+
+mdl_abessi_today : 학생의 오늘/주간 목표 및 학습 기록 조회 (type, text, timecreated).
+
+
+조회 로직
+
+
+최신 미션/목표 1건만 불러와 상태(완료, 기한 초과, 임박 등)에 따라 아이콘 분기.
+
+
+최근 4주(604800*4) 간 오늘목표·주간목표 기록을 불러와 타임라인 형식으로 출력.
+
+
+
+2. 파일의 목적과 기능
+학생 개별 학습 목표 및 일정(timeline) 조회 페이지.
+
+
+주요 기능:
+
+
+미션/목표 리스트 최신 1건 표시.
+
+
+최근 4주간 오늘 목표, 주간 목표를 분류하여 타임라인 형식으로 시각화.
+
+
+마감일 상태에 따라 다른 아이콘 표시 (완료됨, 지연됨, 임박 등).
+
+
+학부모·교사·학생 모두 학습 진행 상황을 한눈에 확인할 수 있도록 설계.
+
+
+
+3. 포함된 연관 파일
+DB 처리: Moodle 환경(config_abessi.php)에 의존.
+
+
+연결된 페이지
+
+
+p_schedule.php : 학생 시간표.
+
+
+timelineWeek.php : 주간 계획.
+
+
+timeline.php : 당일 학습.
+
+
+timescaffolding.php : 교사용 학습 일지.
+
+
+weekly letter.php : 상담 페이지.
+
+
+외부 리소스
+
+
+Bootstrap, jQuery, jQuery UI, SweetAlert, Scrollbar 등 UI/JS 라이브러리.
+
+
+
+4. 인터페이스 설명
+상단 고정 메뉴(top-menu)
+
+
+버튼 5개 제공: 일정 / 계획 / 일지 / 오늘 / 상담.
+
+
+각 버튼 클릭 시 관련된 다른 학습 관리 페이지로 이동.
+
+
+본문
+
+
+상단에 학생 이름 + “학습목표 기록” 출력.
+
+
+최신 미션/목표 1건을 강조 표시.
+
+
+구분선 뒤 최근 4주간의 오늘목표, 주간목표를 색상과 태그로 구분하여 표시.
+
+
+상태에 따라 아이콘(완료, 지연, 임박, 진행 중) 출력.
+
+
+스타일
+
+
+Bootstrap 기반 반응형 카드와 타임라인 레이아웃.
+
+
+글꼴 크기를 작게 조정해 많은 정보를 한 화면에 표시.
+
+
+
+5. 파일의 링크
+기본 접근 경로:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/timelineWeek.php?id={studentid}&tb={시간간격}
+
+
+주요 파라미터:
+
+
+id : 학생 ID
+
+
+tb : 조회 기준 시간(예: 604800 = 1주)
+
+
+상단 메뉴에서 연결되는 다른 링크:
+
+
+일정: /students/p_schedule.php?id={studentid}&eid=1
+
+
+계획: /students/timelineWeek.php?id={studentid}&tb=604800
+
+
+일지: /teachers/timescaffolding.php?userid={studentid}&mode=parental
+
+
+오늘: /students/timeline.php?id={studentid}&tb=43200
+
+
+상담: /alt42/mentoring/weekly letter.php?userid={studentid}
+
+
+--------------------------------------------------------------------------------
+alt42/mentoring/weekly%letter.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user_info_data: 현재 로그인한 사용자의 권한(role) 조회.
+
+
+mdl_user: 학생 이름(firstname, lastname) 및 자동발송 여부(subscribe) 확인.
+
+
+alt42_homefeedback: 가장 최근의 학생 피드백 레코드 가져오기.
+
+
+alt42_weeklycuration: 특정 학년/주차/월에 해당하는 주간 콘텐츠(스토리) 불러오기.
+
+
+mdl_abessi_tracking: 최근 1주일 동안의 학습 추적 기록(시작/종료 시간, 학습 내용).
+
+
+alt42_weekly_letters: 주간 레터 저장/업데이트 (발송 시 새 레코드 생성 또는 업데이트).
+
+
+
+2. 파일의 목적과 기능
+주간 학습 보고서(KTM LETTER) 페이지로, 학부모/교사와 공유할 수 있는 형태.
+
+
+주요 기능:
+
+
+최근 1주일 학생 학습 일지 표시.
+
+
+주간 큐레이션 콘텐츠(스토리) 제공.
+
+
+학부모 피드백 입력 및 별점 평가 기능 제공.
+
+
+자동발송 설정 토글 기능.
+
+
+AJAX를 통한 발송(주간 안내장) 및 저장 처리.
+
+
+
+3. 포함된 연관 파일
+config.php: Moodle 환경설정 파일.
+
+
+관련 연결 페이지:
+
+
+students/p_schedule.php: 학생 일정 관리.
+
+
+students/timelineWeek.php: 주간 계획 확인.
+
+
+students/timeline.php: 당일 학습 확인.
+
+
+teachers/timescaffolding.php: 교사용 학습 일지(멘토링).
+
+
+alt42/mentoring/weekly letter.php: 상담 페이지.
+
+
+alt42/mentoring/buildingtrust.php: 상담도구.
+
+
+alt42/mentoring/weekly curation.php: 큐레이션 수정.
+
+
+alt42/mentoring/parental observations.php: 부모 피드백 관리.
+
+
+
+4. 인터페이스 설명
+헤더
+
+
+상단 고정 헤더(파란색) + 드롭다운 메뉴 (자동발송 토글, 발송 버튼, 상담도구 버튼).
+
+
+메인 콘텐츠
+
+
+일지 섹션: 최근 1주일 학습 기록(요일, 시간, 목표시간/실제시간, 학습 내용). 6개 이상 항목은 접어서 표시 → "더보기" 버튼으로 토글.
+
+
+스토리 섹션: 주간 큐레이션 콘텐츠 표시, “더보기” 버튼과 제공처 정보.
+
+
+피드백 섹션: 별점 평가(최대 3개 항목), 한줄 피드백 입력, “담임 선생님에게 전달하기” 버튼. 안내 문구 포함.
+
+
+하단 내비게이션 바
+
+
+일정 / 계획 / 일지 / 오늘 / 상담 메뉴 아이콘 버튼 제공. 해당 관리 페이지로 이동.
+
+
+시각요소
+
+
+Tailwind CSS + Lucide 아이콘 활용.
+
+
+색상 강조 (파란색: 주요 기능, 빨간색: 상담).
+
+
+
+5. 파일의 링크
+기본 접근 URL:
+
+ https://mathking.kr/moodle/local/augmented_teacher/alt42/mentoring/weekly%20letter.php?userid={학생ID}
+
+
+주요 링크:
+
+
+일정: /students/p_schedule.php?id={userid}&eid=1
+
+
+계획: /students/timelineWeek.php?id={userid}&tb=604800
+
+
+일지: /teachers/timescaffolding.php?userid={userid}&mode=parental
+
+
+오늘: /students/timeline.php?id={userid}&tb=43200
+
+
+상담: /alt42/mentoring/weekly letter.php?userid={userid}
+
+
+--------------------------------------------------------------------------------
+teachers/realtime/webcam.php
+
+1. DB 관련 상세정보
+이 파일은 데이터베이스(DB)와 직접적인 연동은 없음.
+
+
+config.php를 포함하고 있지만, 이 코드에서는 $DB를 통한 쿼리 실행, 사용자 정보 조회, 로그 저장 등 DB 활용이 전혀 없음.
+
+
+따라서 DB 관련 작업이나 테이블 접근 없음.
+
+
+
+2. 파일의 목적과 기능
+목적: 학생의 집중도(몰입도) 추적 시스템.
+
+
+기능:
+
+
+웹캠을 통해 얼굴 인식.
+
+
+face-api.js 라이브러리를 이용해 얼굴 움직임 감지.
+
+
+얼굴이 인식되면 몰입도 점수 증가(+1), 일정 시간(2초) 이상 감지되지 않으면 점수 감소(-2).
+
+
+점수 범위는 0~100 사이.
+
+
+실시간으로 점수를 화면에 표시.
+
+
+
+3. 포함된 연관 파일
+config.php: Moodle 기본 환경설정 파일 (포함되지만 현재 코드에서는 실질적 활용 없음).
+
+
+face-api.js (CDN으로 불러옴): 얼굴 인식 라이브러리.
+
+
+/models 폴더: face-api.js 모델 파일(tiny_face_detector_model-weights_manifest.json 등)이 저장되어 있어야 정상 동작.
+
+
+
+4. 인터페이스 설명
+UI 구성
+
+
+상단 제목: Student Engagement Tracker (with face-api.js).
+
+
+중앙에 웹캠 영상 표시 (640x480).
+
+
+하단에 Engagement Score 표시 (기본값 100).
+
+
+동작 방식
+
+
+페이지 로드 → 웹캠 권한 요청 → 실시간 얼굴 인식.
+
+
+점수는 1초마다 업데이트.
+
+
+콘솔에도 현재 점수 로그 출력.
+
+
+스타일
+
+
+회색 배경, 중앙 정렬된 비디오 및 점수 표시.
+
+
+간단한 CSS로 레이아웃 구성.
+
+
+
+5. 파일의 링크
+파일 자체는 독립 실행형 HTML 출력 구조.
+
+
+접근 경로 예시:
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/engagement_tracker.php
+ (파일명을 engagement_tracker.php라 가정)
+
+
+의존 링크
+
+
+face-api.js CDN:
+ https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js
+
+
+모델 파일 경로:
+ /models (서버 내에 위치해야 함)
+
+
+
+
+--------------------------------------------------------------------------------
+teachers/realtime/webcam%copy.php
+
+1. DB 관련 상세정보
+이 파일은 config.php를 불러올 수 있는 구조로 되어 있지만,
+ 현재 코드에서는 DB 연결이나 SQL 쿼리 실행이 없음.
+
+
+따라서 Moodle DB($DB)와의 상호작용은 전혀 하지 않음.
+
+
+
+2. 파일의 목적과 기능
+목적: 웹캠을 통해 학생의 집중도(Engagement Score) 를 간단히 추적하는 테스트용 페이지.
+
+
+기능:
+
+
+웹 브라우저의 navigator.mediaDevices.getUserMedia() API로 웹캠 스트리밍 시작.
+
+
+기본 점수(100점)에서 시작 → 일정 간격으로 점수를 감소(-1)시키거나 움직임 감지 시 점수 조정.
+
+
+점수는 0~100 범위 내에서 변동.
+
+
+점수 변화를 실시간으로 화면에 표시.
+
+
+
+3. 포함된 연관 파일
+config.php: Moodle 환경설정 포함 가능 (현재 코드에서는 사용 안 함).
+
+
+외부 라이브러리 없음:
+
+
+face-api.js 같은 외부 라이브러리를 불러오지 않고, 단순히 시간 기반 로직으로만 움직임 여부를 가정.
+
+
+
+4. 인터페이스 설명
+UI 구성
+
+
+제목: Student Engagement Tracker.
+
+
+중앙: 웹캠 영상(video 태그, 640x480).
+
+
+하단: 현재 몰입도 점수 표시(Engagement Score: n).
+
+
+동작 방식
+
+
+페이지 로드 시 웹캠 권한 요청.
+
+
+점수는 setInterval을 통해 주기적으로 변경.
+
+
+startEngagementTracking() 또는 detectFaceMovement() 함수 실행 시, 점수 감소/증가 로직 동작.
+
+
+현재 window.onload에서는 두 함수 호출이 주석 처리되어 있어, 실행하려면 주석을 해제해야 함.
+
+
+
+5. 파일의 링크
+독립 실행형 HTML 페이지 구조로 작성.
+
+
+실제 접근 URL 예시 (파일명 가정):
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/engagement_tracker_simple.php
+
+
+--------------------------------------------------------------------------------
+teachers/realtime/tobii_eyetracking.php
+
+1. DB 관련 상세정보
+현재 코드에는 DB 연결이나 쿼리 실행 로직이 없음.
+
+
+주석에 “세션이나 DB 연결, 사용자 식별 로직이 필요하면 추가 가능” 이라는 설명만 있음.
+
+
+즉, 향후 확장 시 세션 기반 사용자 관리나 DB 저장 기능을 추가할 수 있는 구조.
+
+
+
+2. 파일의 목적과 기능
+목적: Tobii Eyetracker의 시선 좌표 데이터를 활용하여, 학생이 바라보는 화면 영역을 캡처하고 GPT API에 전송 → 실시간 피드백을 받는 데모 페이지.
+
+
+핵심 기능:
+
+
+html2canvas를 사용해 브라우저 전체 화면을 캡처.
+
+
+시선 좌표(latestGazeX, latestGazeY)를 기준으로 200x200 영역만 추출.
+
+
+추출된 이미지와 시선 좌표, 컨텐츠 텍스트(cnttext)를 패키징.
+
+
+/sendToGPT.php로 POST 요청을 보내 GPT로 피드백을 요청.
+
+
+응답(result.feedback)을 화면의 #feedbackDisplay에 표시.
+
+
+
+3. 포함된 연관 파일
+프론트엔드 라이브러리:
+
+
+html2canvas (CDN) – 화면 캡처 기능.
+
+
+백엔드 파일:
+
+
+/sendToGPT.php → GPT API 연동 처리 담당 (서버 측에서 실제 GPT API 호출).
+
+
+추가 가능성:
+
+
+Tobii Eyetracker SDK (WebSocket 기반 예시 코드 포함, 실제 구현 필요).
+
+
+
+4. 인터페이스 설명
+UI 구성:
+
+
+제목: Tobii Eyetracker 5 + GPT Realtime Feedback
+
+
+버튼: “시선 주변 이미지 전송하기” → 클릭 시 화면 캡처 및 서버 전송.
+
+
+피드백 영역: #feedbackDisplay → GPT 결과 표시.
+
+
+동작 흐름:
+
+
+페이지 로드 시 initTobiiEyetracker() 실행 → 시선 좌표값을 1초마다 갱신 (현재는 랜덤 시뮬레이션).
+
+
+버튼 클릭 → captureScreenAndGazeArea() 실행, 화면 캡처 및 시선 주변 이미지 추출.
+
+
+추출 데이터를 sendToGPT() 통해 /sendToGPT.php로 전송.
+
+
+응답으로 받은 GPT 피드백을 인터페이스에 출력.
+
+
+
+5. 파일의 링크
+예상 접근 경로 (실제 배포 시):
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/eyetracker_gpt.php
+
+
+/sendToGPT.php는 같은 서버 내에서 호출되는 백엔드 엔드포인트.
+
+
+
+--------------------------------------------------------------------------------
+teachers/realtime/eyetracking.php
+
+1. DB 관련 상세정보
+이 코드에는 DB 접근이나 쿼리 실행 부분이 없음.
+
+
+주석으로 세션이나 사용자 식별 로직이 필요하다면 추가 가능 이라고만 표시되어 있음.
+
+
+따라서 현재 상태에서는 DB와 직접 연동되지 않는 프론트엔드 데모 페이지.
+
+
+
+2. 파일의 목적과 기능
+목적: Tobii Eyetracker 데이터를 기반으로 화면의 시선 영역을 캡처하여 GPT API와 연동 → 실시간 피드백을 받는 기능을 시연하는 데모 페이지.
+
+
+기능 요약:
+
+
+initTobiiEyetracker(): Eyetracker 초기화 및 시선 좌표 가져오기 (현재는 랜덤 시뮬레이션).
+
+
+captureScreenAndGazeArea(): html2canvas로 전체 화면 캡처 후, 시선 좌표 주변(200x200 영역) 잘라내기.
+
+
+sendToGPT(): 캡처 이미지·좌표·컨텐츠 텍스트를 sendToGPT.php로 전송 → GPT API 응답 수신.
+
+
+결과 피드백을 화면에 표시.
+
+
+
+3. 포함된 연관 파일
+프론트엔드 라이브러리:
+
+
+html2canvas (CDN 사용).
+
+
+연동 예상 파일:
+
+
+sendToGPT.php → 서버에서 GPT API 호출 처리 담당.
+
+
+추가 가능성:
+
+
+실제 Tobii Web SDK (TobiiWebSDK.js 등) – 현재는 주석 처리되어 있고, 실제 연결 로직은 가상 코드로 대체.
+
+
+
+4. 인터페이스 설명
+UI 구성 요소:
+
+
+제목: Tobii Eyetracker 5 + GPT Realtime Feedback (Demo).
+
+
+버튼: “시선 주변 이미지 전송하기” → 클릭 시 캡처 및 전송 실행.
+
+
+좌표 표시: #coordsDisplay → 현재 시선 좌표(가상 값)를 실시간으로 표시.
+
+
+피드백 영역: #feedbackDisplay → GPT API의 응답 표시.
+
+
+사용 흐름:
+
+
+페이지 로드 시 initTobiiEyetracker() 실행 → 시선 좌표 갱신.
+
+
+버튼 클릭 시 화면 및 시선 주변 이미지 캡처.
+
+
+캡처 데이터를 sendToGPT.php로 전송.
+
+
+GPT 응답이 도착하면 인터페이스에 출력.
+
+
+
+5. 파일의 링크
+예상 실행 경로 (배포 시):
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/index.php
+
+
+연동 파일:
+
+
+sendToGPT.php (같은 경로 내 존재해야 함).
+
+--------------------------------------------------------------------------------
+teachers/realtime/log_event.php
+
+1. DB 관련 상세정보
+사용 DB: Moodle의 $DB 객체 (Moodle 환경 설정 config.php를 통해 로드).
+
+
+테이블: mdl_alt42_engagement_events
+
+
+user_id (사용자 식별자)
+
+
+event_type (이벤트 유형: 예, CLICK, SCROLL, UNKNOWN 등)
+
+
+engagement_score (숫자 점수, 집중도 등)
+
+
+timecreated (UNIX 타임스탬프, BIGINT)
+
+
+additional_info (옵션, JSON 문자열 형태로 추가 정보 저장 가능 – 현재는 주석 처리됨).
+
+
+
+2. 파일의 목적과 기능
+목적: 학습 환경에서 발생하는 학생의 활동 이벤트를 DB에 기록하기 위한 API 역할.
+
+
+기능:
+
+
+JSON 형태의 입력(user_id, event_type, engagement_score)을 받음.
+
+
+Moodle DB의 mdl_alt42_engagement_events 테이블에 기록 삽입.
+
+
+삽입 성공 시 {status: "ok"}, 실패 시 {status: "error", message: "에러 내용"} JSON 응답.
+
+
+
+3. 포함된 연관 파일
+필수 포함 파일:
+
+
+/home/moodle/public_html/moodle/config.php → Moodle 환경 설정 (DB 연결, 전역 객체 $DB, $USER 초기화).
+
+
+선택적 파일:
+
+
+require_login() (현재 주석 처리됨, 필요 시 로그인 확인 로직 추가 가능).
+
+
+
+4. 인터페이스 설명
+입력: php://input에서 JSON 파싱.
+
+
+user_id: 사용자 ID (정수).
+
+
+event_type: 이벤트 타입 문자열.
+
+
+engagement_score: 이벤트와 함께 저장할 점수 (정수/실수).
+
+
+처리 흐름:
+
+
+JSON 파라미터 파싱.
+
+
+DB 레코드 객체 생성.
+
+
+$DB->insert_record('mdl_alt42_engagement_events', $data) 실행.
+
+
+결과를 JSON 형식으로 응답.
+
+
+출력:
+
+ {"status": "ok"}
+ 또는
+
+ {"status": "error", "message": "에러 설명"}
+
+
+
+5. 파일의 링크
+예상 접근 경로 (API 엔드포인트):
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/engagement_event.php
+ (파일명이 다를 수 있으나, 구조상 local/augmented_teacher/students/ 디렉토리에 배치된 이벤트 로깅용 API로 추정)
+
+
+--------------------------------------------------------------------------------
+teachers/realtime/eyetracking.php
+
+1. DB 관련 상세정보
+이 파일은 데이터베이스와 직접적인 연동이 없음.
+
+
+$DB 객체나 require_once("config.php") 같은 Moodle 환경 설정도 포함되어 있지 않음.
+
+
+오직 클라이언트 측 브라우저에서 동작하는 JavaScript 코드와 화면 UI만 포함.
+
+
+
+2. 파일의 목적과 기능
+목적: Tobii Eyetracker와 GPT를 연동하는 데모 페이지.
+
+
+기능:
+
+
+Tobii Eyetracker로부터 **시선 좌표(Gaze X, Y)**를 수집 (현재는 랜덤 값으로 시뮬레이션).
+
+
+html2canvas를 이용해 화면 전체 및 **시선 주변 영역(200x200 픽셀)**을 캡처.
+
+
+캡처 이미지와 시선 좌표, 설명 텍스트(cnttext)를 sendToGPT.php로 전송.
+
+
+서버에서 GPT API 호출 후 받은 피드백을 화면에 출력.
+
+
+
+3. 포함된 연관 파일
+외부 라이브러리:
+
+
+html2canvas (전체화면 캡처용, CDN 경로: https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js)
+
+
+연동 대상 파일:
+
+
+sendToGPT.php → 캡처 데이터와 좌표를 받아 GPT API 호출 및 결과 반환.
+
+
+
+4. 인터페이스 설명
+화면 요소:
+
+
+#captureButton: "시선 주변 이미지 전송하기" 버튼 → 클릭 시 캡처 및 GPT 전송 실행.
+
+
+#coordsDisplay: 현재 시선 좌표 표시 (예: Gaze(가상): (123, 456)).
+
+
+#feedbackDisplay: GPT 피드백 결과 표시 영역.
+
+
+동작 흐름:
+
+
+페이지 로드 시 initTobiiEyetracker() 실행 → 시선 좌표 갱신.
+
+
+버튼 클릭 → captureScreenAndGazeArea()로 화면 및 시선 주변 이미지 캡처.
+
+
+캡처 데이터(JSON) → sendToGPT.php로 전송.
+
+
+서버 응답({feedback: "내용"}) → #feedbackDisplay에 표시.
+
+
+
+5. 파일의 링크
+실제 파일명: index.php
+
+
+예상 접근 경로 (예시):
+
+ https://mathking.kr/moodle/local/augmented_teacher/alt42/eyetracker/index.php
+ (경로는 서버 배치 구조에 따라 달라질 수 있음)
+
+
+--------------------------------------------------------------------------------
+teachers/whiteboard_feedback.php
+
+1. DB 관련 상세정보
+사용되는 주요 Moodle 테이블:
+
+
+mdl_abessi_messages: 학생 메시지/화이트보드 활동 추적 (present, contentstype 등).
+
+
+mdl_user: 학생 기본 정보 (id, firstname, lastname, lastaccess, suspended 여부).
+
+
+mdl_abessi_today: 오늘 목표, 검사요청, 주간목표 등 학습 계획 관리.
+
+
+mdl_abessi_indicators: 학습 지표 저장 (todayscore, usedtime, tlaststroke 등).
+
+
+mdl_logstore_standard_log: 사용자 로그인 기록, 마지막 활동 기록.
+
+
+mdl_user_info_data: 사용자 추가 정보(예: role, interval 등).
+
+
+mdl_abessi_missionlog: 미션 로그 기록.
+
+
+mdl_abessi_stayfocused: 학생의 현재 접속 URL 및 상태 추적.
+
+
+mdl_abessi_feedbacklog: 과제/시험 피드백 기록.
+
+
+mdl_abessi_cognitivesteps: 문제 풀이 단계 기록.
+
+
+mdl_question: Moodle 문제 은행의 질문 텍스트.
+
+
+mdl_icontent_pages: IContent 페이지 콘텐츠 (텍스트, 이미지).
+
+
+mdl_abessi_schedule: 학생 스케줄 기록.
+
+
+데이터 활용 목적: 학생 학습 상태(목표 달성, 참여도, 온라인 활동, 피드백 현황)를 실시간 모니터링.
+
+
+
+2. 파일의 목적과 기능
+목적: Moodle 학습 환경에서 접속 중인 학생들의 학습 참여도, 목표 달성 상황, 온라인 활동 기록을 교사가 모니터링할 수 있는 관리자 대시보드 제공.
+
+
+주요 기능:
+
+
+최근 접속한 학생 리스트 표시.
+
+
+오늘 목표, 주간 목표, 학습 진행 상태, 귀가검사 여부 확인.
+
+
+학생별 현재 페이지/학습 활동 상황 추적.
+
+
+학생별 학습 점수(오늘/주간) 집계 → mdl_abessi_indicators_class에 반영.
+
+
+화이트보드 과제/문제 풀이 현황 확인 및 피드백 확인.
+
+
+교사가 다수의 화이트보드 세션을 동시에 열 수 있도록 링크 제공.
+
+
+
+3. 포함된 연관 파일
+내부 include:
+
+
+config.php (Moodle 환경 설정 및 DB 접근)
+
+
+navbar.php (상단 네비게이션 UI)
+
+
+quicksidebar.php (우측 퀵사이드바)
+
+
+../whiteboard/status_icons.php (화이트보드 상태 아이콘 정의)
+
+
+외부 JS/CSS 라이브러리:
+
+
+jQuery, Bootstrap, jQuery UI, Moment.js, Chart.js, Datatables, Fullcalendar 등 다수의 UI/차트/폼 처리 라이브러리.
+
+
+Summernote (에디터), Select2 (선택 박스), Sweet Alert (알림창) 등 포함.
+
+
+
+4. 인터페이스 설명
+대시보드 레이아웃:
+
+
+좌측: 화이트보드 활동 목록(학생별 상태, 풀이/피드백, 문제 이미지 미리보기).
+
+
+중앙: 학습 추적 기록 (feedback, review 상태별 분류).
+
+
+우측: 최근 온라인 사용자 목록(목표 달성 현황, 활동 시간, 현재 페이지, 메시지 전송 버튼).
+
+
+학생별 정보 표시:
+
+
+오늘 점수, 주간 점수, 활동 지속 시간, 현재 URL 기반 학습 상태.
+
+
+목표(복습/활동/발표)별 완료 여부를 아이콘으로 표시 (green/red/blue/white 등).
+
+
+현재 페이지 종류(예: 일정, 오늘, 미션, 평가 등)를 텍스트+링크로 제공.
+
+
+툴팁(tooltip)으로 학습 계획, 질문수/응답수, 최근 피드백 상세 내용 확인 가능.
+
+
+교사용 기능:
+
+
+학생별 메시지 전송 버튼.
+
+
+체크박스(ajax 호출 → check.php)를 통한 상태 업데이트.
+
+
+askstudent() Ajax 요청으로 특정 학생에게 질문 전송 가능.
+
+
+여러 학생 화이트보드를 동시에 열 수 있는 버튼(“여러 개 열기”).
+
+
+
+5. 파일의 링크
+파일명: (교사용 관리자 대시보드, 정확한 이름은 코드 상에서 명시되지 않음)
+
+
+예상 접근 경로 예시:
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/[파일명].php
+ (실제 경로는 navbar.php, quicksidebar.php와 같은 교사용 인터페이스 폴더 내에 위치)
+
+
+
+--------------------------------------------------------------------------------
+teachers/wbresults.php
+
+1. DB 관련 상세정보
+참조 테이블:
+
+
+mdl_abessi_teacher: 교사가 작성한 화이트보드 기록(teacherid, wboardid, status, type, timecreated 등).
+
+
+mdl_abessi_messages: 특정 화이트보드(wboardid)에 연결된 메시지(학생 응답, AI 상태 aion, 상호작용 단계 수 nstep, 별점 star, 리뷰 시간 timereviewed 등).
+
+
+mdl_user: 사용자 기본 정보(학생 firstname, lastname).
+
+
+mdl_abessi_indicators_class: 교실 단위 지표 저장(평균 응답 지연시간 timedelayed, 자동응답 수 nauto, 교사 직접 작성 수 ncreate 등).
+
+
+주요 처리 로직:
+
+
+최근 일정(tb 파라미터로 지정된 시간 범위) 안에 생성된 화이트보드 기록을 가져옴.
+
+
+메시지의 응답 지연 시간(timereviewed - timemodified)을 분 단위로 계산.
+
+
+응답/상호작용 결과를 7일 단위 그룹별로 분류하여 테이블 출력.
+
+
+지표(timedelayed, nauto, ncreate)를 mdl_abessi_indicators_class 테이블에 업데이트.
+
+
+
+2. 파일의 목적과 기능
+목적: 교사가 최근 화이트보드 기반 학습 활동에서 학생들의 상호작용, 응답 지연, 자동응답 여부 등을 집계하여 수업 피드백 및 첨삭 성과를 관리.
+
+
+기능:
+
+
+학생별 최근 화이트보드 활동 요약 제공.
+
+
+응답 속도와 상호작용 횟수를 확인.
+
+
+화이트보드 메시지의 별점 상태를 아이콘으로 표시.
+
+
+교실 지표(timedelayed, nauto, ncreate)를 실시간 계산 후 DB 반영.
+
+
+
+3. 포함된 연관 파일
+PHP include:
+
+
+config.php : Moodle 환경 및 DB 설정.
+
+
+navbar.php : 상단 네비게이션 UI.
+
+
+quicksidebar.php : 빠른 접근 사이드바 UI.
+
+
+JS/CSS 라이브러리 (외부 플러그인):
+
+
+jQuery, Bootstrap, jQuery UI, Moment.js, Chart.js, Datatables.
+
+
+Fullcalendar, Sweet Alert, Select2, Summernote 등.
+
+
+
+4. 인터페이스 설명
+출력 테이블:
+
+
+학생 이름 → today.php 링크로 상세 학습 현황 페이지 연결.
+
+
+화이트보드 결과 → board.php 링크로 해당 화이트보드 열기.
+
+
+상호작용 수(nstep), 응답 시간(분), 작성 시간(yyyy-mm-dd hh:mm) 표시.
+
+
+별점(star)에 따라 다른 아이콘 표시.
+
+
+기간 그룹화:
+
+
+1일 이내 ~ 7일 이내 응답 건수를 구분하여 각기 다른 리스트(wboardlist1~wboardlist7)에 배치.
+
+
+JavaScript 함수:
+
+
+ChangeCheckBox, ChangeCheckBox2, ChangeCheckBox3: 체크박스 상태 변경을 Ajax로 DB 반영.
+
+
+askstudent: 특정 학생에게 질문 전송.
+
+
+UI:
+
+
+링크 색상 및 툴팁 스타일 정의 (hover 시 강조 효과, 긴 텍스트 툴팁 표시).
+
+
+
+5. 파일의 링크
+위치:
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/[파일명].php
+ (정확한 파일명은 snippet에 직접 노출되지 않았지만, 교사용 대시보드/화이트보드 관련 페이지임)
+
+
+
+
+--------------------------------------------------------------------------------
+teachers/wboards_start.php
+
+1. DB 관련 상세정보
+참조 테이블
+
+
+boarddb: 화이트보드의 stroke(획) 데이터 저장 (authorid, timecreated, encryption_id, generate_id, shape_data 등).
+
+
+mdl_user: Moodle 사용자 정보 (firstname, lastname).
+
+
+mdl_user_info_data: 사용자 정의 필드 (fieldid=22 → role 확인).
+
+
+분석 데이터
+
+
+획간 시간 간격(strokegap), 히스토그램(0~9초 간격), 화이트보드별 최대 획 수(generate_id 최대값), 평균 획간 시간(avgGap) 계산.
+
+
+조건
+
+
+최근 ndays일 이내(86400 * ndays) 기록만 조회.
+
+
+획간 간격이 12시간(43,200초) 미만인 데이터만 분석.
+
+
+
+2. 파일의 목적과 기능
+목적: 학생의 화이트보드 필기 데이터를 바탕으로 집중도/학습 패턴 분석.
+
+
+기능
+
+
+일자별 평균 획간 시간 분석.
+
+
+화이트보드별 평균 획간 시간, 최대 획 수 산출.
+
+
+히스토그램으로 획간 시간(0~9초)을 분포 시각화.
+
+
+아코디언 구조를 통한 인터페이스 제공.
+
+
+차트 클릭 시 색상 강조(빨간색) 및 세부 분석 패널 자동 펼침.
+
+
+풀이 길이 그래프 막대 클릭 시 화이트보드 페이지(board_onair.php) 새 탭으로 열기.
+
+
+툴팁에 풀이 길이와 평균 간격 함께 표시.
+
+
+
+3. 포함된 연관 파일
+PHP
+
+
+config.php: Moodle 환경 설정.
+
+
+configwhiteboard.php: 화이트보드 DB 설정.
+
+
+JS/CSS 라이브러리
+
+
+Frontend: Bootstrap(3.x), jQuery.
+
+
+차트: Chart.js.
+
+
+수학식 렌더링: MathJax.
+
+
+에디터: TinyMCE.
+
+
+알림/팝업: SweetAlert2.
+
+
+
+4. 인터페이스 설명
+UI 구조
+
+
+아코디언 패널
+
+
+일별 평균 차트: 일자별 평균 획간 시간 표시.
+
+
+화이트보드 상세 차트: 특정 일자 선택 시 화이트보드별 평균 획간 시간.
+
+
+히스토그램 차트: 특정 화이트보드 선택 시 획간 시간 분포(0~9초).
+
+
+풀이 길이 그래프
+
+
+화이트보드별 최대 획 수 표시.
+
+
+막대 클릭 시 해당 화이트보드 상세 페이지 새 탭에서 열림.
+
+
+차트 속성
+
+
+모두 bar(막대) 차트.
+
+
+y축 최대 높이: 전체 화면의 50%(50vh).
+
+
+클릭한 막대만 빨간색으로 강조.
+
+
+히스토그램 라벨: "시간에 따른 획간 시간차 분포".
+
+
+툴팁
+
+
+풀이 길이 그래프: "획 수 + 평균간격"을 함께 표시.
+
+
+
+5. 파일의 링크
+위치:
+
+ https://mathking.kr/moodle/local/augmented_teacher/analysis_daily.php
+
+
+--------------------------------------------------------------------------------
+teachers/wboardquestions.php
+
+1. DB 관련 상세정보
+주요 참조 테이블
+
+
+mdl_user: 학생 기본 정보 (id, firstname, lastname).
+
+
+mdl_abessi_schedule: 학생별 수업 시간표 (start0~start7, duration0~duration7).
+
+
+mdl_logstore_standard_log: 사용자 활동 로그 (timecreated → 마지막 활동 확인).
+
+
+mdl_abessi_today: 학생의 오늘 학습 기록 및 목표 제출 여부(submit, timemodified).
+
+
+mdl_abessi_messages: 화이트보드 메시지(질문, 오답 작성 등), 필드: userid, wboardid, nstroke, status, timemodified.
+
+
+mdl_question, mdl_question_attempts, mdl_question_attempt_steps: 퀴즈 문제, 풀이 상태, 플래그(깃발 표시), 정답 여부(gradedwrong, gradedpartial).
+
+
+mdl_user_info_data: 사용자 부가 정보 (fieldid=56 → 검사 시간, fieldid=57 → 교과목 구분).
+
+
+쿼리 특징
+
+
+학생 출석/활동 여부 확인 → 최근 활동 로그, 오늘 학습 기록.
+
+
+화이트보드 상태 → 오답 작성, 질문 여부, 최근 수정 시간 기반.
+
+
+깃발 표시된 문제와 오답 처리 현황 모니터링.
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+Moodle 기반 수업에서 교사가 학생들의 학습 활동 현황(출석, 오답노트 작성, 질문, 플래그 문제 처리, 귀가 요청 등)을 실시간 모니터링 할 수 있도록 함.
+
+
+기능
+
+
+시간대별(30분, 1시간, 3시간) 활동 확인.
+
+
+학생 목표 입력 여부 및 학습 기록 점검.
+
+
+최근 작성된 오답노트/질문 현황 확인.
+
+
+깃발 표시된 문제와 오답 문제 처리 상태 피드백 제공.
+
+
+귀가 요청 및 중간점검 체크 기능(체크박스 기반 AJAX).
+
+
+
+3. 포함된 연관 파일
+PHP
+
+
+config.php (Moodle 설정/DB 접속)
+
+
+navbar.php (네비게이션 바)
+
+
+quicksidebar.php (사이드바 UI)
+
+
+check.php, ../students/check.php, database.php (AJAX 요청 처리)
+
+
+JS/CSS 라이브러리
+
+
+jQuery, Bootstrap, jQuery UI, Moment.js
+
+
+Chart.js, Datatables, Fullcalendar, Summernote, Select2
+
+
+SweetAlert, Bootstrap Notify, Dropzone 등
+
+
+
+4. 인터페이스 설명
+상단 네비게이션
+
+
+“30분 전 / 1시간 전 / 3시간 전” 버튼 제공 (별표 * 표시로 선택된 시간대 강조).
+
+
+“출결전달” 링크 제공(외부 Daum 카페 연결).
+
+
+메인 패널 표시 항목
+
+
+목표 입력(today 변수) → 출석 여부 색상(빨강/파랑 점 아이콘).
+
+
+오답 작성(activewb) → 학생별 최근 작성 오답노트 현황.
+
+
+질의응답(Qlist) → 학생의 질문 및 깃발 문제 현황 표시, 툴팁으로 상세내용 확인 가능.
+
+
+중간점검(detectedusers) → 검사시간 초과 학생 확인 및 체크박스 처리.
+
+
+귀가 요청(confirm) → 학습 종료 요청 학생 확인 및 체크박스 처리.
+
+
+AJAX 기능
+
+
+ChangeCheckBox, ChangeCheckBox2, askstudent → 이벤트, 목표, 질문 데이터를 서버에 기록.
+
+
+시각적 요소
+
+
+아이콘 색상(빨강/파랑 점, 플래그 색상)으로 상태 직관적으로 표시.
+
+
+Tooltip으로 문제 텍스트, 학생 답변, 경과 시간 제공.
+
+
+
+5. 파일의 링크
+위치:
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/whiteboard.php
+
+
+--------------------------------------------------------------------------------
+teachers/wboard_start.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user: 학생 정보 (firstname, lastname).
+
+
+mdl_user_info_data: 사용자 추가정보 (fieldid=22 → role).
+
+
+mdl_abessi_timeline: 학습 타임라인 기록 (userid, wboardid, gidarray, tstamparray, timecreated, status, nview 등).
+
+
+mdl_abessi_messages: 화이트보드 메시지 데이터 (wboardid, nstroke, contentsid, status 등).
+
+
+boarddb, replaydb_trans: 화이트보드 필기/재생 데이터 (generate_id, shape_data, timecreated).
+
+
+mdl_icontent_pages: 전자책 콘텐츠(pageicontent, reflections).
+
+
+mdl_question: 문항 데이터 (questiontext, reflections1).
+
+
+DB 연결
+
+
+config.php, configwhiteboard.php에서 DB 접속 정보 불러옴.
+
+
+MySQLi 직접 연결($conn = new mysqli(...))과 Moodle $DB 객체 병행 사용.
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+학생의 화이트보드 학습 활동 로그를 시각화하여 교사/관리자가 집중도, 방황 시간, 학습 루틴을 분석할 수 있게 지원.
+
+
+주요 기능
+
+
+최근 12시간($hoursago12) 동안의 학습 활동을 불러와 타임라인 생성.
+
+
+gidarray, tstamparray 기반으로 획 간격, 머무른 시간 등을 막대 시각화로 표현.
+
+
+오답노트/전자책/일반 문항 학습 여부에 따라 다른 링크 제공(화이트보드 재생, 노트 페이지, 전자책 페이지).
+
+
+학생별 방황 시간(nwandering1~3) 계산 및 비율 출력.
+
+
+의심활동 및 학습 루틴 개선을 위한 텍스트 가이드 출력.
+
+
+
+3. 포함된 연관 파일
+PHP
+
+
+config.php (Moodle 환경설정)
+
+
+configwhiteboard.php (화이트보드 DB 연결 설정)
+
+
+관련 모듈
+
+
+replay.php (화이트보드 재생 페이지)
+
+
+mynote.php (전자책 노트 페이지)
+
+
+boarddb, replaydb_trans 관련 DB 활용
+
+
+라이브러리/플러그인
+
+
+TinyMCE (에디터)
+
+
+MathJax (수식 렌더링)
+
+
+SweetAlert2
+
+
+jQuery / Bootstrap
+
+
+
+4. 인터페이스 설명
+테이블 출력
+
+
+타임라인 테이블: 시간(timestamp), 상태(status), 뷰 횟수(nview), 링크(cnturl), 획 시각화(snapshots).
+
+
+시간대별 색상/글씨 크기 변화로 체류 시간 강조.
+
+
+링크
+
+
+화이트보드 replay: replay.php?id=...
+
+
+전자책 노트: mynote.php?...
+
+
+일반 문제: whiteboard/replay.php?id=...
+
+
+시각화 요소
+
+
+gidarray, tstamparray를 기반으로 가로 막대(span)를 길이/색상으로 표시.
+
+
+방황 단계(짧은 체류, 중간 체류, 긴 체류) 비율 출력.
+
+
+추가 안내
+
+
+루틴 개선 프로세스(# 의심활동 선택 → 공부순서 교정 → 피드백 개선 → 성적향상) 텍스트 제공.
+
+
+관리자 계정(ID=2)일 경우, 추천 학습 루틴 안내 문구 추가.
+
+
+
+5. 파일의 링크
+위치 (추정):
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/synergetic.php
+
+
+--------------------------------------------------------------------------------
+teachers/update_field.php
+
+1. DB 관련 상세정보
+테이블: agent_dashboard_memos
+
+
+사용 컬럼:
+
+
+기본: id, user_id, taskid, timecreated, timemodified
+
+
+갱신 가능 필드:
+
+
+일반 메모/지표 관련: wxspert, memo, okr, kpi, qstn
+
+
+프롬프트/파일 관련: prompt1, prompt2, prompt3, jsonfile
+
+
+리소스 관련: rsc1 ~ rsc9
+
+
+쿼리 동작:
+
+
+POST 요청으로 전달된 userid, taskid, field, value에 따라 기존 레코드 조회 후 update_record 또는 신규 insert_record 실행.
+
+
+
+2. 파일의 목적과 기능
+목적:
+ 대시보드에서 사용자가 작성/수정한 메모나 지표, 리소스 등을 실시간으로 DB에 반영하기 위한 API 엔드포인트.
+
+
+기능:
+
+
+JSON 기반 POST 요청 처리.
+
+
+특정 user_id와 taskid에 해당하는 메모 데이터를 생성 또는 수정.
+
+
+허용되지 않은 필드에 대한 업데이트 시 보안상 차단.
+
+
+성공 여부를 JSON 응답(success: true/false)으로 반환.
+
+
+
+3. 포함된 연관 파일
+config.php: Moodle 환경 설정 및 DB 연결.
+
+
+(암묵적으로 관련) agent_dashboard_memos 테이블을 사용하는 다른 대시보드/화면 PHP 파일.
+
+
+
+4. 인터페이스 설명
+요청 방식: HTTP POST
+
+
+입력(JSON Body):
+
+ {
+  "userid": 123,
+  "taskid": 456,
+  "field": "memo",
+  "value": "새 메모 내용"
+}
+
+
+출력(JSON Response):
+
+ { "success": true }
+ 또는 오류 시:
+
+ { "success": false, "message": "오류 내용" }
+
+
+제약 조건:
+
+
+field는 미리 정의된 $allowed_fields 배열 내 값만 허용.
+
+
+POST 방식이 아니거나 필수 파라미터 누락 시 에러 반환.
+
+
+
+5. 파일의 링크
+위치 (예상):
+
+ https://mathking.kr/moodle/local/augmented_teacher/agents/update_memo.php
+ (※ 파일명은 제공 코드 내 직접 명시가 없어, 기능적 의미에 따라 추정)
+
+
+--------------------------------------------------------------------------------
+teachers/triadresonance.php
+
+1. DB 관련 상세정보
+주요 테이블
+
+
+mdl_user: 교사(teacherid)의 lastname, firstname 정보를 가져오기 위해 사용됨.
+
+
+abessi_missionlog: 교사 본인이 접근 시 userid, eventid=71, page='chainreaction', timecreated 값이 기록됨.
+
+
+쿼리 특징
+
+
+Moodle $DB API를 활용한 매개변수화된 안전한 SQL 실행 ($DB->execute, $DB->get_record_sql).
+
+
+SQL 인젝션 방지를 위한 prepared query 사용.
+
+
+
+2. 파일의 목적과 기능
+목적:
+ "연계 피드백 시스템" 웹페이지를 제공하여, 여러 교사들이 한 학생에 대해 순차적으로 피드백을 주고받는 학습 피드백 프로세스를 시각화.
+
+
+기능:
+
+
+특정 교사의 활동 로그를 기록 (abessi_missionlog 테이블).
+
+
+교사 및 학생의 기본 정보를 조회하여 UI에 표시.
+
+
+피드백 단계별 진행 상태(완료, 진행중, 대기중)를 시각적으로 표현.
+
+
+학생 학습 정보(최근 성적, 취약 영역, 심리 상태 등)와 현재 풀이 문제를 표시.
+
+
+피드백 요약/핵심 개선점/강점/교정 방향을 카드 형태로 제공.
+
+
+
+3. 포함된 연관 파일
+/home/moodle/public_html/moodle/config.php : Moodle 환경 설정 및 DB 연결.
+
+
+Moodle 핵심 라이브러리 (require_login(), $DB 객체)와 연계.
+
+
+직접적으로는 별도의 로컬 include 파일은 없음.
+
+
+
+4. 인터페이스 설명
+DB 인터페이스:
+
+
+$DB->execute 를 사용하여 로그 데이터 삽입.
+
+
+$DB->get_record_sql 로 교사 이름을 조회.
+
+
+웹 인터페이스 (UI/UX):
+
+
+HTML + CSS 기반 반응형 레이아웃.
+
+
+주요 섹션:
+
+
+피드백 진행 과정: 교사별 단계 진행 상태(진행중, 완료, 대기).
+
+
+탭 메뉴: 피드백 흐름 / 문제 풀이 과정 / 변화 추적.
+
+
+학생 정보 카드: 최근 성적, 취약 영역, 심리 상태.
+
+
+현재 풀이 문제 표시: 수학 문제 LaTeX-like 텍스트.
+
+
+연계 피드백 요약 카드: 핵심 개선점, 강점, 교정 방향.
+
+
+버튼: "다음 선생님에게 전달", "문제 변경", "문제 풀이 과정 보기".
+
+
+
+5. 파일의 링크
+예상 위치(URL):
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/chainreaction.php
+ (파일명이 코드 내 직접 표기되지는 않았으므로, 기능명/페이지명 chainreaction에 기반한 추정)
+
+
+--------------------------------------------------------------------------------
+teachers/topic_profiling.php
+
+1. DB 관련 상세정보
+주요 테이블
+
+
+mdl_user : 학생(userid)의 firstname, lastname 조회.
+
+
+mdl_user_info_data : 현재 로그인한 사용자의 role(fieldid=22) 조회.
+
+
+mdl_abessi_timeline : 특정 화이트보드(wboardid)의 학습 타임라인을 최근 12시간 내 기록 기준으로 조회.
+
+
+mdl_abessi_messages : 화이트보드별 마지막 메시지 조회.
+
+
+boarddb : 타임라인의 gidarray, tstamparray 값이 비어 있을 경우 stroke 기록(generate_id, timecreated)을 가져와 갱신.
+
+
+mdl_icontent_pages : 전자책 콘텐츠 이미지 로드.
+
+
+mdl_question : 문제(questiontext, reflections1)와 연결된 이미지·정보 조회.
+
+
+
+2. 파일의 목적과 기능
+목적:
+ 특정 화이트보드(wboardid)의 학습 활동 타임라인을 분석하고, 시간 간격 및 stroke 기반 시각화 UI를 제공.
+
+
+기능:
+
+
+최근 학습 활동 기록(abessi_timeline)을 불러와 시간 차이(tstamparray)를 막대 그래프 형태(snapshots)로 시각화.
+
+
+각 기록을 테이블 행으로 출력(학습 시간, 상태, 뷰 횟수, 화이트보드 미리보기 이미지, 상세 분석 링크 포함).
+
+
+stroke 기록이 누락된 경우 boarddb에서 재생성 후 abessi_timeline 갱신.
+
+
+특정 교사($USER->id==2) 전용 모니터링/교정 가이드(학습 순서, 추천 알고리즘) 제공.
+
+
+
+3. 포함된 연관 파일
+/home/moodle/public_html/moodle/config.php : Moodle 환경설정 및 DB 연결.
+
+
+/home/moodle/public_html/moodle/configwhiteboard.php : 화이트보드 DB 연결 정보.
+
+
+외부 JS/CSS:
+
+
+SweetAlert2, jQuery, Bootstrap, MathJax, Animate.css, jQuery UI.
+
+
+
+4. 인터페이스 설명
+DB 인터페이스
+
+
+$DB->get_record_sql, $DB->get_records_sql : Moodle 표준 API로 안전한 SQL 실행.
+
+
+$DB->execute : gidarray, tstamparray 갱신 시 사용.
+
+
+웹 인터페이스
+
+
+HTML Table 기반 타임라인 로그 출력.
+
+
+각 stroke gap을 색상과 폭으로 표시한 막대(span 요소).
+
+
+Tooltip으로 이미지 미리보기 제공.
+
+
+JS 함수 showMoment(wboardid, gidmax) : SweetAlert 팝업 내 iframe으로 특정 시점 화이트보드 상태 표시.
+
+
+JS 함수 ChangeCheckBox() : 체크박스 클릭 시 AJAX 요청으로 학생 활동 체크 후 페이지 새로고침.
+
+
+MathJax : 수식 표현 지원.
+
+
+
+5. 파일의 링크
+예상 접근 경로(URL)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/focused_timeline.php?id={wboardid}&userid={studentid}&mode={mode}
+ (실제 파일명은 코드에 직접 표기되지 않았으나, 출력 테이블 내 링크로 focused_analysis.php 등과 연계됨.)
+
+
+--------------------------------------------------------------------------------
+teachers/todayVIPs.php
+
+1. DB 관련 상세정보
+로그 기록
+
+
+{abessi_missionlog} : 교사 활동 기록(userid, page, timecreated)을 저장.
+
+
+사용자 정보 조회
+
+
+mdl_user_info_data : 교사의 symbol 값(fieldid=64) 조회 → 해당 기호로 학생 식별.
+
+
+mdl_user : 학생 리스트(id, firstname, lastname) 조회 (firstname LIKE '%$tsymbol%').
+
+
+학생 학습 관련 테이블
+
+
+mdl_logstore_standard_log : 학생별 마지막 접속 시간(max(timecreated)).
+
+
+block_use_stats_totaltime : 학생별 누적 학습 시간(totaltime).
+
+
+mdl_checklist_check : 체크리스트 최종 확인(max(usertimestamp)).
+
+
+mdl_abessi_schedule : 주간 수업 스케줄(duration1~7, memo8).
+
+
+mdl_user_info_data : 학생 연락처(fieldid=54, 55) 저장.
+
+
+mdl_checklist_comment : 최근 코멘트 타임스탬프.
+
+
+
+2. 파일의 목적과 기능
+목적:
+ 교사별 오늘의 집중 관리 학생(VIP) 명단을 조회하고, 학습 시간·스케줄·접속 현황 등을 종합적으로 모니터링.
+
+
+기능:
+
+
+교사 로그(abessi_missionlog) 기록 → 페이지 사용 이력 추적.
+
+
+교사 심볼(symbol) 기반으로 담당 학생 자동 필터링.
+
+
+학생별로 다음 정보 표시:
+
+
+최근 접속 시간
+
+
+누적 학습 시간 vs 주간 수업 총량
+
+
+체크리스트 확인 현황
+
+
+오답노트/집중도 관리 지표
+
+
+주차별 수업 횟수
+
+
+개별 메모, 메시지, 연락처 바로가기 링크
+
+
+시각적 강조(tooltip, hover 효과)로 학생 관리 상황 표시.
+
+
+
+3. 포함된 연관 파일
+navbar.php : 상단 네비게이션 포함.
+
+
+quicksidebar.php : 사이드바 UI 포함.
+
+
+/home/moodle/public_html/moodle/config.php : Moodle 전역 설정 및 DB 초기화.
+
+
+외부 라이브러리(JS/CSS):
+
+
+jQuery, Bootstrap, Moment.js
+
+
+Chart.js, DataTables, Summernote, SweetAlert
+
+
+Google Maps, Dropzone, Fullcalendar 등
+
+
+
+4. 인터페이스 설명
+DB 인터페이스
+
+
+$DB->execute : 로그 기록 삽입.
+
+
+$DB->get_record_sql, $DB->get_records_sql : 교사/학생 데이터 조회.
+
+
+$DB->get_record : 누적 학습시간(block_use_stats_totaltime) 등 개별 레코드 조회.
+
+
+웹 UI 인터페이스
+
+
+학생별 데이터가 HTML <table> 행으로 출력.
+
+
+각 학생 이름, 수업 정보, 누적 학습시간, 오늘 학습 링크, 개별 메모, 메시지 아이콘, 연락처 SMS·메일 아이콘 제공.
+
+
+Tooltip 스타일(tooltip1, tooltip2) 및 hover 시 부가 정보 표시.
+
+
+AJAX 함수 ChangeCheckBox() : 체크박스 클릭 이벤트를 check.php에 전달하여 상태 업데이트.
+
+
+
+5. 파일의 링크
+예상 접근 경로(URL)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/teachertodayVIPs.php?teacherid={교사ID}
+ (파일명은 내부 코드에서 page='teachertodayVIPs' 로 로깅되는 점으로 추정.)
+
+
+--------------------------------------------------------------------------------
+teachers/timetable.php
+
+1. DB 관련 상세정보
+로그 기록
+
+
+{abessi_missionlog} : 교사의 페이지 접근 기록(userid, page, timecreated).
+
+
+{abessi_teacher_setting} : 교사의 nenergy(학생당 평균 학습시간 에너지 지수), usedtime(평균 사용 시간) 업데이트.
+
+
+학생/교사 관리 관련
+
+
+mdl_user : 학생 계정(id, firstname, lastname, lastaccess, lastlogin, suspended).
+
+
+{abessi_schedule} : 학생 주간 시간표(start0~7, duration0~7, pinned, timecreated).
+
+
+{abessi_mystudents} : 교사와 학생 매핑(teacherid, studentid, suspended, timecreated).
+
+
+{abessi_indicators} : 학생 지표 관리, teacherid 업데이트.
+
+
+{abessi_today} : 학생의 당일 학습 목표 기록.
+
+
+{abessi_attendance} : 출결 상태(doriginal, dchanged, type, text).
+
+
+로그/활동
+
+
+mdl_logstore_standard_log : 학생별 마지막 활동 기록(timecreated).
+
+
+
+2. 파일의 목적과 기능
+목적:
+ 교사가 관리하는 학생들의 주간 시간표/출석 현황을 시각적으로 확인하고, 담당 교사 배정, 결석 체크, 학습 에너지 지수 등을 관리하는 도구.
+
+
+주요 기능:
+
+
+학생 시간표 불러오기 및 현재 시간대 학습 여부 표시.
+
+
+교사 심볼 기반으로 학생 자동 필터링.
+
+
+신규 학생 추가 시 바로 링크 표시.
+
+
+학생 출결 상태 자동 체크 및 빨간 점(red dot)/파란 점(blue dot) 으로 시각화.
+
+
+활동 로그 기반으로 미션 수행 여부 확인.
+
+
+viewmode=change 일 경우, 교사-학생 매칭 데이터(abessi_mystudents) 갱신.
+
+
+학습 누락 학생, 정지 계정(suspended) 학생 목록 출력.
+
+
+교사의 에너지 지수(nenergy)와 평균 사용 시간(usedtime)을 자동 산출 후 DB 반영.
+
+
+
+3. 포함된 연관 파일
+navbar.php : 상단 네비게이션.
+
+
+quicksidebar.php : 우측 사이드바.
+
+
+/home/moodle/public_html/moodle/config.php : Moodle 설정/DB 초기화.
+
+
+외부 JS/CSS 라이브러리:
+
+
+jQuery, Bootstrap, Moment.js (한국어 locale 포함)
+
+
+Chart.js, DataTables, Summernote
+
+
+Fullcalendar, Google Maps, Dropzone
+
+
+SweetAlert, Select2, jQuery UI 등
+
+
+
+4. 인터페이스 설명
+DB 인터페이스
+
+
+$DB->get_record_sql, $DB->get_records_sql : 학생 정보, 시간표, 출석, 학습 기록 조회.
+
+
+$DB->execute : 로그 기록 삽입, 교사·학생 관계 업데이트.
+
+
+웹 UI 인터페이스
+
+
+시간표를 HTML <table> 형태로 주간(월~일, 30분 단위) 표시.
+
+
+각 칸에는 학생 이름과 함께 활동 상태 아이콘(빨간 점/파란 점) 및 Pomodoro 아이콘 출력.
+
+
+출석 체크 미완료 학생은 빨간색 체크 링크로 표시.
+
+
+tablemode 파라미터에 따라 주간 시간표 또는 오늘 일정만 표시.
+
+
+suspended 계정은 따로 분류하여 ‘성공적인 실패들’ 섹션에 표시.
+
+
+
+5. 파일의 링크
+예상 접근 경로(URL)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timetable.php?id={teacherid}&tb=7
+
+
+tablemode 파라미터: 전체 주간 시간표(default) 또는 today 모드.
+
+
+viewmode=change : 교사-학생 매핑 갱신 모드.
+
+
+
+
+--------------------------------------------------------------------------------
+teachers/timescaffolding42.php
+
+1. DB 관련 상세정보
+mdl_user : 사용자 기본정보(id, firstname, lastname 등).
+
+
+mdl_user_info_data : 사용자 역할(role, fieldid=22).
+
+
+mdl_abessi_mathtalk : 학생의 녹음 동의 여부(type='agreement', hide).
+
+
+mdl_abessi_tracking : 학생 학습 활동 추적 로그(status, text, duration, timecreated, timefinished, feedback, comment 등).
+
+
+mdl_abessi_today : 학생 목표 관리(주간목표, 오늘목표, 검사요청).
+
+
+mdl_abessi_chapterlog : 최근 단원 학습 로그(cid, cntid, nch).
+
+
+mdl_abessi_progress : 분기별 목표(plantype='분기목표', deadline).
+
+
+mdl_abessi_missionlog : 이벤트 로그(휴식 이벤트 eventid=7128).
+
+
+mdl_abessi_reflections : 학습 활동에 대한 자기 평가/리플렉션(trackingid).
+
+
+mdl_abessi_indicators : 학생의 PM 결과(pmresult), 포모도로(npomodoro, kpomodoro) 기록.
+
+
+
+2. 파일의 목적과 기능
+학생의 **학습일지(수학일기)**를 관리하는 메인 페이지.
+
+
+학생별로 오늘/주간 목표, 학습 활동 로그, 활동 상태(대기, 시작, 완료 등)를 시각적으로 보여줌.
+
+
+Pomodoro 방식(25~50분 단위 학습) 기반 학습시간 기록 및 성과 평가.
+
+
+기능 요약:
+
+
+학습 활동 시작/완료 버튼과 남은 시간 표시(자동 카운트다운).
+
+
+학생이 입력한 목표와 활동 리스트 표시 및 관리.
+
+
+활동 결과 평가(매우 만족/만족/불만족) 및 교사 코멘트/피드백 관리.
+
+
+그래프(Chart.js)로 세션별 학습 시간/노트 작성 시간 시각화.
+
+
+메모장(Sticky Notes) 기능: 교사·학생 메모 작성, 색상 분류, 알림 설정, 녹음 기능 포함.
+
+
+녹음 동의 여부에 따라 상담 녹음 및 리포트 생성 지원.
+
+
+
+3. 포함된 연관 파일
+Moodle 설정 : /home/moodle/public_html/moodle/config.php
+
+
+API 호출
+
+
+../students/check.php : 이벤트 처리 (활동 완료, 메모 추가 등).
+
+
+../api/stickynotes_api.php : 메모 CRUD.
+
+
+../api/callback_api.php : 알림(콜백) 설정/완료.
+
+
+../LLM/uploadimage.php, ../LLM/upload_recording.php : 이미지·음성 업로드.
+
+
+../api/recording_api.php : 녹음 파일 조회/삭제.
+
+
+../api/consent_api.php : 녹음 동의 저장.
+
+
+연결된 페이지
+
+
+challenge_report.php : 활동 결과 리포트.
+
+
+synergetic.php : 활동 상세 로그.
+
+
+chapter42.php, weeklyplans.php, dailygoals.php, todayplans.php 등 목표·계획 관리 페이지.
+
+
+studenthome/index.php, index42.php, today42.php, schedule42.php, goals42.php : 학생용 홈/학습방/일정/목표 페이지.
+
+
+student_inbox.php : 메시지함.
+
+
+
+4. 인터페이스 설명
+DB 인터페이스 :
+
+
+$DB->get_record_sql(), $DB->get_records_sql()로 데이터 조회.
+
+
+$DB->execute()로 학습 지표 업데이트.
+
+
+UI 구성 :
+
+
+상단 네비게이션(홈, 내공부방, 오늘, 일정, 목표, 메세지, 수학일기).
+
+
+활동 리스트: 대기/오늘/지난 활동 구분 출력.
+
+
+상태별 아이콘: 🌱 준비, 🍎 응시, 📝 오답, 📚 과제, 🏬 시험, 🌈 기타.
+
+
+체크박스로 책/프린트 공부, DMN 휴식 표시 가능.
+
+
+SweetAlert 기반 모달 입력창을 통해 목표/메모/과제 입력.
+
+
+Sticky Notes UI: 색상별 메모, 이미지 업로드/붙여넣기, 알림 설정(⏰), 전체 삭제 기능.
+
+
+녹음 인터페이스: 시작/정지, 녹음 목록, 동의 모달.
+
+
+Chart.js 그래프: 세션별 학습 소요시간, 노트 작성시간 표시.
+
+
+
+5. 파일의 링크
+교사용 :
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}
+
+
+학생용 (수학일기 페이지) :
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding42.php?userid={studentid}
+
+
+관련 링크: 출결 페이지, 상담 페이지, 과제/목표 관리 페이지, 챕터 학습 페이지 등과 상호 연결됨.
+
+
+--------------------------------------------------------------------------------
+teachers/timescaffolding42_fixed.php
+
+1. DB 관련 상세정보
+주요 테이블
+
+
+{user} : 학생/사용자 기본정보(id, lastname, firstname).
+
+
+{user_info_data} : 사용자 역할(필드ID=22 → role).
+
+
+{abessi_messages} : 학생 필기/활동 로그(usedtime, nstroke, feedback, status, contentstype, timemodified 등).
+
+
+{abessi_mathtalk} : 학생 녹음 동의(type='agreement', hide).
+
+
+{abessi_tracking} : 활동 추적 로그(status, text, duration, timecreated, timefinished, feedback, result 등).
+
+
+{abessi_today} : 목표 관리(주간목표, 오늘목표, 검사요청).
+
+
+{abessi_chapterlog} : 최근 학습 단원 기록(cid, cntid, nch).
+
+
+{abessi_progress} : 분기별 목표(plantype='분기목표', deadline).
+
+
+{abessi_missionlog} : 이벤트 로그(예: 휴식 이벤트 eventid=7128).
+
+
+
+2. 파일의 목적과 기능
+핵심 목적: 학생 개별 학습일지(“📒수학일기”)를 관리하고, 활동 데이터를 기반으로 AI 분석/피드백을 제공하는 시스템.
+
+
+기능
+
+
+학습 활동 조회(AJAX, JSON 반환).
+
+
+OpenAI API 연결 테스트 및 분석/피드백 생성.
+
+
+캐시 관리(통계, 클리어, 만료 캐시 정리).
+
+
+학습 목표(오늘/주간/분기)와 활동 현황 출력.
+
+
+Chart.js 기반 시각화(세션별 소요시간, 노트 작성시간).
+
+
+활동 상태별 UI(대기, 준비, 응시, 오답, 과제, 시험 등).
+
+
+학습일지 모드 구분: 교사용 기본 모드 vs. parental 모드.
+
+
+
+3. 포함된 연관 파일
+Moodle 설정
+
+
+/home/moodle/public_html/moodle/config.php
+
+
+AI 관련
+
+
+openai_config.php (OpenAI API key 및 분석 함수 포함)
+
+
+외부 라이브러리
+
+
+jQuery / jQuery UI
+
+
+SweetAlert2
+
+
+Chart.js
+
+
+Bootstrap
+
+
+연계 파일
+
+
+challenge_report.php : 활동 마무리 리포트
+
+
+timescaffolding.php : 교사용 학습일지
+
+
+weekly letter.php : 상담 리포트
+
+
+학생용 관련 페이지(timeline.php, p_schedule.php, schedule.php 등)
+
+
+
+4. 인터페이스 설명
+AJAX 엔드포인트
+
+
+action=fetch_learning_activity : 활동 데이터 조회
+
+
+action=test_openai_connection : OpenAI 연결 확인
+
+
+action=analyze_with_openai : OpenAI 분석 실행
+
+
+action=generate_feedback : AI 피드백 생성
+
+
+action=manage_cache : 캐시 관리(stats, clear, clear_expired)
+
+
+UI 구성
+
+
+상단 탭: 📈 활동일지, 📝 메모장, 🤖 학습분석
+
+
+표 형태의 활동 로그 (계획 시간, 실제 소요시간, 상태)
+
+
+Chart.js 그래프 2개 (세션별 학습시간, 노트 작성시간)
+
+
+메모장(Sticky Notes)은 UI 컨테이너만 준비되어 있음
+
+
+분석 탭에서 "AI 분석 실행" 버튼 클릭 시 AJAX 호출 → 분석 결과 표시
+
+
+학습 진행 상태
+
+
+활동 중일 때 카운트다운 타이머 표시
+
+
+완료 버튼 클릭 시 challenge_report.php로 이동
+
+
+특정 상태(대기/완료 등)에 따라 색상, 아이콘, 알림 표시
+
+
+
+5. 파일의 링크
+교사용 수학일기(타임스캐폴딩):
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}
+
+
+학생용 수학일기 페이지:
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding42.php?userid={studentid}
+
+
+활동 리포트:
+
+ https://mathking.kr/moodle/local/augmented_teacher/cjnstudents/challenge_report.php?tid={trackingid}&userid={studentid}
+
+
+부모용 모드:
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}&mode=parental
+
+
+
+
+--------------------------------------------------------------------------------
+teachers/timescaffolding42_backup.php
+
+1. DB 관련 상세정보
+사용되는 주요 Moodle DB 테이블
+
+
+mdl_user : 학생 기본 정보(id, lastname, firstname).
+
+
+mdl_user_info_data : 사용자 역할(fieldid=22 → role).
+
+
+mdl_abessi_mathtalk : 학생의 녹음 동의 여부(type='agreement').
+
+
+mdl_abessi_tracking : 학습 활동 추적(status, text, duration, timecreated, timefinished, feedback, result, comment 등).
+
+
+mdl_abessi_today : 목표 데이터(주간목표, 오늘목표, 검사요청).
+
+
+mdl_abessi_chapterlog : 학생의 최근 학습 단원 기록(cid, cntid, nch).
+
+
+mdl_abessi_progress : 분기별 목표 관리(plantype='분기목표', deadline, hide).
+
+
+mdl_abessi_missionlog : 휴식 이벤트 로그(eventid=7128).
+
+
+mdl_abessi_reflections : 활동에 대한 학생/선생님 평가 기록.
+
+
+mdl_abessi_indicators : 학습 지표 저장(pmresult, npomodoro, kpomodoro).
+
+
+
+2. 파일의 목적과 기능
+핵심 목적
+ 학생 개별 학습 활동을 “수학일기(학습일지)” 형태로 기록·관리하고, 실시간 진행 현황, 목표 달성도, 메모, 녹음 기능까지 포함해 교사·부모·학생 모두가 활용 가능한 통합 학습 지원 인터페이스를 제공.
+
+
+주요 기능
+
+
+오늘/주간/분기 목표 조회 및 관리.
+
+
+학습 활동 상태 표시 (대기, 준비, 응시, 오답, 과제, 시험 등).
+
+
+활동 시간 기록 및 포모도르 분석 결과 DB 반영.
+
+
+Chart.js를 통한 학습시간/노트 작성시간 그래프 제공.
+
+
+활동별 보고서(challenge_report.php) 및 활동 로그(synergetic.php) 연계.
+
+
+Sticky Notes 기반 메모장(학생/교사 메모 구분).
+
+
+메모 알림(콜백) 및 전체 삭제 기능.
+
+
+학생의 녹음 기능(동의 시 활성화, 목록 관리 포함).
+
+
+학부모 모드(mode=parental)와 교사/학생 모드에 따라 UI 차별화.
+
+
+
+3. 포함된 연관 파일
+필수 Moodle 설정
+
+
+/home/moodle/public_html/moodle/config.php
+
+
+외부 JS 라이브러리
+
+
+jQuery, jQuery UI
+
+
+SweetAlert2
+
+
+Bootstrap
+
+
+Chart.js
+
+
+Font Awesome
+
+
+연계 Moodle 모듈/페이지
+
+
+check.php : 활동 상태 갱신, 목표 입력 등 AJAX 처리.
+
+
+challenge_report.php : 특정 활동 리포트 페이지.
+
+
+synergetic.php : 학생 활동 로그 기록 확인.
+
+
+mypersonas.php : 학습 페르소나.
+
+
+attendancerecords.php : 출결 기록.
+
+
+weeklyplans.php, dailygoals.php, todayplans.php : 계획/목표 관리.
+
+
+editmemos.php : 메모 수정.
+
+
+uploadimage.php, upload_recording.php : 파일 업로드 관련 API.
+
+
+stickynotes_api.php, callback_api.php, recording_api.php, consent_api.php : 메모, 알림, 녹음, 동의 처리 API.
+
+
+
+4. 인터페이스 설명
+화면 구성
+
+
+상단 모던 헤더(네비게이션 메뉴: 홈, 내 공부방, 오늘, 일정, 목표, 메시지, 수학일기).
+
+
+상태 체크박스 (책/프린트 공부, DMN 휴식).
+
+
+학습 활동 표: Plan, Final, 상태, 평가/활동 기록 링크 포함.
+
+
+Chart.js 그래프 2종: 세션별 소요시간, 노트 작성시간.
+
+
+메모장: 교사/학생 메모 영역 분리, 색상 선택 가능, 이미지 업로드·붙여넣기 지원.
+
+
+알림 설정: 개별 메모/전체 콜백 설정 및 모니터링 표시.
+
+
+녹음 기능: 동의 시 활성화, 음성 녹음/자동 정지/업로드/목록 관리 가능.
+
+
+목표 입력/수정 팝업(SweetAlert 기반).
+
+
+학부모 모드: 단순화된 학습일지 테이블 + 그래프만 표시.
+
+
+AJAX 인터페이스
+
+
+check.php : 활동 시작/완료/수정, 목표 입력, 시간 연장 등 이벤트 처리.
+
+
+stickynotes_api.php : 메모 CRUD.
+
+
+callback_api.php : 콜백 알림 저장/완료/연장.
+
+
+recording_api.php : 녹음 목록 조회 및 삭제.
+
+
+consent_api.php : 녹음 동의 저장.
+
+
+
+5. 파일의 링크
+교사용 수학일기 (기본 모드)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}
+
+
+학생용 수학일기 (확장 모드)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding42.php?userid={studentid}
+
+
+활동 리포트
+
+ https://mathking.kr/moodle/local/augmented_teacher/cjnstudents/challenge_report.php?tid={trackingid}&userid={studentid}
+
+
+활동 로그 기록
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/synergetic.php?userid={studentid}&tb={timebegin}&te={timeend}
+
+
+부모용 모드
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}&
+
+
+--------------------------------------------------------------------------------
+teachers/timescaffolding42%copy.php
+
+1. DB 관련 상세정보
+사용되는 테이블
+
+
+mdl_user: 학생 기본정보(lastname, firstname)
+
+
+mdl_user_info_data: 사용자 역할(role, fieldid=22)
+
+
+mdl_abessi_mathtalk: 녹음 동의 여부(type='agreement', hide)
+
+
+mdl_abessi_tracking: 학습 활동 추적(status, text, duration, timecreated, timefinished, feedback, result, comment, ndisengagement, nwboard, wbtimeave)
+
+
+mdl_abessi_today: 오늘/주간 목표(오늘목표, 주간목표, 검사요청)
+
+
+mdl_abessi_chapterlog: 최근 학습 단원(cid, cntid, nch)
+
+
+mdl_abessi_progress: 분기별 목표(plantype='분기목표', deadline, hide)
+
+
+mdl_abessi_missionlog: 휴식 이벤트 로그(eventid=7128)
+
+
+mdl_abessi_reflections: 활동별 평가 기록
+
+
+mdl_abessi_indicators: 학습 지표(pmresult, npomodoro, kpomodoro)
+
+
+
+2. 파일의 목적과 기능
+핵심 목적
+ 학생의 학습 활동을 시간 단위로 추적·기록하고, 이를 기반으로 학습 목표 달성 현황, 학습 패턴, 메모, 녹음 등 종합적인 학습일지를 제공.
+
+
+주요 기능
+
+
+활동 기록 관리: 활동 시작·완료·대기 상태 표시, 예상 소요시간 대비 실제 시간 분석.
+
+
+학습 목표 관리: 오늘/주간/분기 목표 표시 및 입력.
+
+
+시각화: Chart.js를 이용해 학습 소요시간 및 노트 작성시간 그래프 제공.
+
+
+메모장: 학생/교사 메모 작성·편집·삭제, 이미지 업로드·붙여넣기 지원.
+
+
+알림(콜백): 특정 메모 또는 전체 활동에 점검 알림 설정 가능.
+
+
+녹음 기능: 녹음 동의 시 음성 녹음 및 자동 업로드/관리.
+
+
+자동 복사 기능: 학생 학습 활동/목표 내용을 블로그 형식 학습일지로 정리해 클립보드 복사.
+
+
+
+3. 포함된 연관 파일
+Moodle 필수 설정
+
+
+/home/moodle/public_html/moodle/config.php
+
+
+내부 API/페이지
+
+
+check.php: 활동/목표 이벤트 처리
+
+
+challenge_report.php: 특정 활동 보고서
+
+
+synergetic.php: 활동 로그 기록
+
+
+mypersonas.php, attendancerecords.php, weeklyplans.php, dailygoals.php, todayplans.php: 학생 프로필, 출결, 목표 관리
+
+
+editmemos.php: 메모 관리
+
+
+uploadimage.php, upload_recording.php: 업로드 관련
+
+
+stickynotes_api.php, callback_api.php, recording_api.php, consent_api.php: 메모·알림·녹음·동의 API
+
+
+외부 라이브러리
+
+
+jQuery, jQuery UI
+
+
+SweetAlert2
+
+
+Bootstrap
+
+
+Chart.js
+
+
+Font Awesome
+
+
+
+4. 인터페이스 설명
+모드별 화면
+
+
+학생 모드: 활동 기록, 목표, 그래프, 메모장, 녹음 기능 포함.
+
+
+학부모 모드: 단순화된 활동 표와 그래프 중심 표시.
+
+
+구성 요소
+
+
+상단 네비게이션: 공부방, 공부결과, 메시지함, 목표설정, 수업시간, 수학일기
+
+
+상태 체크박스: 책/프린트 공부, DMN 휴식
+
+
+활동 표: 계획, 실제 시간, 상태, 평가 기록 링크
+
+
+그래프: 세션별 소요시간, 노트 작성시간
+
+
+Sticky Notes: 교사/학생 메모 영역 분리, 색상 선택, 이미지 업로드
+
+
+알림 기능: 개별 메모/전체 모니터링 설정
+
+
+녹음 인터페이스: 녹음 시작/정지, 자동 종료, 목록 관리
+
+
+클립보드 복사 버튼: 학습 기록을 블로그 형식으로 자동 정리
+
+
+
+5. 파일의 링크
+기본(학생용) 수학일기
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}
+
+
+확장(42 버전) 수학일기
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding42.php?userid={studentid}
+
+
+활동 보고서
+
+ https://mathking.kr/moodle/local/augmented_teacher/cjnstudents/challenge_report.php?tid={trackingid}&userid={studentid}
+
+
+활동 로그 기록
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/synergetic.php?userid={studentid}&tb={timebegin}&te={timeend}
+
+
+학부모 모드
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/timescaffolding.php?userid={studentid}&mode=p
+
+
+--------------------------------------------------------------------------------
+teachers/timescaffolding_stat.php
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 사용자 기본 정보 (이름, 최초 접속일 등)
+
+
+abessi_indicators : 학습 지표 데이터 저장
+
+
+주요 컬럼:
+
+
+timecreated (UNIX timestamp)
+
+
+nalt (능동지수)
+
+
+kpomodoro (평균 주기)
+
+
+npomodoro (주간 세션 수)
+
+
+pmresult (만족도 점수)
+
+
+조회 조건
+
+
+userid = 선택된 사용자 ID
+
+
+timecreated > 최근 3개월(약 90일)
+
+
+pmresult > 0 (유효 데이터만 가져옴)
+
+
+최대 10,000 레코드 반환
+
+
+
+2. 파일의 목적과 기능
+목적
+
+
+학생의 **학습 지표(능동성, 세션 수, 주기, 만족도)**를 시각적으로 보여주는 대시보드 역할.
+
+
+기능
+
+
+최근 3개월 간 지표 데이터 조회
+
+
+날짜별 데이터 배열화 및 전처리
+
+
+Chart.js 기반 시각화 제공
+
+
+탭 버튼으로 지표별 차트 전환 (평균 주기, 세션 수, 만족도, 능동지수)
+
+
+
+3. 포함된 연관 파일
+필수 포함
+
+
+/home/moodle/public_html/moodle/config.php : Moodle 환경 설정
+
+
+외부 라이브러리
+
+
+Chart.js v4.2.1 (CDN 제공)
+
+
+
+4. 인터페이스 설명
+탭 버튼
+
+
+평균주기 → kPomodoro 데이터 표시
+
+
+세션수/주 → nPomodoro 데이터 표시
+
+
+만족도 → pmresult 데이터 표시
+
+
+능동지수 → nalt 데이터 표시
+
+
+UI 구성
+
+
+상단: 탭 전환 버튼 (active 시 강조 표시)
+
+
+본문: 선택된 차트만 표시, 나머지는 숨김
+
+
+차트: Line Chart 형식, X축=날짜(월/일), Y축=해당 지표 값
+
+
+
+5. 파일의 링크
+기본 접근 링크 (userid 파라미터 필요)
+
+ https://mathking.kr/moodle/local/augmented_teacher/teachers/indicators.php?userid={studentid}
+
+
+--------------------------------------------------------------------------------
+
+teachers/timefolding0727
+
+1. DB 관련 상세정보
+사용 테이블
+
+
+mdl_user : 학생 기본 정보 (이름, ID 조회)
+
+
+mdl_user_info_data : 사용자 부가 정보 (fieldid=22 → 역할/role 값 저장)
+
+
+mdl_abessi_tracking : 학습 활동 추적 기록
+
+
+주요 컬럼: userid, timecreated, duration, status, text
+
+
+쿼리 조건
+
+
+학생 ID = URL 파라미터(userid) 또는 현재 로그인한 $USER->id
+
+
+최근 일주일간(timecreated > aweekago) 데이터만 조회
+
+
+최대 100개의 기록만 반환
+
+
+
+2. 파일의 목적과 기능
+목적
+ 학생의 최근 학습 활동을 표 형태로 시각화하고, 교사 또는 관리자가 활동 시간 및 계획을 직접 부여·관리할 수 있도록 지원.
+
+
+주요 기능
+
+
+학습 활동 내역 조회 및 테이블 표시
+
+
+활동 상태(진행중, 종료 등) 표시
+
+
+활동 시간 설정(beginTracking) 및 계획 입력(giveInstruction)
+
+
+상태를 SDL(Self-Directed Learning) 모드로 전환(returntoSDL)
+
+
+AJAX를 통해 check.php로 활동 데이터 기록/갱신
+
+
+
+3. 포함된 연관 파일
+필수 포함
+
+
+/home/moodle/public_html/moodle/config.php (Moodle 환경 설정)
+
+
+AJAX 처리
+
+
+check.php : 활동 시간/계획 등을 DB에 업데이트하는 서버 처리용 스크립트
+
+
+외부 라이브러리
+
+
+SweetAlert2, SweetAlert (알림/모달)
+
+
+jQuery, Bootstrap (UI 인터페이스)
+
+
+Animate.css (애니메이션 효과)
+
+
+jQuery UI (UI 위젯 기능)
+
+
+
+4. 인터페이스 설명
+화면 요소
+
+
+학습 활동 테이블
+
+
+열 구성: 시작시간 | 내용 | 종료시간 | 상태
+
+
+"진행중" 상태는 클릭 시 SDL 모드로 전환 가능
+
+
+아이콘/버튼 기능
+
+
+⏱ 활동시간 부여: SweetAlert 팝업에서 시간(5~50분 등)을 선택하면 check.php로 기록
+
+
+📝 계획입력: SweetAlert 팝업에서 활동 계획 텍스트와 필요 시간 입력 후 DB에 저장
+
+
+팝업 인터랙션
+
+
+SweetAlert 모달창에서 시간/계획 입력
+
+
+입력값에 따라 AJAX 요청 실행 후 location.reload()로 새로고침
+
+
+
+5. 파일의 링크
+접근 URL (학생별 활동 추적 조회):
+
+ https://mathking.kr/moodle/local/augmented_teacher/students/tracking.php?userid={studentid}
+
+
+--------------------------------------------------------------------------------
+
+view_goal_analysis.php / mdl_alt42g_goal_analysis
+
+1. DB 관련 상세정보
+사용 테이블
+
+mdl_alt42g_goal_analysis : 목표 분석 결과 저장 테이블
+mdl_user : 사용자 기본 정보 (이름)
+
+주요 컬럼 (mdl_alt42g_goal_analysis)
+
+id (bigint) : PK
+userid (bigint) : 사용자 ID
+analysis_type (varchar) : quarterly | weekly | daily | pomodoro | curriculum
+source_data (longtext) : 원본 데이터 JSON
+gpt_prompt (longtext) : GPT 프롬프트
+analysis_result (longtext) : 분석 결과 텍스트
+signals_routine (longtext) : 추출된 시그널 루틴
+effectiveness_score (decimal(5,2)) : 효과성 점수 (0-100)
+recommendations (longtext) : 추천사항 JSON
+timecreated (bigint) : 생성 시각
+timemodified (bigint) : 수정 시각
+
+인덱스
+
+KEY userid_idx(userid)
+KEY analysis_type_idx(analysis_type)
+KEY timecreated_idx(timecreated)
+KEY idx_user_type_time (userid, analysis_type, timecreated)
+
+주요 쿼리/조건
+
+SELECT ga.*, u.firstname, u.lastname
+FROM {alt42g_goal_analysis} ga
+JOIN {user} u ON ga.userid = u.id
+WHERE [userid/analysis_type 조건]
+ORDER BY ga.timecreated DESC
+LIMIT 100
+
+2. 파일의 목적과 기능
+- 목표 분석 결과(분기/주간/일간/포모도르/커리큘럼)를 목록/상세로 조회
+- 필터(사용자/유형), 삭제, 개수 통계/유형별 카운트 제공
+
+3. 포함된 연관 파일
+- /home/moodle/public_html/moodle/config.php
+- orchestration_hs(2)/sql/create_goal_analysis_table.sql (테이블 정의)
+
+
+--------------------------------------------------------------------------------
+
+view_emotion_data.php / mdl_alt42g_emotion_*
+
+1. DB 관련 상세정보
+사용 테이블
+
+mdl_alt42g_emotion_categories : 감정 카테고리
+mdl_alt42g_emotion_items : 카테고리별 항목
+mdl_alt42g_emotion_selections : 사용자 선택 기록 (main/sub, 완료여부)
+mdl_alt42g_emotion_surveys 또는 mdl_alt42g_emotion_survey_responses : 설문 응답(구현에 따라 명칭 다름)
+mdl_user : 사용자 정보(이름)
+
+주요 컬럼
+
+emotion_categories
+- id, category_name, category_key, icon, description, display_order, is_active, timecreated, timemodified
+
+emotion_items
+- id, category_id, item_name, item_key, description, display_order, is_active, timecreated, timemodified
+
+emotion_selections
+- id, userid, category_id, item_id, main_emotion, sub_emotion, survey_completed, timecreated, timemodified
+
+emotion_surveys / emotion_survey_responses
+- id, selection_id, userid, emotion_state(TEXT JSON), motivation_factors(TEXT JSON),
+  stress_factors(TEXT JSON), management_strategies(TEXT JSON), additional_notes(TEXT), timecreated
+
+인덱스(핵심)
+- categories: UNIQUE(category_key)
+- items: INDEX(category_id), UNIQUE(item_key)
+- selections: INDEX(userid), INDEX(category_id), INDEX(item_id)
+- surveys/responses: INDEX(selection_id), INDEX(userid), INDEX(userid, timecreated)
+
+주요 쿼리/조건
+
+-- 통계
+SELECT COUNT(*) FROM {alt42g_emotion_categories/items/selections/surveys}
+
+-- 카테고리/항목 목록
+SELECT * FROM {alt42g_emotion_categories} ORDER BY display_order ASC
+SELECT * FROM {alt42g_emotion_items} WHERE category_id = :id ORDER BY display_order ASC
+
+-- 사용자 선택 최근 20건
+SELECT s.*, c.category_name, c.icon, i.item_name, u.firstname, u.lastname
+FROM {alt42g_emotion_selections} s
+JOIN {alt42g_emotion_categories} c ON s.category_id = c.id
+JOIN {alt42g_emotion_items} i ON s.item_id = i.id
+LEFT JOIN {user} u ON s.userid = u.id
+ORDER BY s.timecreated DESC
+LIMIT 20
+
+-- 설문 응답 최근 10건
+SELECT sr.*, s.main_emotion, s.sub_emotion, u.firstname, u.lastname
+FROM {alt42g_emotion_surveys} sr
+JOIN {alt42g_emotion_selections} s ON sr.selection_id = s.id
+LEFT JOIN {user} u ON sr.userid = u.id
+ORDER BY sr.timecreated DESC
+LIMIT 10
+
+2. 파일의 목적과 기능
+- Step 5 학습감정 분석 데이터의 현황/통계/목록/상세 표시
+- 설문 JSON 항목 파싱하여 가독성 있게 표시
+
+3. 포함된 연관 파일
+- /home/moodle/public_html/moodle/config.php
+- orchestration_hs2/api/fix_emotion_tables.php (테이블 생성/복구)
+
+
+--------------------------------------------------------------------------------
+
+view_problem_redefinitions.php / mdl_alt42g_problem_redefinitions
+
+1. DB 관련 상세정보
+사용 테이블
+
+mdl_alt42g_problem_redefinitions : 문제 재정의/개선안 저장 테이블
+
+주요 컬럼 (핵심 + 확장)
+- id, userid, redefinition_content(LONGTEXT), source_data(LONGTEXT JSON),
+  data_source(varchar: gpt_api|template|test|gpt_with_guide_mode), gpt_model,
+  generation_time_ms(int), session_id,
+  step2_data..step6_data, step14_data(LONGTEXT JSON),
+  guide_mode(varchar), guide_mode_matched_by(enum: manual|gpt_auto|template),
+  guide_mode_confidence(decimal), guide_mode_reasoning(text),
+  timecreated, timemodified
+
+인덱스(문서화됨)
+- guide_mode, guide_mode_matched_by, (userid, guide_mode)
+
+주요 API 및 쿼리
+- 저장: orchestration_hs2/api/save_problem_redefinition.php
+  $DB->insert_record('alt42g_problem_redefinitions', $record)
+- 조회: orchestration_hs2/api/get_problem_redefinitions.php
+  목록: SELECT * FROM {alt42g_problem_redefinitions} WHERE [조건] ORDER BY timecreated DESC LIMIT :limit OFFSET :offset
+  단건: $DB->get_record('alt42g_problem_redefinitions', ['id' => :id])
+
+2. 파일의 목적과 기능
+- 저장된 문제 재정의 내역을 필터/카드형 UI로 조회, 상세 JSON 표시
+- 지도 모드(guide_mode) 관련 메타 정보 시각화
+
+3. 포함된 연관 파일
+- /home/moodle/public_html/moodle/config.php
+- orchestration_hs2/api/get_problem_redefinitions.php, save_problem_redefinition.php
+- orchestration_hs2/db_schema_update.sql (guide_mode 인덱스 추가)
+
+
+--------------------------------------------------------------------------------
+
+view_strategies.php (orchestration_hs2/db/view_strategies.php) / mdl_alt42g_exam_strategies
+
+1. DB 관련 상세정보
+사용 테이블
+
+mdl_alt42g_exam_strategies : 시험 전략 저장 테이블
+mdl_user : 사용자 정보(이름)
+
+주요 컬럼 (alt42g_exam_strategies)
+- id, userid, exam_timeline(varchar), goal_analysis_data(LONGTEXT),
+  generated_strategy(LONGTEXT), strategy_summary(TEXT), gpt_model(varchar),
+  generation_time_ms(INT), timecreated(BIGINT), timemodified(BIGINT)
+
+테이블 생성 SQL (내장)
+CREATE TABLE IF NOT EXISTS {alt42g_exam_strategies} (
+  id BIGINT(10) NOT NULL AUTO_INCREMENT,
+  userid BIGINT(10) NOT NULL,
+  exam_timeline VARCHAR(50) NOT NULL,
+  goal_analysis_data LONGTEXT,
+  generated_strategy LONGTEXT,
+  strategy_summary TEXT,
+  gpt_model VARCHAR(50) DEFAULT 'gpt-4o',
+  generation_time_ms INT DEFAULT 0,
+  timecreated BIGINT(10) NOT NULL,
+  timemodified BIGINT(10) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+
+주요 쿼리/조건
+- 통계: COUNT(*), COUNT(DISTINCT userid), GROUP BY exam_timeline
+- 목록(최근 20): user JOIN, ORDER BY timecreated DESC
+
+2. 파일의 목적과 기능
+- 시험 전략 데이터 현황/분포/목록 조회 및 상세 모달 표시
+- 삭제/전체삭제/테이블 생성 액션 지원
+
+3. 포함된 연관 파일
+- /home/moodle/public_html/moodle/config.php
+- orchestration_hs2/db/view_strategy_detail.php, db/create_exam_strategy_tables.sql
+
+
+--------------------------------------------------------------------------------
+
+view_survey_data.php / mdl_alt42g_teacher_feedback (관련)
+
+비고
+- 코드베이스에 `view_survey_data.php` 직접 파일은 확인되지 않음.
+- Step 14 교사 피드백 저장 테이블과 연계되어 설문/피드백 조회 용도로 사용될 가능성 큼.
+- 관련 테이블/파일: mdl_alt42g_teacher_feedback, orchestration_hs2/api/save_teacher_feedback.php, orchestration_hs2/view_saved_feedback.php
+
+mdl_alt42g_teacher_feedback 주요 스키마
+- id(PK), userid, teacher_id, period(1-8), feedback_text(LONGTEXT),
+  suggestions(TEXT), encouragement(TEXT), feedback_summary(TEXT),
+  execution_plan(TEXT), next_steps(TEXT), session_id(VARCHAR),
+  timecreated(INT), timemodified(INT)
+- INDEX: userid, teacher_id, period, timecreated
+
+
+--------------------------------------------------------------------------------
+
+테이블 요약: 학습감정 분석 관련
+
+mdl_alt42g_emotion_categories
+- PK(id), UNIQUE(category_key), 표시순서(display_order), 활성여부(is_active)
+
+mdl_alt42g_emotion_items
+- PK(id), INDEX(category_id), UNIQUE(item_key)
+
+mdl_alt42g_emotion_selections
+- PK(id), INDEX(userid), INDEX(category_id), INDEX(item_id), survey_completed(0/1)
+
+mdl_alt42g_emotion_surveys / mdl_alt42g_emotion_survey_responses
+- PK(id), INDEX(selection_id), INDEX(userid), INDEX(userid, timecreated)
+
+
+--------------------------------------------------------------------------------
+
+메모/링크
+- view_goal_analysis.php: orchestration_hs/view_goal_analysis.php, orchestration_hs2/view_goal_analysis.php
+- view_emotion_data.php: orchestration_hs2/view_emotion_data.php
+- view_problem_redefinitions.php: orchestration_hs2/view_problem_redefinitions.php
+- view_strategies.php: orchestration_hs2/db/view_strategies.php
+- teacher_feedback: orchestration_hs2/api/save_teacher_feedback.php, omniui/create_db_table.php

@@ -1,0 +1,489 @@
+{
+  "@context": {
+    "@vocab": "https://mathking.kr/ontology/agent19/",
+    "schema": "https://schema.org/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "persona": "https://mathking.kr/ontology/persona/",
+    "context": "https://mathking.kr/ontology/context/",
+    "interaction": "https://mathking.kr/ontology/interaction/"
+  },
+  "@graph": [
+    {
+      "@id": "persona:PersonaSystem",
+      "@type": "owl:Class",
+      "rdfs:label": "Agent19 Persona System",
+      "rdfs:comment": "학습 콘텐츠 상호작용을 위한 3차원 페르소나 시스템",
+      "schema:version": "1.0.0",
+      "schema:dateModified": "2025-12-02"
+    },
+
+    {
+      "@id": "persona:CognitiveDimension",
+      "@type": "owl:Class",
+      "rdfs:label": "인지적 차원 (Cognitive Dimension)",
+      "rdfs:subClassOf": "persona:PersonaSystem",
+      "rdfs:comment": "학습자의 인지적 상태를 나타내는 페르소나 차원"
+    },
+    {
+      "@id": "persona:BehavioralDimension",
+      "@type": "owl:Class",
+      "rdfs:label": "행동적 차원 (Behavioral Dimension)",
+      "rdfs:subClassOf": "persona:PersonaSystem",
+      "rdfs:comment": "학습자의 행동 패턴을 나타내는 페르소나 차원"
+    },
+    {
+      "@id": "persona:EmotionalDimension",
+      "@type": "owl:Class",
+      "rdfs:label": "감정적 차원 (Emotional Dimension)",
+      "rdfs:subClassOf": "persona:PersonaSystem",
+      "rdfs:comment": "학습자의 감정 상태를 나타내는 페르소나 차원"
+    },
+
+    {
+      "@id": "persona:C1_ActiveCognition",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "활성 인지 (Active Cognition)",
+      "persona:code": "C1",
+      "persona:indicators": ["high_engagement", "fast_response", "complex_problem_attempt"],
+      "persona:contentStrategy": "challenge_oriented",
+      "persona:compatibleBehaviors": ["B1", "B3", "B5"],
+      "persona:compatibleEmotions": ["E1", "E4", "E6"]
+    },
+    {
+      "@id": "persona:C2_FatiguedCognition",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "피로 인지 (Fatigued Cognition)",
+      "persona:code": "C2",
+      "persona:indicators": ["slow_response", "accuracy_decline", "skip_increase"],
+      "persona:contentStrategy": "support_oriented",
+      "persona:compatibleBehaviors": ["B2", "B4", "B6"],
+      "persona:compatibleEmotions": ["E3", "E5", "E6"]
+    },
+    {
+      "@id": "persona:C3_ConceptOriented",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "개념 지향 (Concept Oriented)",
+      "persona:code": "C3",
+      "persona:indicators": ["explanation_seeking", "why_questions", "connection_making"],
+      "persona:contentStrategy": "explanation_rich",
+      "persona:compatibleBehaviors": ["B4", "B5"],
+      "persona:compatibleEmotions": ["E1", "E4", "E6"]
+    },
+    {
+      "@id": "persona:C4_ProblemSolving",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "문제 해결 (Problem Solving)",
+      "persona:code": "C4",
+      "persona:indicators": ["trial_and_error", "strategy_variation", "persistence"],
+      "persona:contentStrategy": "scaffolded_hints",
+      "persona:compatibleBehaviors": ["B1", "B4", "B5"],
+      "persona:compatibleEmotions": ["E1", "E4"]
+    },
+    {
+      "@id": "persona:C5_PatternRecognition",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "패턴 인식 (Pattern Recognition)",
+      "persona:code": "C5",
+      "persona:indicators": ["similar_problem_success", "routine_formation", "efficiency_increase"],
+      "persona:contentStrategy": "pattern_reinforcement",
+      "persona:compatibleBehaviors": ["B4", "B5"],
+      "persona:compatibleEmotions": ["E1", "E6"]
+    },
+    {
+      "@id": "persona:C6_ReasoningOriented",
+      "@type": "persona:CognitiveDimension",
+      "rdfs:label": "추론 지향 (Reasoning Oriented)",
+      "persona:code": "C6",
+      "persona:indicators": ["logical_progression", "inference_making", "deep_analysis"],
+      "persona:contentStrategy": "socratic_method",
+      "persona:compatibleBehaviors": ["B4", "B5"],
+      "persona:compatibleEmotions": ["E1", "E4", "E6"]
+    },
+
+    {
+      "@id": "persona:B1_ActiveEngager",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "적극적 참여자 (Active Engager)",
+      "persona:code": "B1",
+      "persona:indicators": ["high_click_rate", "exploration", "proactive_action"],
+      "persona:interactionStyle": "interactive_rich",
+      "persona:compatibleCognitive": ["C1", "C4"],
+      "persona:compatibleEmotions": ["E1", "E4"]
+    },
+    {
+      "@id": "persona:B2_PassiveObserver",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "수동적 관찰자 (Passive Observer)",
+      "persona:code": "B2",
+      "persona:indicators": ["low_interaction", "content_consumption", "minimal_response"],
+      "persona:interactionStyle": "guided_step_by_step",
+      "persona:compatibleCognitive": ["C2", "C3"],
+      "persona:compatibleEmotions": ["E2", "E3", "E5"]
+    },
+    {
+      "@id": "persona:B3_SpontaneousLearner",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "즉흥적 학습자 (Spontaneous Learner)",
+      "persona:code": "B3",
+      "persona:indicators": ["irregular_pattern", "quick_decisions", "varied_paths"],
+      "persona:interactionStyle": "flexible_adaptive",
+      "persona:compatibleCognitive": ["C1", "C4"],
+      "persona:compatibleEmotions": ["E1", "E3", "E4"]
+    },
+    {
+      "@id": "persona:B4_DeliberateLearner",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "신중한 학습자 (Deliberate Learner)",
+      "persona:code": "B4",
+      "persona:indicators": ["careful_reading", "review_before_answer", "systematic_approach"],
+      "persona:interactionStyle": "structured_sequential",
+      "persona:compatibleCognitive": ["C3", "C5", "C6"],
+      "persona:compatibleEmotions": ["E1", "E2", "E6"]
+    },
+    {
+      "@id": "persona:B5_SustainedFlowLearner",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "지속 몰입형 (Sustained Flow Learner)",
+      "persona:code": "B5",
+      "persona:indicators": ["long_session", "consistent_pace", "deep_engagement"],
+      "persona:interactionStyle": "immersive_continuous",
+      "persona:compatibleCognitive": ["C1", "C4", "C5", "C6"],
+      "persona:compatibleEmotions": ["E1", "E4", "E6"]
+    },
+    {
+      "@id": "persona:B6_IntermittentLearner",
+      "@type": "persona:BehavioralDimension",
+      "rdfs:label": "간헐적 학습자 (Intermittent Learner)",
+      "persona:code": "B6",
+      "persona:indicators": ["short_sessions", "frequent_breaks", "irregular_timing"],
+      "persona:interactionStyle": "micro_learning",
+      "persona:compatibleCognitive": ["C2"],
+      "persona:compatibleEmotions": ["E3", "E5", "E6"]
+    },
+
+    {
+      "@id": "persona:E1_ConfidentState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "자신감 상태 (Confident State)",
+      "persona:code": "E1",
+      "persona:indicators": ["quick_answers", "challenge_seeking", "positive_persistence"],
+      "persona:supportStrategy": "maintain_challenge",
+      "persona:compatibleCognitive": ["C1", "C4", "C5", "C6"],
+      "persona:compatibleBehaviors": ["B1", "B4", "B5"]
+    },
+    {
+      "@id": "persona:E2_AnxiousState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "불안 상태 (Anxious State)",
+      "persona:code": "E2",
+      "persona:indicators": ["hesitation", "answer_changes", "avoidance_behavior"],
+      "persona:supportStrategy": "reassurance_scaffolding",
+      "persona:compatibleCognitive": ["C3", "C5"],
+      "persona:compatibleBehaviors": ["B2", "B4"]
+    },
+    {
+      "@id": "persona:E3_BoredState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "권태 상태 (Bored State)",
+      "persona:code": "E3",
+      "persona:indicators": ["fast_skipping", "low_engagement", "pattern_answers"],
+      "persona:supportStrategy": "novelty_injection",
+      "persona:compatibleCognitive": ["C1", "C2"],
+      "persona:compatibleBehaviors": ["B3", "B6"]
+    },
+    {
+      "@id": "persona:E4_ChallengedState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "도전 상태 (Challenged State)",
+      "persona:code": "E4",
+      "persona:indicators": ["struggle_with_effort", "retry_attempts", "focused_attention"],
+      "persona:supportStrategy": "balanced_support",
+      "persona:compatibleCognitive": ["C1", "C4", "C6"],
+      "persona:compatibleBehaviors": ["B1", "B3", "B5"]
+    },
+    {
+      "@id": "persona:E5_FrustratedState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "좌절 상태 (Frustrated State)",
+      "persona:code": "E5",
+      "persona:indicators": ["repeated_failures", "long_pauses", "giving_up_signs"],
+      "persona:supportStrategy": "immediate_support",
+      "persona:compatibleCognitive": ["C2"],
+      "persona:compatibleBehaviors": ["B2", "B6"]
+    },
+    {
+      "@id": "persona:E6_StableState",
+      "@type": "persona:EmotionalDimension",
+      "rdfs:label": "안정 상태 (Stable State)",
+      "persona:code": "E6",
+      "persona:indicators": ["consistent_performance", "steady_pace", "neutral_engagement"],
+      "persona:supportStrategy": "maintain_stability",
+      "persona:compatibleCognitive": ["C3", "C5", "C6"],
+      "persona:compatibleBehaviors": ["B4", "B5", "B6"]
+    },
+
+    {
+      "@id": "context:SituationContext",
+      "@type": "owl:Class",
+      "rdfs:label": "상황 컨텍스트",
+      "rdfs:comment": "학습 중 발생하는 7가지 핵심 상황"
+    },
+    {
+      "@id": "context:S1_Dropout",
+      "@type": "context:SituationContext",
+      "rdfs:label": "이탈 감지 (Dropout Detection)",
+      "context:code": "S1",
+      "context:triggers": ["activity_stop_5min", "gradual_disengagement", "technical_dropout"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C2", "C1", "C4"],
+        "behavioral": ["B2", "B1", "B3"],
+        "emotional": ["E3", "E4", "E6"]
+      }
+    },
+    {
+      "@id": "context:S2_Delay",
+      "@type": "context:SituationContext",
+      "rdfs:label": "지연 (Delay)",
+      "context:code": "S2",
+      "context:triggers": ["response_time_2x_average", "irregular_pattern", "perfectionism_review"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C3", "C6", "C2", "C4", "C5"],
+        "behavioral": ["B4", "B6", "B2"],
+        "emotional": ["E4", "E3", "E1", "E2"]
+      }
+    },
+    {
+      "@id": "context:S3_RestRoutine",
+      "@type": "context:SituationContext",
+      "rdfs:label": "휴식 루틴 (Rest Routine)",
+      "context:code": "S3",
+      "context:triggers": ["scheduled_break", "fatigue_indicators", "goal_completion"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C1", "C2", "C4"],
+        "behavioral": ["B5", "B6", "B1", "B3"],
+        "emotional": ["E6", "E5", "E1"]
+      }
+    },
+    {
+      "@id": "context:S4_ErrorPatterns",
+      "@type": "context:SituationContext",
+      "rdfs:label": "오류 패턴 (Error Patterns)",
+      "context:code": "S4",
+      "context:triggers": ["same_type_error_3x", "careless_mistakes", "application_errors", "giving_up"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C3", "C6", "C2", "C4", "C5"],
+        "behavioral": ["B4", "B3", "B2"],
+        "emotional": ["E4", "E3", "E2", "E5"]
+      }
+    },
+    {
+      "@id": "context:S5_EmotionalStability",
+      "@type": "context:SituationContext",
+      "rdfs:label": "정서적 안정 (Emotional Stability)",
+      "context:code": "S5",
+      "context:triggers": ["confidence_rise", "anxiety_detected", "frustration_detected", "boredom_detected"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C1", "C5", "C2"],
+        "behavioral": ["B1", "B4", "B2", "B6"],
+        "emotional": ["E1", "E2", "E5", "E3"]
+      }
+    },
+    {
+      "@id": "context:S6_ActivityImbalance",
+      "@type": "context:SituationContext",
+      "rdfs:label": "활동 불균형 (Activity Imbalance)",
+      "context:code": "S6",
+      "context:triggers": ["activity_type_bias", "difficulty_bias", "learning_assessment_imbalance"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C3", "C4", "C5", "C2"],
+        "behavioral": ["B4", "B1", "B6"],
+        "emotional": ["E2", "E1", "E4", "E6"]
+      }
+    },
+    {
+      "@id": "context:S7_SignatureRoutine",
+      "@type": "context:SituationContext",
+      "rdfs:label": "시그니처 루틴 (Signature Routine)",
+      "context:code": "S7",
+      "context:triggers": ["learning_start_pattern", "problem_solving_pattern", "review_pattern", "end_pattern"],
+      "context:recommendedPersonas": {
+        "cognitive": ["C1", "C4", "C5", "C6", "C3"],
+        "behavioral": ["B1", "B4", "B5"],
+        "emotional": ["E1", "E6"]
+      }
+    },
+
+    {
+      "@id": "interaction:InteractionType",
+      "@type": "owl:Class",
+      "rdfs:label": "상호작용 유형",
+      "rdfs:comment": "7가지 콘텐츠 상호작용 방식"
+    },
+    {
+      "@id": "interaction:I1_TextBased",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "텍스트 기반",
+      "interaction:code": "I1",
+      "interaction:characteristics": ["reading", "q_and_a", "conversational"],
+      "interaction:suitablePersonas": ["C3", "C6", "C4", "C1", "B1", "B5"]
+    },
+    {
+      "@id": "interaction:I2_Interactive",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "인터랙티브 콘텐츠",
+      "interaction:code": "I2",
+      "interaction:characteristics": ["drag_drop", "simulation", "gamification"],
+      "interaction:suitablePersonas": ["B1", "B3", "C4", "E4", "B5"]
+    },
+    {
+      "@id": "interaction:I3_RoutineImprovement",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "루틴 개선",
+      "interaction:code": "I3",
+      "interaction:characteristics": ["planning", "habit_tracking", "reminders"],
+      "interaction:suitablePersonas": ["C5", "B4", "B5", "E6", "C2", "B6"]
+    },
+    {
+      "@id": "interaction:I4_Timeshifting",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "타임시프팅",
+      "interaction:code": "I4",
+      "interaction:characteristics": ["flexible_schedule", "micro_learning", "async_learning"],
+      "interaction:suitablePersonas": ["C2", "E5", "B6", "E3", "B2", "E6"]
+    },
+    {
+      "@id": "interaction:I5_ActivityCompanion",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "활동 동반자",
+      "interaction:code": "I5",
+      "interaction:characteristics": ["virtual_tutor", "learning_mate", "character_companion"],
+      "interaction:suitablePersonas": ["C3", "E2", "B1", "E1", "E4", "B3"]
+    },
+    {
+      "@id": "interaction:I6_MultiTurn",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "다중 턴",
+      "interaction:code": "I6",
+      "interaction:characteristics": ["step_by_step", "socratic_dialogue", "error_analysis"],
+      "interaction:suitablePersonas": ["C4", "B4", "C6", "B5", "C3", "E5"]
+    },
+    {
+      "@id": "interaction:I7_NonLinear",
+      "@type": "interaction:InteractionType",
+      "rdfs:label": "비선형",
+      "interaction:code": "I7",
+      "interaction:characteristics": ["free_exploration", "adaptive_path", "challenge_selection"],
+      "interaction:suitablePersonas": ["C1", "B3", "C5", "B4", "E4", "B1"]
+    },
+
+    {
+      "@id": "persona:CompositePersona",
+      "@type": "owl:Class",
+      "rdfs:label": "복합 페르소나",
+      "rdfs:comment": "상황별로 정의된 C+B+E 조합"
+    },
+    {
+      "@id": "persona:S1_CP1",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S1 복합 페르소나 1",
+      "persona:situation": "context:S1_Dropout",
+      "persona:composition": {
+        "cognitive": "C2",
+        "behavioral": "B2",
+        "emotional": "E3"
+      },
+      "persona:description": "피로-수동-권태 조합 (점진적 이탈)"
+    },
+    {
+      "@id": "persona:S1_CP2",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S1 복합 페르소나 2",
+      "persona:situation": "context:S1_Dropout",
+      "persona:composition": {
+        "cognitive": "C1",
+        "behavioral": "B1",
+        "emotional": "E4"
+      },
+      "persona:description": "활성-적극-도전 조합 (갑작스러운 이탈)"
+    },
+    {
+      "@id": "persona:S4_CP1",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S4 복합 페르소나 1",
+      "persona:situation": "context:S4_ErrorPatterns",
+      "persona:composition": {
+        "cognitive": "C3",
+        "behavioral": "B4",
+        "emotional": "E4"
+      },
+      "persona:description": "개념-신중-도전 조합 (개념 오류)"
+    },
+    {
+      "@id": "persona:S4_CP2",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S4 복합 페르소나 2",
+      "persona:situation": "context:S4_ErrorPatterns",
+      "persona:composition": {
+        "cognitive": "C2",
+        "behavioral": "B3",
+        "emotional": "E3"
+      },
+      "persona:description": "피로-즉흥-권태 조합 (부주의 오류)"
+    },
+    {
+      "@id": "persona:S5_CP1",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S5 복합 페르소나 1",
+      "persona:situation": "context:S5_EmotionalStability",
+      "persona:composition": {
+        "cognitive": "C1",
+        "behavioral": "B1",
+        "emotional": "E1"
+      },
+      "persona:description": "활성-적극-자신감 조합 (긍정 상승)"
+    },
+    {
+      "@id": "persona:S5_CP2",
+      "@type": "persona:CompositePersona",
+      "rdfs:label": "S5 복합 페르소나 2",
+      "persona:situation": "context:S5_EmotionalStability",
+      "persona:composition": {
+        "cognitive": "C2",
+        "behavioral": "B2",
+        "emotional": "E5"
+      },
+      "persona:description": "피로-수동-좌절 조합 (위기 상태)"
+    },
+
+    {
+      "@id": "persona:hasIndicator",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "지표를 가짐",
+      "rdfs:domain": ["persona:CognitiveDimension", "persona:BehavioralDimension", "persona:EmotionalDimension"],
+      "rdfs:range": "xsd:string"
+    },
+    {
+      "@id": "persona:isCompatibleWith",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "호환됨",
+      "rdfs:domain": ["persona:CognitiveDimension", "persona:BehavioralDimension", "persona:EmotionalDimension"],
+      "rdfs:range": ["persona:CognitiveDimension", "persona:BehavioralDimension", "persona:EmotionalDimension"]
+    },
+    {
+      "@id": "context:triggersPersona",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "페르소나를 트리거함",
+      "rdfs:domain": "context:SituationContext",
+      "rdfs:range": "persona:CompositePersona"
+    },
+    {
+      "@id": "interaction:suitableFor",
+      "@type": "owl:ObjectProperty",
+      "rdfs:label": "적합한 페르소나",
+      "rdfs:domain": "interaction:InteractionType",
+      "rdfs:range": ["persona:CognitiveDimension", "persona:BehavioralDimension", "persona:EmotionalDimension"]
+    }
+  ]
+}

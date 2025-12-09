@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KTM 플러그인 시스템 데모</title>
+    <link rel="stylesheet" href="plugin_settings_styles.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 24px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header p {
+            margin: 8px 0 0 0;
+            color: #64748b;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .section-header {
+            background: #f1f5f9;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .section-content {
+            padding: 24px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .quick-action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-action-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .quick-action-btn.primary {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        
+        .quick-action-btn.primary:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+        
+        .plugin-examples {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .example-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .example-card:hover {
+            background: #f1f5f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .example-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .example-card p {
+            margin: 0 0 12px 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .code-snippet {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 12px 0;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        
+        .try-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 6px 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .try-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            color: #1d4ed8;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-box ul {
+            margin: 0;
+            padding-left: 24px;
+            color: #3730a3;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #14532d;
+            margin-left: auto;
+        }
+        
+        .status-indicator::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .debug-console {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .debug-line {
+            margin: 4px 0;
+            padding: 2px 0;
+        }
+        
+        .debug-time {
+            color: #64748b;
+            margin-right: 12px;
+        }
+        
+        .debug-success {
+            color: #34d399;
+        }
+        
+        .debug-error {
+            color: #f87171;
+        }
+        
+        .debug-info {
+            color: #60a5fa;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>
+                🔌 KTM 플러그인 시스템 데모
+                <span class="status-indicator">시스템 활성</span>
+            </h1>
+            <p>플러그인을 생성하고 테스트할 수 있는 통합 데모 페이지입니다</p>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <div class="demo-grid">
+                <div class="demo-section">
+                    <div class="section-header">
+                        <h2>🎛️ 플러그인 관리</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="info-box">
+                            <h3>📌 빠른 시작 가이드</h3>
+                            <ul>
+                                <li>아래 버튼으로 샘플 플러그인을 추가해보세요</li>
+                                <li>생성된 플러그인을 목록에서 실행할 수 있습니다</li>
+                                <li>편집 버튼으로 설정을 변경할 수 있습니다</li>
+                                <li>PHP 에이전트는 서버에서 코드를 실행합니다</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button class="quick-action-btn primary" onclick="clearAllPlugins()">
+                                🗑️ 모든 플러그인 삭제
+                            </button>
+                            <button class="quick-action-btn" onclick="addQuickPlugin('internal')">
+                                🔗 내부링크 추가
+                            </button>
+                            <button class="quick-action-btn" onclick="addQuickPlugin('external')">
+                                🌐 외부링크 추가
+                            </button>
+                            <button class="quick-action-btn" onclick="addQuickPlugin('message')">
+                                💬 메시지 추가
+                            </button>
+                            <button class="quick-action-btn" onclick="addQuickPlugin('agent')">
+                                🤖 PHP 에이전트 추가
+                            </button>
+                        </div>
+                        
+                        <div id="pluginSettingsContainer"></div>
+                    </div>
+                </div>
+                
+                <div class="demo-section">
+                    <div class="section-header">
+                        <h2>📚 플러그인 예제</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="plugin-examples">
+                            <div class="example-card">
+                                <h4>🧮 점수 통계 분석기</h4>
+                                <p>학생들의 점수를 분석하여 평균, 최고점, 최저점을 계산합니다.</p>
+                                <div class="code-snippet">$scores = [85, 92, 78, 95, 88];
+return [
+    'average' => array_sum($scores) / count($scores),
+    'max' => max($scores),
+    'min' => min($scores)
+];</div>
+                                <button class="try-btn" onclick="tryExample('score_analyzer')">실행</button>
+                            </div>
+                            
+                            <div class="example-card">
+                                <h4>📅 날짜 계산기</h4>
+                                <p>현재 날짜와 특정 날짜 간의 차이를 계산합니다.</p>
+                                <div class="code-snippet">$target = new DateTime('2024-12-31');
+$today = new DateTime();
+$diff = $today->diff($target);
+
+return "D-Day: {$diff->days}일";</div>
+                                <button class="try-btn" onclick="tryExample('date_calculator')">실행</button>
+                            </div>
+                            
+                            <div class="example-card">
+                                <h4>🎲 로또 번호 생성기</h4>
+                                <p>1부터 45까지의 숫자 중 6개를 무작위로 선택합니다.</p>
+                                <div class="code-snippet">$numbers = range(1, 45);
+shuffle($numbers);
+$selected = array_slice($numbers, 0, 6);
+sort($selected);
+
+return $selected;</div>
+                                <button class="try-btn" onclick="tryExample('lotto_generator')">실행</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <div class="section-header">
+                    <h2>🖥️ 디버그 콘솔</h2>
+                </div>
+                <div class="section-content">
+                    <div id="debugConsole" class="debug-console">
+                        <div class="debug-line debug-info">
+                            <span class="debug-time">[시스템]</span>
+                            플러그인 시스템이 준비되었습니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="plugin_settings_client.js"></script>
+    <script>
+        // 디버그 로그 함수
+        function debugLog(message, type = 'info') {
+            const console = document.getElementById('debugConsole');
+            const time = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `debug-line debug-${type}`;
+            line.innerHTML = `<span class="debug-time">[${time}]</span> ${message}`;
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+        
+        // 페이지 로드 시 초기화
+        window.addEventListener('DOMContentLoaded', async function() {
+            const container = document.getElementById('pluginSettingsContainer');
+            if (window.ktmPluginSettings) {
+                await window.ktmPluginSettings.createPluginSettingsUI(container, 'demo');
+                debugLog('플러그인 설정 UI가 로드되었습니다.', 'success');
+            } else {
+                debugLog('플러그인 시스템을 찾을 수 없습니다.', 'error');
+            }
+        });
+        
+        // 모든 플러그인 삭제
+        async function clearAllPlugins() {
+            if (!confirm('정말로 모든 플러그인을 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            debugLog('모든 플러그인 삭제 중...', 'info');
+            
+            try {
+                const container = document.getElementById('pluginSettingsContainer');
+                container.innerHTML = '';
+                await window.ktmPluginSettings.createPluginSettingsUI(container, 'demo');
+                debugLog('모든 플러그인이 삭제되었습니다.', 'success');
+            } catch (error) {
+                debugLog('플러그인 삭제 중 오류 발생: ' + error.message, 'error');
+            }
+        }
+        
+        // 빠른 플러그인 추가
+        async function addQuickPlugin(type) {
+            let pluginId, config;
+            
+            switch(type) {
+                case 'internal':
+                    pluginId = 'internal_link';
+                    config = {
+                        plugin_name: '학습 대시보드',
+                        internal_url: '/dashboard',
+                        open_new_tab: false
+                    };
+                    break;
+                    
+                case 'external':
+                    pluginId = 'external_link';
+                    config = {
+                        plugin_name: 'KTM 문서',
+                        external_url: 'https://docs.ktm.com',
+                        open_new_tab: true
+                    };
+                    break;
+                    
+                case 'message':
+                    pluginId = 'send_message';
+                    config = {
+                        plugin_name: '일일 동기부여',
+                        message_content: '오늘도 좋은 하루 되세요! 💪',
+                        message_type: 'success'
+                    };
+                    break;
+                    
+                case 'agent':
+                    pluginId = 'agent';
+                    config = {
+                        plugin_name: '학습 진도 분석',
+                        agent_type: 'php',
+                        agent_code: `// 학습 진도 분석
+$completed = rand(60, 95);
+$remaining = 100 - $completed;
+$days_left = rand(5, 15);
+
+return [
+    'progress' => $completed . '%',
+    'remaining' => $remaining . '%',
+    'estimated_days' => $days_left,
+    'status' => $completed >= 80 ? '우수' : '양호',
+    'message' => "현재 진도율은 {$completed}%이며, 약 {$days_left}일 후 완료 예정입니다."
+];`,
+                        agent_description: '현재 학습 진도를 분석합니다',
+                        agent_parameters: '{}'
+                    };
+                    break;
+            }
+            
+            debugLog(`${type} 플러그인 추가 중...`, 'info');
+            
+            try {
+                const settingName = config.plugin_name.toLowerCase().replace(/\s+/g, '_');
+                const result = await window.ktmPluginSettings.saveUserSetting(
+                    pluginId,
+                    settingName,
+                    config,
+                    'demo'
+                );
+                
+                if (result.success) {
+                    debugLog(`✅ "${config.plugin_name}" 플러그인이 추가되었습니다.`, 'success');
+                    
+                    // UI 새로고침
+                    const container = document.getElementById('pluginSettingsContainer');
+                    container.innerHTML = '';
+                    await window.ktmPluginSettings.createPluginSettingsUI(container, 'demo');
+                } else {
+                    debugLog(`플러그인 추가 실패: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                debugLog(`오류 발생: ${error.message}`, 'error');
+            }
+        }
+        
+        // 예제 실행
+        async function tryExample(exampleType) {
+            let code, name;
+            
+            switch(exampleType) {
+                case 'score_analyzer':
+                    name = '점수 통계 분석기';
+                    code = `$scores = [85, 92, 78, 95, 88];
+return [
+    'average' => array_sum($scores) / count($scores),
+    'max' => max($scores),
+    'min' => min($scores)
+];`;
+                    break;
+                    
+                case 'date_calculator':
+                    name = '날짜 계산기';
+                    code = `$target = new DateTime('2024-12-31');
+$today = new DateTime();
+$diff = $today->diff($target);
+
+return "D-Day: {$diff->days}일";`;
+                    break;
+                    
+                case 'lotto_generator':
+                    name = '로또 번호 생성기';
+                    code = `$numbers = range(1, 45);
+shuffle($numbers);
+$selected = array_slice($numbers, 0, 6);
+sort($selected);
+
+return $selected;`;
+                    break;
+            }
+            
+            debugLog(`"${name}" 예제 실행 중...`, 'info');
+            
+            try {
+                const response = await fetch('execute_agent_code.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        parameters: {}
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    debugLog(`✅ 실행 성공: ${JSON.stringify(result.result)}`, 'success');
+                    
+                    // 결과를 모달로 표시
+                    if (window.ktmPluginSettings && window.ktmPluginSettings.showAgentResult) {
+                        window.ktmPluginSettings.showAgentResult({
+                            plugin_name: name,
+                            result: result
+                        });
+                    }
+                } else {
+                    debugLog(`실행 실패: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                debugLog(`예제 실행 중 오류: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

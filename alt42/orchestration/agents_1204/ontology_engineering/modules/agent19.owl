@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent19">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 19 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 19 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 19: Interaction Content 관련 추가 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EngagementScore">
+    <rdfs:label xml:lang="ko">EngagementScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 집중도 점수 (0.0~1.0)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InputEventCount">
+    <rdfs:label xml:lang="ko">InputEventCount</rdfs:label>
+    <rdfs:comment xml:lang="ko">입력 이벤트 수 (시간 윈도우 내 사용자 입력 횟수)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CalmnessScoreChange">
+    <rdfs:label xml:lang="ko">CalmnessScoreChange</rdfs:label>
+    <rdfs:comment xml:lang="ko">침착도 점수 변화량 (이전 대비 변화율)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TemplateLibraryMatch">
+    <rdfs:label xml:lang="ko">TemplateLibraryMatch</rdfs:label>
+    <rdfs:comment xml:lang="ko">템플릿 라이브러리 매칭 여부</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TemplateMatchScore">
+    <rdfs:label xml:lang="ko">TemplateMatchScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">템플릿 매칭 점수 (0.0~1.0)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningSituationDetection">
+    <rdfs:label xml:lang="ko">LearningSituationDetection</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 상황 감지 (S1~S7: 이탈/지연/휴식/오답/침착도/불균형/루틴강화)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SituationCode">
+    <rdfs:label xml:lang="ko">SituationCode</rdfs:label>
+    <rdfs:comment xml:lang="ko">상황 코드 (S1, S2, S3, S4, S5, S6, S7)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DetectionSource">
+    <rdfs:label xml:lang="ko">DetectionSource</rdfs:label>
+    <rdfs:comment xml:lang="ko">감지 소스 (어떤 에이전트에서 감지되었는지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ReentrySuccessRate">
+    <rdfs:label xml:lang="ko">ReentrySuccessRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">재진입 성공률 (학습 이탈 후 재진입 성공 비율)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ClickRate">
+    <rdfs:label xml:lang="ko">ClickRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">클릭률 (상호작용 컨텐츠 링크 클릭 비율)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ParticipationRate">
+    <rdfs:label xml:lang="ko">ParticipationRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">참여율 (상호작용 컨텐츠 참여 비율)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ReentryInteraction">
+    <rdfs:label xml:lang="ko">ReentryInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">재진입 유도 상호작용 (S1: 학습 이탈 조짐 감지 후 재진입 유도)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DelayRecoveryInteraction">
+    <rdfs:label xml:lang="ko">DelayRecoveryInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">지연 회복 상호작용 (S2: 현재 위치 지연 감지 시 부담 완화 및 동기 회복)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineImprovementInteraction">
+    <rdfs:label xml:lang="ko">RestRoutineImprovementInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 루틴 개선 상호작용 (S3: 휴식 루틴 이상 탐지 시 휴식 리셋)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ErrorPatternRecoveryInteraction">
+    <rdfs:label xml:lang="ko">ErrorPatternRecoveryInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">오답 패턴 회복 상호작용 (S4: 오답 패턴 반복 시 학습 루틴 개선)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStabilityInteraction">
+    <rdfs:label xml:lang="ko">EmotionalStabilityInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서적 침착도 저하 대응 상호작용 (S5: 침착도 저하 시 감정 안정형 상호작용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ActivityBalanceInteraction">
+    <rdfs:label xml:lang="ko">ActivityBalanceInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 대비 활동 불균형 조정 상호작용 (S6: 활동 불균형 시 학습지점 변경 또는 활동반려)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SignatureRoutineReinforcementInteraction">
+    <rdfs:label xml:lang="ko">SignatureRoutineReinforcementInteraction</rdfs:label>
+    <rdfs:comment xml:lang="ko">시그너처 루틴 강화 상호작용 (S7: 시그너처 루틴 형성 시점에 루틴 강화)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionTypeTemplate">
+    <rdfs:label xml:lang="ko">InteractionTypeTemplate</rdfs:label>
+    <rdfs:comment xml:lang="ko">상호작용 유형과 템플릿 매핑 (Agent 19 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 19: Interaction Content 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionContentGeneration">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EngagementScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InputEventCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningSituationDetection"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SituationCode"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DetectionSource"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionTemplate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TemplateLibrary"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TemplateLibraryMatch"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TemplateMatchScore"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ReentryInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EngagementScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InputEventCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionState"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityDifficulty"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MBTIType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DelayRecoveryInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CurrentPositionStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PressureLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConfidenceChange"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineImprovementInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestPatternStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestIntervalMinutes"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestMissingCount"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ErrorPatternRecoveryInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorRepeatCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptReviewTimeSeconds"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudyStyle"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStabilityInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CalmnessScoreChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CalmnessScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelectionErrorFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionLog"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MBTIType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActivityBalanceInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityDistributionBalance"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptStudyRatio"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemSolvingRatio"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#GoalType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SignatureRoutineReinforcementInteraction">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SignatureRoutineDetected"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineConsistencyDays"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineSuccessRate"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionEffectiveness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReentrySuccessRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ClickRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ParticipationRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionResult"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Shining Stars - 통합 시스템 테스트</title>
+    
+    <!-- 기존 시스템 스타일 (간소화) -->
+    <style>
+        /* 기본 설정 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 레거시 시스템 요소들 (시뮬레이션) */
+        #legacy-system {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        #avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        #avatar:hover {
+            transform: scale(1.1);
+        }
+        
+        #avatarSpeech {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin: 20px auto;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+        
+        #constellation {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+        
+        .constellation-node {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .constellation-node:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+        
+        .constellation-node.completed {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+        
+        #contentPanel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            min-height: 200px;
+            backdrop-filter: blur(10px);
+        }
+        
+        #progressTimer {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 20px;
+            margin: 20px auto;
+            max-width: 300px;
+            text-align: center;
+        }
+        
+        /* 컨트롤 패널 */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            z-index: 50000;
+            min-width: 250px;
+        }
+        
+        .control-panel h3 {
+            margin-bottom: 15px;
+            color: #64b5f6;
+        }
+        
+        .control-btn {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-indicator.active {
+            background: #22c55e;
+        }
+        
+        .status-indicator.inactive {
+            background: #ef4444;
+        }
+        
+        /* 시스템 상태 */
+        .system-status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .system-status h4 {
+            margin-bottom: 10px;
+            color: #94a3b8;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 0.8rem;
+        }
+        
+        /* 테스트 로그 */
+        .test-log {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            max-height: 200px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            z-index: 49000;
+        }
+        
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        
+        .log-entry.success {
+            color: #22c55e;
+        }
+        
+        .log-entry.error {
+            color: #ef4444;
+        }
+        
+        .log-entry.info {
+            color: #64b5f6;
+        }
+        
+        .log-entry.warning {
+            color: #fbbf24;
+        }
+        
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .control-panel {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+            
+            .test-log {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                margin: 20px;
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 레거시 시스템 시뮬레이션 -->
+    <div id="legacy-system">
+        <h1>🌟 Shining Stars - 기존 시스템</h1>
+        
+        <div id="avatar">🌟</div>
+        <div id="avatarSpeech">안녕하세요! 우주 탐험을 시작해보세요.</div>
+        
+        <div id="constellation">
+            <div class="constellation-node" onclick="selectNode(1)">
+                <div>🌌 노드 1</div>
+                <div>확증편향</div>
+            </div>
+            <div class="constellation-node" onclick="selectNode(2)">
+                <div>⭐ 노드 2</div>
+                <div>앵커링편향</div>
+            </div>
+            <div class="constellation-node completed" onclick="selectNode(3)">
+                <div>✨ 노드 3</div>
+                <div>가용성편향</div>
+            </div>
+        </div>
+        
+        <div id="contentPanel">
+            <h3>컨텐츠 패널</h3>
+            <p>노드를 클릭하면 관련 내용이 여기에 표시됩니다.</p>
+        </div>
+        
+        <div id="progressTimer">⏱️ 진행 시간: 00:00</div>
+    </div>
+    
+    <!-- 컨트롤 패널 -->
+    <div class="control-panel">
+        <h3>🎛️ 시스템 테스트</h3>
+        
+        <button class="control-btn" onclick="testSystemBridge()">
+            🌉 SystemBridge 테스트
+        </button>
+        
+        <button class="control-btn" onclick="testScreenManager()">
+            🖥️ ScreenManager 테스트
+        </button>
+        
+        <button class="control-btn" onclick="testShiningStarsApp()">
+            🌟 ShiningStarsApp 테스트
+        </button>
+        
+        <button class="control-btn" onclick="testIntegration()">
+            🔗 전체 통합 테스트
+        </button>
+        
+        <button class="control-btn" onclick="simulateBiasDetection()">
+            🔍 편향 감지 시뮬레이션
+        </button>
+        
+        <button class="control-btn" onclick="testDashboard()">
+            📊 대시보드 테스트
+        </button>
+        
+        <button class="control-btn" onclick="clearTestLog()">
+            🧹 로그 지우기
+        </button>
+        
+        <div class="system-status">
+            <h4>시스템 상태</h4>
+            <div class="status-item">
+                <span>SystemBridge</span>
+                <span><span class="status-indicator" id="bridge-status"></span><span id="bridge-text">대기</span></span>
+            </div>
+            <div class="status-item">
+                <span>ScreenManager</span>
+                <span><span class="status-indicator" id="screen-status"></span><span id="screen-text">대기</span></span>
+            </div>
+            <div class="status-item">
+                <span>ShiningStarsApp</span>
+                <span><span class="status-indicator" id="app-status"></span><span id="app-text">대기</span></span>
+            </div>
+            <div class="status-item">
+                <span>Dashboard</span>
+                <span><span class="status-indicator" id="dashboard-status"></span><span id="dashboard-text">대기</span></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 테스트 로그 -->
+    <div class="test-log" id="testLog">
+        <div class="log-entry info">🚀 통합 시스템 테스트 페이지 로드됨</div>
+    </div>
+    
+    <!-- 시스템 스크립트들 로드 -->
+    <script src="js/ScreenManager.js"></script>
+    <script src="js/DashboardScreen.js"></script>
+    <script src="js/ShiningStarsApp.js"></script>
+    <script src="js/SystemBridge.js"></script>
+    
+    <!-- 테스트 스크립트 -->
+    <script>
+        // 글로벌 변수들
+        let testResults = {
+            systemBridge: false,
+            screenManager: false,
+            shiningStarsApp: false,
+            dashboard: false,
+            integration: false
+        };
+        
+        // 로그 함수
+        function addLog(message, type = 'info') {
+            const log = document.getElementById('testLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // 상태 업데이트
+        function updateStatus(system, active, text = '') {
+            const indicator = document.getElementById(`${system}-status`);
+            const textElement = document.getElementById(`${system}-text`);
+            
+            if (indicator) {
+                indicator.className = `status-indicator ${active ? 'active' : 'inactive'}`;
+            }
+            if (textElement) {
+                textElement.textContent = text || (active ? '활성' : '비활성');
+            }
+        }
+        
+        // 레거시 시스템 함수들
+        window.currentNode = null;
+        
+        function selectNode(nodeId) {
+            window.currentNode = nodeId;
+            const contentPanel = document.getElementById('contentPanel');
+            const avatarSpeech = document.getElementById('avatarSpeech');
+            
+            contentPanel.innerHTML = `
+                <h3>노드 ${nodeId} 선택됨</h3>
+                <p>이것은 편향 ${nodeId}에 대한 내용입니다.</p>
+                <input type="text" id="answerInput" placeholder="답변을 입력하세요..." style="
+                    width: 100%; 
+                    padding: 10px; 
+                    margin: 10px 0; 
+                    border: 1px solid rgba(255,255,255,0.3); 
+                    border-radius: 5px; 
+                    background: rgba(255,255,255,0.1); 
+                    color: white;
+                ">
+                <button onclick="submitAnswer()" style="
+                    padding: 10px 20px; 
+                    background: linear-gradient(135deg, #667eea, #764ba2); 
+                    border: none; 
+                    border-radius: 5px; 
+                    color: white; 
+                    cursor: pointer;
+                ">답변 제출</button>
+            `;
+            
+            avatarSpeech.textContent = `노드 ${nodeId}를 선택했습니다. 질문에 답해보세요!`;
+            addLog(`레거시: 노드 ${nodeId} 선택됨`, 'info');
+        }
+        
+        function submitAnswer() {
+            const input = document.getElementById('answerInput');
+            const answer = input ? input.value : '';
+            
+            if (!answer.trim()) {
+                alert('답변을 입력해주세요.');
+                return;
+            }
+            
+            // 답변 처리
+            const avatarSpeech = document.getElementById('avatarSpeech');
+            avatarSpeech.textContent = '훌륭한 답변입니다! 다음 노드로 진행해보세요.';
+            
+            addLog(`레거시: 답변 제출됨 - "${answer}"`, 'success');
+            
+            // 완료된 노드 표시
+            const nodes = document.querySelectorAll('.constellation-node');
+            if (nodes[window.currentNode - 1]) {
+                nodes[window.currentNode - 1].classList.add('completed');
+            }
+        }
+        
+        function updateAvatarMessage(message) {
+            const avatarSpeech = document.getElementById('avatarSpeech');
+            if (avatarSpeech) {
+                avatarSpeech.textContent = message;
+            }
+        }
+        
+        // 테스트 함수들
+        function testSystemBridge() {
+            addLog('SystemBridge 테스트 시작...', 'info');
+            
+            try {
+                // SystemBridge 클래스 존재 확인
+                if (typeof SystemBridge === 'undefined') {
+                    throw new Error('SystemBridge 클래스를 찾을 수 없습니다');
+                }
+                
+                // 시스템 감지 테스트
+                const bridge = new SystemBridge();
+                
+                setTimeout(() => {
+                    if (window.systemBridge) {
+                        addLog('✅ SystemBridge 생성 및 초기화 완료', 'success');
+                        addLog(`브릿지 모드: ${window.systemBridge.bridgeMode}`, 'info');
+                        updateStatus('bridge', true, window.systemBridge.bridgeMode);
+                        testResults.systemBridge = true;
+                    } else {
+                        throw new Error('SystemBridge 인스턴스 생성 실패');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                addLog(`❌ SystemBridge 테스트 실패: ${error.message}`, 'error');
+                updateStatus('bridge', false, '실패');
+            }
+        }
+        
+        function testScreenManager() {
+            addLog('ScreenManager 테스트 시작...', 'info');
+            
+            try {
+                if (typeof ScreenManager === 'undefined') {
+                    throw new Error('ScreenManager 클래스를 찾을 수 없습니다');
+                }
+                
+                // 가상 앱 객체 생성
+                const mockApp = {
+                    eventBus: {
+                        emit: (event, data) => addLog(`이벤트: ${event}`, 'info'),
+                        on: (event, callback) => {}
+                    },
+                    state: {
+                        user: {
+                            profile: { name: '테스트 사용자', explorerName: '우주 탐험가' },
+                            progress: {
+                                collectedCards: [],
+                                completedSessions: [],
+                                currentStreak: 0
+                            }
+                        }
+                    }
+                };
+                
+                const screenManager = new ScreenManager(mockApp);
+                
+                addLog('✅ ScreenManager 생성 완료', 'success');
+                addLog(`사용 가능한 화면: ${screenManager.getState().availableScreens.join(', ')}`, 'info');
+                updateStatus('screen', true, '활성');
+                testResults.screenManager = true;
+                
+            } catch (error) {
+                addLog(`❌ ScreenManager 테스트 실패: ${error.message}`, 'error');
+                updateStatus('screen', false, '실패');
+            }
+        }
+        
+        function testShiningStarsApp() {
+            addLog('ShiningStarsApp 테스트 시작...', 'info');
+            
+            try {
+                if (typeof ShiningStarsApp === 'undefined') {
+                    throw new Error('ShiningStarsApp 클래스를 찾을 수 없습니다');
+                }
+                
+                // 앱 인스턴스 확인
+                if (window.shiningStarsApp) {
+                    addLog('✅ ShiningStarsApp 인스턴스 발견', 'success');
+                    addLog(`초기화 상태: ${window.shiningStarsApp.initialized}`, 'info');
+                    
+                    // 상태 확인
+                    const state = window.shiningStarsApp.state;
+                    addLog(`현재 화면: ${state.app.currentScreen || '없음'}`, 'info');
+                    addLog(`수집된 카드: ${state.user.progress.collectedCards.length}개`, 'info');
+                    
+                    updateStatus('app', true, '초기화됨');
+                    testResults.shiningStarsApp = true;
+                } else {
+                    throw new Error('ShiningStarsApp 인스턴스를 찾을 수 없습니다');
+                }
+                
+            } catch (error) {
+                addLog(`❌ ShiningStarsApp 테스트 실패: ${error.message}`, 'error');
+                updateStatus('app', false, '실패');
+            }
+        }
+        
+        function testDashboard() {
+            addLog('Dashboard 테스트 시작...', 'info');
+            
+            try {
+                if (typeof DashboardScreen === 'undefined') {
+                    throw new Error('DashboardScreen 클래스를 찾을 수 없습니다');
+                }
+                
+                // ShiningStars 전역 API 테스트
+                if (window.ShiningStars) {
+                    addLog('✅ ShiningStars 전역 API 사용 가능', 'success');
+                    
+                    // 대시보드로 이동 시도
+                    if (window.ShiningStars.navigateTo) {
+                        addLog('대시보드로 이동 시도...', 'info');
+                        window.ShiningStars.navigateTo('dashboard');
+                        
+                        setTimeout(() => {
+                            addLog('✅ 대시보드 이동 명령 실행됨', 'success');
+                            updateStatus('dashboard', true, '로드됨');
+                            testResults.dashboard = true;
+                        }, 1000);
+                    }
+                } else {
+                    throw new Error('ShiningStars 전역 API를 찾을 수 없습니다');
+                }
+                
+            } catch (error) {
+                addLog(`❌ Dashboard 테스트 실패: ${error.message}`, 'error');
+                updateStatus('dashboard', false, '실패');
+            }
+        }
+        
+        function testIntegration() {
+            addLog('🔗 전체 통합 테스트 시작...', 'info');
+            
+            // 모든 개별 테스트 실행
+            testSystemBridge();
+            
+            setTimeout(() => {
+                testScreenManager();
+            }, 500);
+            
+            setTimeout(() => {
+                testShiningStarsApp();
+            }, 1000);
+            
+            setTimeout(() => {
+                testDashboard();
+            }, 1500);
+            
+            // 통합 테스트 결과 확인
+            setTimeout(() => {
+                const allPassed = Object.values(testResults).every(result => result);
+                
+                if (allPassed) {
+                    addLog('🎉 모든 통합 테스트 통과!', 'success');
+                    addLog('시스템이 성공적으로 통합되었습니다.', 'success');
+                    testResults.integration = true;
+                } else {
+                    addLog('⚠️ 일부 테스트 실패. 시스템 확인 필요.', 'warning');
+                    const failed = Object.entries(testResults)
+                        .filter(([key, value]) => !value)
+                        .map(([key]) => key);
+                    addLog(`실패한 컴포넌트: ${failed.join(', ')}`, 'warning');
+                }
+                
+                // 통합 기능 테스트
+                testCrossSystemCommunication();
+                
+            }, 3000);
+        }
+        
+        function testCrossSystemCommunication() {
+            addLog('시스템 간 통신 테스트...', 'info');
+            
+            try {
+                // 편향 감지 이벤트 시뮬레이션
+                if (window.shiningStarsApp && window.shiningStarsApp.eventBus) {
+                    window.shiningStarsApp.eventBus.emit('biasDetected', {
+                        biasName: '확증편향',
+                        confidence: 0.85,
+                        context: '테스트 시나리오'
+                    });
+                    
+                    addLog('✅ 편향 감지 이벤트 발생', 'success');
+                    
+                    // 카드 수집 이벤트 시뮬레이션
+                    setTimeout(() => {
+                        window.shiningStarsApp.eventBus.emit('cardCollected', {
+                            biasName: '확증편향',
+                            cardId: 'confirmation_bias'
+                        });
+                        addLog('✅ 카드 수집 이벤트 발생', 'success');
+                    }, 500);
+                }
+                
+            } catch (error) {
+                addLog(`❌ 시스템 간 통신 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        function simulateBiasDetection() {
+            addLog('편향 감지 시뮬레이션 시작...', 'info');
+            
+            const biases = ['확증편향', '앵커링편향', '가용성편향', '대표성편향', '손실회피편향'];
+            const randomBias = biases[Math.floor(Math.random() * biases.length)];
+            const confidence = 0.7 + Math.random() * 0.3;
+            
+            // 레거시 시스템 업데이트
+            updateAvatarMessage(`${randomBias}이 감지되었습니다! (신뢰도: ${Math.round(confidence * 100)}%)`);
+            
+            // 새 시스템에도 전달
+            if (window.shiningStarsApp && window.shiningStarsApp.eventBus) {
+                window.shiningStarsApp.eventBus.emit('biasDetected', {
+                    biasName: randomBias,
+                    confidence: confidence,
+                    context: '시뮬레이션 테스트'
+                });
+            }
+            
+            addLog(`🔍 ${randomBias} 감지됨 (신뢰도: ${Math.round(confidence * 100)}%)`, 'success');
+        }
+        
+        function clearTestLog() {
+            const log = document.getElementById('testLog');
+            log.innerHTML = '<div class="log-entry info">🧹 로그가 지워졌습니다</div>';
+        }
+        
+        // 페이지 로드 시 자동 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            addLog('DOM 로드 완료', 'info');
+            
+            // 2초 후 자동 통합 테스트 실행
+            setTimeout(() => {
+                addLog('자동 통합 테스트 시작...', 'info');
+                testIntegration();
+            }, 2000);
+        });
+        
+        // 타이머 시뮬레이션
+        let startTime = Date.now();
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timerElement = document.getElementById('progressTimer');
+            if (timerElement) {
+                timerElement.innerHTML = `⏱️ 진행 시간: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

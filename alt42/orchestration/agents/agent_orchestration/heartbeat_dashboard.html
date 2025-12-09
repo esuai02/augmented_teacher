@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heartbeat Dashboard - 에이전트 현황 모니터링</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+            background: #fafafa;
+            padding: 0;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        /* 좌측 상단 페이지 메뉴 드롭다운 */
+        .nav-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .nav-dropdown select {
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 200px;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .nav-dropdown select:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        
+        .nav-dropdown select {
+            border-radius: 0 0 0 8px;
+        }
+        
+        /* 우측 상단 에이전트 선택 드롭다운 */
+        .agent-selector {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .agent-selector select {
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 200px;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            border-radius: 0 0 8px 0;
+        }
+        
+        .agent-selector select:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        
+        .nav-menu {
+            padding: 10px 15px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top: none;
+            border-right: none;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 42px;
+            line-height: 1.5;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .nav-menu:hover {
+            border-color: rgba(0,0,0,0.2);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            transform: translateY(2px);
+            background: rgba(255,255,255,1);
+        }
+        
+        .nav-menu.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 60px auto 40px;
+            padding: 0 20px;
+            padding-right: 220px; /* 우측 에이전트 선택 메뉴 공간 확보 */
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .page-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .dashboard-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .btn-active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.active {
+            background: #10b981;
+        }
+        
+        .status-indicator.inactive {
+            background: #6b7280;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .agent-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        
+        .agent-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .agent-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .agent-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+        
+        .agent-category {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .category-analysis {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .category-support {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .category-execution {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-normal {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* 이벤트 타입별 색상 */
+        .event-heartbeat {
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .event-state-change {
+            border-left: 4px solid #10b981;
+        }
+        
+        .event-scenario {
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .event-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .event-type-heartbeat {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .event-type-state-change {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .event-type-scenario {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .agent-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            margin-top: 20px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .close-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .modal-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tab-btn {
+            padding: 12px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .log-table th,
+        .log-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .log-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding-left: 30px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        /* 에이전트 상세 뷰 */
+        .agent-detail-view {
+            display: none;
+        }
+        
+        .agent-detail-view.active {
+            display: block;
+        }
+        
+        .action-group {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .action-group-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .action-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .action-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .action-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .action-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .action-details {
+            font-size: 14px;
+            color: #4b5563;
+            margin-top: 5px;
+        }
+        
+        .action-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .action-status-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .action-status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .action-status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <!-- 좌측 상단 페이지 메뉴 드롭다운 -->
+    <div class="nav-dropdown">
+        <select id="pageSelector" onchange="navigateToPage()">
+            <option value="agentmission.html">1. 에이전트 미션</option>
+            <option value="questions.html">2. 주요 요청들</option>
+            <option value="dataindex.php">3. 데이터 통합</option>
+            <option value="rules_viewer.html">4. 에이전트 룰들</option>
+            <option value="progress_dashboard.php">5. Mathking AI 조교</option>
+            <option value="heartbeat_dashboard.html" selected>6. Heartbeat Dashboard</option>
+            <option value="../agent22_module_improvement/ui/index.php">7. 에이전트 가드닝</option>
+            <option value="../agent01_onboarding/persona_system/test_chat.php">8. 페르소나 테스트</option>
+            <option value="quantum_modeling.html">9. Quantum Modeling</option>
+            <option value="Alignment_dashboard.php">10. Alignment Dashboard</option>
+        </select>
+    </div>
+    
+    <!-- 우측 상단 에이전트 선택 드롭다운 -->
+    <div class="agent-selector">
+        <select id="agentSelector" onchange="handleAgentSelect()">
+            <option value="">전체</option>
+            <option value="agent01">Agent 01 - Onboarding</option>
+            <option value="agent02">Agent 02 - Exam Schedule</option>
+            <option value="agent03">Agent 03 - Goals Analysis</option>
+            <option value="agent04">Agent 04 - Inspect Weakpoints</option>
+            <option value="agent05">Agent 05 - Learning Emotion</option>
+            <option value="agent06">Agent 06 - Teacher Feedback</option>
+            <option value="agent07">Agent 07 - Interaction Targeting</option>
+            <option value="agent08">Agent 08 - Calmness</option>
+            <option value="agent09">Agent 09 - Learning Management</option>
+            <option value="agent10">Agent 10 - Concept Notes</option>
+            <option value="agent11">Agent 11 - Problem Notes</option>
+            <option value="agent12">Agent 12 - Rest Routine</option>
+            <option value="agent13">Agent 13 - Learning Dropout</option>
+            <option value="agent14">Agent 14 - Current Position</option>
+            <option value="agent15">Agent 15 - Problem Redefinition</option>
+            <option value="agent16">Agent 16 - Interaction Preparation</option>
+            <option value="agent17">Agent 17 - Remaining Activities</option>
+            <option value="agent18">Agent 18 - Signature Routine</option>
+            <option value="agent19">Agent 19 - Interaction Content</option>
+            <option value="agent20">Agent 20 - Intervention Preparation</option>
+            <option value="agent21">Agent 21 - Intervention Execution</option>
+            <option value="agent22">Agent 22 - Module Improvement</option>
+        </select>
+    </div>
+    
+    <div class="container">
+        <div class="page-header">
+            <h1>🤖 Heartbeat Dashboard</h1>
+            <p>22개 에이전트의 실시간 상태 및 성능 모니터링</p>
+            
+            <div class="dashboard-controls">
+                <div class="control-group">
+                    <span class="status-indicator" id="connectionStatus"></span>
+                    <span id="connectionText">연결 중...</span>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-primary" id="realtimeBtn" onclick="setUpdateMode('realtime')">
+                        실시간 모드
+                    </button>
+                    <button class="btn btn-primary" id="pollingBtn" onclick="setUpdateMode('polling')">
+                        5분 모드
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-primary" onclick="refreshData()">새로고침</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterCategory('all')">전체</button>
+            <button class="filter-btn" onclick="filterCategory('analysis')">분석 에이전트</button>
+            <button class="filter-btn" onclick="filterCategory('support')">지원 에이전트</button>
+            <button class="filter-btn" onclick="filterCategory('execution')">실행 에이전트</button>
+            <input type="text" class="search-box" id="searchBox" placeholder="에이전트 검색..." onkeyup="filterAgents()">
+        </div>
+        
+        <div class="stats-grid" id="statsGrid"></div>
+        
+        <!-- 전체 에이전트 뷰 -->
+        <div class="agents-grid" id="agentsGrid">
+            <div class="loading">데이터 로딩 중...</div>
+        </div>
+        
+        <!-- 단일 에이전트 상세 뷰 -->
+        <div class="agent-detail-view" id="agentDetailView">
+            <div class="page-header" id="agentDetailHeader">
+                <h1 id="agentDetailTitle">에이전트 상세 정보</h1>
+                <p id="agentDetailDesc">에이전트의 동작 상태 및 액션 상세 정보</p>
+            </div>
+            
+            <div id="agentActionsContainer">
+                <!-- 액션별 그룹이 여기에 동적으로 생성됨 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 모달 -->
+    <div class="modal" id="agentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">에이전트 상세 정보</h2>
+                <button class="close-btn" onclick="closeModal()">닫기</button>
+            </div>
+            
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="switchTab('logs')">실행 로그</button>
+                <button class="tab-btn" onclick="switchTab('stats')">성능 통계</button>
+                <button class="tab-btn" onclick="switchTab('events')">관련 이벤트</button>
+                <button class="tab-btn" onclick="switchTab('errors')">에러 내역</button>
+            </div>
+            
+            <div id="tabLogs" class="tab-content active"></div>
+            <div id="tabStats" class="tab-content"></div>
+            <div id="tabEvents" class="tab-content"></div>
+            <div id="tabErrors" class="tab-content"></div>
+        </div>
+    </div>
+    
+    <script>
+        let updateMode = 'realtime';
+        let eventSource = null;
+        let pollingInterval = null;
+        let currentAgentId = null;
+        let selectedAgentId = null; // 선택된 에이전트 ID
+        
+        // API 기본 경로
+        const apiBase = '../../api/monitoring/agent_status_api.php';
+        
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 현재 페이지 설정
+            const currentPage = window.location.pathname.split('/').pop();
+            const pageSelector = document.getElementById('pageSelector');
+            if (pageSelector) {
+                if (currentPage === 'heartbeat_dashboard.html') {
+                    pageSelector.value = 'heartbeat_dashboard.html';
+                } else if (window.location.pathname.includes('agent22_module_improvement')) {
+                    pageSelector.value = '../agent22_module_improvement/ui/index.php';
+                }
+            }
+            
+            loadAgentStatus();
+            setUpdateMode('realtime');
+        });
+        
+        // 페이지 네비게이션
+        function navigateToPage() {
+            const select = document.getElementById('pageSelector');
+            const selectedPage = select.value;
+            if (selectedPage) {
+                window.location.href = selectedPage;
+            }
+        }
+        
+        // 에이전트 선택 처리
+        function handleAgentSelect() {
+            const select = document.getElementById('agentSelector');
+            selectedAgentId = select.value;
+            
+            if (!selectedAgentId || selectedAgentId === '') {
+                // 전체 뷰 표시
+                document.getElementById('agentsGrid').style.display = 'grid';
+                document.getElementById('agentDetailView').classList.remove('active');
+                loadAgentStatus();
+            } else {
+                // 단일 에이전트 상세 뷰 표시
+                document.getElementById('agentsGrid').style.display = 'none';
+                document.getElementById('agentDetailView').classList.add('active');
+                loadAgentDetail(selectedAgentId);
+            }
+        }
+        
+        // 업데이트 모드 설정
+        function setUpdateMode(mode) {
+            updateMode = mode;
+            
+            // 기존 연결 종료
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            
+            // 새 모드 설정
+            if (mode === 'realtime') {
+                document.getElementById('realtimeBtn').classList.add('btn-active');
+                document.getElementById('pollingBtn').classList.remove('btn-active');
+                startRealtimeUpdates();
+            } else {
+                document.getElementById('realtimeBtn').classList.remove('btn-active');
+                document.getElementById('pollingBtn').classList.add('btn-active');
+                startPollingUpdates();
+            }
+        }
+        
+        // 실시간 업데이트 시작
+        function startRealtimeUpdates() {
+            updateConnectionStatus(true);
+            eventSource = new EventSource('../../api/monitoring/agent_status_sse.php?interval=5&last_id=0');
+            
+            eventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'update') {
+                    // 선택된 에이전트가 있으면 상세 뷰만 업데이트
+                    if (selectedAgentId && selectedAgentId !== '') {
+                        loadAgentDetail(selectedAgentId);
+                    } else {
+                        updateAgentCards(data.agents);
+                    }
+                } else if (data.type === 'heartbeat') {
+                    updateConnectionStatus(true);
+                } else if (data.type === 'error') {
+                    console.error('SSE Error:', data.message);
+                    updateConnectionStatus(false);
+                }
+            };
+            
+            eventSource.onerror = function() {
+                updateConnectionStatus(false);
+                // 재연결 시도
+                setTimeout(() => {
+                    if (updateMode === 'realtime') {
+                        startRealtimeUpdates();
+                    }
+                }, 5000);
+            };
+        }
+        
+        // 폴링 업데이트 시작
+        function startPollingUpdates() {
+            updateConnectionStatus(true);
+            loadAgentStatus();
+            pollingInterval = setInterval(loadAgentStatus, 300000); // 5분
+        }
+        
+        // 연결 상태 업데이트
+        function updateConnectionStatus(connected) {
+            const indicator = document.getElementById('connectionStatus');
+            const text = document.getElementById('connectionText');
+            
+            if (connected) {
+                indicator.classList.add('active');
+                indicator.classList.remove('inactive');
+                text.textContent = updateMode === 'realtime' ? '실시간 연결됨' : '5분 모드';
+            } else {
+                indicator.classList.remove('active');
+                indicator.classList.add('inactive');
+                text.textContent = '연결 끊김';
+            }
+        }
+        
+        // 에이전트 현황 로드
+        function loadAgentStatus() {
+            // 선택된 에이전트가 있으면 상세 뷰만 업데이트
+            if (selectedAgentId && selectedAgentId !== '') {
+                loadAgentDetail(selectedAgentId);
+                return;
+            }
+            
+            fetch(apiBase + '?action=status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderAgents(data.data);
+                        loadStats();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading agent status:', error);
+                    updateConnectionStatus(false);
+                });
+        }
+        
+        // 통계 로드
+        function loadStats() {
+            fetch(apiBase + '?action=stats&period=24h')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderStats(data.data);
+                    }
+                })
+                .catch(error => console.error('Error loading stats:', error));
+        }
+        
+        // 통계 렌더링
+        function renderStats(stats) {
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total.events.toLocaleString()}</div>
+                    <div class="stat-label">총 이벤트 (24h)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total.completed.toLocaleString()}</div>
+                    <div class="stat-label">성공 이벤트</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total.failed}</div>
+                    <div class="stat-label">실패 이벤트</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total.avg_duration_ms.toFixed(2)}ms</div>
+                    <div class="stat-label">평균 실행 시간</div>
+                </div>
+            `;
+        }
+        
+        // 에이전트 카드 렌더링
+        function renderAgents(agents) {
+            const grid = document.getElementById('agentsGrid');
+            
+            if (agents.length === 0) {
+                grid.innerHTML = '<div class="loading">에이전트 데이터가 없습니다.</div>';
+                return;
+            }
+            
+            grid.innerHTML = agents.map(agent => `
+                <div class="agent-card" onclick="showAgentDetail('${agent.id}')">
+                    <div class="agent-card-header">
+                        <div>
+                            <div class="agent-number">Agent ${String(agent.number).padStart(2, '0')}</div>
+                            <div class="agent-name">${agent.name}</div>
+                        </div>
+                        <span class="agent-category category-${agent.category}">
+                            ${agent.category === 'analysis' ? '분석' : agent.category === 'support' ? '지원' : '실행'}
+                        </span>
+                    </div>
+                    
+                    <div class="agent-status">
+                        <span class="status-badge status-${agent.status}">
+                            ${agent.status === 'normal' ? '정상' : agent.status === 'warning' ? '경고' : '오류'}
+                        </span>
+                    </div>
+                    
+                    <div class="agent-metrics">
+                        <div class="metric">
+                            <div class="metric-label">총 실행</div>
+                            <div class="metric-value">${agent.total_executions}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">성공률</div>
+                            <div class="metric-value">${agent.success_rate}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">오류</div>
+                            <div class="metric-value">${agent.error_count}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">평균 시간</div>
+                            <div class="metric-value">${agent.avg_duration_ms}ms</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 카테고리 필터
+        function filterCategory(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const cards = document.querySelectorAll('.agent-card');
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    const agentCategory = card.querySelector('.agent-category').textContent.trim();
+                    const categoryMap = {
+                        'analysis': '분석',
+                        'support': '지원',
+                        'execution': '실행'
+                    };
+                    if (agentCategory === categoryMap[category]) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // 에이전트 검색
+        function filterAgents() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const cards = document.querySelectorAll('.agent-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // 에이전트 상세 정보 로드 (전체 뷰에서 카드 클릭 시)
+        function showAgentDetail(agentId) {
+            currentAgentId = agentId;
+            document.getElementById('agentModal').classList.add('active');
+            
+            fetch(apiBase + `?action=detail&agent_id=${agentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderAgentDetail(data.data);
+                    }
+                })
+                .catch(error => console.error('Error loading agent detail:', error));
+        }
+        
+        // 에이전트 상세 정보 로드 (드롭다운 선택 시)
+        function loadAgentDetail(agentId) {
+            fetch(apiBase + `?action=detail&agent_id=${agentId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderAgentDetailView(data.data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading agent detail:', error);
+                    document.getElementById('agentActionsContainer').innerHTML = 
+                        '<div class="loading">에이전트 상세 정보를 불러오는 중 오류가 발생했습니다.</div>';
+                });
+        }
+        
+        // 에이전트 상세 뷰 렌더링 (액션별 그룹화)
+        function renderAgentDetailView(data) {
+            const agent = data.agent;
+            const logs = data.execution_logs || [];
+            
+            // 헤더 업데이트
+            document.getElementById('agentDetailTitle').textContent = 
+                `🤖 Agent ${String(agent.number).padStart(2, '0')}: ${agent.name}`;
+            document.getElementById('agentDetailDesc').textContent = 
+                `${agent.name} 에이전트의 실시간 동작 상태 및 액션 상세 정보`;
+            
+            // 액션별로 그룹화
+            const actionGroups = groupActionsByType(logs);
+            
+            // 액션 그룹 렌더링
+            const container = document.getElementById('agentActionsContainer');
+            if (Object.keys(actionGroups).length === 0) {
+                container.innerHTML = '<div class="loading">실행된 액션이 없습니다.</div>';
+                return;
+            }
+            
+            container.innerHTML = Object.keys(actionGroups).map(actionType => {
+                const actions = actionGroups[actionType];
+                const eventInfo = getEventType(actions[0]?.event_type || actionType);
+                
+                return `
+                    <div class="action-group">
+                        <div class="action-group-title">
+                            <span class="event-type-badge ${eventInfo.class}">${eventInfo.label}</span>
+                            ${eventInfo.label} 액션 (${actions.length}건)
+                        </div>
+                        ${actions.map(action => {
+                            // routing_result에서 실제 액션 추출 시도
+                            let actionDetails = '';
+                            try {
+                                if (action.routing_result) {
+                                    const routing = typeof action.routing_result === 'string' 
+                                        ? JSON.parse(action.routing_result) 
+                                        : action.routing_result;
+                                    if (routing.actions) {
+                                        actionDetails = Array.isArray(routing.actions) 
+                                            ? routing.actions.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(', ')
+                                            : JSON.stringify(routing.actions);
+                                    } else if (routing.action) {
+                                        actionDetails = Array.isArray(routing.action)
+                                            ? routing.action.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(', ')
+                                            : JSON.stringify(routing.action);
+                                    }
+                                }
+                            } catch (e) {
+                                // JSON 파싱 실패 시 무시
+                            }
+                            
+                            return `
+                                <div class="action-item">
+                                    <div class="action-item-header">
+                                        <div>
+                                            <span class="action-name">${action.event_type || actionType}</span>
+                                            <span class="action-status action-status-${action.status === 'completed' ? 'success' : action.status === 'failed' ? 'error' : 'pending'}">
+                                                ${action.status === 'completed' ? '완료' : action.status === 'failed' ? '실패' : '대기'}
+                                            </span>
+                                        </div>
+                                        <span class="action-time">${new Date(action.created_at).toLocaleString('ko-KR')}</span>
+                                    </div>
+                                    <div class="action-details">
+                                        ${action.student_id ? `<div><strong>학생 ID:</strong> ${action.student_id}</div>` : ''}
+                                        ${action.duration_ms ? `<div><strong>실행 시간:</strong> ${parseFloat(action.duration_ms).toFixed(2)}ms</div>` : ''}
+                                        ${action.scenarios_evaluated ? `<div><strong>평가된 시나리오:</strong> ${action.scenarios_evaluated}개</div>` : ''}
+                                        ${action.priority ? `<div><strong>우선순위:</strong> ${action.priority}</div>` : ''}
+                                        ${actionDetails ? `<div><strong>수행 액션:</strong> ${actionDetails}</div>` : ''}
+                                        ${action.scenario_results ? `<div><strong>시나리오 결과:</strong> ${typeof action.scenario_results === 'string' ? action.scenario_results.substring(0, 100) : JSON.stringify(action.scenario_results).substring(0, 100)}...</div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // 액션을 타입별로 그룹화
+        function groupActionsByType(logs) {
+            const groups = {};
+            
+            logs.forEach(log => {
+                const eventType = log.event_type || 'unknown';
+                const eventInfo = getEventType(eventType);
+                const groupKey = eventInfo.type;
+                
+                if (!groups[groupKey]) {
+                    groups[groupKey] = [];
+                }
+                
+                groups[groupKey].push(log);
+            });
+            
+            // 각 그룹을 시간순으로 정렬 (최신순)
+            Object.keys(groups).forEach(key => {
+                groups[key].sort((a, b) => {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+            });
+            
+            // 그룹을 우선순위로 정렬 (heartbeat > state-change > scenario > other)
+            const groupOrder = {
+                'heartbeat': 1,
+                'state-change': 2,
+                'scenario': 3,
+                'other': 4
+            };
+            
+            const sortedGroups = {};
+            Object.keys(groups).sort((a, b) => {
+                return (groupOrder[a] || 99) - (groupOrder[b] || 99);
+            }).forEach(key => {
+                sortedGroups[key] = groups[key];
+            });
+            
+            return sortedGroups;
+        }
+        
+        // 에이전트 상세 정보 렌더링
+        function renderAgentDetail(data) {
+            const agent = data.agent;
+            document.getElementById('modalTitle').textContent = `Agent ${String(agent.number).padStart(2, '0')}: ${agent.name}`;
+            
+            // 실행 로그
+            renderLogs(data.execution_logs);
+            
+            // 성능 통계
+            renderPerformanceStats(data.daily_stats);
+            
+            // 관련 이벤트
+            renderEvents(data.related_events);
+            
+            // 에러 내역
+            renderErrors(data.errors);
+        }
+        
+        // 이벤트 타입 분류
+        function getEventType(eventType) {
+            if (eventType.includes('heartbeat') || eventType.includes('cron.heartbeat')) {
+                return { type: 'heartbeat', label: 'Heartbeat', class: 'event-type-heartbeat' };
+            } else if (eventType.includes('state_change') || eventType.includes('state.change')) {
+                return { type: 'state-change', label: 'State Change', class: 'event-type-state-change' };
+            } else if (eventType.includes('scenario') || eventType.includes('evaluation')) {
+                return { type: 'scenario', label: 'Scenario', class: 'event-type-scenario' };
+            }
+            return { type: 'other', label: 'Other', class: 'event-type-heartbeat' };
+        }
+        
+        // 실행 로그 렌더링
+        function renderLogs(logs) {
+            const content = document.getElementById('tabLogs');
+            if (logs.length === 0) {
+                content.innerHTML = '<p>실행 로그가 없습니다.</p>';
+                return;
+            }
+            
+            content.innerHTML = `
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>시간</th>
+                            <th>이벤트 타입</th>
+                            <th>학생 ID</th>
+                            <th>상태</th>
+                            <th>실행 시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${logs.map(log => {
+                            const eventInfo = getEventType(log.event_type);
+                            return `
+                                <tr class="event-${eventInfo.type}">
+                                    <td>${new Date(log.created_at).toLocaleString('ko-KR')}</td>
+                                    <td>
+                                        <span class="event-type-badge ${eventInfo.class}">${eventInfo.label}</span>
+                                        ${log.event_type}
+                                    </td>
+                                    <td>${log.student_id || '-'}</td>
+                                    <td><span class="status-badge status-${log.status}">${log.status}</span></td>
+                                    <td>${log.duration_ms ? parseFloat(log.duration_ms).toFixed(2) + 'ms' : '-'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // 성능 통계 렌더링
+        function renderPerformanceStats(stats) {
+            const content = document.getElementById('tabStats');
+            if (stats.length === 0) {
+                content.innerHTML = '<p>통계 데이터가 없습니다.</p>';
+                return;
+            }
+            
+            content.innerHTML = `
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>날짜</th>
+                            <th>실행 수</th>
+                            <th>성공</th>
+                            <th>실패</th>
+                            <th>평균 시간</th>
+                            <th>최대 시간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${stats.map(stat => `
+                            <tr>
+                                <td>${stat.date}</td>
+                                <td>${stat.executions}</td>
+                                <td>${stat.successes}</td>
+                                <td>${stat.errors}</td>
+                                <td>${stat.avg_duration_ms ? parseFloat(stat.avg_duration_ms).toFixed(2) + 'ms' : '-'}</td>
+                                <td>${stat.max_duration_ms ? parseFloat(stat.max_duration_ms).toFixed(2) + 'ms' : '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // 관련 이벤트 렌더링
+        function renderEvents(events) {
+            const content = document.getElementById('tabEvents');
+            if (events.length === 0) {
+                content.innerHTML = '<p>관련 이벤트가 없습니다.</p>';
+                return;
+            }
+            
+            content.innerHTML = `
+                <div class="timeline">
+                    ${events.map(event => {
+                        const eventInfo = getEventType(event.event_type);
+                        return `
+                            <div class="timeline-item event-${eventInfo.type}">
+                                <span class="event-type-badge ${eventInfo.class}">${eventInfo.label}</span>
+                                <strong>${event.event_type}</strong>
+                                <div style="color: #6b7280; font-size: 12px; margin-top: 5px;">
+                                    ${new Date(event.created_at).toLocaleString('ko-KR')} | 
+                                    학생: ${event.student_id || '-'} | 
+                                    상태: <span class="status-badge status-${event.status}">${event.status}</span>
+                                    ${event.scenarios_evaluated ? `| 시나리오: ${event.scenarios_evaluated}개` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        // 에러 내역 렌더링
+        function renderErrors(errors) {
+            const content = document.getElementById('tabErrors');
+            if (errors.length === 0) {
+                content.innerHTML = '<p>에러 내역이 없습니다.</p>';
+                return;
+            }
+            
+            content.innerHTML = `
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>시간</th>
+                            <th>이벤트 타입</th>
+                            <th>학생 ID</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${errors.map(error => `
+                            <tr>
+                                <td>${new Date(error.created_at).toLocaleString('ko-KR')}</td>
+                                <td>${error.event_type}</td>
+                                <td>${error.student_id || '-'}</td>
+                                <td><span class="status-badge status-error">실패</span></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        // 탭 전환
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('agentModal').classList.remove('active');
+        }
+        
+        // 데이터 새로고침
+        function refreshData() {
+            loadAgentStatus();
+        }
+        
+        // 에이전트 카드 업데이트 (SSE에서 호출)
+        function updateAgentCards(agents) {
+            if (selectedAgentId && selectedAgentId !== '') {
+                // 선택된 에이전트가 있으면 상세 뷰만 업데이트
+                return;
+            }
+            
+            // 전체 뷰 업데이트
+            const grid = document.getElementById('agentsGrid');
+            if (agents && agents.length > 0) {
+                renderAgents(agents);
+            }
+        }
+        
+        // 페이지 언로드 시 연결 종료
+        window.addEventListener('beforeunload', function() {
+            if (eventSource) {
+                eventSource.close();
+            }
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+

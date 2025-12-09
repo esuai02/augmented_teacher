@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/routinecoach/db" VERSION="20241230" COMMENT="Routine Coach plugin for exam-based learning automation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <!-- Exam information table -->
+    <TABLE NAME="routinecoach_exam" COMMENT="Stores exam information for routine planning">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="User ID from mdl_user"/>
+        <FIELD NAME="scheduleid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="NULL" COMMENT="Reference to mdl_abessi_schedule.id"/>
+        <FIELD NAME="label" TYPE="char" LENGTH="255" NOTNULL="true" COMMENT="Exam label or name"/>
+        <FIELD NAME="examdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Exam date timestamp"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_examdate" UNIQUE="false" FIELDS="userid,examdate"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Routine configuration table -->
+    <TABLE NAME="routinecoach_routine" COMMENT="Routine configuration for each exam">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="examid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="ratio_concept" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="70"/>
+        <FIELD NAME="ratio_review" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="30"/>
+        <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="active"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="examid" TYPE="foreign" FIELDS="examid" REFTABLE="routinecoach_exam" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="examid" UNIQUE="true" FIELDS="examid"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Task management table -->
+    <TABLE NAME="routinecoach_task" COMMENT="Individual tasks for routine execution">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="routineid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="duedate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="concept"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="schedule"/>
+        <FIELD NAME="refid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="NULL"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true"/>
+        <FIELD NAME="durationmin" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="30"/>
+        <FIELD NAME="priority" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="5"/>
+        <FIELD NAME="completed" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="routineid" TYPE="foreign" FIELDS="routineid" REFTABLE="routinecoach_routine" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="routineid_duedate_type" UNIQUE="false" FIELDS="routineid,duedate,type"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- Activity log table -->
+    <TABLE NAME="routinecoach_log" COMMENT="Activity and action log">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="examid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="action" TYPE="char" LENGTH="50" NOTNULL="true"/>
+        <FIELD NAME="meta" TYPE="text" NOTNULL="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_examid_timecreated" UNIQUE="false" FIELDS="userid,examid,timecreated"/>
+      </INDEXES>
+    </TABLE>
+
+    <!-- User preferences table -->
+    <TABLE NAME="routinecoach_pref" COMMENT="User preferences for routine coach">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="weekly_max_push" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="2"/>
+        <FIELD NAME="quiet_hours_from" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="22"/>
+        <FIELD NAME="quiet_hours_to" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="8"/>
+        <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="false" DEFAULT="Asia/Seoul"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign-unique" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="true" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

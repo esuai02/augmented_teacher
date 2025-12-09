@@ -1,0 +1,2265 @@
+﻿<?php
+include_once("/home/moodle/public_html/moodle/config.php"); 
+include_once("/home/moodle/public_html/moodle/configwhiteboard.php"); 
+global $DB, $USER;
+require_login();
+
+$userrole=$DB->get_record_sql("SELECT data AS role FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22' "); 
+$role=$userrole->role;
+$userid=$USER->id;
+$timecreated=time();
+
+$halfdayago=time()-43200;
+
+$period=60;
+$recommend = $_GET["recommend"];
+if($recommend==NULL)$recommend=1;
+
+$id = $_GET["id"];
+$srcid = $_GET["srcid"];
+$pw = $_GET["pw"]; 
+$thispageid = $_GET["cntpageid"];
+$cntpageid0 = $_GET["cntpageid"];
+$originalid = $_GET["originalid"];
+$pageid = $_GET["pageid"];
+$refid = $_GET["refid"];  
+$nrepeat=  $_GET["nrepeat"];  
+if($id==NULL)
+	{
+	echo '존재하지 않는 화이트보드입니다';
+	exit;
+	}
+$cmid = $_GET["cmid"];
+
+$DB->execute("INSERT INTO {logstore_standard_log} (eventname,component,action,target,objecttable,objectid,crud,edulevel,contextid,contextlevel,contextinstanceid,userid,courseid,relateduserid,anonymous,other,timecreated,origin) 
+          SELECT   eventname,component,action,target,objecttable,objectid,crud,edulevel,contextid,contextlevel,contextinstanceid,'$USER->id',courseid,'2','0','7128','$timecreated','web' FROM  {logstore_standard_log} WHERE id ='21671604' ");
+
+
+$pagenum = $_GET["pagenum"];
+$thiscmid = $_GET["cmid"];
+$thispagenum = $_GET["pagenum"];
+if($cmid==NULL)$thiscmid =0;
+if($pagenum==NULL)$pagenum =0;
+$studentid = $_GET["studentid"];
+$quizid = $_GET["quizid"];
+$stepnum = $_GET["nstep"];
+$time=time();
+
+if($stepnum==NULL)$stepnum=0;
+if($thispageid>0)$createpageid=$thispageid;
+else $createpageid=$pageid;
+
+$access= $_GET["access"]; 
+$wboardid0= $_GET["wboardid0"]; 
+$userid0= $_GET["userid0"]; 
+$contentsid0= $_GET["contentsid0"]; 
+$contentstype0= $_GET["contentstype0"]; 
+if($contentsid0==NULL)$contentsid0=$createpageid;
+
+$url= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];    
+$contextid=substr($url, 0, strpos($url, '?')); // 문자 이후 삭제
+$currenturl=strstr($url, '?');  //before
+$currenturl=str_replace("?","",$currenturl);
+//$print=$currenturl; include("debug.php");
+$contentsid=0; // 퀴즈와 연동할 때 이 부분에 퀴즈 아이디를 입력한다. 
+ 
+if ($pw == 'ktmbiobrain')
+{
+  $unlock = 1;
+}
+else
+{
+  $unlock = 0;
+}
+$conn = new mysqli($servername, $username, $password, $dbname);
+ 
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+
+if($stepnum!=0)  $sql = "SELECT * FROM boarddb where encryption_id='$id' AND nstep<='$stepnum' ";
+else $sql = "SELECT * FROM boarddb where encryption_id='$id'";
+$sql2 = "SELECT * FROM createdb where encryption_id='$id'";
+// sql excute;
+
+$rs = mysqli_query($conn, $sql);
+$rs2 = mysqli_query($conn, $sql2);
+
+if($srcid==NULL)$srcid=$id;
+$info2 = mysqli_fetch_array($rs2);
+$creator=$info2['creator'];          // 창작자 아이디
+$state = $info2['lockwb'];
+$contentsid=$info2['contentsid'];
+$contentstype=$info2['contentstype']; 
+$boardname = $info2['boardname'];
+$boardtype='question';   // url을 보고 이곳 boardtype을 설정하도록 추후 변경
+$category = $info2['tag'];
+
+$userfrom=$creator;
+
+$thisboard=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid='$srcid' ORDER BY id DESC LIMIT 1    ");
+if($studentid==NULL)$studentid=$thisboard->userid;
+if($studentid==NULL)$studentid=$creator; 
+if($creator==NULL)$creator=$studentid;
+if($studentid==NULL || $userid0!=NULL)$studentid=$userid0;
+ 
+//if($creator!=NULL && $studentid==NULL)$studentid=$creator;
+$userrole=$DB->get_record_sql("SELECT data AS role FROM mdl_user_info_data where userid='$studentid' AND fieldid='22' "); 
+$role2=$userrole->role;
+
+$point=array();
+$len=array();
+
+
+
+
+if(strpos($id, 'jnrsorksqcrark')!==false &&  ($info2['id']==NULL || $thisboard->id==NULL)) //&& strpos($id, 'user')!== false 
+	{
+	$textbookid=strstr($id, 'jnrsorksqcrark',true).'jnrsorksqcrark';
+	$teacherboard=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid='$textbookid' ORDER BY id DESC LIMIT 1    ");
+	 
+	// 선생님 개념노트 체크 후 생성
+		$exist=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages WHERE wboardid ='$textbookid'  ORDER BY id DESC LIMIT 1 "); 
+		if($exist->id==NULL && strpos($id, '_step')!==true )
+		{
+		$cntpageid=$createpageid;
+		$timecreated = time();
+		$sql_t = "INSERT INTO  createdb(encryption_id,contentsid,contentstype,creator,lockwb,timecreated) VALUES ('$textbookid','$cntpageid',1,'$userid',0,'$timecreated')";
+		$sql_t1 = "INSERT INTO  boarddb(encryption_id,generate_id)  VALUES ('$textbookid','0')";
+		$sql_t2 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$textbookid','1','\[color black\]','$timecreated')";
+
+		$getimg=$DB->get_record_sql("SELECT * FROM mdl_icontent_pages WHERE id ='$cntpageid' ");
+		$ctext=$getimg->pageicontent;
+		//$cmid=$getimg->cmid;
+		$ctitle=$getimg->title;
+		//Create a new DOMDocument object.
+		$htmlDom = new DOMDocument;
+		$DB->execute("INSERT INTO {abessi_messages} (userid,userto,userrole,talkid,nstep,turn,status,contentstype,wboardid,contentstitle,contentsid,cmid,pagenum,timemodified,timecreated) VALUES('$studentid','2','$role','2','0','0','complete','1','$textbookid','$ctitle','$createpageid','$thiscmid','$pagenum','$timecreated','$timecreated')");
+ 
+		@$htmlDom->loadHTML($ctext);
+		$imageTags = $htmlDom->getElementsByTagName('img');
+		$extractedImages = array();
+		$nimg=0;
+		foreach($imageTags as $imageTag)
+			{
+			$nimg++;
+    			$imgSrc = $imageTag->getAttribute('src');
+			$imgSrc = str_replace(' ', '%20', $imgSrc); 
+			if(strpos($imgSrc, 'MATRIX')!= false || strpos($imgSrc, 'MATH')!= false || strpos($imgSrc, 'imgur')!= false)break;
+			}
+		$imageurl ='\[image '.$imgSrc.' 50 50\]';
+		$sql_t3 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$textbookid','2','[color black]','$timecreated')"; 
+		$sql_t4 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$textbookid','3','$imageurl','$timecreated')"; 
+		$conn->query($sql_t);
+		$conn->query($sql_t1);
+		$conn->query($sql_t2);
+		$conn->query($sql_t3);
+		$conn->query($sql_t4);
+		}
+
+	// 선생님 개념노트를 복사하여 학생노트 생성
+
+	if($info2['id']==NULL  || $thisboard->id==NULL ) // && $teacherboard->id!=NULL ) 
+		{
+		$getimg=$DB->get_record_sql("SELECT * FROM mdl_icontent_pages WHERE id ='$pageid' ");
+		$ctitle=$getimg->title;
+
+	 	$sql_create = "INSERT INTO  createdb(encryption_id,creator,starred,contentsid,contentstype,lockwb,timecreated) VALUES ('$id','$userid',1,'$createpageid','1',0,'$time')";
+		$rs_create = mysqli_query($conn, $sql_create);
+		if($stepnum!=NULL)
+			{
+			$instruction=$DB->get_record_sql("SELECT * FROM mdl_abessi_cognitivesteps WHERE contentsid='$contentsid' AND contentstype=1  ORDER BY id DESC LIMIT 1 "); 
+			$step1=$instruction->step1;
+			$step2=$instruction->step2;
+			$step3=$instruction->step3;
+			$step4=$instruction->step4;
+			$step5=$instruction->step5;
+			$step6=$instruction->step6;
+			$step7=$instruction->step7;
+			if($stepnum==1)$steptext=$step1;
+			if($stepnum==2)$steptext=$step2;
+			if($stepnum==3)$steptext=$step3;
+			if($stepnum==4)$steptext=$step4;
+			if($stepnum==5)$steptext=$step5;
+			if($stepnum==6)$steptext=$step6;
+			if($stepnum==7)$steptext=$step7;
+			}
+	 	$sql_note = "INSERT INTO boarddb (encryption_id, shape_data, generate_id, timecreated) SELECT '$id', shape_data, generate_id, '$time' FROM boarddb WHERE encryption_id = '$textbookid' ";
+	 	if ($conn->query($sql_note) === TRUE)echo("<script>location.reload();</script>"); 
+		else echo "Error: " . $sql_note . "<br>" . $conn->error; 
+		$DB->execute("INSERT INTO {abessi_messages} (userid,userto,contentstitle,url,instruction,userrole,talkid,nstep,turn,status,contentstype,wboardid,contentsid,cmid,pagenum,timemodified,timecreated) VALUES('$studentid','2','$ctitle','$currenturl','$steptext','$role','2','0','0','begintopic','1','$id','$createpageid','$thiscmid','$pagenum','$timecreated','$timecreated')");
+		}
+	}
+elseif($info2['id']==NULL && (strpos($id, 'nx4HQkXq')!==false || strpos($id, 'tsDoHfRT')!==false || strpos($id, 'booststep')!==false)  )  // 평가준비 피드백을 위한 선생님 노트 생성하기
+	{ 
+	if($contentsid0==NULL)$contentsid0=$thisboard->contentsid;
+	$sql_init = "INSERT INTO  createdb(encryption_id,contentstype,contentsid,creator,starred,lockwb,timecreated) VALUES ('$id',2,'$contentsid0','$studentid',1,0,$timecreated)";
+	$sql_init1 = "INSERT INTO  boarddb(encryption_id,generate_id)  VALUES ('$id','0')";
+	$sql_init1 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$id','1','\[color black\]','$timecreated')";
+
+	$getimg=$DB->get_record_sql("SELECT * FROM mdl_question WHERE id ='$contentsid0' ");
+	$qtext=$getimg->questiontext;
+
+	$htmlDom = new DOMDocument;
+	@$htmlDom->loadHTML($qtext);
+	$imageTags = $htmlDom->getElementsByTagName('img');
+	$extractedImages = array();
+
+	$nimg=0;
+	foreach($imageTags as $imageTag)
+		{
+		$nimg++;
+	    	$imgSrc = $imageTag->getAttribute('src');
+		$imgSrc = str_replace(' ', '%20', $imgSrc); 
+		if(strpos($imgSrc, 'MATRIX')!= false || strpos($imgSrc, 'HintIMG')!= false)break;
+		}
+ 
+	$imageurl ='\[image '.$imgSrc.' 50 50\]';
+
+	$sql_init2 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$id','2','[color black]','$timecreated')"; 
+	$sql_init3 = "INSERT INTO  boarddb(encryption_id,generate_id,shape_data,timecreated)  VALUES ('$id','3','$imageurl','$timecreated')"; 
+	$conn->query($sql_init);
+	$conn->query($sql_init1);
+	$conn->query($sql_init2);
+	$conn->query($sql_init3);
+	$DB->execute("INSERT INTO {abessi_messages} (userid,userto,contentstitle,userrole,talkid,nstep,turn,status,contentstype,wboardid,contentsid,timemodified,timecreated) VALUES('$studentid','2','incorrect','$role','2','0','0','begin','2','$id','$contentsid0','$timecreated','$timecreated')");
+	echo '<script>location.reload();</script>';
+	}
+
+if($nrepeat==NULL)$nrepeat=$thisboard->nrepeat;
+ 
+$nsynapse=0;
+
+while($info = mysqli_fetch_array($rs))
+	{
+  	array_push($point,$info['shape_data']);
+  	array_push($len,$info['generate_id']);
+
+ 	$stroke_gap=$info['timecreated']-$tstroke_prev;
+
+  	if($info['shape_data']!=='["color black"]')$tstroke_prev=$info['timecreated'];
+	$generate_id=$info['generate_id'];
+	 
+	if($generate_id==5) $tbegin=$info['timecreated'];
+	if($info['authorid']==$studentid)$tfinal=$info['timecreated'];
+	if($stroke_gap>10 && $stroke_gap<1800 && $generate_id>5 && $info['authorid']==$studentid && $nsynapse<20 && $info['shape_data']!=='["color black"]')
+		{
+		$nsynapse++;
+		$gid='gid'.$nsynapse;
+		$timefired='timefired'.$nsynapse;
+		$delay='delay'.$nsynapse;
+		$tsynapsefired=$info['timecreated'];
+		if(strpos($id, 'nx4HQkXq')!==false)$DB->execute("UPDATE {abessi_firesynapse} SET ".$gid."='$generate_id', ".$delay."='$stroke_gap', ".$timefired."='$tsynapsefired'  WHERE  wbtype=2 AND contentsid='$contentsid' AND contentstype='$contentstype' AND userid='$studentid' AND nrepeat='$nrepeat' ORDER BY id DESC LIMIT 1 ");
+		else $DB->execute("UPDATE {abessi_firesynapse} SET ".$gid."='$generate_id', ".$delay."='$stroke_gap', ".$timefired."='$tsynapsefired'  WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+		}
+	}
+$tamount=round(($tfinal-$tbegin)/60,1);
+ 
+$DB->execute("UPDATE {abessi_firesynapse} SET nstroke='$generate_id', tamount='$tamount'  WHERE wboardid='$id' ORDER BY id DESC LIMIT 1  ");
+if(($tamount>10 || $tamount<0.5) && ($thisboard->status==='complete' || $thisboard->status==='review' ))
+	{
+ 	$exitLog= $DB->get_record_sql("SELECT * FROM mdl_abessi_timematrix WHERE wboardid='$id' AND timecreated >'$halfdayago' ORDER BY id DESC LIMIT 1  ");
+	if($exitLog->id==NULL)
+		{
+		if($tamount>10)$DB->execute("INSERT INTO {abessi_timematrix} (userid,wboardid,type,url,tamount,timecreated) VALUES('$studentid','$id','much','$currenturl','$tamount','$timecreated')");		                       	                   
+  		else $DB->execute("INSERT INTO {abessi_timematrix} (userid,wboardid,type,url,tamount,timecreated) VALUES('$studentid','$id','little','$currenturl','$tamount','$timecreated')");	
+		}
+	}  
+
+$nstroke=count($len);
+if($USER->id==$studentid)
+	{
+	$addtime=time()-$thisboard->timemodified;
+	$timetoday=$thisboard->timetoday;
+	if($addtime<900)$timetoday=$timetoday+$addtime;
+	elseif($addtime>3600 || $timetoday>3600)$timetoday=0;
+	
+	$DB->execute("UPDATE {abessi_messages} SET nstroke='$nstroke',timetoday='$timetoday', timemodified='$timecreated', tlaststroke='$timecreated' WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+	}
+
+else $DB->execute("UPDATE {abessi_messages} SET nstroke='$nstroke' WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+if($role!=='student')$timetoday=$thisboard->timetoday+time()-$thisboard->timemodified;
+
+$index_max=max($len);
+$test = str_replace( "\"","", $point );
+$menuimg='https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624807193001.png';
+$menucolor='#999999';
+$completeOption='alert_completeqstn'; 
+
+if($refid!=NULL)$DB->execute("UPDATE {abessi_references} SET nview=nview+1 WHERE id LIKE '$refid' ORDER BY id DESC LIMIT 1 ");
+  
+if($refid==-1) // 참고자료 추가 및 수정하기
+	{
+	$exit= $DB->get_record_sql("SELECT * FROM mdl_abessi_references WHERE contentsid='$contentsid0' AND contentsid0='$contentsid' AND contentstype='$contentstype' AND  contentstype='$contentstype0' AND nstep='$stepnum' "); 
+	if($exit->id==NULL)$DB->execute("INSERT INTO {abessi_references} (userid,pageurl,nview,nstep,active,contentsid,contentsid0,contentstype,contentstype0,teacherid,timemodified,timecreated) VALUES('$studentid','$thisboard->url',1,'$stepnum',1,'$contentsid0','$contentsid','$contentstype0','$contentstype','$USER->id','$timecreated','$timecreated')");	
+	else $DB->execute("UPDATE {abessi_references} SET nview=nview+1, active=1 WHERE contentsid='$contentsid0' AND contentsid0='$contentsid' AND contentstype='$contentstype' AND  contentstype='$contentstype0' AND nstep='$stepnum' ");
+ 	}  
+
+
+$timemodified=date("m-d h:i:s", time());
+if(strpos($id, 'jnrsorksqcrark')!==false)
+	{
+	$teachernote=strstr($id, 'jnrsorksqcrark',true).'jnrsorksqcrark';
+	$contentsid=$pageid;
+	$completeOption='alert_completetopic';
+	 
+	$updatetitle=$DB->get_record_sql("SELECT * FROM mdl_icontent_pages WHERE id ='$createpageid' ORDER BY id DESC");
+	$ctitle=$updatetitle->title;
+	if($ctitle==NULL)$ctitle=$thisboard->contentstitle;
+	if(strpos($id, '_step')===false)$DB->execute("UPDATE {abessi_messages} SET instruction='$ctitle' WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+
+ 	
+ 	$exitSynapse= $DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+	$timemodified=date("m-d h:i:s", time());
+ 	if($exitSynapse->id==NULL)$DB->execute("INSERT INTO {abessi_firesynapse} (userid,wbtype,contentsid,contentstype,wboardid,timemodified,timecreated) VALUES('$studentid',0,'$createpageid','1','$id','$timemodified','$timecreated')");	
+	}
+elseif(strpos($id, '0tsDoHfRT')!==false)
+	{
+	$teachernote=strstr($id, '0tsDoHfRT',true).'0tsDoHfRT';
+
+ 	$sycntid=$thisboard->contentsid;$sycnttype=$thisboard->contentstype;
+ 	$exitSynapse= $DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+ 	if($exitSynapse->id==NULL)$DB->execute("INSERT INTO {abessi_firesynapse} (userid,wbtype,contentsid,contentstype,wboardid,timemodified,timecreated) VALUES('$studentid',1,'$sycntid','$sycnttype','$id','$timemodified','$timecreated')");	
+	}
+elseif(strpos($id, 'nx4HQkXq')!==false)
+	{
+	$teachernote=strstr($id, 'nx4HQkXq',true).'nx4HQkXq';
+
+ 	$sycntid=$thisboard->contentsid;$sycnttype=$thisboard->contentstype;
+ 	$exitSynapse= $DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE wbtype=2 AND  contentsid='$sycntid' AND contentstype='$sycnttype' AND userid='$studentid' AND nrepeat='$nrepeat' ORDER BY id DESC LIMIT 1 ");
+ 	if($exitSynapse->id==NULL)
+		{
+		$logwbid=$srcid.'_synapse'.$nrepeat;
+		$DB->execute("INSERT INTO {abessi_firesynapse} (userid,wbtype,contentsid,contentstype,wboardid,nrepeat,timemodified,timecreated) VALUES('$studentid',2,'$sycntid','$sycnttype','$logwbid','$nrepeat','$timemodified','$timecreated')");	
+		}
+	} 
+elseif(strpos($id, 'booststep')!==false)
+	{
+ 	$sycntid=$thisboard->contentsid;$sycnttype=$thisboard->contentstype;
+ 	$exitSynapse= $DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+ 	if($exitSynapse->id==NULL)$DB->execute("INSERT INTO {abessi_firesynapse} (userid,wbtype,contentsid,contentstype,wboardid,timemodified,timecreated) VALUES('$studentid',3,'$sycntid','$sycnttype','$id','$timemodified','$timecreated')");	
+	} 
+ 
+if($thisboard->contentstitle==='realtime')$pedagogicaltalk='questionsolving1';
+elseif(strpos($id, '0tsDoHfRT')!== false )$pedagogicaltalk='questionsolving2'; 
+elseif(strpos($id, 'nx4HQkXq')!== false )$pedagogicaltalk='questionsolving3';
+elseif($thisboard->contentstype==1)$pedagogicaltalk='topictalk1';
+elseif(strpos($id, 'booststep')!== false )$pedagogicaltalk='boosterstep'; 
+ 
+
+$countm=$DB->get_records_sql("SELECT * FROM mdl_abessi_messages WHERE   userid='$studentid' AND wboardid NOT LIKE '$id' AND teacher_check NOT LIKE 2 AND  status LIKE 'reply' AND timemodified >'$halfdayago' ");
+$resultm = json_decode(json_encode($countm), True);
+$ncountm=count($resultm);
+
+if($ncountm==1)$newmsg='https://mathking.kr/Contents/IMAGES/msg1.png';
+elseif($ncountm==2)$newmsg='https://mathking.kr/Contents/IMAGES/msg2.png';
+elseif($ncountm==3)$newmsg='https://mathking.kr/Contents/IMAGES/msg3.png';
+elseif($ncountm==4)$newmsg='https://mathking.kr/Contents/IMAGES/msg4.png';
+elseif($ncountm==5)$newmsg='https://mathking.kr/Contents/IMAGES/msg5.png';
+elseif($ncountm==6)$newmsg='https://mathking.kr/Contents/IMAGES/msg6.png';
+elseif($ncountm==7)$newmsg='https://mathking.kr/Contents/IMAGES/msg7.png';
+elseif($ncountm==8)$newmsg='https://mathking.kr/Contents/IMAGES/msg8.png';
+elseif($ncountm==9)$newmsg='https://mathking.kr/Contents/IMAGES/msg9.png';
+elseif($ncountm>=10)$newmsg='https://mathking.kr/Contents/IMAGES/msg10.png';
+
+$newm=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages WHERE  userid='$studentid' AND wboardid NOT LIKE '$id' AND teacher_check NOT LIKE 2 AND  status LIKE 'reply' AND timemodified >'$halfdayago'  ORDER BY timemodified ASC LIMIT 1");
+if($newm->id!=NULL &&  $thisboard->contentstitle !=='realtime')$newmessage.='<a style ="z-index:2;  position:fixed;  top: 1%;left:6%;"  href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$newm->wboardid.'" target="_blank"><img src='.$newmsg.' width=50></a>'; 
+
+
+
+ 
+// 이곳에 'push retry' 알고리즘을 적용한다. 고려사항 - 정답률, 오답노트 완성도 관련
+$func='sendmessage';
+ 
+$getperiod=$DB->get_record_sql("SELECT data AS period FROM mdl_user_info_data where userid='$userid'  AND fieldid='67' "); 
+$personalperiod=$getperiod->period;
+
+
+$engagement = $DB->get_record_sql("SELECT todayscore,nreview FROM  mdl_abessi_indicators WHERE userid='$userid'  ORDER BY id DESC LIMIT 1 ");  // abessi_indicators
+$todayscore=$engagement->todayscore;
+$nreview=$engagement->nreview;
+if($nreview==NULL)$nreview=0;
+$nremain=10-$nreview; // 복습예약 잔여횟수
+
+
+if($nrepeat==0 &&$thisboard->id==NULL &&  $info2['id']!=NULL && (strpos($id, 'nx4HQkXq')!==false || strpos($id, 'tsDoHfRT')!==false || strpos($id, 'jnrsorksqcrark')!==false) )
+	{
+	$contentsid=$thispageid;
+	$thisstatus='begin';
+	if(strpos($id, 'jnrsorksqcrark')!==false)$thisstatus='begintopic';
+	if(strpos($id, 'synapse')===false)$DB->execute("INSERT INTO {abessi_messages} (userid,userto,contentstitle,userrole,talkid,nstep,turn,status,contentstype,wboardid,contentsid,cmid,pagenum,timemodified,timecreated) VALUES('$USER->id','2','incorrect','$role','2','0','0','$thisstatus','$contentstype','$id','$contentsid0','$thiscmid','$pagenum','$timecreated','$timecreated')");
+	}
+$time_reviewed=time()-$thisboard->timereviewed;
+$time_reviewed=(INT)($time_reviewed/60);
+$reviewer=$thisboard->userto;
+$username1= $DB->get_record_sql("SELECT lastname, firstname FROM mdl_user WHERE id='$reviewer' ");
+$reviewername=$username1->firstname.$username1->lastname;
+$contentstitle=$thisboard->contentstitle; 
+$tdelete=time()-$thisboard->timemodified;
+if($todayscore<70)$todayscore=60;
+$nexturl1='https://mathking.kr/moodle/local/augmented_teacher/whiteboard/replay.php?id='.$id.'&speed=+9'; 
+$nexturl2='https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id=OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid; 
+$nexturl3='https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id=booststep'.$contentsid.'_user'.$creator.'&contentsid0='.$thisboard->contentsid.'&userid0='.$studentid; 
+
+ 
+if($thisboard->contentstitle=='realtime')$playalert='';
+if($role!=='student')
+{
+$page= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];    
+$sec = "1800";
+}
+include("initiate.php");
+$pagestatus=$thisboard->status;
+include("style.php");   
+//include("styleRapid.php");     
+?>
+
+<?php
+$cntfeed=$DB->get_record_sql("SELECT * FROM mdl_abessi_feedbacklog where userid='$creator' AND contentsid='$contentsid' AND contentstype='$contentstype' ORDER BY id DESC LIMIT 1");
+if($cntfeed->id!=NULL) // 1. 상호작용 컨텐츠 목록 생성
+	{
+	for($ncnt=1;$ncnt<=10;$ncnt++)
+		{
+		$fbtext='feedback'.$ncnt;
+	 	$feedbacktext=$cntfeed->$fbtext;
+	 	$ctid='cnt'.$ncnt;
+		$wbname='wb'.$ncnt;
+	 	$cnt=$cntfeed->$ctid;		
+		if(strpos($cnt, 'qstn')!= false)
+			{
+			 // 해석피드백
+			$nstep=substr($cnt, -1);
+			$link='';
+			if($cntfeed->$wbname==1)
+				{
+				$link='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/cognitivesteps.php?id='.$id.'&nstep='.$nstep.'"> 자세히</a>';
+				$cnttype='<tr><td>'.$feedbacktext.'</td><td>&nbsp;&nbsp;</td><td>'.$link.' (길잡이)</td></tr> '; 
+				}
+			if($cntfeed->$wbname==1)$items.=$cnttype;
+			}
+		elseif(strpos($cnt, 'cognitive')!= false)
+			{
+			  //풀이피드백
+			$nstep=strstr($cnt, 'hint');
+			$nstep=str_replace('hint','',$nstep);
+			$link='';
+			if($cntfeed->$wbname==1)
+				{
+				$link='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/cognitivesteps.php?id='.$id.'&recommend='.$recommend.'&nstep='.$nstep.'"> 자세히</a>';
+				$cnttype='<tr><td>'.$feedbacktext.'</td><td>&nbsp;&nbsp;</td><td>'.$link.' (단계별 풀이)</td></tr> '; 
+				}
+			if($cntfeed->$wbname==1)$items.=$cnttype;
+			}
+		elseif(strpos($cnt, 'nx4HQkXq')!= false)
+			{
+			$cnttype='<tr><td>'.$feedbacktext.'</td><td>&nbsp;&nbsp;</td><td><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/replay.php?id='.$cnt.'&speed=+9"target="_blank"> 자세히</a> (풀이참조)</td></tr> ';  // 하단으로 메끄러운 sweet alert로 ifram 내리기 !!!
+			$items.=$cnttype;
+			}
+		elseif(strpos($cnt, 'jnrsorksqcrark')!= false)
+			{
+			 // 개념노트전달
+			$cnttype='<tr><td>'.$feedbacktext.'</td><td>&nbsp;&nbsp;</td><td><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$cnt.'"target="_blank"> 자세히</a> (개념노트)</td></tr> '; // 하단으로 메끄러운 sweet alert로 ifram 내리기 !!!
+			$items.=$cnttype;
+ 			}
+		
+		}
+	}
+$cotentsitems='<table width=100%>'.$items.'</table> ';
+ ?>  
+
+ 
+ <?php
+// 2. 개념노트 상호작용 부
+if(strpos($id, 'jnrsorksqcrark')!== false || $items!=NULL)  
+{ 
+$moduleid = $_GET["moduleid"];   
+ 
+$icntid = $_GET["cntid"];
+$icontent=$DB->get_record_sql("SELECT * FROM mdl_icontent where id='$icntid' ORDER BY id DESC LIMIT 1    ");  // icontent 모듈 기본 정보 가지고 오기
+$cognitive=$DB->get_record_sql("SELECT * FROM mdl_abessi_cognitivesteps where contentsid='$pageid' AND contentstype='1'  ORDER BY id DESC LIMIT 1   ");  // 서술평가 문항 가지고 오기
+$quiztitle='';
+if($quizid!=NULL)$quiztitle='<br><img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/MXBESSI1621944443001.png" width=20> 연습문제';
+if($cognitive->step1!=NULL){$menuimg='https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624807004001.png';$menucolor='#4a86e8';}
+$textbookid2='pageid'.$pageid.'jnrsorksqcrark_user'.$studentid; 
+$teachernoteId='pageid'.$pageid.'jnrsorksqcrark';
+
+$tutorExpl='';
+if($thisboard->aion==1 ||  (strpos($id, '_user')!==false && $role!=='student')  ) $tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+
+for($nstep=1;$nstep<=7;$nstep++)  // 서술질문 나열하기
+	{ 
+	$stepid='step'.$nstep;
+	$steptext=$cognitive->$stepid; 
+	if($steptext==NULL)break;	
+	$cnttextbookid=$textbookid2.'_step'.$nstep;
+	$keypattern=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid='$cnttextbookid' ORDER BY id DESC LIMIT 1    ");
+	$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:0%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==1)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:20%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==2)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:40%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==3)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width:60%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==4)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:80%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==5)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:100%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+ 	$thispagenum=0;
+	if($nstep==$stepnum)  // 개념질문 현재 페이지 표시
+		{
+		if(strpos($id, 'fromT')=== false)
+			{
+			// 질의응답 상태에 따라 아이콘 표시
+			if($role==='student')
+				{
+				$lectureNoteId=$teachernoteId.'_step'.$nstep;
+				$lectureNote=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid LIKE '$lectureNoteId' ORDER BY id DESC LIMIT 1    ");
+				$noteReady=$lectureNote->star;
+				if($noteReady>=3) $tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+				$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/reply.php?id=bessi'.$teachernoteId.'_step'.$nstep.'&originalid='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">'.$tutorExpl.'</a>';
+				$questionlist.='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$textbookid2.'_step'.$nstep.'&srcid='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">질문'.$nstep.' : '.$steptext.'</a></b>'.$seeTutorial.$resultValue;
+				}
+			// 선생님 설명 페이지 아이콘 표시
+			elseif(strpos($id, 'jnrsorksqcrark_step')!==false) // 개념질문에서 선생님 설명화면
+				{
+				$tutorExpl='<img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621665743001.png" width=60>';  // BACK (학생노트)
+				$questionlist.='<b>'.$nstep.' : '.$steptext.'<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$textbookid2.'_step'.$nstep.'&srcid='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">'.$tutorExpl.'</a></b>'.$resultValue;
+				}
+			elseif(strpos($id, 'jnrsorksqcrark_user')!==false)
+				{
+				$tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>';  // BACK (학생노트)
+				$questionlist.='<b>질문'.$nstep.' : '.$steptext.'<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$teachernoteId.'_step'.$nstep.'&srcid='.$teachernoteId.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">'.$tutorExpl.'</a></b>'.$resultValue;
+				}
+			 
+			}
+		else // 선생님 노트 복사하여 질문
+			{
+			$tutorExpl='<img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621665743001.png" width=60>';  // BACK (학생노트)
+			$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$textbookid2.'_step'.$nstep.'&srcid='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">'.$tutorExpl.'</a>';
+			$questionlist.='<b>질문'.$nstep.' : '.$steptext.'<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">'.$seeTutorial.'</a></b>'.$resultValue;
+			}
+ 		}
+	// 현재 페이지 이외에는 학생페이지로 이동
+	else  $questionlist.='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$textbookid2.'_step'.$nstep.'&cntid='.$icntid.'&pageid='.$pageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'&nstep='.$nstep.'">질문'.$nstep.' : '.$steptext.'</a>'.$resultValue;
+
+//$topicqna='질문 '.$stepnum.'.';
+//if($pagenum==NULL || $pagenum!=0) $topicqna=''; 
+}
+$answerthis=$thisboard->instruction;
+// 대표유형 및 개념 체크 문제
+ 
+$cntpages=$DB->get_records_sql("SELECT * FROM mdl_icontent_pages where icontentid='$icntid' ORDER BY pagenum ASC   ");  //AND  title NOT LIKE '%Approach%' 
+$result = json_decode(json_encode($cntpages), True);
+ 
+unset($value);
+foreach($result as $value)
+	{
+	if($value['pagenum']==1)$subjecttitle=$value['title'];
+	$cntpageid=$value['id'];
+	$title=$value['title'];
+	$thiscmid=$value['cmid'];
+	$thispagenum=$value['pagenum'];
+	$cnttextbookid='pageid'.$cntpageid.'jnrsorksqcrark_user'.$studentid;
+ 	$teachernoteId='pageid'.$cntpageid.'jnrsorksqcrark';
+
+	$keypattern=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid='$cnttextbookid' ORDER BY id DESC LIMIT 1    ");
+	$resultValue='<div class="progress" style="height: 4px;margin-bottom:10px;"><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:0%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==1)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:20%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==2)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-danger" role="progressbar" style="width:40%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==3)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width:60%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==4)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:80%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	if($keypattern->depth==5)$resultValue='<div class="progress" style="height: 5px;margin-bottom:10px; "><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width:100%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="0" data-toggle="tooltip" data-placement="top" title="" data-original-title="2%"></div></div>';
+	 
+ 	if($value['pagenum']==1) 
+		{
+		$tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+		$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id='.$teachernoteId.'&srcid='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a>';
+		if($cntpageid0==NULL && $stepnum==NULL)$begintopic=$seeTutorial;
+		else $begintopic='';
+	 	}
+ 
+	if(strpos($title, 'Approach')!== false || strpos($title, 'Check')!== false || strpos($title, '대표유형')!== false || strpos($title, 'Note')!== false)  
+		{
+		if($cntpageid==$thispageid )
+			{
+			if(strpos($id, 'fromT')=== false) // 피드백 페이지 제외
+				{
+				if($role==='student')
+					{
+					$lectureNote=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid LIKE '$teachernoteId' ORDER BY id DESC LIMIT 1    ");
+					$noteReady=$lectureNote->star;
+					if($noteReady>=3) $tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+					$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/reply.php?id=bessi'.$teachernoteId.'&originalid='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a>';
+					if(strpos($title, 'Approach')!== false)$contentslist0='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+					else $contentslist.='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+					}
+				elseif(strpos($id, 'jnrsorksqcrark_user')!==false)
+					{
+					$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$teachernoteId.'&srcid='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a>';
+					if( strpos($title, 'Approach')!== false)$contentslist0='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+					else $contentslist.='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+					}
+				else 
+					{
+					$tutorExpl='<img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621665743001.png" width=60>';  // BACK (학생노트)
+					if(strpos($title, 'Approach')!== false)$contentslist0='<b>&nbsp;&nbsp;'.$title.'<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$cnttextbookid.'&srcid='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a></b>'.$resultValue; 
+					else $contentslist.='<b>&nbsp;&nbsp;'.$title.'<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$cnttextbookid.'&srcid='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a></b>'.$resultValue; 
+					}
+				}
+			else // 선생님 노트 복사하여 질문
+				{
+				$tutorExpl='<img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621665743001.png" width=60>';  // BACK (학생노트)
+				$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id='.$cnttextbookid.'&srcid='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$tutorExpl.'</a>';
+				if(strpos($title, 'Approach')!== false)$contentslist0.='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+				else $contentslist.='<b><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$teachernoteId.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></b>'.$seeTutorial.$resultValue;
+				}	
+ 			}
+		else 
+			{
+			if(strpos($title, 'Approach')!== false) $contentslist0='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></span>'.$resultValue;
+			else $contentslist.='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$cnttextbookid.'&cntid='.$icntid.'&pageid='.$pageid.'&cntpageid='.$cntpageid.'&cmid='.$thiscmid.'&pagenum='.$thispagenum.'&moduleid='.$moduleid.'&studentid='.$studentid.'&quizid='.$quizid.'">'.$title.'</a></span>'.$resultValue;
+			}
+		}
+
+	}
+ 
+ 
+if(strpos($icontent->name, '개념도약')!== false || strpos($icontent->name, '단원')!== false) 
+	{
+	if(strpos($icontent->name, '단원')!== false)$menuimg='https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624807004001.png';$menucolor='#4a86e8';
+	
+	$topictitle=str_replace('개념도약:','',$icontent->name);   
+	if($moduleid!=NULL) echo ' <button type="text"    style = "z-index:3;  position:fixed;  top: 0%;right: 8%;color:white;background-color:'.$menucolor.';height:40px;" id="cntlist"><img src="'.$menuimg.'" height=40></button>';
+	echo ' 
+	<script>
+	var Topictitle= \''.$topictitle.'\';
+	var Begintopic=\''.$begintopic.'\';
+	var Cmid= \''.$thiscmid.'\';
+	var Textbookid2= \''.$textbookid2.'\';
+	var Icntid= \''.$icntid.'\';
+	var Pageid= \''.$pageid.'\';
+	var Quizid= \''.$quizid.'\';
+	var Quiztitle= \''.$quiztitle.'\';
+	var Moduleid= \''.$moduleid.'\';
+	var Studentid= \''.$studentid.'\';
+	var Questionlist= \''.$questionlist.'\';  // 개념질문 목록
+	var Contentslist0= \''.$contentslist0.'\';  // 개념 Approach
+	var Contentslist= \''.$contentslist.'\';  // 개념체크, 대표유형 목록
+	var Cntitems= \''.$cotentsitems.'\';   // 상호작용 컨텐츠 목록
+	';
+ 
+if(($role!=='student' && $moduleid!=NULL) || (($thisboard->status==='complete' || $thisboard->status==='review') && time()-$thisboard->timemodified<5))  //if($role!=='student' && $moduleid!=NULL)
+	{
+	echo '
+	Swal.fire({
+	  position: "top-end",
+	  backdrop:false,
+	  width: 500,
+	  height:900,
+	  confirmButtonText : "숨기기", 
+
+	  hideClass: {
+	    popup: "animate__animated animate__fadeOutUp"
+	  },
+	  html: "<div align=left style=font-size:12;><h6>"+Topictitle+"<a href=https://mathking.kr/moodle/mod/icontent/view.php?id="+Cmid+" target=_blank>&nbsp;&nbsp;<img src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1591233231001.png  width=15></a></h6><hr>"
+	+"<a href=https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id="+ Textbookid2+"&cntid="+Icntid+"&pageid="+Pageid+"&moduleid="+Moduleid+"&studentid="+Studentid+"&quizid="+Quizid+"> <b> 1단계 : 개념 이해하기</b></a>"+Begintopic+"<br><br>"+Contentslist0+Questionlist+"<b><br>2단계 : 예제 연습</b><br><br>"+Contentslist+
+	"<a href=https://mathking.kr/moodle/mod/quiz/view.php?id="+Quizid+" target=_blank>"+Quiztitle+"</a><hr><span align=right><a href=https://mathking.kr/moodle/mod/checklist/view.php?id="+Moduleid+"><img src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621944121001.png width=23> 목차보기</a></span></div>"+Cntitems})';
+	}
+ 
+echo '
+document.getElementById("cntlist").onclick = function()
+	{
+	Swal.fire({
+	  position: "top-end",
+	  backdrop:false,
+	  width: 500,
+	  height:900,
+ 
+	  confirmButtonText : "숨기기", 
+	  showClass: {
+	    popup: "animate__animated animate__fadeInDown"
+	  },
+	  hideClass: {
+	    popup: "animate__animated animate__fadeOutUp"
+	  },
+	  html: "<div align=left style=font-size:12;><h6>"+Topictitle+"<a href=https://mathking.kr/moodle/mod/icontent/view.php?id="+Cmid+" target=_blank>&nbsp;&nbsp;<img src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1591233231001.png  width=15></a></h6><hr>"
+	+"<a href=https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id="+ Textbookid2+"&cntid="+Icntid+"&pageid="+Pageid+"&moduleid="+Moduleid+"&studentid="+Studentid+"&quizid="+Quizid+"> <b> 1단계 : 개념 이해하기</b></a><br><br>"+Contentslist0+Questionlist+"<b><br>2단계 : 예제 연습</b><br><br>"+Contentslist+
+	"<a href=https://mathking.kr/moodle/mod/quiz/view.php?id="+Quizid+" target=_blank>"+Quiztitle+"</a><hr><span align=right><a href=https://mathking.kr/moodle/mod/checklist/view.php?id="+Moduleid+"><img src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621944121001.png width=23> 목차보기</a></span><hr></div>"+Cntitems}) 
+	}
+</script>';
+}
+ 
+ 
+}  
+// 3. 평가준비 
+
+if( (strpos($id, 'tsDoHfRT')!== false && $contentstitle==='incorrect') || $items!=NULL) 
+{
+$cognitive=$DB->get_record_sql("SELECT * FROM mdl_abessi_cognitivesteps where contentsid='$contentsid' AND contentstype='2'  ORDER BY id DESC LIMIT 1   ");
+if($cognitive->step1!=NULL){$menuimg='https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624807050001.png';$menucolor='#4a86e8';}
+
+$popuptitle='논리의 <b>약한 연결고리</b>를 찾는 단계입니다.';
+$instructiontext='약간의 노력으로 각각의 단계를 완벽하게 이해할 수 있습니다 !';
+$teachernoteId=strstr($id, 'tsDoHfRT',true).'tsDoHfRT';
+$openTab='target="_blank"';
+if($thisboard->status==='teachernote')$openTab='';
+
+echo ' <button type="text"    style = "z-index:3;  position:fixed;  top: 0%;right:8%;color:white;background-color:'.$menucolor.';height:40px;" id="cntlist"><img src="'.$menuimg.'"></button>';
+
+$tutorExpl='';
+if($thisboard->aion==1 ||  (strpos($id, '_user')!==false && $role!=='student')) $tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+  
+//$teacherboard2=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid='$teachernoteId' ORDER BY id DESC LIMIT 1    ");
+$questionlist='<hr>';
+for($nstep=1;$nstep<=7;$nstep++)
+	{
+	$stepid='step'.$nstep;
+	$steptext=$cognitive->$stepid;
+
+	if($steptext==NULL)
+		{
+		if($nstep==1)
+			{
+			$instructiontext='평가준비를 통해 충분한 <b>논리훈련</b>을 한 다음 서술평가를 진행해 주세요 ! ';
+			$questionlist='';
+			}
+		break;	
+		}
+	if($nstep<$stepnum)
+		{
+		$questionlist.='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$id.'&originalid='.$originalid.'&studentid='.$studentid.'&recommend='.$recommend.'&nstep='.$nstep.'">'.$nstep.' 단계 : '.$steptext.'</a><br>';
+		}
+	elseif($nstep==$stepnum)
+		{
+		if(strpos($id, 'fromT')=== false)
+			{
+			if($role==='student') 
+				{
+				$lectureNote=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages where wboardid LIKE '$teachernoteId' ORDER BY id DESC LIMIT 1    ");
+				$noteReady=$lectureNote->star;
+
+				if($noteReady>=3) $tutorExpl='<img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/BESSI1616029078001.png" width=60>'; 
+				$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/reply.php?id=bessi'.$teachernoteId.'&originalid='.$id.'&studentid='.$studentid.'&contentsid0='.$contentsid.'&recommend='.$recommend.'&nstep='.$nstep.'" '.$openTab.'>'.$tutorExpl.'</a>';
+				$questionlist.='<span style="color:red;"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$id.'&originalid='.$originalid.'&recommend='.$recommend.'&nstep='.$nstep.'">'.$nstep.' 단계 : '.$steptext.'</a>'.$seeTutorial.'</b></span><br>';
+				}
+			else 
+				{
+				$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$teachernoteId.'&srcid='.$teachernoteId.'&studentid='.$studentid.'&contentsid0='.$contentsid.'&recommend='.$recommend.'&nstep='.$nstep.'" '.$openTab.'>'.$tutorExpl.'</a>';
+				$questionlist.='<span style="color:red;"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$id.'&originalid='.$originalid.'&recommend='.$recommend.'&nstep='.$nstep.'">'.$nstep.' 단계 : '.$steptext.'</a>'.$seeTutorial.'</b></span><br>';
+				}
+			}
+		else // 선생님 노트 복사하여 질문
+			{
+			$tutorExpl='<img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1621665743001.png" width=60>';  // BACK (학생노트)
+			$seeTutorial='<a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$originalid.'&srcid='.$originalid.'&studentid='.$studentid.'&recommend='.$recommend.'&nstep='.$nstep.'" >'.$tutorExpl.'</a>';
+			$questionlist.='<span style="color:red;"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$nstep.' 단계 : '.$steptext.'<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$id.'&originalid='.$originalid.'&recommend='.$recommend.'&nstep='.$nstep.'">'.$seeTutorial.'</a></b></span><br>';
+			}
+
+		//$answerthis='['.$stepnum.'단계] '.$steptext;
+		}
+	else $questionlist.='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$id.'&originalid='.$originalid.'&studentid='.$studentid.'&recommend='.$recommend.'&nstep='.$nstep.'"><span style="color:lightgrey;">'.$nstep.' 단계 '.$steptext.'</span></a><br>';
+	}
+
+
+echo '<script>
+var Popuptitle= \''.$popuptitle.'\';
+var Topictitle= \''.$topictitle.'\';
+var Questionlist= \''.$questionlist.'\';
+var Instructiontext= \''.$instructiontext.'\'; 
+var Cntitems= \''.$cotentsitems.'\'; 
+';
+
+if($role!=='student' || (($thisboard->status==='complete' || $thisboard->status==='review')&& time()-$thisboard->timemodified<5))
+{
+echo 'Swal.fire({
+	  position: "top-end",
+	  backdrop:false,
+	  width: 500,
+	  height:900,
+
+	  hideClass: {
+	    popup: "animate__animated animate__fadeOutUp"
+	  },
+	  html: 
+	"<div align=left style=font-size:14><h6>"+Popuptitle+"</h6>"
+	+Instructiontext+"</b>"+Questionlist+"</div>"+Cntitems,
+  	showConfirmButton: true,
+  	confirmButtonText : "숨기기",
+	})';
+}
+
+echo '
+document.getElementById("cntlist").onclick = function(){
+Swal.fire({
+  position: "top-end",
+  backdrop:false,
+  width: 500,
+  height:900,
+  
+  showClass: {
+    popup: "animate__animated animate__fadeInDown"
+  },
+  hideClass: {
+    popup: "animate__animated animate__fadeOutUp"
+  },
+  html: 
+"<div align=left style=font-size:14><h6>"+Popuptitle+"</h6>"
++Instructiontext+"</b>"+Questionlist+"</div>"+Cntitems,
+  showConfirmButton: true,
+  confirmButtonText : "숨기기",
+})	
+}; 
+</script>';
+}
+ 
+// 4. 발표평가 준비화면
+if( strpos($id, 'nx4HQkXq_user')!== false && $thisboard->status==='present')  
+{
+$cognitive=$DB->get_record_sql("SELECT * FROM mdl_abessi_cognitivesteps where contentsid='$contentsid' AND contentstype='2'  ORDER BY id DESC LIMIT 1   ");
+$menuimg='https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624805530001.png';
+$popuptitle=' <b>소리내어 생각하기</b>';
+$instructiontext='발표평가를 통하여 알고 있는 내용을 보다 확실하게 이해할 수 있습니다 !<hr><table align=center><tr><td></td></tr></table><p align=center><a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$id.'&srcid='.$id.'&createpageid='.$contentsid.'&studentid='.$creator.'"><img  src="http://mathking.kr/Contents/IMAGES/mic.gif" width = 200></a><br><a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$id.'&srcid='.$id.'&createpageid='.$contentsid.'&studentid='.$creator.'">시작하기</a></p>';
+
+$teachernoteId=strstr($id, 'tsDoHfRT',true).'tsDoHfRT';
+$openTab='target="_blank"';
+if($thisboard->status==='teachernote')$openTab='';
+
+ 
+
+echo '<script>
+
+var Popuptitle= \''.$popuptitle.'\';
+var Topictitle= \''.$topictitle.'\';
+var Questionlist= \''.$questionlist.'\';
+var Instructiontext= \''.$instructiontext.'\'; 
+var Cntitems= \''.$cotentsitems.'\'; 
+Swal.fire({
+  position: "top-end",
+  backdrop:false,
+  width: 500,
+  html: 
+"<div align=left style=font-size:14><h6>"+Popuptitle+"</h6>"
++Instructiontext+"</b> </div>",
+  showConfirmButton: true,
+  confirmButtonText : "숨기기",
+})	 
+</script>';
+}
+
+echo '<style>
+.swal2-popup {
+ 
+  overflow-y: auto;
+  width: 100%;
+  max-height:800px;
+  margin:33px;
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+';
+
+ 
+?>  
+  <head>
+    <title>KTM Whiteboard</title>
+  
+    <script language="JavaScript">
+      var state = <?php echo $state;?>;
+      var unlock = "<?php echo $unlock;?>";
+      var db_category = "<?php echo $category;?>";
+      var db_boardname = "<?php echo $boardname;?>";
+      // console.log(state)
+
+      var textareaList = ["history"];
+
+      function clearText(idOfTextArea) {
+        document.getElementById(idOfTextArea).value = "";
+      }
+
+      function SaveAsTxt() {
+        var fileName = document.getElementById("title").value;
+        if (fileName.length == 0) {
+          fileName = "image";
+        }
+        fileName += ".txt";
+
+        var preData = 'version: V0.617a1\n';
+        var postData =  preData + document.getElementById("history").value;
+
+        var link = document.createElement("a");
+        link.setAttribute("download", fileName);
+        link.setAttribute(
+          "href",
+          "data:" +
+            "application/[txt]" +
+            ";charset=utf-8," +
+            encodeURIComponent(postData)
+        );
+        link.click();
+      }
+
+      function SaveAsJson() {
+        console.log("SaveAsJson");
+        var fileName = document.getElementById("title").value;
+        if (fileName.length == 0) {
+          fileName = "imsge";
+        }
+
+        fileName += ".json";
+
+        var preData = {'version':'V0.617a1'};
+        textareaList.forEach(function(e) {
+          preData[e] = document.getElementById(e).value;
+        });
+
+        var jsonData = JSON.stringify(preData);
+
+        var link = document.createElement("a");
+        var file = new Blob([jsonData], { type: "text/plain" });
+        link.href = URL.createObjectURL(file);
+        link.download = fileName;
+        link.click();
+      }
+
+      function isJsonFile(filename) {
+        var ridx = filename.lastIndexOf(".");
+        var extension = filename.substring(ridx + 1);
+
+        console.log(extension);
+
+        if (extension.length != 4 || extension.toLowerCase() != "json") {
+          return false;
+        }
+        return true;
+      }
+
+      function isTextFile(filename) {
+        var ridx = filename.lastIndexOf(".");
+        var extension = filename.substring(ridx + 1);
+
+        console.log(extension);
+
+        if (extension.length != 3 || extension.toLowerCase() != "txt") {
+          return false;
+        }
+        return true;
+      }
+
+
+      function loadFile() {
+        var loadFile = document.getElementById("load_filename");
+        var file = loadFile.files[0];
+          
+        if (!file) {
+          return;
+        }
+
+        var fileName = document.getElementById("load_filename").value;
+        var ridx = fileName.lastIndexOf("\\");
+
+        fileName = fileName.substring(ridx + 1);
+
+        if (isJsonFile(fileName)) {
+          LoadJson(file, fileName);
+        } else if(isTextFile(fileName)) {
+          LoadText(file, fileName);
+        } 
+      }
+
+      function LoadJson(file, fileName) {
+        document.getElementById("title").value = fileName;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var contents = e.target.result;
+          displayLoadJsonData(contents);
+        };
+        reader.readAsText(file);
+      }
+
+      function displayLoadJsonData(contents) {
+        var noteData = JSON.parse(contents);
+
+        var version = noteData['version'];
+        console.log(version);
+        document.getElementById('history').value = noteData['history'];
+        reDrawCanvas();
+      }
+
+      function LoadText(file, fileName) {
+        document.getElementById("title").value = fileName;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var contents = e.target.result;
+          displayLoadTextData(contents);
+        };
+        reader.readAsText(file);
+      }
+
+      function displayLoadTextData(contents) {
+        var noteData = contents.split('\n');
+        var history = "";
+         
+        noteData.forEach(function (e){
+          if (e[0] != 'v') {
+            history += e + "\n";
+          }
+        }); 
+        document.getElementById('history').value = history;
+        reDrawCanvas();
+        
+      }
+    //   points = new Array;
+    //   var points1 = <?= json_encode($test) ?>;
+    //   var data1 = new Array;
+    //   test1 = new Array;
+      
+    </script>
+
+<?php
+
+ if($role==='student')include("studentmenu.php");
+ ?>  
+<?php 
+
+// tagsearch
+ 
+$instance=$DB->get_records_sql("SELECT * FROM mdl_tag_instance  WHERE itemid='$contentsid'  ");
+$tags= json_decode(json_encode($instance), True);   
+unset($value2); 
+foreach($tags as $value2)
+	{
+	$tagid=$value2['tagid'];
+	$tag=$DB->get_record_sql("SELECT * FROM mdl_tag WHERE id='$tagid' ORDER BY id DESC LIMIT 1 ");
+	$tagname=$tag->name;
+	if(strpos($tagname, 'mx')!==false)$mathnoteId=$tag->contents;
+	if($tagid>=120 && $tagid<=136)$domainboardid=$tag->contents;
+	}
+
+
+if(strpos($id, 'jnrsorksqcrark')!==false)echo ' <button type="text"   style = "z-index:3;  position:fixed;  top: 0%;right:0%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/local/augmented_teacher/students/CognitiveTopicMap.php?studentid='.$creator.'&nweek=4&contentsid='.$contentsid.'&contentstype='.$contentstype.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1634123698.png" width=40px></a></button>'; 
+else echo '<button type="text"   style = "z-index:3;  position:fixed;  top:0%;right:4%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/local/augmented_teacher/students/CognitiveTopicMap.php?studentid='.$creator.'&nweek=4&contentsid='.$contentsid.'&contentstype='.$contentstype.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1634123698.png" width=40px></a></button>     <button type="text"   style = "z-index:3;  position:fixed;  top: 0%;right:0%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/mod/checklist/report.php?id='.$mathnoteId.'&studentid='.$creator.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/bessi21_1634122704.png" width=40px></a> </button>'; 
+ 
+$helptext=''; 
+
+$testwbid= 'OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid; 
+
+if($role==='student')$helptext='<button type="text"  style ="z-index:3;  position:fixed;  top: 0%;left:3%;background-color:#068b06;color:white;width:51%;height:40px;font-size:20;"  data-toggle="modal" data-target="#message"><b>순서도 그리기를 완료 후 서술평가를 시작해 주세요</b> </button>';
+if(strpos($id, 'tsDoHfRT')!== false && $contentstitle==='incorrect')echo $helptext;
+elseif(strpos($id, 'booststep')!==false)
+	{
+	$bstep=$DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE wbtype=2 AND contentsid='$contentsid' AND contentstype='$contentstype' AND userid='$studentid' ORDER BY id DESC LIMIT 1 ");
+ 	for($nstep=1;$nstep<=10;$nstep++)
+		{
+		$gidtext='gid'.$nstep;
+		$generate_id=$bstep->$gidtext;
+		$delaytext='delay'.$nstep;
+		$tdelay=$bstep->$delaytext;
+		$bstepid=$bstep->wboardid;
+		if($generate_id!=NULL)$boosterlist.='&nbsp;<span  type="button"  onClick="showMoment(\''.$testwbid.'\',\''.$generate_id.'\')">'.$tdelay.'초</span>&nbsp;';
+		}
+	if($boosterlist==NULL)$todoboost='고민지점이 없습니다. 아래 지시사항을 참고하여 주세요.';
+	else 
+		{
+		$boosterlist.='&nbsp;<span  type="button"  onClick="showMoment(\''.$testwbid.'\',1000)">END</span>&nbsp;';
+		$todoboost='고민지점('.$boosterlist.')을 클릭하여 관찰 + 결과를 쓴 다음 평가준비를 삭제후 재시도 해 주세요. ';
+		}
+	echo '<button type="text"  style ="z-index:3;  position:fixed;  top: 0%; text-align: left; background-color:#4a86e8;color:white;width:100%;height:40px;font-size:20;"  data-toggle="modal" data-target="#message">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '.$todoboost.'&nbsp;&nbsp; &nbsp;&nbsp;  (논리수확 & 장기기억 저장소 )</button>';                                        
+	}
+elseif(strpos($tagname, 'topic_')!==false)$tagsearch.='<button type="text"   style = "z-index:2;  position:fixed;  top: 0%;right:4%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/mod/checklist/report.php?id='.$mathnoteId.'&studentid='.$creator.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624156916001.png" width=45px></a></button>     <button type="text"   style = "z-index:2;  position:fixed;  top: 0%;right:0%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivestorm.php?userid='.$creator.'&tagid='.$tagid.'&id='.$id.'&teacherid='.$teacherid.'&contentsid='.$contentsid.'" target="_blank"> <img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/MXBESSI1620783633001.png" width=45px></a></button>   ';
+elseif(strpos($tagname, 'mx')!==false)$tagsearch.='<button type="text"   style = "z-index:2;  position:fixed;  top:0%;right:4%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/mod/checklist/report.php?id='.$mathnoteId.'&studentid='.$creator.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1624156916001.png" width=45px></a></button>     <button type="text"   style = "z-index:2;  position:fixed;  top: 0%;right:0%;background-color:white;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/local/augmented_teacher/students/cognitivestorm.php?userid='.$creator.'&tagid='.$tagid.'&id='.$id.'&teacherid='.$teacherid.'&contentsid='.$contentsid.'" target="_blank"> <img src="https://mathking.kr/Contents/MATH MATRIX/MATH images/IMG/MXBESSI1620783633001.png" width=45px></a></button>   ';
+if($tagsearch==NULL)$tagsearch='없음';
+
+$prepare= 'Q7MQFA'.$contentsid.'0tsDoHfRT_user'.$creator;
+$prepare_note=$DB->get_record_sql("SELECT * FROM mdl_abessi_messages WHERE wboardid LIKE '%$prepare%' ORDER BY id DESC LIMIT 1 "); 
+$hwtest = 'OVc4lRh'.$contentsid.'nx4HQkXq_user'.$creator;
+
+ 
+
+include("teachermenu.php"); 
+
+?>  
+  </head>
+
+  <body>
+  <html>
+      <script language="JavaScript">
+      // Date: 2019.04.24
+
+      var textareaList = ["history"];
+
+      function clearText(idOfTextArea) {
+        document.getElementById(idOfTextArea).value = "";
+      }
+
+      function SaveAsTxt() {
+        var fileName = document.getElementById("title").value;
+        if (fileName.length == 0) {
+          fileName = "image";
+        }
+        fileName += ".txt";
+
+        var preData = 'version: V0.617a1\n';
+        var postData =  preData + document.getElementById("history").value;
+
+        var link = document.createElement("a");
+        link.setAttribute("download", fileName);
+        link.setAttribute(
+          "href",
+          "data:" +
+            "application/[txt]" +
+            ";charset=utf-8," +
+            encodeURIComponent(postData)
+        );
+        link.click();
+      }
+
+      function SaveAsJson() {
+        console.log("SaveAsJson");
+        var fileName = document.getElementById("title").value;
+        if (fileName.length == 0) {
+          fileName = "imsge";
+        }
+
+        fileName += ".json";
+
+        var preData = {'version':'V0.617a1'};
+        textareaList.forEach(function(e) {
+          preData[e] = document.getElementById(e).value;
+        });
+
+        var jsonData = JSON.stringify(preData);
+
+        var link = document.createElement("a");
+        var file = new Blob([jsonData], { type: "text/plain" });
+        link.href = URL.createObjectURL(file);
+        link.download = fileName;
+        link.click();
+      }
+
+      function isJsonFile(filename) {
+        var ridx = filename.lastIndexOf(".");
+        var extension = filename.substring(ridx + 1);
+
+        console.log(extension);
+
+        if (extension.length != 4 || extension.toLowerCase() != "json") {
+          return false;
+        }
+        return true;
+      }
+
+      function isTextFile(filename) {
+        var ridx = filename.lastIndexOf(".");
+        var extension = filename.substring(ridx + 1);
+
+        console.log(extension);
+
+        if (extension.length != 3 || extension.toLowerCase() != "txt") {
+          return false;
+        }
+        return true;
+      }
+
+
+      function loadFile() {
+        var loadFile = document.getElementById("load_filename");
+        var file = loadFile.files[0];
+          
+        if (!file) {
+          return;
+        }
+
+        var fileName = document.getElementById("load_filename").value;
+        var ridx = fileName.lastIndexOf("\\");
+
+        fileName = fileName.substring(ridx + 1);
+
+        if (isJsonFile(fileName)) {
+          LoadJson(file, fileName);
+        } else if(isTextFile(fileName)) {
+          LoadText(file, fileName);
+        } 
+      }
+
+      function LoadJson(file, fileName) {
+        document.getElementById("title").value = fileName;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var contents = e.target.result;
+          displayLoadJsonData(contents);
+        };
+        reader.readAsText(file);
+      }
+
+      function displayLoadJsonData(contents) {
+        var noteData = JSON.parse(contents);
+
+        var version = noteData['version'];
+        console.log(version);
+        document.getElementById('history').value = noteData['history'];
+        reDrawCanvas();
+      }
+
+      function LoadText(file, fileName) {
+        document.getElementById("title").value = fileName;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var contents = e.target.result;
+          displayLoadTextData(contents);
+        };
+        reader.readAsText(file);
+      }
+
+      function displayLoadTextData(contents) {
+        var noteData = contents.split('\n');
+        var history = "";
+         
+        noteData.forEach(function (e){
+          if (e[0] != 'v') {
+            history += e + "\n";
+          }
+        }); 
+        document.getElementById('history').value = history;
+        reDrawCanvas();
+      }
+    
+    </script>
+  </head>
+<!--이곳에 소요시간 기반 알고리즘 적용하기 if(counter>300)... 랜덤함수. swal 띄우기.. check_status.. 303 이 기록..-->
+  <body >
+    <div class="jb_table" id = "test123">
+      <div class="row">
+        <span class="cell" width="88">
+          <div>
+            <div class="sidenav">
+             <div align="center" class="row"> 
+<span class="cell"><?php echo $contentsready; ?><?php echo $statusimg; ?></span>
+</div>
+                   </span>
+<div align="center" class="row"> <span class="cell"  style="color:white;"><a align=center href="https://mathking.kr/moodle/local/augmented_teacher/students/today.php?id=<?php echo $studentid; ?>&tb=604800" target=_blank"><?php echo $cfirstname.$clastname; ?></a></span></div><div><span >
+    	     <table align="center" style="width:100%;"><tr><td><img align="middle" id = "alert_eraser" height="45" width="45" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1579570654.png" onclick="selectTool('eraser')"/></td>
+                  <td><img id = "alert_pen" height="45"  width="45" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1579570583.png"  onclick="selectColor('black');selectTool('pencil')" /></td></tr>
+	  <tr><td><select name="eraserwidth" id = "eraserwidth" style = "width:100%;height=50;text-align-last:center;">
+                  <option value="10">1</option>
+                  <option value="30">2</option>
+                  <option value="50" selected="selected">3</option>
+                  <option value="70">4</option>
+                  <option value="400">5</option>
+                </select></td><td><select  align="right"   name="linewidth" id = "linewidth" style = "width:100%;height=50;text-align-last:center;">
+                  <option value="1" selected="selected">1</option>
+                  <option value="2">2</option>
+                  <option value="3" >3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select></td></tr></table>
+                </span> 
+              </div>
+              <div class="row">
+	<span align=center class="cell">
+	<img  height="44" width="44" id = "alert_black"  src="img/black.png" onclick="selectColor('black')"/><img id="alert_line"  height="44" width="44"  src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1579583979.png"  onclick="selectTool('line')"/>
+	</span>
+               </div>
+              <div class="row">
+	 <span align=center class="cell">
+          <table><tr><td><img width="18" id = "alert_white" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1628091298001.png" onclick="selectTool('pencil');selectColor('white')" /></td>
+<td><img width="18" id = "alert_red" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1629168602001.png" onclick="selectTool('pencil');selectColor('orangered')" /></td>
+<td><img width="18" id = "alert_blue" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1629163000001.png" onclick="selectTool('pencil');selectColor('royalblue')"/></td>
+<td><img width="18" id = "alert_purple" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1628091423001.png" onclick="selectTool('pencil');selectColor('purple')"/></td>
+<td><img width="18" id = "alert_green" src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1629168756001.png" onclick="selectTool('pencil');selectColor('limegreen')"/></td></tr></table>  
+	</span>
+              </div>
+ 
+ 
+              <!-- <div class="row">
+                <span class="cell">
+                  <img src="img/circle.png" onclick="selectTool('circle')"/>
+                  <img src="img/filledcircle.png" onclick="selectTool('filledcircle')"/>
+                </span>
+              </div>
+              <div class="row">
+                <span class="cell">
+                  <img src="img/square.png" onclick="selectTool('square')"/>
+                  <img src="img/filledsquare.png" onclick="selectTool('filledsquare')"/>
+                </span>
+              </div>
+              <div class="row">
+                <span class="cell">
+                  <img src="img/rect.png" onclick="selectTool('rect')" />
+                  <img src="img/filledrect.png" onclick="selectTool('filledrect')" />
+                </span>
+              </div>
+              <div class="row">
+                <span class="cell">
+                 <table><tr><td><img src="img/triangle.png" onclick="selectTool('tri')" /></td><td> <img src="img/filledtriangle.png" onclick="selectTool('filledtri')" /></td></tr></table>                   
+                 </span>
+              </div> -->
+              <div class="row">
+	    <span class="cell" align=center>
+                 <table><tr><td><img id = "alert_undo" width="50" src="img/undo.png" onclick="undo()"/></td><td> <img id = "alert_redo"   width="50" src="img/redo.png" onclick="redo()"/></td></tr></table>                   
+              </span>
+	 </div>	
+	 <div class="row" id="btn_group">
+             <span  align=center class="cell">
+              <table><tr><td><img width="50" id="alert_zoomin" src="img/zoom-in.png" onclick="zoom_in()"/></td><td><img src="img/zoom-out.png" width="50"  id="alert_zoomout"   onclick="zoom_out()"/></td></tr></table>                                   
+<?php
+$dialoguetype='alert_dialogue';
+$deletebutton='alert_demo_reset';
+if(strpos($id, 'jnrsorksqcrark')!==false)$dialoguetype='topic_dialogue';
+if((strpos($thisboard->contentstitle, 'realtime')===false || $thisboard->flag==1) && $thisboard->status!=='exam')echo '<button type="button"   id="'.$dialoguetype.'" style = "color:white;width:88px" data-toggle="modal" >메세지</button>';
+
+if($thisboard->contentstitle ==='realtime' || $thisboard->contentstype==1)echo '<button type="button" id="alert_flag" style = "color:white;width:88px;height=100"  onclick="keepreview(12,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$nreview.'\');selectTool(\'pencil\');selectColor(\'red\');" > 책갈피 &nbsp;<img src=https://mathking.kr/Contents/IMAGES/bookmarktransparent.png width=10></button>';
+if(strpos($id, 'booststep')!==false || strpos($id, 'jnrsorksqcrark')!==false || $thisboard->flag==1)
+	{
+	echo '
+	<button type="button" id="alert_review" style = "color:white;width:88px;height=100;"  onclick="keepreview(12,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$nreview.'\')" >기억관찰</button> 
+	<button type="button"  id="'.$completeOption.'" style = "color:white;width:88px;height=100;"  onclick="sendmessage(13,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\')" >학습완료</button></span>';
+	}
+$markbutton='<button type="button"  id="alert_demo_submit" style = "background-color:white;width:90px;height=100"  onclick="" ><a href="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/board.php?id=bessi'.$id.'&srcid='.$id.'&createpageid='.$contentsid.'&studentid='.$creator.'" target="_blank"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1628989069001.png" width=30></a></button>';
+if(strpos($id, 'nx4HQkXq')!==false)
+	{
+//	$markbutton='<button type="button" id="alert_bookmark" style = "background-color:white;color:blue;width:90px;height=50px;"  onclick="keepreview(12,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$nreview.'\');selectTool(\'pencil\');selectColor(\'red\');" ><img src=https://mathking.kr/Contents/IMAGES/addicon.png height=25></button>';
+	$deletebutton='alert_retry';
+	}
+echo ' </div><div class="row" id="btn_group"><span  align=center class="cell"><button type="button"  id="'.$deletebutton.'" style = "color: white;width:88px ;height=100"  onclick=" ">전체삭제</button></span></div>'.$markbutton;
+ 
+if($role!=='student' || $thisboard->status==='complete' ||  $thisboard->status==='review' ||  $thisboard->status==='retry')
+	{
+	$nextstep1='<button type="image"  style="background-color:green;color:white;width:88px;" onclick="window.open(\''.$nexturl2.'\',\'_self\')"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549466001.png"  width="'.$width.'"></button>';
+	$nextstep2='<button type="image"  style="background-color:green;color:white;width:88px;" onclick="window.open(\''.$nexturl3.'\',\'_self\')"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549466001.png"  width="'.$width.'"></button>';
+	}
+else
+	{
+	$nextstep1='<button type="image" id="alert_why" style="background-color:green;color:white;width:88px;" onClick="" > <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549466001.png"  width="'.$width.'"></button>';
+	$nextstep2='<button type="image" id="alert_gmindset" style="background-color:green;color:white;width:88px;" onClick="" > <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549466001.png"  width="'.$width.'"></button>';
+	}
+if(strpos($id, 'tsDoHfRT')!==false && strpos($id, 'fromT')===false && strpos($thisboard->contentstitle, 'incorrect')!==false)
+	{
+	echo '<div class="row" id="btn_group">
+        	     <span  align=center class="cell">                       
+		'.$nextstep1.'
+		</span></div>';
+	}
+elseif(strpos($id, 'nx4HQkXq')!==false)
+	{
+	echo '<div class="row" id="btn_group">
+        	     <span  align=center class="cell">                       
+		'.$nextstep2.'
+		<button type="image"  style="background-color:green;color:white;width:88px;" onclick="window.open(\'https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id='.$prepare_note->wboardid.'\',\'_self\')"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549394001.png"  width="'.$width.'"></button>
+		</span></div>';
+	}
+elseif(strpos($id, 'booststep')!==false)
+	{
+	echo '<div class="row" id="btn_group">
+        	     <span  align=center class="cell">        	
+		<button type="image"  style="background-color:green;color:white;width:88px;" onclick="window.open(\''.$nexturl2.'\',\'_self\')"><img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1630549394001.png"  width="'.$width.'"></button>
+		</span></div>';
+	}
+echo '<div class="row" id="btn_group"><span  align=center class="cell">';
+
+if(strpos($id, 'fromT')===false && $thisboard->contentstitle !=='realtime') 
+	{ 
+	echo '<button type="image" id="alert_play" style="background-color:green;color:white;width:88px;" onClick="" > <img src="https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/BESSI1579530292.png"  width="'.$width.'"></button>';
+	}
+
+echo '</span></div>';
+if(($thisboard->status ==='stepbystep' || $thisboard->status =='submitstepbystep')&& $role==='student') echo '<div class="row" id="btn_group"><span  align=center class="cell"><button type="button"   id="alert_stepbystep" style = "color:white;width:88px;" data-toggle="modal" >답장하기</button></span></div>';
+ 
+?>  
+
+<div class="row" id="btn_group2">
+<span  align=center class="cell">	
+</span></div>
+
+ <?php
+$replytype='alert_teacherreply';
+
+
+if(strpos($id, 'jnrsorksqcrark')!==false)$replytype='topic_teacherreply';
+//<button type="button"  id="alert_teacherreply2" style = "color:white;width:88px;height=100"  onclick="sendmessage(11,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$contentstype.'\',\''.$wboardid0.'\')" >도제학습</button>
+if($role!=='student')echo '<div class="row" id="btn_group2"><span  align=center class="cell">
+<button type="button"  id="'.$replytype.'" style = "color:white;width:88px;height=100"  onclick="sendmessage(11,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$contentstype.'\',\''.$wboardid0.'\')" >답장하기</button>
+<button type="button"  id="emotional_dialogue" style = "color:white;width:88px;height=100"  onclick="sendmessage(11,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$contentstype.'\',\''.$wboardid0.'\')" >메세지</button>
+<button type="button"  id="'.$pedagogicaltalk.'" style = "color:white;width:88px;height=100"  onclick="sendmessage(11,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\',\''.$contentstype.'\',\''.$wboardid0.'\')" >인지촉진</button>
+<button type="button"  style = "background-color:green;color:white;width:88px;height=150"  onclick="teacherCheck()" >검사완료</button>
+<button type="button" style = "color: white;width:88px ;height=100" onclick=" window.open(\'https://webdemo.myscript.com/views/math/index.html\',\'_blank\')"> 수식인식</button></span></div>
+<button   type="button" class="btn btn-focus" id="alert_demo_copyurl" style = "background-color:blue;color: white;width:100%;height:30px"  OnClick="javascript:CopyUrlToClipboard()">필기복사</button><input type="text" id = "ShareUrl" readonly value="KTM BOARD" style="height:0px;padding:0px 0px 0px 0px;" />
+<button   type="button" class="btn btn-focus" id="alert_pasteink" style = "background-color:blue;color: white;width:100%;height:30px"  onclick="" >필기추가</button>
+ <button type="button"  id="alert_nextpage" style="background-color:#4287f5;color:white;width:100%;height:40px;" accesskey="w">NEXT</button>
+</span></div> ';
+?>  
+  
+
+
+
+</span></div>
+	
+ 
+
+<?php
+// 초기 내용들이 여기에 있었음..
+$conn->close();
+
+?> 
+ 
+ 
+            </div>
+          </div>
+        </span>
+<div  style ="z-index:2;" class="myDiv2"> <table align=left width=100%>
+<tr><td><h5><span style="color:<?php echo $color1?>"> </span></h5></td></tr>
+</table></div>
+<div  style ="z-index:3;" class="myDiv"> <table align=left>
+<tr><td><h6><span style="text-align:left;color:<?php echo $color1?>"><?php echo $answerthis;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color1?>"><?php echo $feedback->feedback1.$wbcnt1;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color2?>"><?php echo $feedback->feedback2.$wbcnt2;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color3?>"><?php echo $feedback->feedback3.$wbcnt3;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color4?>"><?php echo $feedback->feedback4.$wbcnt4;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color5?>"><?php echo $feedback->feedback5.$wbcnt5;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color6?>"><?php echo $feedback->feedback6.$wbcnt6;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color7?>"><?php echo $feedback->feedback7.$wbcnt7;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color8?>"><?php echo $feedback->feedback8.$wbcnt8;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color9?>"><?php echo $feedback->feedback9.$wbcnt9;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:<?php echo $color10?>"><?php echo $feedback->feedback10.$wbcnt10;?> </span></h6></td></tr>
+<tr><td><h6><span style="color:black"><?php echo $text_assess;?> </span></h6></td></tr>
+</table></div>
+        <span class="cell">
+          <div id="wboard">
+	 <meta name="viewport" content="width=device-width, initial-scale=1">
+          <canvas id="canvas"  width="2000" height="6000" touch-action="none"></canvas>
+          <canvas id="canvas2" style="z-index:1" width="2000" height="6000" touch-action="none"></canvas>
+
+ 
+
+
+<?php
+$jd = cal_to_jd(CAL_GREGORIAN,date("m"),date("d"),date("Y"));
+$nday=jddayofweek($jd,0);
+if($nday==0)$nday=7;
+
+//$wtimestart=time()-86400*($nday+3);
+//$stateColor='#ccffd0';
+//$weeklyGoalText='<a href="https://mathking.kr/moodle/local/augmented_teacher/students/today.php?id='.$creator.'&tb=43200" target="_blank">미설정되었습니다. 요청해 주세요.</a>';
+//$weeklyGoal= $DB->get_record_sql("SELECT * FROM mdl_abessi_today WHERE userid='$studentid' AND timecreated>'$wtimestart' AND type LIKE '주간목표' ORDER BY id DESC LIMIT 1 ");
+//$schedule=$DB->get_record_sql("SELECT * FROM mdl_abessi_schedule where userid='$creator' ORDER BY id DESC LIMIT 1 ");
+//$lastday=$schedule->lastday;
+
+//if($weeklyGoal->id!=NULL)
+//	{
+//	$weeklyGoalText=$weeklyGoal->text.'('.$lastday.'까지)&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/today.php?id='.$creator.'&tb=43200" target="_blank">(요청)</a>';
+//	$stateColor='#ccffd0';
+//	}
+//$timestart=time()-43200;
+//$todayGoal='<a href="https://mathking.kr/moodle/local/augmented_teacher/students/today.php?id='.$creator.'&tb=43200" target="_blank">입력이 필요합니다. 요청해 주세요.</a>';
+//$goal= $DB->get_record_sql("SELECT * FROM mdl_abessi_today WHERE userid='$creator' AND timecreated>'$timestart' AND type LIKE '오늘목표' ORDER BY id DESC LIMIT 1  ");
+//if($goal->id!=NULL)$todayGoal=$goal->text.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://mathking.kr/moodle/local/augmented_teacher/students/today.php?id='.$creator.'&tb=43200" target="_blank">(요청)</a>';
+
+
+//$Indicators= $DB->get_record_sql("SELECT * FROM mdl_abessi_indicators WHERE userid='$creator'  ORDER BY id DESC LIMIT 1 ");
+//$timeused=$Indicators->usedtime;
+//$todayGrade=$Indicators->todayscore;
+//$urgent=$Indicators->urgent;
+//$studentType='';
+ 
+//if($urgent==1)$studentType='관심학생';
+// question timeline
+
+
+/*
+$qtimeline= $DB->get_records_sql("SELECT * FROM mdl_question_attempts  LEFT OUTER  JOIN mdl_question_attempt_steps  ON  mdl_question_attempt_steps.questionattemptid= mdl_question_attempts.id  WHERE  userid='$studentid' AND questionid='$contentsid' ");
+$actionresult = json_decode(json_encode($qtimeline), True);
+unset($value);
+$ntimeline=0;
+
+foreach($actionresult as $value)
+	{
+	$ntimeline++;
+
+	if($ntimeline==1){$timebegun=$value['timecreated'];$timebegun2=(INT)((time()-$value['timecreated'])/60);  $timeline='# 타임라인('.$timebegun2.'분전 시작)<hr> ';}
+	$tspent=(INT)(($value['timecreated']-$timebegun)/60);
+	$timeline.=$ntimeline.')'.$tspent.'분 지점 : '.$value['state'].'<hr>';
+	}
+$timeline.='화이트보드 타임라인';
+*/
+$preparetext='문제해석';
+if(strpos($contentstitle, 'realtime')!== false && time()-$thisboard->timemodified > 30) $preparetext='';
+elseif($thisboard->status==='accelerate') $preparetext='<button type="text"  style ="z-index:2;  position:fixed;  top: 0%;left: 10%;background-color:white;color:black;width:30%;height:40px;"  data-toggle="modal" data-target="#message">풀이 시간이 길어 학교시험에서 위기를 발생시킬 수 있습니다. 다른 풀이를 찾아보세요.</button>';
+elseif($thisboard->status==='exam') $preparetext='<button type="text"  style ="z-index:2;  position:fixed;  top: 0%;left: 10%;background-color:white;color:black;width:30%;height:40px;"  data-toggle="modal" data-target="#message">평가준비 과정에서의 기억을 무시하고 숙달된 논리만을 사용하여 풀어 보세요</button>'; 
+elseif(strpos($id, 'jnrsorksqcrark')!==false)'<button type="text"  style ="z-index:2;  position:fixed;  top: 0%;left: 10%;background-color:white;color:black;width:30%;height:40px;"  data-toggle="modal" data-target="#message">'.$thisboard->instruction.' &nbsp;'.$seeTutorial.'</button>'; 
+
+$timemodified=time()-$thisboard->timemodified;
+if($timemodified>60)$timemodifiedtext=(INT)($timemodified/60).'분전';
+else $timemodifiedtext=$timemodified.'초전';
+
+$tlaststroke=time()-$thisboard->tlaststroke;
+	
+if($tlaststroke>1000000)$tlaststroketext='비어있음';
+elseif($tlaststroke>60)$tlaststroketext=(INT)($tlaststroke/60).'분전 필기';
+else $tlaststroketext=$tlaststroke.'초전';
+
+$instructionText=''.$newmessage;
+if(strpos($id, 'nx4HQkXq')!==false)
+	{
+	
+	for($nsol=$thisboard->nrepeat;$nsol>=1;$nsol--)
+		{
+		$stptext='bstep'.$nsol;		 
+		$$stptext=$DB->get_record_sql("SELECT * FROM mdl_abessi_firesynapse WHERE contentsid='$contentsid' AND contentstype='$contentstype' AND userid='$studentid' AND nrepeat='$nsol' ORDER BY id DESC LIMIT 1 ");
+ 		
+		if($nsol==$thisboard->nrepeat) $boosterlist.='현재풀이 <a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id=OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid.'&srcid=OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid.'&userid='.$studentid.'"> '.$thisboard->nstroke.'획</a>&nbsp;&nbsp;';
+		else $boosterlist.='서술평가'.$nsol.'. <a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board.php?id=OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid.'_synapse'.$nsol.'&srcid=OVc4lRh'.$contentsid.'nx4HQkXq_user'.$studentid.'&userid='.$studentid.'&nrepeat='.$nsol.'">'.$$stptext->nstroke.'획</a>&nbsp;&nbsp;';
+
+ 		for($nstep=1;$nstep<=20;$nstep++)
+			{
+			$gidtext='gid'.$nstep;
+			$generate_id=$$stptext->$gidtext;
+			
+			$delaytext='delay'.$nstep;
+			$tdelay=$$stptext->$delaytext;
+			$bstepid=$$stptext->wboardid;
+			
+			if($generate_id==NULL)$nstep=100;
+			elseif($nsol==$thisboard->nrepeat)  $boosterlist.='&nbsp; <span  type="button"  onClick="showMoment(\''.$testwbid.'\',\''.$generate_id.'\')">'.$tdelay.'초</span>&nbsp;';
+			else  $boosterlist.='&nbsp; <span  type="button"  onClick="showMoment(\''.$bstepid.'\',\''.$generate_id.'\')">'.$tdelay.'초</span>&nbsp;';  //$boosterlist.='<a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board_review.php?id='.$bstepid.'&userid='.$studentid.'&gidmax='.$generate_id.'&nrepeat='.$nsol.'"><span style="color:white;">'.$tdelay.'s</span></a>&nbsp;&nbsp;';
+			}
+		$boosterlist.=' <hr>';
+		}
+	}
+if($role!=='student')  echo '<button type="text"  style ="z-index:2;  position:fixed;  top: 0%;right: 15%;background-color:'.$stateColor.';color:black;width:30%;height:40px;"  data-toggle="modal" data-target="#message"><div class="tooltip2"> 학습정보 <span class="tooltiptext2"><table width=100% align=center><tr><td width=10%></td><td>'.$boosterlist.'</td><td></td><td width=10%></td></tr></table></span></div> | '.$tlaststroketext.' | '.$timemodifiedtext.' 클릭 &nbsp;&nbsp;&nbsp;  ( 이해도 : '.$thisboard->depth.' 점 | 평점  : '.$thisboard->star.' 점  ) 
+&nbsp;&nbsp;&nbsp; <a href="https://mathking.kr/moodle/mod/hsuforum/view.php?id='.$domainboardid.'" target="_blank"> <img src=https://mathking.kr/Contents/MATH%20MATRIX/MATH%20images/IMG/MXBESSI1626747399001.png></a> </button>';
+
+echo $switchto.$instructionText.$tagsearch;
+ 
+
+if($role!=='student')echo '<button type="text"  style ="z-index:2;  position:fixed;  top: 0%;left: 10%;background-color:'.$tcolor.';color:white;height:40px;"  data-toggle="modal" data-target="#topicfeedback">문항해석</button><button type="text"   style = "z-index:2;  position:fixed;  top: 0%;left: 14%;background-color:'.$scolor.';color:white;height:40px;" data-toggle="modal" data-target="#setsteps">풀이촉진</button><button type="text"   style ="z-index:2;  position:fixed;  top: 0%;left: 18%;background-color:green;color:white;height:40px;" data-toggle="modal" data-target="#reflection">피드백</button>
+<button type="text"   style = "z-index:2;  position:fixed;  top: 0%;left:22%;background-color:#c7f9ff;color:black;height:40px;"  data-toggle="modal" ><a href="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board_onair.php?userid='.$studentid.'&mode=2&wboardid='.$id.'">실험실</a></button>
+<button  type="button"  style = "z-index:2;  position:fixed;  top: 0%;left:26%;background-color:green;color:white;height:40px;" get="#smaplemodal" data-backdrop="static" data-toggle="modal" data-target="#boardchat"  onclick="beginchat(200,\''.$chatid.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$id.'\')" >채팅</button><button   type="button"  id="alert_refresh"   style = "z-index:2;  position:fixed;  top: 0%;left: 30%;background-color:green;color:white;height:40px;"   onclick="beginchat(201,\''.$chatid.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$id.'\')" >전달</button>
+<button   type="button"  id="alert_sync"  style ="z-index:2;  position:fixed;  top: 0%;left: 34%;background-color:green;color:white;height:40px;"  onclick="Realtime(\'강제지도\',\'3분간 실시간 지도가 진행됩니다.\',\''.$creator.'\',\''.$userid.'\',\''.$contentstype.'\',\''.$contentsid.'\',\''.$contextid.'\',\''.$currenturl.'\')">동기화</button>
+<button   type="button"  id="alert_terminate" style ="z-index:2;  position:fixed;  top: 0%;left: 38%;background-color:green;color:white;height:40px;"  onclick="sendmessage(17,\''.$id.'\',\''.$userfrom.'\',\''.$teacherid.'\',\''.$contentsid.'\')" >종료</button> '.$viewcontents.'
+
+';
+ 
+if($role==='student' && $USER->id==$studentid )  //
+	{
+	echo ' 
+
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    <script type="module" src="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/index.js"></script>
+
+    	<script src="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/dist/RTCMultiConnection.min.js"></script>
+    	<script src="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/node_modules/webrtc-adapter/out/adapter.js"></script>
+    	<script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
+
+	<script>
+	  var chatroomid= \''.$id.'\';
+                connection = new RTCMultiConnection();
+                connection.socketURL = \'https://mathking.kr:9559/\';
+                connection.socketMessageEvent = \'audio-conference-demo\';
+
+                connection.session = {
+                		    audio: true,
+                 		   video: false
+              		  };
+
+                connection.mediaConstraints = {
+              		      audio: true,
+               		     video: false
+             			   };
+
+                connection.sdpConstraints.mandatory = {
+               		     OfferToReceiveAudio: true,
+                		    OfferToReceiveVideo: false
+                		};
+
+                // https://www.rtcmulticonnection.org/docs/iceServers/
+                // use your own TURN-server here!
+                connection.iceServers = [{
+                    \'urls\': [
+                        \'stun:stun.l.google.com:19302\',
+                        \'stun:stun1.l.google.com:19302\',
+                        \'stun:stun2.l.google.com:19302\',
+                        \'stun:stun.l.google.com:19302?transport=udp\',
+               	     ]
+           		     }];
+
+                connection.audiosContainer = document.getElementById(\'audios-container\');
+                connection.onstream = function(event)
+		 {
+                  		  var width = parseInt(connection.audiosContainer.clientWidth / 2) - 20;
+                		    var mediaElement = getHTMLMediaElement(event.mediaElement, {
+                		        title: event.userid,
+                 		       buttons: [\'full-screen\'],
+                 		       width: width,
+                 		       showOnMouseEnter: false
+                		    });
+                		    connection.audiosContainer.appendChild(mediaElement);
+
+               		     setTimeout(function() {
+               		         mediaElement.media.play();
+                		    }, 5000);
+
+              		      mediaElement.id = event.streamid;
+             		   };
+
+                connection.onstreamended = function(event) 
+		{
+                   	   var mediaElement = document.getElementById(event.streamid);
+                 	   if (mediaElement) {
+                 		       mediaElement.parentNode.removeChild(mediaElement);
+                 			}
+ 	               };
+
+                // ktm 방 만들기 혹은 참가
+                connection.openOrJoin(chatroomid, function(isRoomExist, roomid)
+	 	{
+                	   console.log(isRoomExist, roomid);
+                	//   btnElement.innerText = \'연결해제\';
+                  	//   btnElement.disabled = false;
+               	 });  
+	</script>
+   <script src="https://mathking.kr/moodle/local/augmented_teacher/bessiboard/webRtc.js"></script>
+
+   <input type="hidden" id="copyInput" />'; 
+	}  
+
+	echo '
+	<script>
+	function showMoment(Wbid,Gidmax)
+		{
+		Swal.fire({
+		backdrop: false,position:"top-end",showCloseButton: true,
+		  html:
+		    \'<iframe style="border: 1px none; z-index:2; width:900; height:900;  margin-left: -120px; margin-top: -130px; "  src="https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board_review.php?id=\'+Wbid+\'&gidmax=\'+Gidmax+\'" ></iframe>\',
+		  showConfirmButton: false,
+		        })
+		}	
+	</script>';
+?> 
+         </div>
+        </span>
+        <span class="cell">
+          <div>
+            <textarea id="history" cols="40" rows="37" style="display: none;"></textarea>
+          </div>
+          </div>
+        </span>
+      </div>
+    </div>
+<script>var nstep = "<?php echo $stepnum;?>";</script>
+
+    <script src="painter_test.php"></script>
+    <script src="drawengine_test.js"></script>
+ 
+    <script > 
+    var testid = "<?php echo $id;?>";
+ 
+    var points1 = <?= json_encode($test) ?>;
+    var index_len = Number(<?= json_encode($index_max) ?>);
+//    var recommend =  "<?php echo $recommend;?>";
+ //   var nstep = "<?php echo $nstep;?>";
+    // console.log(index_len)
+    var points = new Array;
+    var points2 = new Array;
+    var points3 = new Array;
+    var regExp = /\[/g;
+    var regExp2 = /\]/g;
+    for(i=0;i<points1.length;i++)
+    {
+      points1[i]=points1[i].replace(regExp, "");
+      points.push(points1[i].replace(regExp2, ""));
+      points2=points[i].split(",");
+      for(a=0; a<points2.length; a++)
+      {
+        if(a==points2.legth)
+        {
+          points3 = points3+points2[a]
+        }
+        else{
+        points3 = points3+points2[a]+'\n'
+        }
+      }
+      points2 = [];
+      // points = points1[2].replace(/[{}]/g, "");
+    }
+    // console.log(points3)
+    document.getElementById('history').value=points3;
+    
+
+    reDrawCanvas();
+    var newColor = drwaCommand();
+    newColor.mode = "color";
+    newColor.color = "black";
+    color_state=commandHistory[commandHistory.length-2]
+    if(color_state=="color black"){
+
+    }
+    else{
+      commandHistory.push(newColor.toCommand());
+      addHistory(newColor.toCommand());
+      var data = new Array();
+      data.push(newColor.toCommand());
+      index_len+=1;
+      $.ajax({
+      type: 'POST',
+      url: './dbsend.php',
+      data : {id:testid,data:data,nstep:nstep,index:index_len},     
+      dataType: 'json'
+    });
+    }
+    // var s = document.getElementById("speed");
+    // var speed = s.options[s.selectedIndex].value;
+    jQuery('#speed').change(function() {
+      speed = jQuery('#speed option:selected').val();
+  });
+  function CopyUrlToClipboard()
+	{	
+	obShareUrl.value =  "<?php echo $id;?>";  	 
+	obShareUrl.select();  // 해당 값이 선택되도록 select() 합니다
+	document.execCommand("copy"); // 클립보드에 복사합니다.
+	}
+ 
+ 
+ 
+
+
+function modechange(Wboardid,Userid, Contentsid, Contentstype)
+{  	window.location("https://mathking.kr/moodle/local/augmented_teacher/students/cognitive_steps.php?id="+Userid+"&cntid="+Contentsid+"&cnttype="+Contentstype+"&recommend=1&nstep=1"); 
+	setTimeout(function(){
+	location.reload();
+	},100);  
+}
+ function sendmessage(Eventid,Wboardid,Userid,Tutorid,Contentsid,Contentstype,Wboardid0)
+{
+	  
+ 	var Contentsid0 = "<?php echo $contentsid0;?>";
+	var Contentstype0 = "<?php echo $contentstype0;?>";
+
+	$.ajax({
+	url:"database.php",
+	type: "POST",
+	dataType:"json",
+ 	data : {
+	"eventid":Eventid,
+	"wboardid":Wboardid,	
+	"userid":Userid,
+	"tutorid":Tutorid,
+	"contentsid":Contentsid,
+	"contentstype":Contentstype,
+	"contentsid0":Contentsid0,
+	"contentstype0":Contentstype0,
+	"wboardid0":Wboardid0,
+	},
+	success:function(data){
+	 }
+	 })
+}
+
+function teacherCheck() 
+{
+  let wrap = document.createElement('div');
+  wrap.setAttribute('class', 'text-muted');
+  var Wbid = "<?php echo $id;?>";
+  var Pedagogicaltalk = "<?php echo $pedagogicaltalk;?>";
+   if(Wbid.indexOf("jnrsorksqcrark") != -1 && Wbid.indexOf("user") != -1  )   wrap.innerHTML = '<table width=100%><tr><td align=center><button onclick="reply(\'level1\',\'1\')" type="button" value="level1" class="row" id="btn_group">이해 부족</button></td><td align=center><button onclick="reply(\'level2\',\'2\')" type="button" value="level2" class="row" id="btn_group">기본 개념</button></td><td align=center><button onclick="reply(\'level3\',\'3\')" type="button" value="level3" class="row" id="btn_group">상세 개념</button></td><td align=center><button onclick="reply(\'level4\',\'4\')" type="button" value="level4" class="row" id="btn_group">설명 가능</button></td><td align=center><button onclick="reply(\'level5\',\'5\')" type="button" value="level5" class="row" id="btn_group">발표 가능</button></td></tr></table>';
+  else if(Wbid.indexOf("user") != -1 )   wrap.innerHTML = '<table width=100%><tr><td align=center><button onclick="reply(\'level1\',\'1\')" type="button" value="level1" class="row" id="btn_group">아직 미흡</button></td><td align=center><button onclick="reply(\'level2\',\'2\')" type="button" value="level2" class="row" id="btn_group">현재 문항</button></td><td align=center><button onclick="reply(\'level3\',\'3\')" type="button" value="level3" class="row" id="btn_group">유사 문항</button></td><td align=center><button onclick="reply(\'level4\',\'4\')" type="button" value="level4" class="row" id="btn_group">응용 문항</button></td><td align=center><button onclick="reply(\'level5\',\'5\')" type="button" value="level5" class="row" id="btn_group">심화 문항</button></td></tr></table>';
+  else  wrap.innerHTML = '<table width=100%><tr><td align=center><button onclick="reply(\'level1\',\'1\')" type="button" value="level1" class="row" id="btn_group">1점</button></td><td align=center><button onclick="reply(\'level2\',\'2\')" type="button" value="level2" class="row" id="btn_group">2점</button></td><td align=center><button onclick="reply(\'level3\',\'3\')" type="button" value="level3" class="row" id="btn_group">3점</button></td><td align=center><button onclick="reply(\'level4\',\'4\')" type="button" value="level4" class="row" id="btn_group">4점</button></td><td align=center><button onclick="reply(\'level5\',\'5\')" type="button" value="level5" class="row" id="btn_group">5점</button></td></tr></table>';
+  swal({
+    position: "fixed",
+    top : "0%",
+    title: "학생 수준에 대한 선생님 의견",
+    text: "학생이 현재 내용에 대해 어느 수준에 도달하였다고 생각하시나요 ?",
+    closeOnClickOutside: true,
+ 
+    content: {
+      element: wrap,
+    },   
+
+
+ buttons: {
+     cancel: {
+        text:"메세지 전달",
+        visible: true,
+        className: "btn btn-info",
+        closeModal: true,
+      }
+    },
+  }).then((value) => {
+    if (value === 'level1') {
+      swal("미흡함으로 평가되었습니다.", {
+        icon: "success",
+        buttons: false
+      });
+    } else if (value === 'level2') {
+      swal("다소 미흡함으로 평가되었습니다.", {
+        icon: "success",
+        buttons: false
+      });
+    } else if (value === 'level3') {
+      swal("보통으로 평가되었습니다.", {
+        icon: "success",
+        buttons: false
+      });
+   } else if (value === 'level4') {
+      swal("우수함으로 평가되었습니다.", {
+        icon: "success",
+        buttons: false
+      });
+   } else if (value === 'level5') {
+      swal("탁월함으로 평가되었습니다.", {
+        icon: "success",
+        buttons: false
+      });
+    }
+else {
+ document.getElementById(Pedagogicaltalk).click();
+    }
+  });  
+} 
+ 
+
+  
+function reply(feel,resultValue){
+	var Userid= "<?php echo $studentid;?>";
+ 	var Wboardid = "<?php echo $id;?>";
+	var Tutorid= "<?php echo $USER->id;?>";
+ 	var Contentsid = "<?php echo $contentsid;?>";
+	var Contentstype= "<?php echo $contentstype;?>";
+	var Pagenum= "<?php echo $thispagenum;?>";
+	var Eventid="13";
+  swal.setActionValue(feel);
+ 	$.ajax({
+	url:"database.php",
+	type: "POST",
+	dataType:"json",
+ 	data : {
+	"eventid":Eventid,
+	"wboardid":Wboardid,	
+	"userid":Userid,
+	"tutorid":Tutorid,
+	"contentsid":Contentsid,
+	"contentstype":Contentstype,
+ 	"pagenum":Pagenum,
+ 	"value":resultValue,
+	},
+	success:function(data){
+	 }
+	 })
+swal("평가 : " + resultValue +"점", {buttons: false, timer: 5000, });
+ 				var Userid= "<?php echo $studentid;?>";
+				var Username;
+				var Fbtype;
+				var Fbgoal;
+				var Fbtext;
+				var Fburl;
+				var Prepareimg;
+				var Summary;
+				var Source=1;
+              			 $.ajax({
+					url: "../whiteboard/almtyroutine.php",
+					type: "POST",
+					dataType:"json",
+              				data : {	 
+				        	"userid":Userid,
+					"source":Source,
+               			        	}, 
+                				success:function(data) 
+						{						
+						Username=data.username;
+						Fbtype=data.fbtype;
+						Fbgoal=data.fbgoal;
+						Fbtext=data.fbtext;
+						Fburl=data.fburl;	
+						Prepareimg=data.prepareimg;
+						Summary=data.summary;	
+						
+						swal({
+								title: Username+"의 " + Fbtype ,
+								text: Fbtext,
+								type: "warning",
+								buttons:{
+									confirm: {
+										text : "확인",
+										className : "btn btn-success"
+									},
+									cancel: {
+										visible: true,
+										text : "취소",
+										className: "btn btn-danger"
+									}      			
+
+								}
+							}).then((willDelete) => {
+								if (willDelete) {
+						 
+								 window.location.href =Fburl;	 					 
+								} else {
+									swal("취소되었습니다.", {
+									
+									});
+								}
+							});
+						}
+            	   		  	      });
+}
+ 
+function keepreview(Eventid,Wboardid,Userid,Tutorid,Contentsid,Nreview)
+{
+	$.ajax({
+	url:"database.php",
+	type: "POST",
+	dataType:"json",
+ 	data : {
+	"eventid":Eventid,
+	"wboardid":Wboardid,	
+	"userid":Userid,
+	"tutorid":Tutorid,
+	"contentsid":Contentsid,
+	"nreview":Nreview,
+	},
+	success:function(data){
+	 }
+	 })
+	setTimeout(function(){
+	location.reload();
+	},60000);  
+}
+ function beginchat(Eventid,Chatid,Userid,Tutorid,Wboardid)
+{
+	$.ajax({
+    	url: "check_status.php",
+	type: "POST",
+	dataType:"json",
+ 	data : {
+	"eventid":Eventid,
+	"chatid":Chatid,	
+	"userid":Userid,
+	"tutorid":Tutorid,
+	"wboardid":Wboardid,
+	},
+	success:function(data){
+	 }
+	 })
+}
+
+
+
+function checkstate() {
+    if(unlock==1)
+    {
+      state = 0
+      $.ajax({
+        type: 'POST',
+        url: './state.php',
+        data : {id:testid,state:state},     
+        dataType: 'json',
+        success:function(data,status,er) {
+          location.href = "./board.php?id="+testid;
+        },
+        error:function(data,status,er) {
+          location.href = "./board.php?id="+testid;
+        }
+      });
+      
+    }
+    else if(state==1)
+  {
+    lock();
+  }
+  }
+  function db_nametagcheck() {
+    var boardname = document.getElementById("boardname");
+    var category = document.getElementById("category");
+    if(db_category!='' || db_boardname!='')
+    {
+      category.value = db_category
+      boardname.value = db_boardname
+      boardname.disabled = true;
+      category.disabled = true;
+    }
+  }
+  var obShareUrl = document.getElementById("ShareUrl");
+
+
+obShareUrl.value = window.document.location.href;  // 현재 URL 을 세팅해 줍니다.
+
+  checkstate();
+  db_nametagcheck();
+    </script>
+  </body>
+  <style>
+
+.feel {
+  margin: 5px 5px;
+  background-color: white;
+  height:50px;
+}
+</style>
+
+</html>
+<?php
+ if( $role==='student' && ($thisboard->status==='complete' || $thisboard->status==='review')   &&  $thisboard->contentstype==2 && time()-$thisboard->timemodified>600 && time()-$thisboard->timemodified<43200 &&   $thisboard->nretry==1 )
+	{
+echo '	<script> function retrywb()
+			{
+				var Wboardid= \''.$id.'\'; 
+				var Userid= \''.$studentid.'\'; 
+				swal({
+					title: \'오늘 배운 내용 복습하기\',
+					text: "삭제 후 다시 풀기를 권합니다.",
+					type: \'warning\',
+					buttons:{
+						confirm: {
+							text : \'삭제 후 다시 풀기\',
+							className : \'btn btn-danger\'
+						},
+						cancel: {
+							visible: true,
+							text : \'복습 후 다시 풀기\',
+							className: \'btn btn-primary\'
+						}      			
+
+					}
+				}).then((willDelete) => {
+					if (willDelete) {
+						$.ajax({
+						url:"delete.php",
+						type: "POST",
+						dataType:"json",
+					 	data : {
+						"wboardid":Wboardid,
+						"userid":Userid,	
+					 		},
+						 });
+					location.reload();
+					} else {
+						swal("취소되었습니다.", {
+							buttons : {
+								confirm : {
+									className: \'btn btn-success\'
+								}
+							}
+						});
+					}
+				}); 
+			}
+		</script>';
+$DB->execute("UPDATE {abessi_messages} SET status='retry', tlaststroke='$timecreated' WHERE wboardid='$id' ORDER BY id DESC LIMIT 1 ");
+echo '<script>retrywb()</script>';
+	}  
+ 
+
+$siprogram=$DB->get_record_sql("SELECT data   FROM mdl_user_info_data where userid='$studentid' and fieldid='81' ");
+$sistate=$siprogram->data;
+
+
+if($thisboard->status==='review' && time()-$thisboard->timemodified+43200 > $thisboard->treview*86400 && $sistate=='ON')
+	{
+echo '	<script> 
+function firesynapse()
+		{
+		var Wboardid= \''.$id.'\'; 
+		var Userid= \''.$studentid.'\'; 
+		var Eventid=7128;
+ 	 
+		Swal.fire({
+		position:"top-end",
+		width: 725,
+		backdrop: false,
+		title: "기억상태 입력하기 (기억 안남 0% ~ 직전 기억 100%)",
+		icon: "range",
+		input: "range",
+		inputLabel: "1. 기억나지 않음 (0%) 2. 풀었다는 사실만 기억나는 정도 (25%) 3. 기억은 나지만 시작하기 전에 약간의 시간이 필요함 (50%) 4. 풀이를 바로 시작하는 것은 가능하지만 과정에서 시간이 필요한 지점이 있음 (75%) 5. 마치 조금 전에 본 것과 같음 (100%)",
+		inputAttributes: {
+		min: 0,
+  		max: 100,
+ 		step: 5,
+ 		},
+ 		inputValue: 60
+		}).then((result) => {
+		if(result.isConfirmed) {
+				$.ajax({
+				url:"check_cognitive.php",
+				type: "POST",
+				dataType:"json",
+				 data : {
+				"eventid":Eventid,
+				"userid":Userid,
+				"wboardid":Wboardid,	
+				"synapselevel":result.value,
+				         },			 	
+				
+				success:function(data){
+						 }
+				 })	     		 
+ 				Swal.fire({
+				width: 725,
+				text : "입력되었습니다. NEXT 버튼을 누르고 복습활동을 마무리해 주세요.",
+				showConfirmButton:false,
+				    })
+			setTimeout("location.reload()", 1000);				 
+				}
+		})
+		}
+	</script>';
+	echo '<script>firesynapse()</script>';
+	}
+
+$autogradeOn=$DB->get_record_sql("SELECT data   FROM mdl_user_info_data where userid='$USER->id' and fieldid='82' ");
+$autoGradeState=$autogradeOn->data;
+
+ 
+if( $role!=='student' && ($thisboard->status==='complete' || $thisboard->status==='review') && $thisboard->teacher_check!=2 && $autoGradeState==='ON')
+	{
+	include("autograde.php");
+	//include("almtyroutine.php");
+	
+	echo '<script>
+ 	var nstar= \''.$nstar.'\'; 
+
+				swal({
+					title: \'자동평가 결과\',
+					text: "자동평점 결과가 " + nstar +"점 입니다.  (결과를 수정 : 검사완료 클릭)",
+					type: \'warning\',
+					buttons:{
+						confirm: {
+							visible: true,
+							text : \'변경하기\',
+							className : \'btn btn-info\'
+						},
+						cancel: {
+							visible: true,
+							text : \'NEXT\',
+							className: \'btn btn-primary\'
+						},     			
+
+					},
+				}).then((willDelete) => {
+					if (willDelete) {
+					teacherCheck();	 
+					} else {
+					document.getElementById("alert_nextpage").click();	
+					}
+				}); 
+ 
+	</script>';
+	}  
+
+if($thisboard->contentstitle ==='realtime')
+	{
+	$voice11=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=11 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice11->instruction;
+	if($inputtext!=NULL)
+		{
+		include("texttovoice.php");
+		//sleep(60);
+		}
+
+	$voice2=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=2 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice2->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice3=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=3 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice3->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice4=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=4 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice4->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice7=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=7 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice7->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	}
+elseif(strpos($id, '0tsDoHfRT')!==false)
+	{
+	$voice2=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=2 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice2->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice3=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=3 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice3->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice4=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=4 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice4->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice5=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=5 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice5->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice7=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=7 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice7->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice10=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=10 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice10->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	}
+elseif(strpos($id, 'nx4HQkXq')!==false)
+	{
+	$voice4=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=4 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice4->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice5=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=5 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice5->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice6=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=6 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice6->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice9=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=9 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice9->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+	} 
+elseif(strpos($id, 'booststep')!==false)
+	{
+	$voice4=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=4 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice4->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice5=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=5 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice5->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	} 
+elseif($thisboard->contentstype==1)
+	{
+	$voice3=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=3 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice3->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice5=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=5 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice5->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice7=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=7 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice7->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	$voice8=$DB->get_record_sql("SELECT * FROM mdl_abessi_instruction where contentsid='$contentsid' AND contentstype='$contentstype' AND feedbacktype=8 ORDER BY id DESC LIMIT 1   ");
+	$inputtext=$voice8->instruction;
+	if($inputtext!=NULL)include("texttovoice.php");
+	//sleep(60);
+
+	} 
+ 
+?>

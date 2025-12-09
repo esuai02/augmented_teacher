@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인지관성 개선 - 문제풀이 상호작용 시스템</title>
+    <link rel="stylesheet" href="bias_styles.css">
+</head>
+<body>
+    <div class="bias-main-container">
+        <!-- 상단 헤더 -->
+        <div class="bias-header">
+            <div class="header-left">
+                <button class="back-button" onclick="goBack()">← 돌아가기</button>
+                <h1>🧠 인지관성 개선 - 문제풀이 상호작용</h1>
+            </div>
+            <div class="header-right">
+                <div class="connection-status">
+                    <span class="status-indicator online"></span>
+                    <span>연결됨</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="bias-content">
+            <!-- 단계 선택 영역 -->
+            <div class="phase-selector">
+                <div class="phase-selector-header">
+                    <h2>문제풀이 단계를 선택하세요</h2>
+                    <button class="skip-button" onclick="skipPhaseSelection()">스킵 →</button>
+                </div>
+                <div class="phase-buttons">
+                    <button class="phase-button" id="initialBtn" onclick="selectPhase('initial')">
+                        <div class="phase-icon">🎯</div>
+                        <div class="phase-title">초기접근</div>
+                        <div class="phase-desc">문제 분석 및 전략 수립</div>
+                    </button>
+                    <button class="phase-button" id="middleBtn" onclick="selectPhase('middle')">
+                        <div class="phase-icon">⚙️</div>
+                        <div class="phase-title">중간풀이</div>
+                        <div class="phase-desc">해결 과정 진행 및 점검</div>
+                    </button>
+                    <button class="phase-button" id="finalBtn" onclick="selectPhase('final')">
+                        <div class="phase-icon">✅</div>
+                        <div class="phase-title">최종검산</div>
+                        <div class="phase-desc">답안 검증 및 마무리</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 상호작용 영역 -->
+            <div class="interaction-area" id="interactionArea" style="display: none;">
+                <!-- 학생 정보 입력 -->
+                <div class="student-info-section">
+                    <h3>학생 정보</h3>
+                    <div class="info-inputs">
+                        <input type="text" id="studentName" placeholder="학생 이름" class="info-input">
+                        <select id="gradeLevel" class="info-input">
+                            <option value="">학년 선택</option>
+                            <option value="중1">중학교 1학년</option>
+                            <option value="중2">중학교 2학년</option>
+                            <option value="중3">중학교 3학년</option>
+                            <option value="고1">고등학교 1학년</option>
+                            <option value="고2">고등학교 2학년</option>
+                            <option value="고3">고등학교 3학년</option>
+                        </select>
+                        <input type="text" id="problemType" placeholder="문제 유형 (예: 이차함수, 확률)" class="info-input">
+                    </div>
+                </div>
+
+                <!-- 선택된 단계 정보 -->
+                <div class="phase-info-section" id="phaseInfo">
+                    <h3 id="phaseTitle"></h3>
+                    <p id="phaseDescription"></p>
+                </div>
+
+                <!-- 인지관성 패턴 선택 -->
+                <div class="pattern-selection-section">
+                    <h3>관찰된 인지관성 패턴</h3>
+                    <div class="pattern-grid" id="patternGrid">
+                        <!-- 패턴 버튼들이 동적으로 생성됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 상호작용 메시지 영역 -->
+                <div class="message-section" id="messageSection" style="display: none;">
+                    <h3>상호작용 메시지</h3>
+                    <div class="message-preview" id="messagePreview">
+                        <!-- 메시지 미리보기가 여기에 표시됩니다 -->
+                    </div>
+                    <div class="message-actions">
+                        <button class="edit-message-btn" onclick="editMessage()">메시지 수정</button>
+                        <button class="send-message-btn" onclick="sendMessage()">메시지 발송</button>
+                    </div>
+                </div>
+
+                <!-- 연쇄상호작용 영역 -->
+                <div class="chain-interaction-section" id="chainSection" style="display: none;">
+                    <h3>🔗 연쇄상호작용 설정</h3>
+                    <div class="similar-students" id="similarStudents">
+                        <!-- 유사 패턴 학생들이 여기에 표시됩니다 -->
+                    </div>
+                    <div class="chain-actions">
+                        <button class="chain-send-btn" onclick="sendChainMessage()">연쇄 메시지 발송</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상태 표시 영역 -->
+        <div class="status-area" id="statusArea" style="display: none;">
+            <div class="status-messages" id="statusMessages">
+                <!-- 상태 메시지들이 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="bias_script.js"></script>
+</body>
+</html>

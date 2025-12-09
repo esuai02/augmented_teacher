@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카드 탭 격리 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .tab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .tab-button {
+            background: #6c757d;
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .tab-button:hover {
+            background: #5a6268;
+        }
+        .tab-button.active {
+            background: #007bff;
+        }
+        .cards-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .card-type {
+            color: #6c757d;
+            font-size: 12px;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>카드 탭 격리 테스트</h1>
+    
+    <div class="container">
+        <h2>1. 테스트 카드 생성</h2>
+        <div class="test-section">
+            <p>각 탭에 테스트 카드를 생성합니다.</p>
+            <button onclick="createTestCards()">테스트 카드 생성</button>
+            <div id="createResult" class="result"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>2. 탭별 카드 확인</h2>
+        <div class="test-section">
+            <label>카테고리 선택:</label>
+            <select id="categorySelect" onchange="loadTabs()">
+                <option value="">선택하세요</option>
+                <option value="menu_tab">수학교실</option>
+                <option value="student_management">학생관리</option>
+                <option value="class_management">학급운영</option>
+            </select>
+            
+            <div id="tabsContainer" style="display: none;">
+                <h3>탭 선택:</h3>
+                <div id="tabGrid" class="tab-grid"></div>
+                
+                <div id="cardsContainer" style="display: none;">
+                    <h3>카드 목록:</h3>
+                    <div id="cardsDisplay" class="cards-display"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>3. 격리 테스트</h2>
+        <div class="test-section">
+            <p>특정 탭의 카드가 다른 탭에서 표시되지 않는지 확인합니다.</p>
+            <button onclick="runIsolationTest()">격리 테스트 실행</button>
+            <div id="isolationResult" class="result"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>4. 플러그인 실행 테스트</h2>
+        <div class="info-box">
+            <strong>팝업 차단 해제 필요:</strong> 플러그인 테스트를 위해 이 사이트의 팝업을 허용해주세요.
+        </div>
+        <div class="test-section">
+            <button onclick="testInternalLink()">내부 링크 테스트</button>
+            <button onclick="testExternalLink()">외부 링크 테스트</button>
+            <button onclick="testMessage()">메시지 테스트</button>
+            <button onclick="testAgent()">에이전트 테스트</button>
+            <div id="pluginResult" class="result"></div>
+        </div>
+    </div>
+    
+    <script src="plugin_settings_client.js"></script>
+    <script>
+        // 전역 클라이언트 인스턴스
+        const client = new KTMPluginSettingsClient();
+        const userId = 1;
+        
+        // 탭 구조 정의
+        const tabStructure = {
+            'menu_tab': ['맞춤형 학습', '평가시스템', 'AI 도우미', '학습 분석'],
+            'student_management': ['상담관리', '건강관리', '진로진학', '특별활동'],
+            'class_management': ['학급조직', '학급회의', '보상시스템', '학급활동']
+        };
+        
+        // 테스트 카드 생성
+        async function createTestCards() {
+            const resultDiv = document.getElementById('createResult');
+            resultDiv.innerHTML = '카드 생성 중...';
+            
+            try {
+                let createdCount = 0;
+                
+                for (const [category, tabs] of Object.entries(tabStructure)) {
+                    for (const tab of tabs) {
+                        // 각 탭에 2개의 테스트 카드 생성
+                        for (let i = 1; i <= 2; i++) {
+                            const config = {
+                                plugin_name: `${tab} 테스트 ${i}`,
+                                card_description: `${category}/${tab}에만 표시되어야 하는 카드`,
+                                internal_url: `/test/${category}/${tab}/${i}`,
+                                open_new_tab: true
+                            };
+                            
+                            await client.saveCardSetting(
+                                category,
+                                tab,
+                                i - 1,
+                                'internal_link',
+                                config,
+                                i - 1
+                            );
+                            createdCount++;
+                        }
+                    }
+                }
+                
+                resultDiv.innerHTML = `<span class="success">✓ ${createdCount}개의 테스트 카드 생성 완료</span>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">✗ 카드 생성 실패: ${error.message}</span>`;
+            }
+        }
+        
+        // 탭 로드
+        async function loadTabs() {
+            const category = document.getElementById('categorySelect').value;
+            const tabsContainer = document.getElementById('tabsContainer');
+            const tabGrid = document.getElementById('tabGrid');
+            
+            if (!category) {
+                tabsContainer.style.display = 'none';
+                return;
+            }
+            
+            tabsContainer.style.display = 'block';
+            const tabs = tabStructure[category] || [];
+            
+            tabGrid.innerHTML = tabs.map(tab => `
+                <div class="tab-button" onclick="loadCards('${category}', '${tab}', this)">
+                    ${tab}
+                </div>
+            `).join('');
+        }
+        
+        // 카드 로드
+        async function loadCards(category, tab, buttonElement) {
+            // 탭 버튼 활성화 상태 업데이트
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+            
+            const cardsContainer = document.getElementById('cardsContainer');
+            const cardsDisplay = document.getElementById('cardsDisplay');
+            
+            cardsContainer.style.display = 'block';
+            cardsDisplay.innerHTML = '로딩 중...';
+            
+            try {
+                // 카드 로드
+                await client.loadCardSettings(category, tab);
+                const cards = client.getCardSettings(category, tab) || [];
+                
+                if (cards.length === 0) {
+                    cardsDisplay.innerHTML = '<p>카드가 없습니다.</p>';
+                    return;
+                }
+                
+                cardsDisplay.innerHTML = cards.map(card => {
+                    const config = card.plugin_config || {};
+                    return `
+                        <div class="card-item" onclick="executePlugin('${card.plugin_id}', ${JSON.stringify(config).replace(/"/g, '&quot;')})">
+                            <div class="card-title">${config.plugin_name || '제목 없음'}</div>
+                            <div class="card-type">타입: ${card.plugin_id}</div>
+                            <div class="card-type">카테고리: ${card.category}</div>
+                            <div class="card-type">탭: ${card.card_title}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                cardsDisplay.innerHTML = `<span class="error">카드 로드 실패: ${error.message}</span>`;
+            }
+        }
+        
+        // 격리 테스트
+        async function runIsolationTest() {
+            const resultDiv = document.getElementById('isolationResult');
+            resultDiv.innerHTML = '격리 테스트 실행 중...';
+            
+            try {
+                let testResults = [];
+                let passCount = 0;
+                let failCount = 0;
+                
+                // 모든 카테고리와 탭 조합 테스트
+                for (const [category, tabs] of Object.entries(tabStructure)) {
+                    for (const tab of tabs) {
+                        // 현재 탭의 카드 로드
+                        await client.loadCardSettings(category, tab);
+                        const currentTabCards = client.getCardSettings(category, tab) || [];
+                        
+                        // 다른 탭들 확인
+                        for (const otherTab of tabs) {
+                            if (otherTab === tab) continue;
+                            
+                            await client.loadCardSettings(category, otherTab);
+                            const otherTabCards = client.getCardSettings(category, otherTab) || [];
+                            
+                            // 현재 탭의 카드가 다른 탭에 나타나는지 확인
+                            const leakedCards = currentTabCards.filter(card => {
+                                return otherTabCards.some(otherCard => 
+                                    otherCard.id === card.id || 
+                                    (otherCard.plugin_config?.plugin_name === card.plugin_config?.plugin_name)
+                                );
+                            });
+                            
+                            if (leakedCards.length > 0) {
+                                testResults.push(`❌ FAIL: ${category}/${tab} 카드가 ${otherTab}에서 발견됨 (${leakedCards.length}개)`);
+                                failCount++;
+                            } else {
+                                testResults.push(`✅ PASS: ${category}/${tab} → ${otherTab} 격리 성공`);
+                                passCount++;
+                            }
+                        }
+                    }
+                }
+                
+                resultDiv.innerHTML = `
+<h3>격리 테스트 결과</h3>
+<p>성공: ${passCount}, 실패: ${failCount}</p>
+${testResults.join('\n')}
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">격리 테스트 실패: ${error.message}</span>`;
+            }
+        }
+        
+        // 플러그인 실행
+        function executePlugin(pluginId, config) {
+            const resultDiv = document.getElementById('pluginResult');
+            
+            try {
+                // script.js의 executePluginAction 함수 로직 재현
+                if (pluginId === 'internal_link') {
+                    const url = config.internal_url || config.url;
+                    window.open(url, '_blank', 'width=1200,height=800,resizable=yes,scrollbars=yes');
+                    resultDiv.innerHTML = `✅ 내부 링크 팝업 열기: ${url}`;
+                } else if (pluginId === 'external_link') {
+                    const url = config.external_url || config.url;
+                    window.open(url, '_blank', 'width=1200,height=800,resizable=yes,scrollbars=yes');
+                    resultDiv.innerHTML = `✅ 외부 링크 팝업 열기: ${url}`;
+                } else if (pluginId === 'send_message') {
+                    showMessagePopup(config);
+                    resultDiv.innerHTML = `✅ 메시지 팝업 표시: ${config.message_content}`;
+                } else if (pluginId === 'agent') {
+                    resultDiv.innerHTML = `✅ 에이전트 실행: ${config.plugin_name}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ 플러그인 실행 오류: ${error.message}`;
+            }
+        }
+        
+        // 메시지 팝업 표시 (script.js에서 복사)
+        function showMessagePopup(config) {
+            const popupWindow = window.open('', '_blank', 'width=600,height=400,resizable=yes,scrollbars=yes');
+            
+            if (!popupWindow) {
+                alert('팝업 차단이 감지되었습니다. 팝업을 허용해주세요.');
+                return;
+            }
+            
+            const messageContent = config.message_content || '메시지가 없습니다.';
+            const messageType = config.message_type || 'info';
+            const pluginName = config.plugin_name || '메시지';
+            
+            const colors = {
+                info: '#0066cc',
+                success: '#00a854',
+                warning: '#faad14',
+                error: '#ff4d4f'
+            };
+            
+            const popupHTML = `
+                <!DOCTYPE html>
+                <html lang="ko">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${pluginName}</title>
+                    <style>
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            background: #f5f5f5;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 100vh;
+                        }
+                        .message-container {
+                            background: white;
+                            border-radius: 12px;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                            padding: 40px;
+                            max-width: 90%;
+                            text-align: center;
+                        }
+                        .message-icon {
+                            font-size: 48px;
+                            margin-bottom: 20px;
+                        }
+                        .message-title {
+                            font-size: 24px;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 10px;
+                        }
+                        .message-content {
+                            font-size: 16px;
+                            color: #666;
+                            line-height: 1.6;
+                            margin-bottom: 30px;
+                        }
+                        .close-button {
+                            background: ${colors[messageType]};
+                            color: white;
+                            border: none;
+                            padding: 12px 30px;
+                            border-radius: 6px;
+                            font-size: 16px;
+                            cursor: pointer;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="message-container">
+                        <div class="message-icon">
+                            ${messageType === 'info' ? 'ℹ️' : 
+                              messageType === 'success' ? '✅' : 
+                              messageType === 'warning' ? '⚠️' : '❌'}
+                        </div>
+                        <h2 class="message-title">${pluginName}</h2>
+                        <div class="message-content">${messageContent}</div>
+                        <button class="close-button" onclick="window.close()">확인</button>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            popupWindow.document.write(popupHTML);
+            popupWindow.document.close();
+        }
+        
+        // 플러그인 테스트 함수들
+        async function testInternalLink() {
+            const config = {
+                plugin_name: '내부 링크 테스트',
+                internal_url: '/test/internal/page',
+                open_new_tab: true
+            };
+            executePlugin('internal_link', config);
+        }
+        
+        async function testExternalLink() {
+            const config = {
+                plugin_name: '외부 링크 테스트',
+                external_url: 'https://www.google.com',
+                open_new_tab: true
+            };
+            executePlugin('external_link', config);
+        }
+        
+        async function testMessage() {
+            const config = {
+                plugin_name: '알림 메시지',
+                message_content: '이것은 테스트 메시지입니다.\n팝업으로 표시됩니다.',
+                message_type: 'success'
+            };
+            executePlugin('send_message', config);
+        }
+        
+        async function testAgent() {
+            const config = {
+                plugin_name: 'AI 에이전트 테스트',
+                agent_type: 'custom',
+                agent_description: 'AI 에이전트 팝업 테스트'
+            };
+            executePlugin('agent', config);
+        }
+        
+        // 페이지 로드 시 초기화
+        window.onload = function() {
+            client.setUserId(userId);
+            console.log('카드 탭 격리 테스트 준비 완료');
+        };
+    </script>
+</body>
+</html>

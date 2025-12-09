@@ -1,0 +1,20 @@
+[RESPECT_STATEMENT]
+
+{{student_name}}님의 의견을 존중해요.
+
+[ACKNOWLEDGMENT]
+
+지금 {{intervention_type}}을(를) 원하지 않으신다는 걸 이해했어요.
+{{student_name}}님의 선택을 존중합니다.
+
+[REASSURANCE]
+
+이건 선택의 문제이지, 맞고 틀림의 문제가 아니에요.
+제가 옆에 있다는 건 변하지 않아요.
+
+[OPEN_INVITATION]
+
+마음이 바뀌시거나, 다른 방식의 도움이 필요하시면
+언제든 편하게 말씀해 주세요.
+
+저는 항상 여기 있을게요.

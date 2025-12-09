@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React 테스트</title>
+    <!-- React 및 ReactDOM 라이브러리 로드 -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel 로드 (JSX 변환용) -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <h1>React 테스트 페이지</h1>
+    
+    <!-- React 앱이 마운트될 컨테이너 -->
+    <div id="root"></div>
+
+    <!-- 디버깅 정보 출력 영역 -->
+    <div id="debug"></div>
+
+    <!-- React 코드 (babel로 변환) -->
+    <script type="text/babel">
+        // 간단한 React 컴포넌트
+        const App = () => {
+            const [count, setCount] = React.useState(0);
+            
+            return (
+                <div style={{padding: '20px', border: '1px solid #ddd', margin: '20px 0'}}>
+                    <h2>간단한 React 앱</h2>
+                    <p>현재 카운트: {count}</p>
+                    <button 
+                        onClick={() => setCount(count + 1)} 
+                        style={{padding: '10px', backgroundColor: '#0070f3', color: 'white', border: 'none', borderRadius: '5px'}}
+                    >
+                        증가
+                    </button>
+                </div>
+            );
+        };
+
+        // React 앱 렌더링
+        document.getElementById('debug').textContent = 'React 렌더링 시도 중...';
+        
+        try {
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+            document.getElementById('debug').textContent = 'React 렌더링 성공!';
+        } catch (error) {
+            document.getElementById('debug').textContent = '오류 발생: ' + error.message;
+        }
+    </script>
+</body>
+</html> 

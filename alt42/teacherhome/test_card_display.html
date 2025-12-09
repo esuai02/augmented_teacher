@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카드 표시 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .test-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .test-card:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .card-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .card-type {
+            font-size: 12px;
+            color: #999;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            background: #cce5ff;
+            color: #004085;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>카드 표시 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1. 플러그인 시스템 상태</h2>
+        <div id="pluginStatus" class="status info">플러그인 시스템 확인 중...</div>
+        <button onclick="loadPluginSystem()">플러그인 시스템 로드</button>
+        <button onclick="checkPluginTypes()">플러그인 타입 확인</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 카드 데이터 로드 테스트</h2>
+        <button onclick="loadConsultationCards()">상담관리 카드 로드</button>
+        <button onclick="loadAllCards()">모든 카드 로드</button>
+        <div id="cardStatus" class="status info">카드를 로드하려면 버튼을 클릭하세요</div>
+        <div id="cardGrid" class="card-grid"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 디버그 정보</h2>
+        <div id="debugInfo" class="debug-info">디버그 정보가 여기에 표시됩니다</div>
+    </div>
+
+    <!-- 필요한 스크립트 로드 -->
+    <script src="plugin_settings_client.js"></script>
+    
+    <script>
+        let ktmPluginClient;
+        let pluginTypes = [];
+        
+        // 플러그인 시스템 로드
+        async function loadPluginSystem() {
+            const status = document.getElementById('pluginStatus');
+            const debug = document.getElementById('debugInfo');
+            
+            try {
+                // 플러그인 클라이언트 초기화
+                ktmPluginClient = new KTMPluginSettingsClient('plugin_settings_api_real.php');
+                ktmPluginClient.setUserId(1); // 테스트용 사용자 ID
+                
+                // 플러그인 타입 로드
+                await ktmPluginClient.loadPluginTypes();
+                pluginTypes = ktmPluginClient.pluginTypes;
+                
+                status.className = 'status success';
+                status.textContent = `✓ 플러그인 시스템 로드 완료 (${pluginTypes.length}개 타입)`;
+                
+                debug.textContent = '플러그인 타입:\n' + JSON.stringify(pluginTypes, null, 2);
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `✗ 플러그인 시스템 로드 실패: ${error.message}`;
+                debug.textContent = `오류 상세:\n${error.stack}`;
+            }
+        }
+        
+        // 플러그인 타입 확인
+        function checkPluginTypes() {
+            const debug = document.getElementById('debugInfo');
+            const agentPlugin = pluginTypes.find(p => p.id === 'agent');
+            
+            if (agentPlugin) {
+                debug.textContent = '에이전트 플러그인 정보:\n' + JSON.stringify(agentPlugin, null, 2);
+            } else {
+                debug.textContent = '에이전트 플러그인을 찾을 수 없습니다';
+            }
+        }
+        
+        // 상담관리 카드 로드
+        async function loadConsultationCards() {
+            await loadCards('consultation');
+        }
+        
+        // 모든 카드 로드
+        async function loadAllCards() {
+            const categories = ['quarterly', 'weekly', 'daily', 'realtime', 'interaction', 'bias', 'development', 'consultation'];
+            const allCards = [];
+            
+            for (const category of categories) {
+                try {
+                    await ktmPluginClient.loadCardSettings(category);
+                    const cards = ktmPluginClient.getCardSettings(category) || [];
+                    allCards.push(...cards.map(card => ({ ...card, category })));
+                } catch (error) {
+                    console.error(`${category} 카드 로드 실패:`, error);
+                }
+            }
+            
+            displayCards(allCards);
+        }
+        
+        // 카드 로드
+        async function loadCards(category) {
+            const status = document.getElementById('cardStatus');
+            const debug = document.getElementById('debugInfo');
+            
+            if (!ktmPluginClient) {
+                status.className = 'status error';
+                status.textContent = '플러그인 시스템을 먼저 로드하세요';
+                return;
+            }
+            
+            try {
+                status.className = 'status info';
+                status.textContent = `${category} 카드 로드 중...`;
+                
+                // 카드 설정 로드
+                await ktmPluginClient.loadCardSettings(category);
+                const cards = ktmPluginClient.getCardSettings(category) || [];
+                
+                status.className = 'status success';
+                status.textContent = `✓ ${cards.length}개의 카드를 로드했습니다`;
+                
+                // 디버그 정보 표시
+                const agentCards = cards.filter(card => card.plugin_id === 'agent');
+                debug.textContent = `${category} 에이전트 카드 (${agentCards.length}개):\n`;
+                agentCards.forEach(card => {
+                    const config = card.plugin_config || {};
+                    debug.textContent += `\n- ${config.plugin_name}:\n`;
+                    debug.textContent += `  card_description: ${config.card_description || '없음'}\n`;
+                    debug.textContent += `  description: ${config.description || '없음'}\n`;
+                });
+                
+                // 카드 표시
+                displayCards(cards.map(card => ({ ...card, category })));
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = `✗ 카드 로드 실패: ${error.message}`;
+                debug.textContent = `오류 상세:\n${error.stack}`;
+            }
+        }
+        
+        // 카드 표시
+        function displayCards(cards) {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            
+            cards.forEach(card => {
+                const config = card.plugin_config || {};
+                const plugin = pluginTypes.find(p => p.id === card.plugin_id);
+                
+                // 카드 제목과 설명 결정
+                const title = config.plugin_name || config.card_title || '제목 없음';
+                const description = config.card_description || 
+                                  config.description || 
+                                  (config.agent_config && config.agent_config.description) ||
+                                  (plugin ? plugin.description : '설명 없음');
+                
+                const cardElement = document.createElement('div');
+                cardElement.className = 'test-card';
+                cardElement.innerHTML = `
+                    <div class="card-icon">${plugin ? plugin.icon : '🔌'}</div>
+                    <div class="card-title">${title}</div>
+                    <div class="card-description">${description}</div>
+                    <div class="card-type">${card.category} / ${plugin ? plugin.title : card.plugin_id}</div>
+                `;
+                
+                // 클릭 시 상세 정보 표시
+                cardElement.onclick = () => {
+                    const debug = document.getElementById('debugInfo');
+                    debug.textContent = `카드 상세 정보:\n${JSON.stringify(card, null, 2)}`;
+                };
+                
+                grid.appendChild(cardElement);
+            });
+        }
+        
+        // 페이지 로드 시 플러그인 시스템 자동 로드
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPluginSystem();
+        });
+    </script>
+</body>
+</html>

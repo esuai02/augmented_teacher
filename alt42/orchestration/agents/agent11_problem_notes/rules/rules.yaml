@@ -1,0 +1,911 @@
+# Auto-generated rules.yaml for problem_notes_agent
+# Generated at: 2025-01-21
+# Source: agent11_problem_notes_questions.md → agent11_problem_notes_mission.md → teacher_level_evaluation.md → error_cause_classification.yaml → note_quality_standards.yaml
+
+version: "1.0"
+scenario: "problem_notes"
+description: "오답 패턴 분석, 노트 품질 평가, 복습 전략 설계, 학생별 맞춤 피드백 제공"
+
+rules:
+  # ========== S1: 시험 후 오답노트 작성 직후 분석 ==========
+  
+  - rule_id: "S1_R1_note_submission_analysis"
+    priority: 99
+    description: "오답노트 제출 직후 기본 분석 수행"
+    conditions:
+      - field: "preparation_notes"
+        operator: "!="
+        value: null
+      - field: "note_statistics.preparation_count"
+        operator: ">"
+        value: 0
+      - field: "analysis_performed"
+        operator: "=="
+        value: false
+    action:
+      - "analyze: 'note_submission_initial_analysis'"
+      - "calculate: 'reflection_score'"
+      - "calculate: 'completeness_score'"
+      - "calculate: 'engagement_score'"
+      - "display_message: '오답노트를 분석하여 성찰 깊이와 몰입도를 평가합니다.'"
+    confidence: 0.95
+    rationale: "S1: 오답노트 제출 직후 즉시 분석 필요"
+    
+  - rule_id: "S1_R2_engagement_analysis"
+    priority: 98
+    description: "몰입도 분석 (nstroke, usedtime 기반)"
+    conditions:
+      - field: "preparation_notes"
+        operator: "!="
+        value: null
+      - field: "preparation_notes[0].nstroke"
+        operator: "!="
+        value: null
+      - field: "preparation_notes[0].usedtime"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'engagement_level_analysis'"
+      - "calculate: 'stroke_density'"
+      - "evaluate: 'time_efficiency'"
+      - "generate_description: 'engagement_assessment_report'"
+      - "display_message: '필기량과 소요시간을 분석하여 학습 몰입도를 평가합니다.'"
+    confidence: 0.94
+    rationale: "S1: nstroke와 usedtime은 몰입도의 핵심 지표"
+    
+  - rule_id: "S1_R3_reflection_score_calculation"
+    priority: 97
+    description: "성찰 점수 계산 및 평가"
+    conditions:
+      - field: "preparation_notes"
+        operator: "!="
+        value: null
+      - field: "preparation_notes[0].contentstitle"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'reflection_depth_analysis'"
+      - "calculate: 'reflection_score'"
+      - "evaluate: 'reflection_quality_level'"
+      - "generate_description: 'reflection_score_report'"
+      - "display_message: '오답 원인 기록의 구체성과 깊이를 분석하여 성찰 점수를 산정합니다.'"
+    confidence: 0.93
+    rationale: "S1: reflection_score는 노트 품질의 핵심 지표"
+    
+  - rule_id: "S1_R4_error_cause_distribution"
+    priority: 96
+    description: "오답 원인 분포 분석"
+    conditions:
+      - field: "preparation_notes"
+        operator: "!="
+        value: null
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+    action:
+      - "classify: 'error_cause_classification'"
+      - "analyze: 'error_cause_distribution'"
+      - "identify: 'most_common_error_type'"
+      - "generate_description: 'error_cause_distribution_report'"
+      - "display_message: '오답 원인을 분류하여 가장 흔한 오류 유형을 파악합니다.'"
+    confidence: 0.92
+    rationale: "S1: 오답 원인 분포는 복습 전략 수립의 기초"
+    
+  - rule_id: "S1_R5_review_priority_calculation"
+    priority: 95
+    description: "복습 우선순위 산정"
+    conditions:
+      - field: "error_patterns"
+        operator: "!="
+        value: null
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+    action:
+      - "calculate: 'unit_review_priority'"
+      - "calculate: 'error_type_review_priority'"
+      - "generate_description: 'review_priority_report'"
+      - "recommend: 'review_schedule'"
+      - "display_message: '오답 패턴을 분석하여 복습 우선순위를 산정합니다.'"
+    confidence: 0.91
+    rationale: "S1: 복습 우선순위는 효율적 학습을 위한 필수"
+    
+  - rule_id: "S1_R6_signature_routine_detection"
+    priority: 94
+    description: "시그니처 루틴 가능성 추정"
+    conditions:
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 3
+      - field: "attempt_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 3
+    action:
+      - "analyze: 'note_pattern_consistency'"
+      - "identify: 'recurring_error_patterns'"
+      - "evaluate: 'routine_stability'"
+      - "generate_description: 'signature_routine_analysis'"
+      - "display_message: '반복되는 오답 패턴을 분석하여 시그니처 루틴 가능성을 추정합니다.'"
+    confidence: 0.90
+    rationale: "S1: 시그니처 루틴 발견은 행동 변화의 핵심"
+    
+  # ========== S2: 동일 단원 오답 재발 분석 ==========
+  
+  - rule_id: "S2_R1_repeated_unit_error_detection"
+    priority: 93
+    description: "동일 단원 반복 오답 감지"
+    conditions:
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 3
+      - field: "preparation_notes"
+        operator: "contains"
+        value: "same_unit"
+        field_path: "contentstitle"
+    action:
+      - "identify: 'repeated_unit_errors'"
+      - "analyze: 'unit_error_frequency'"
+      - "classify: 'error_cause_for_unit'"
+      - "generate_description: 'repeated_unit_error_report'"
+      - "display_message: '동일 단원에서 반복되는 오답을 감지하여 분석합니다.'"
+    confidence: 0.92
+    rationale: "S2: 동일 단원 반복 오답은 개념 미이해 신호"
+    
+  - rule_id: "S2_R2_error_cause_determination"
+    priority: 92
+    description: "계산 실수 vs 개념 오해 판정"
+    conditions:
+      - field: "repeated_unit_errors"
+        operator: "!="
+        value: null
+      - field: "repeated_unit_errors"
+        operator: "length"
+        value: ">="
+        comparison_value: 2
+    action:
+      - "classify: 'error_cause_type'"
+      - "determine: 'calculation_vs_concept'"
+      - "analyze: 'error_pattern_consistency'"
+      - "generate_description: 'error_cause_determination_report'"
+      - "display_message: '반복 오답의 원인이 계산 실수인지 개념 오해인지 판정합니다.'"
+    confidence: 0.91
+    rationale: "S2: 계산 실수와 개념 오해는 차별화된 전략 필요"
+    
+  - rule_id: "S2_R3_unit_score_comparison"
+    priority: 91
+    description: "단원별 reflection_score와 completeness_score 비교"
+    conditions:
+      - field: "repeated_unit_errors"
+        operator: "!="
+        value: null
+      - field: "unit_scores"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'unit_average_reflection_score'"
+      - "calculate: 'unit_average_completeness_score'"
+      - "compare: 'unit_scores_with_others'"
+      - "generate_description: 'unit_score_comparison_report'"
+      - "display_message: '해당 단원의 평균 성찰 점수와 완성도를 다른 단원과 비교합니다.'"
+    confidence: 0.90
+    rationale: "S2: 단원별 점수 비교는 취약 단원 식별에 필수"
+    
+  - rule_id: "S2_R4_improvement_routine_suggestion"
+    priority: 89
+    description: "개선 루틴 제안"
+    conditions:
+      - field: "repeated_unit_errors"
+        operator: "!="
+        value: null
+      - field: "error_cause_type"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'unit_specific_improvement_routine'"
+      - "design: 'error_type_based_strategy'"
+      - "generate_description: 'improvement_routine_proposal'"
+      - "display_message: '반복 오답 유형에 맞는 개선 루틴을 제안합니다.'"
+    confidence: 0.88
+    rationale: "S2: 오류 유형별 차별화된 개선 루틴 필요"
+    
+  # ========== S3: 오답노트 작성 부실 시 성찰 유도 ==========
+  
+  - rule_id: "S3_R1_low_quality_note_detection"
+    priority: 88
+    description: "품질이 낮은 노트 감지 (필기량 적음, reflection_score 낮음)"
+    conditions:
+      - OR:
+        - field: "preparation_notes[0].nstroke"
+          operator: "<"
+          value: 50
+        - field: "reflection_score"
+          operator: "<"
+          value: 5
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+    action:
+      - "analyze: 'note_quality_assessment'"
+      - "identify: 'quality_deficiency_reasons'"
+      - "generate_description: 'low_quality_note_diagnosis'"
+      - "display_message: '노트 품질이 기준 이하임을 감지하여 원인을 분석합니다.'"
+    confidence: 0.87
+    rationale: "S3: 낮은 품질 노트는 즉시 개선 필요"
+    
+  - rule_id: "S3_R2_learning_focus_diagnosis"
+    priority: 87
+    description: "학습 집중도 진단"
+    conditions:
+      - field: "low_quality_note_detected"
+        operator: "=="
+        value: true
+      - field: "preparation_notes[0].usedtime"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'learning_focus_level'"
+      - "evaluate: 'engagement_pattern'"
+      - "identify: 'distraction_factors'"
+      - "generate_description: 'learning_focus_diagnosis_report'"
+      - "display_message: '학습 집중도와 성찰 패턴을 진단합니다.'"
+    confidence: 0.86
+    rationale: "S3: 집중도 진단은 개선 방향 제시의 기초"
+    
+  - rule_id: "S3_R3_reflection_pattern_analysis"
+    priority: 86
+    description: "성찰 패턴 분석"
+    conditions:
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 3
+      - field: "reflection_score"
+        operator: "<"
+        value: 5
+    action:
+      - "analyze: 'historical_reflection_patterns'"
+      - "identify: 'reflection_improvement_trend'"
+      - "evaluate: 'reflection_consistency'"
+      - "generate_description: 'reflection_pattern_analysis_report'"
+      - "display_message: '과거 노트의 성찰 패턴을 분석하여 개선점을 찾습니다.'"
+    confidence: 0.85
+    rationale: "S3: 성찰 패턴 분석은 습관적 문제 발견에 필수"
+    
+  - rule_id: "S3_R4_immediate_coaching_message"
+    priority: 85
+    description: "즉시 코칭 메시지 생성 (짧은 행동 유도형)"
+    conditions:
+      - field: "low_quality_note_detected"
+        operator: "=="
+        value: true
+      - field: "quality_deficiency_reasons"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'personalized_coaching_message'"
+      - "create: 'action_guidance_message'"
+      - "recommend: 'immediate_action_steps'"
+      - "display_message: '부족한 부분을 보완할 수 있는 즉시 코칭 메시지를 생성합니다.'"
+    confidence: 0.84
+    rationale: "S3: 즉시 피드백은 행동 변화에 가장 효과적"
+    
+  # ========== S4: 서술평가 재풀이 후 오답 지속 분석 ==========
+  
+  - rule_id: "S4_R1_essay_assessment_comparison"
+    priority: 84
+    description: "서술평가 결과와 준비노트 비교"
+    conditions:
+      - field: "essay_assessments"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+      - field: "related_note_ids"
+        operator: "!="
+        value: null
+    action:
+      - "compare: 'essay_vs_preparation_note'"
+      - "analyze: 'improvement_indicator'"
+      - "calculate: 'correct_answer_conversion_rate'"
+      - "generate_description: 'essay_assessment_comparison_report'"
+      - "display_message: '서술평가 결과와 준비노트를 비교하여 개선 여부를 분석합니다.'"
+    confidence: 0.83
+    rationale: "S4: 서술평가는 이해도 검증의 핵심 지표"
+    
+  - rule_id: "S4_R2_persistent_error_analysis"
+    priority: 83
+    description: "오답 지속 원인 분석"
+    conditions:
+      - field: "correct_answer_conversion_rate"
+        operator: "<"
+        value: 0.5
+      - field: "essay_assessments"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+    action:
+      - "analyze: 'persistent_error_root_cause'"
+      - "classify: 'error_persistence_type'"
+      - "identify: 'learning_gap_areas'"
+      - "generate_description: 'persistent_error_analysis_report'"
+      - "display_message: '서술평가에서도 오답이 지속되는 원인을 분석합니다.'"
+    confidence: 0.82
+    rationale: "S4: 오답 지속은 개념 미이해 강력 신호"
+    
+  - rule_id: "S4_R3_student_type_classification"
+    priority: 82
+    description: "학생 유형 분류 (단순 반복형 vs 개념 비연결형)"
+    conditions:
+      - field: "persistent_error_analysis"
+        operator: "!="
+        value: null
+      - field: "error_cause_type"
+        operator: "!="
+        value: null
+    action:
+      - "classify: 'student_error_pattern_type'"
+      - "determine: 'repetitive_vs_conceptual'"
+      - "analyze: 'learning_style_characteristics'"
+      - "generate_description: 'student_type_classification_report'"
+      - "display_message: '학생의 오류 패턴 유형을 분류합니다 (단순 반복형 / 개념 비연결형).'"
+    confidence: 0.81
+    rationale: "S4: 학생 유형 분류는 맞춤 전략의 기초"
+    
+  - rule_id: "S4_R4_teacher_summary_report"
+    priority: 81
+    description: "교사용 요약 리포트 생성"
+    conditions:
+      - field: "student_type_classified"
+        operator: "=="
+        value: true
+      - field: "persistent_error_analysis"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'teacher_summary_report'"
+      - "create: 'intervention_recommendations'"
+      - "summarize: 'key_findings'"
+      - "display_message: '교사용 요약 리포트를 생성합니다.'"
+    confidence: 0.80
+    rationale: "S4: 교사 개입을 위한 요약 리포트 필수"
+    
+  # ========== S5: 집중력 저하 또는 무리한 시도 감지 ==========
+  
+  - rule_id: "S5_R1_concentration_drop_detection"
+    priority: 80
+    description: "집중력 저하 세션 감지 (usedtime 대비 nstroke 과소)"
+    conditions:
+      - field: "attempt_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 1
+      - field: "attempt_notes[0].usedtime"
+        operator: ">"
+        value: 600
+      - field: "attempt_notes[0].nstroke"
+        operator: "<"
+        value: 100
+    action:
+      - "calculate: 'stroke_density_per_minute'"
+      - "analyze: 'concentration_level'"
+      - "identify: 'concentration_drop_sessions'"
+      - "generate_description: 'concentration_drop_detection_report'"
+      - "display_message: '집중력 저하가 의심되는 세션을 찾습니다.'"
+    confidence: 0.79
+    rationale: "S5: 집중력 저하는 학습 효과 저하의 주요 원인"
+    
+  - rule_id: "S5_R2_stroke_density_analysis"
+    priority: 79
+    description: "필기 밀도 분석 (nstroke/time)"
+    conditions:
+      - field: "concentration_drop_detected"
+        operator: "=="
+        value: true
+      - field: "attempt_notes[0].usedtime"
+        operator: "!="
+        value: null
+      - field: "attempt_notes[0].nstroke"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'stroke_density_ratio'"
+      - "compare: 'density_with_average'"
+      - "evaluate: 'engagement_efficiency'"
+      - "generate_description: 'stroke_density_analysis_report'"
+      - "display_message: '시간 대비 필기 밀도를 분석합니다.'"
+    confidence: 0.78
+    rationale: "S5: 필기 밀도는 몰입도 측정의 핵심 지표"
+    
+  - rule_id: "S5_R3_immersion_breakpoint_identification"
+    priority: 78
+    description: "몰입 단절 시점 판정 (중간 vs 말미)"
+    conditions:
+      - field: "attempt_notes[0].tlaststroke"
+        operator: "!="
+        value: null
+      - field: "attempt_notes[0].timecreated"
+        operator: "!="
+        value: null
+      - field: "attempt_notes[0].usedtime"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'immersion_timeline'"
+      - "identify: 'breakpoint_timing'"
+      - "determine: 'early_vs_late_breakpoint'"
+      - "generate_description: 'immersion_breakpoint_analysis'"
+      - "display_message: '어떤 시점에서 몰입이 끊겼는지 분석합니다 (중간 / 말미).'"
+    confidence: 0.77
+    rationale: "S5: 몰입 단절 시점은 개선 전략에 중요"
+    
+  - rule_id: "S5_R4_calmness_integration"
+    priority: 77
+    description: "침착도 데이터와 연계한 개선 루틴 제안"
+    conditions:
+      - field: "immersion_breakpoint_identified"
+        operator: "=="
+        value: true
+      - field: "calmness_data"
+        operator: "!="
+        value: null
+    action:
+      - "integrate: 'calmness_data_analysis'"
+      - "correlate: 'concentration_calmness_relationship'"
+      - "recommend: 'calmness_based_improvement_routine'"
+      - "generate_description: 'calmness_integrated_routine_proposal'"
+      - "display_message: '침착도 데이터와 연계하여 개선 루틴을 제안합니다.'"
+    confidence: 0.76
+    rationale: "S5: 침착도는 집중력과 밀접한 관련"
+    
+  # ========== S6: 복습 예약 시점 도래 시 변화 추이 분석 ==========
+  
+  - rule_id: "S6_R1_review_schedule_trigger"
+    priority: 75
+    description: "복습 예약 시점 도래 감지 (3일, 10일, 30일 후)"
+    conditions:
+      - field: "review_schedule_date"
+        operator: "<="
+        value: "current_date"
+      - field: "original_note_date"
+        operator: "!="
+        value: null
+    action:
+      - "trigger: 'review_assessment'"
+      - "retrieve: 'original_note_data'"
+      - "retrieve: 'current_note_data'"
+      - "display_message: '복습 예약 시점이 도래했습니다. 이전 노트와 비교 분석을 시작합니다.'"
+    confidence: 0.95
+    rationale: "S6: 복습 시점 도래는 기억 강화의 핵심"
+    
+  - rule_id: "S6_R2_note_comparison_analysis"
+    priority: 74
+    description: "이전 노트와 현재 노트 비교 분석"
+    conditions:
+      - field: "original_note_data"
+        operator: "!="
+        value: null
+      - field: "current_note_data"
+        operator: "!="
+        value: null
+      - field: "same_concept_identified"
+        operator: "=="
+        value: true
+    action:
+      - "compare: 'note_quality_scores'"
+      - "analyze: 'improvement_indicator'"
+      - "calculate: 'score_change_trend'"
+      - "generate_description: 'note_comparison_analysis_report'"
+      - "display_message: '동일 개념에 대한 이해 개선 여부를 평가합니다.'"
+    confidence: 0.93
+    rationale: "S6: 노트 비교는 학습 효과 검증의 핵심"
+    
+  - rule_id: "S6_R3_score_trend_analysis"
+    priority: 73
+    description: "reflection_score와 completeness_score 변화 추이 분석"
+    conditions:
+      - field: "note_comparison_completed"
+        operator: "=="
+        value: true
+      - field: "original_reflection_score"
+        operator: "!="
+        value: null
+      - field: "current_reflection_score"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'reflection_score_change'"
+      - "calculate: 'completeness_score_change'"
+      - "analyze: 'score_trend_direction'"
+      - "evaluate: 'improvement_level'"
+      - "generate_description: 'score_trend_analysis_report'"
+      - "display_message: '성찰 점수와 완성도의 변화 추이를 분석합니다.'"
+    confidence: 0.92
+    rationale: "S6: 점수 추이는 학습 동향 파악에 필수"
+    
+  - rule_id: "S6_R4_review_feedback_generation"
+    priority: 72
+    description: "복습 피드백 문구 생성 (짧은 형태)"
+    conditions:
+      - field: "score_trend_analyzed"
+        operator: "=="
+        value: true
+      - field: "improvement_level"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'personalized_review_feedback'"
+      - "create: 'short_feedback_message'"
+      - "customize: 'feedback_tone_by_improvement'"
+      - "display_message: '학생에게 보낼 짧은 복습 피드백 문구를 생성합니다.'"
+    confidence: 0.91
+    rationale: "S6: 즉시 피드백은 복습 동기 부여에 효과적"
+    
+  # ========== S7: 주간 리포트 생성 ==========
+  
+  - rule_id: "S7_R1_weekly_data_aggregation"
+    priority: 71
+    description: "주간 오답노트 데이터 취합"
+    conditions:
+      - field: "report_type"
+        operator: "=="
+        value: "weekly"
+      - field: "week_start_date"
+        operator: "!="
+        value: null
+      - field: "week_end_date"
+        operator: "!="
+        value: null
+    action:
+      - "aggregate: 'weekly_note_data'"
+      - "collect: 'all_preparation_notes'"
+      - "collect: 'all_attempt_notes'"
+      - "collect: 'all_essay_assessments'"
+      - "display_message: '이번 주 모든 오답노트 데이터를 취합합니다.'"
+    confidence: 0.95
+    rationale: "S7: 주간 리포트는 주기적 평가의 기초"
+    
+  - rule_id: "S7_R2_unit_error_rate_analysis"
+    priority: 70
+    description: "단원별 오답 비율 분석"
+    conditions:
+      - field: "weekly_data_aggregated"
+        operator: "=="
+        value: true
+      - field: "unit_data"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'unit_error_rate'"
+      - "rank: 'units_by_error_rate'"
+      - "identify: 'top_3_weak_units'"
+      - "generate_description: 'unit_error_rate_report'"
+      - "display_message: '단원별 오답 비율을 분석하여 취약 단원을 식별합니다.'"
+    confidence: 0.94
+    rationale: "S7: 단원별 오답 비율은 학습 방향 설정에 필수"
+    
+  - rule_id: "S7_R3_note_completeness_average"
+    priority: 69
+    description: "노트 완성도 평균 계산"
+    conditions:
+      - field: "weekly_data_aggregated"
+        operator: "=="
+        value: true
+      - field: "completeness_scores"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'average_completeness_score'"
+      - "analyze: 'completeness_trend'"
+      - "evaluate: 'completeness_consistency'"
+      - "generate_description: 'completeness_average_report'"
+      - "display_message: '노트 완성도의 평균과 추세를 분석합니다.'"
+    confidence: 0.93
+    rationale: "S7: 완성도 평균은 노트 작성 습관 평가 지표"
+    
+  - rule_id: "S7_R4_reflection_score_trend"
+    priority: 68
+    description: "성찰 점수 추세 분석"
+    conditions:
+      - field: "weekly_data_aggregated"
+        operator: "=="
+        value: true
+      - field: "reflection_scores"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'average_reflection_score'"
+      - "analyze: 'reflection_score_trend'"
+      - "evaluate: 'reflection_improvement_rate'"
+      - "generate_description: 'reflection_trend_report'"
+      - "display_message: '성찰 점수의 추세를 분석하여 개선 여부를 확인합니다.'"
+    confidence: 0.92
+    rationale: "S7: 성찰 점수 추세는 학습 성장도 측정 지표"
+    
+  - rule_id: "S7_R5_signature_routine_identification"
+    priority: 67
+    description: "시그니처 루틴 유형 식별"
+    conditions:
+      - field: "weekly_data_aggregated"
+        operator: "=="
+        value: true
+      - field: "note_patterns"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'routine_patterns'"
+      - "identify: 'signature_routine_type'"
+      - "classify: 'routine_stability_level'"
+      - "generate_description: 'signature_routine_report'"
+      - "display_message: '주간 데이터를 분석하여 시그니처 루틴 유형을 식별합니다.'"
+    confidence: 0.91
+    rationale: "S7: 시그니처 루틴 식별은 행동 변화 기반 마련"
+    
+  - rule_id: "S7_R6_teacher_summary_card"
+    priority: 66
+    description: "교사용 요약 카드 생성"
+    conditions:
+      - field: "all_analyses_completed"
+        operator: "=="
+        value: true
+      - field: "report_type"
+        operator: "=="
+        value: "teacher"
+    action:
+      - "generate: 'teacher_summary_card'"
+      - "summarize: 'key_metrics'"
+      - "highlight: 'critical_findings'"
+      - "recommend: 'intervention_priorities'"
+      - "display_message: '교사용 요약 카드를 생성합니다.'"
+    confidence: 0.90
+    rationale: "S7: 교사용 요약 카드는 효율적 개입 도구"
+    
+  # ========== S8: 학생 루틴 업데이트 시점 ==========
+  
+  - rule_id: "S8_R1_recent_notes_time_series"
+    priority: 65
+    description: "최근 5회 노트 지표 시계열 분석"
+    conditions:
+      - field: "preparation_notes"
+        operator: "length"
+        value: ">="
+        comparison_value: 5
+      - field: "routine_update_trigger"
+        operator: "=="
+        value: true
+    action:
+      - "retrieve: 'recent_5_notes'"
+      - "extract: 'time_series_metrics'"
+      - "analyze: 'metric_trends'"
+      - "generate_description: 'time_series_analysis_report'"
+      - "display_message: '최근 5회 노트의 지표를 시계열로 분석합니다.'"
+    confidence: 0.89
+    rationale: "S8: 시계열 분석은 루틴 안정성 평가의 핵심"
+    
+  - rule_id: "S8_R2_routine_consistency_evaluation"
+    priority: 64
+    description: "시그니처 루틴 일관성 판단"
+    conditions:
+      - field: "time_series_analyzed"
+        operator: "=="
+        value: true
+      - field: "metric_trends"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate: 'routine_consistency_level'"
+      - "calculate: 'consistency_score'"
+      - "determine: 'routine_stability_status'"
+      - "generate_description: 'routine_consistency_report'"
+      - "display_message: '시그니처 루틴이 일관되게 유지되는지 판단합니다.'"
+    confidence: 0.88
+    rationale: "S8: 루틴 일관성은 안정화 여부 판단 기준"
+    
+  - rule_id: "S8_R3_routine_stage_classification"
+    priority: 63
+    description: "루틴 안정화/전환 단계 분류"
+    conditions:
+      - field: "routine_consistency_evaluated"
+        operator: "=="
+        value: true
+      - field: "consistency_score"
+        operator: "!="
+        value: null
+    action:
+      - "classify: 'routine_stage'"
+      - "determine: 'stabilization_vs_transition'"
+      - "evaluate: 'readiness_for_next_stage'"
+      - "generate_description: 'routine_stage_classification_report'"
+      - "display_message: '루틴이 안정화 단계인지 전환 단계인지 분류합니다.'"
+    confidence: 0.87
+    rationale: "S8: 루틴 단계 분류는 다음 행동 결정의 기초"
+    
+  - rule_id: "S8_R4_next_stage_guidance"
+    priority: 62
+    description: "다음 단계 행동 피드백 제시"
+    conditions:
+      - field: "routine_stage_classified"
+        operator: "=="
+        value: true
+      - field: "routine_stage"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'next_stage_guidance'"
+      - "create: 'action_feedback_message'"
+      - "recommend: 'specific_action_steps'"
+      - "display_message: '다음 단계로 넘어가기 위한 행동 피드백을 제시합니다.'"
+    confidence: 0.86
+    rationale: "S8: 다음 단계 가이드는 지속적 성장을 위한 필수"
+    
+  # ========== S9: 교사 개입 우선순위 결정 ==========
+  
+  - rule_id: "S9_R1_multi_student_data_comparison"
+    priority: 61
+    description: "다수 학생 Problem Notes 데이터 비교"
+    conditions:
+      - field: "report_type"
+        operator: "=="
+        value: "teacher_priority"
+      - field: "student_list"
+        operator: "length"
+        value: ">="
+        comparison_value: 2
+    action:
+      - "retrieve: 'all_students_weekly_data'"
+      - "compare: 'student_metrics'"
+      - "rank: 'students_by_priority'"
+      - "display_message: '모든 학생의 Problem Notes 데이터를 비교합니다.'"
+    confidence: 0.90
+    rationale: "S9: 다수 학생 비교는 우선순위 결정의 기초"
+    
+  - rule_id: "S9_R2_priority_criteria_evaluation"
+    priority: 60
+    description: "우선순위 기준 평가 (completeness_score < 40, reflection_score 상승폭 없음)"
+    conditions:
+      - field: "all_students_data_retrieved"
+        operator: "=="
+        value: true
+      - field: "student_metrics"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate: 'completeness_score_below_40'"
+      - "evaluate: 'reflection_score_no_improvement'"
+      - "calculate: 'priority_score'"
+      - "rank: 'students_by_priority_score'"
+      - "display_message: '우선순위 기준에 따라 학생을 평가합니다.'"
+    confidence: 0.89
+    rationale: "S9: 명확한 기준으로 우선순위 객관화"
+    
+  - rule_id: "S9_R3_top_error_cause_identification"
+    priority: 59
+    description: "각 학생별 주요 오답 원인(Top 1) 식별"
+    conditions:
+      - field: "students_ranked"
+        operator: "=="
+        value: true
+      - field: "error_cause_data"
+        operator: "!="
+        value: null
+    action:
+      - "identify: 'top_error_cause_per_student'"
+      - "rank: 'error_causes_by_frequency'"
+      - "generate_description: 'top_error_cause_report'"
+      - "display_message: '각 학생별 주요 오답 원인을 식별합니다.'"
+    confidence: 0.88
+    rationale: "S9: 주요 오답 원인은 개입 전략 수립의 기초"
+    
+  - rule_id: "S9_R4_coaching_message_recommendation"
+    priority: 58
+    description: "추천 코칭 메시지 생성"
+    conditions:
+      - field: "top_error_cause_identified"
+        operator: "=="
+        value: true
+      - field: "student_priority_list"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'personalized_coaching_message'"
+      - "customize: 'message_by_error_cause'"
+      - "create: 'coaching_message_per_student'"
+      - "display_message: '각 학생별 추천 코칭 메시지를 생성합니다.'"
+    confidence: 0.87
+    rationale: "S9: 맞춤형 코칭 메시지는 효과적 개입 도구"
+    
+  # ========== S10: 성공 루틴 모델링 ==========
+  
+  - rule_id: "S10_R1_high_achievement_student_identification"
+    priority: 57
+    description: "성취도 향상률 상위 학생 식별"
+    conditions:
+      - field: "report_type"
+        operator: "=="
+        value: "success_routine_modeling"
+      - field: "achievement_improvement_data"
+        operator: "!="
+        value: null
+      - field: "time_period"
+        operator: "=="
+        value: "one_month"
+    action:
+      - "calculate: 'achievement_improvement_rate'"
+      - "rank: 'students_by_improvement_rate'"
+      - "identify: 'top_improvers'"
+      - "display_message: '최근 한 달간 성취도 향상률 상위 학생을 식별합니다.'"
+    confidence: 0.91
+    rationale: "S10: 성공 사례 분석은 모범 루틴 발견의 기초"
+    
+  - rule_id: "S10_R2_success_pattern_extraction"
+    priority: 56
+    description: "성공 학생들의 공통 패턴 추출 (필기량, reflection_score, 복습주기)"
+    conditions:
+      - field: "top_improvers_identified"
+        operator: "=="
+        value: true
+      - field: "top_improvers_note_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'common_patterns'"
+      - "extract: 'stroke_pattern'"
+      - "extract: 'reflection_score_pattern'"
+      - "extract: 'review_cycle_pattern'"
+      - "generate_description: 'success_pattern_analysis_report'"
+      - "display_message: '성공 학생들의 공통 패턴을 추출합니다.'"
+    confidence: 0.90
+    rationale: "S10: 공통 패턴 추출은 성공 루틴 정의의 핵심"
+    
+  - rule_id: "S10_R3_success_routine_prototype_design"
+    priority: 55
+    description: "성공 루틴 프로토타입 설계"
+    conditions:
+      - field: "common_patterns_extracted"
+        operator: "=="
+        value: true
+      - field: "success_patterns"
+        operator: "!="
+        value: null
+    action:
+      - "design: 'success_routine_prototype'"
+      - "define: 'routine_components'"
+      - "specify: 'routine_parameters'"
+      - "generate_description: 'success_routine_prototype_report'"
+      - "display_message: '성공 루틴 프로토타입을 설계합니다.'"
+    confidence: 0.89
+    rationale: "S10: 프로토타입 설계는 확산 가능한 루틴 정의"
+    
+  - rule_id: "S10_R4_routine_proposal_generation"
+    priority: 54
+    description: "다른 학생들에게 확산 가능한 루틴 제안문 작성"
+    conditions:
+      - field: "success_routine_prototype_designed"
+        operator: "=="
+        value: true
+      - field: "routine_prototype"
+        operator: "!="
+        value: null
+    action:
+      - "generate: 'routine_proposal_document'"
+      - "create: 'actionable_guidance'"
+      - "customize: 'proposal_by_student_level'"
+      - "display_message: '다른 학생들에게 확산 가능한 루틴 제안문을 작성합니다.'"
+    confidence: 0.88
+    rationale: "S10: 확산 가능한 제안문은 성공 루틴 보급의 도구"
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "analyze: 'basic_note_analysis'"
+    - "display_message: '기본적인 노트 분석을 수행합니다.'"
+  confidence: 0.5
+  rationale: "기본 분석 수행"

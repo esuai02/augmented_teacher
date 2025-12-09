@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Test</title>
+</head>
+<body>
+    <h1>JavaScript Error Test</h1>
+    <div id="test-output"></div>
+    
+    <script>
+        // Test if functions are defined
+        const testResults = [];
+        
+        // Mock window objects for testing
+        window.quarterlyModule = null;
+        window.weeklyModule = null;
+        window.dailyModule = null;
+        window.realtimeModule = null;
+        window.interactionModule = null;
+        window.biasModule = null;
+        window.developmentModule = null;
+        
+        // Copy the functions from script.js
+        function getViralMarketingData() {
+            return {
+                title: '바이럴 마케팅',
+                description: '학원 홍보 및 소셜미디어 마케팅 관리',
+                tabs: [
+                    {
+                        id: 'content-creation',
+                        title: '콘텐츠 제작',
+                        items: [
+                            { 
+                                title: '인스타그램 콘텐츠', 
+                                description: '인스타그램용 카드뉴스 및 릴스 제작',
+                                details: ['카드뉴스 제작', '릴스 영상 기획', '해시태그 전략'],
+                                hasLink: true,
+                                link: 'https://mathking.kr/moodle/local/augmented_teacher/alt42/viralktm/index.html'
+                            }
+                        ]
+                    }
+                ]
+            };
+        }
+
+        function getConsultationData() {
+            return {
+                title: '상담관리',
+                description: '학생 및 학부모 상담 관리 시스템',
+                tabs: [
+                    {
+                        id: 'student-consultation',
+                        title: '학생 상담',
+                        items: [
+                            { 
+                                title: '학습 상담', 
+                                description: '학습 진도 및 성취도 상담',
+                                details: ['학습 진단', '목표 설정', '학습 계획 수립'],
+                                hasLink: false
+                            }
+                        ]
+                    }
+                ]
+            };
+        }
+        
+        function getMenuStructure() {
+            return {
+                quarterly: window.quarterlyModule ? window.quarterlyModule.getData() : null,
+                weekly: window.weeklyModule ? window.weeklyModule.getData() : null,
+                daily: window.dailyModule ? window.dailyModule.getData() : null,
+                realtime: window.realtimeModule ? window.realtimeModule.getData() : null,
+                interaction: window.interactionModule ? window.interactionModule.getData() : null,
+                bias: window.biasModule ? window.biasModule.getData() : null,
+                development: window.developmentModule ? window.developmentModule.getData() : null,
+                viral: getViralMarketingData(),
+                consultation: getConsultationData()
+            };
+        }
+        
+        // Test functions
+        try {
+            testResults.push('✅ getViralMarketingData defined: ' + (typeof getViralMarketingData === 'function'));
+            const viralData = getViralMarketingData();
+            testResults.push('✅ getViralMarketingData() returns: ' + (viralData !== null));
+        } catch (e) {
+            testResults.push('❌ Error with getViralMarketingData: ' + e.message);
+        }
+        
+        try {
+            testResults.push('✅ getConsultationData defined: ' + (typeof getConsultationData === 'function'));
+            const consultData = getConsultationData();
+            testResults.push('✅ getConsultationData() returns: ' + (consultData !== null));
+        } catch (e) {
+            testResults.push('❌ Error with getConsultationData: ' + e.message);
+        }
+        
+        try {
+            testResults.push('✅ getMenuStructure defined: ' + (typeof getMenuStructure === 'function'));
+            const menuData = getMenuStructure();
+            testResults.push('✅ getMenuStructure() returns: ' + (menuData !== null));
+            testResults.push('✅ Menu has viral data: ' + (menuData.viral !== null));
+            testResults.push('✅ Menu has consultation data: ' + (menuData.consultation !== null));
+        } catch (e) {
+            testResults.push('❌ Error with getMenuStructure: ' + e.message);
+        }
+        
+        // Display results
+        document.getElementById('test-output').innerHTML = '<pre>' + testResults.join('\n') + '</pre>';
+        
+        console.log('Test Results:', testResults);
+    </script>
+</body>
+</html>

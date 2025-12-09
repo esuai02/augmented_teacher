@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/examfocus/db" VERSION="2025090100" COMMENT="ExamFocus plugin database tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
+  <TABLES>
+    <!-- 규칙 정의 테이블 -->
+    <TABLE NAME="local_examfocus_rules" COMMENT="ExamFocus rule presets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" COMMENT="규칙 이름"/>
+        <FIELD NAME="dthreshold" TYPE="int" LENGTH="6" NOTNULL="true" COMMENT="D-value 임계값"/>
+        <FIELD NAME="mode" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="추천 학습 모드"/>
+        <FIELD NAME="conditions" TYPE="text" NOTNULL="false" COMMENT="JSON 형식 조건"/>
+        <FIELD NAME="priority" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="50" COMMENT="우선순위"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="활성화 여부"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="active_idx" UNIQUE="false" FIELDS="active"/>
+        <INDEX NAME="priority_idx" UNIQUE="false" FIELDS="priority"/>
+      </INDEXES>
+    </TABLE>
+    
+    <!-- 추천 이벤트 기록 테이블 -->
+    <TABLE NAME="local_examfocus_events" COMMENT="Generated recommendation events">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="사용자 ID"/>
+        <FIELD NAME="examdate" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="시험 날짜 (timestamp)"/>
+        <FIELD NAME="examtype" TYPE="char" LENGTH="50" NOTNULL="false" COMMENT="시험 종류"/>
+        <FIELD NAME="dvalue" TYPE="int" LENGTH="6" NOTNULL="true" COMMENT="시험까지 남은 일수"/>
+        <FIELD NAME="suggestedmode" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="추천 모드"/>
+        <FIELD NAME="reason" TYPE="text" NOTNULL="false" COMMENT="추천 이유"/>
+        <FIELD NAME="shownat" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="표시 시간"/>
+        <FIELD NAME="accepted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="수락 여부"/>
+        <FIELD NAME="acceptedat" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="수락 시간"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_idx" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="examdate_idx" UNIQUE="false" FIELDS="examdate"/>
+        <INDEX NAME="dvalue_idx" UNIQUE="false" FIELDS="dvalue"/>
+        <INDEX NAME="accepted_idx" UNIQUE="false" FIELDS="accepted"/>
+      </INDEXES>
+    </TABLE>
+    
+    <!-- 사용자별 설정 오버라이드 테이블 -->
+    <TABLE NAME="local_examfocus_user_prefs" COMMENT="User-specific preferences">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="사용자 ID"/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="기능 활성화"/>
+        <FIELD NAME="notify_d30" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="D-30 알림"/>
+        <FIELD NAME="notify_d7" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="D-7 알림"/>
+        <FIELD NAME="auto_mode_switch" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="자동 모드 전환"/>
+        <FIELD NAME="last_notified" TYPE="int" LENGTH="10" NOTNULL="false" COMMENT="마지막 알림 시간"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid_fk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_unique" UNIQUE="true" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

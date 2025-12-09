@@ -1,0 +1,23 @@
+[WARM_WELCOME]
+
+{{student_name}}님, 답변 주셔서 감사해요!
+
+[UNDERSTANDING]
+
+시간이 좀 걸리셨던 거, 전혀 문제없어요.
+충분히 생각하시고 답해 주신 거잖아요.
+
+[VALIDATION]
+
+사실 급하게 하는 것보다 이렇게 신중하게 하는 게
+더 좋은 결과를 만들 때가 많아요.
+
+[ACKNOWLEDGMENT]
+
+{{student_name}}님이 {{response_content}}라고 하셨네요.
+잘 이해했어요.
+
+[NEXT_STEP]
+
+그럼 이제 {{next_action}}을(를) 진행해 볼까요?
+역시 천천히 하셔도 돼요.

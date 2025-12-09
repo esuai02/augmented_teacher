@@ -1,0 +1,799 @@
+# Rules for Agent04 - Review Activity Persona System
+# Generated at: 2025-12-03
+# Purpose: 복습 활동 시 발생하는 인지관성 패턴 탐지 및 개입 (agent03 구조 기반)
+# Source: 7_review_activity.php 페르소나 기반
+
+version: "2.0"
+scenario: "review_activity"
+description: "복습 활동 시 발생하는 인지관성 패턴 탐지, 원인 진단, 개인화 개입 및 복습 루틴 최적화 제안"
+
+metadata:
+  agent_id: 4
+  agent_name: "Agent04_InspectWeakpoints"
+  persona_type: "review_activity"
+  total_personas: 28
+  total_sub_items: 7
+  categories: 7
+  confidence_threshold: 0.6
+  last_updated: "2025-12-03"
+
+rules:
+  # ========== S1: 복습루틴 효능감 인식 (review_efficacy) - 4개 ==========
+
+  - rule_id: "S1_R1_review_uselessness_belief"
+    priority: 100
+    description: "복습해도 의미없다고 생각하여 복습을 회피하는 패턴 탐지"
+    persona_id: 1
+    category: "confidence_distortion"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_efficacy"
+      - field: "review_value_perception"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'review_uselessness_belief_pattern'"
+      - "analyze: 'review_effectiveness_data'"
+      - "generate_description: 'review_efficacy_demonstration'"
+      - "recommend: 'spaced_repetition_experiment'"
+      - "display_message: '복습의 실제 효과를 데이터로 보여주고 동기 부여합니다.'"
+      - "check_point: '복습의 가치를 인식하고 시도 의향이 있는지 확인'"
+      - "teacher_dialog: '복습하면 정말 도움이 안 될까? 연구에 따르면 적절한 간격으로 복습하면 기억률이 2배 이상 높아져.'"
+    confidence: 0.90
+    rationale: "S1: 복습 무용론은 실증 데이터로 인식 전환 필요"
+
+  - rule_id: "S1_R2_review_boredom"
+    priority: 99
+    description: "새로운 내용 학습만 선호하고 복습을 지루하게 여기는 패턴 탐지"
+    persona_id: 2
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_efficacy"
+      - field: "review_interest_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'review_boredom_pattern'"
+      - "analyze: 'review_engagement_barriers'"
+      - "generate_description: 'fun_review_methods'"
+      - "recommend: 'gamified_review_approach'"
+      - "display_message: '복습의 재미와 효과를 경험할 수 있는 방법을 제시합니다.'"
+      - "check_point: '복습에 대한 부정적 감정이 줄었는지 확인'"
+      - "teacher_dialog: '복습이 지루하게 느껴질 수 있어. 하지만 복습은 새로운 연결고리를 찾는 탐험이 될 수 있어.'"
+    confidence: 0.88
+    rationale: "S1: 복습 기피는 재미있는 방법 제시로 동기 부여"
+
+  - rule_id: "S1_R3_overconfidence_skip"
+    priority: 98
+    description: "다 안다고 생각하여 복습을 생략하는 패턴 탐지"
+    persona_id: 3
+    category: "confidence_distortion"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_efficacy"
+      - field: "self_assessment_accuracy"
+        operator: "<"
+        value: 0.5
+      - field: "actual_retention_rate"
+        operator: "<"
+        value: 0.7
+    action:
+      - "detect: 'overconfidence_skip_pattern'"
+      - "analyze: 'self_assessment_vs_actual_performance'"
+      - "generate_description: 'knowledge_retention_test'"
+      - "recommend: 'self_test_verification'"
+      - "display_message: '자가 테스트를 통해 실제 이해도를 확인합니다.'"
+      - "check_point: '복습 없이 정확히 기억하는지 테스트'"
+      - "teacher_dialog: '다 안다고 생각하니? 그럼 한번 테스트해볼까? 복습하지 않으면 시간이 지나면서 많이 잊어버려.'"
+    confidence: 0.90
+    rationale: "S1: 과신 복습 생략은 자가 테스트로 현실 인식"
+
+  - rule_id: "S1_R4_routine_absence"
+    priority: 97
+    description: "정기적인 복습 습관이 형성되지 않은 패턴 탐지"
+    persona_id: 4
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_efficacy"
+      - field: "review_routine_consistency"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'routine_absence_pattern'"
+      - "analyze: 'review_frequency_patterns'"
+      - "generate_description: 'review_routine_establishment'"
+      - "recommend: 'daily_10min_review_habit'"
+      - "display_message: '복습 루틴 수립 및 알림 설정을 안내합니다.'"
+      - "check_point: '정기 복습 계획이 있는지 확인'"
+      - "teacher_dialog: '복습은 습관이 되어야 효과가 있어. 매일 10분씩 복습 시간을 정해볼까?'"
+    confidence: 0.85
+    rationale: "S1: 복습 루틴 부재는 작은 습관부터 형성"
+
+  # ========== S2: 복습시간 정하기 (review_time_setting) - 4개 ==========
+
+  - rule_id: "S2_R1_time_unset"
+    priority: 96
+    description: "언제 복습할지 구체적인 시간을 정하지 않는 패턴 탐지"
+    persona_id: 5
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_time_setting"
+      - field: "scheduled_review_time"
+        operator: "=="
+        value: null
+    action:
+      - "detect: 'time_unset_pattern'"
+      - "analyze: 'daily_schedule_availability'"
+      - "generate_description: 'optimal_review_time_slot'"
+      - "recommend: 'specific_time_commitment'"
+      - "display_message: '일일 스케줄에서 복습 시간 확보 방법을 안내합니다.'"
+      - "check_point: '구체적인 복습 시간이 설정되었는지 확인'"
+      - "teacher_dialog: '언제 복습할지 정해두면 실천 확률이 높아져. 오늘 몇 시에 복습하면 좋을까?'"
+    confidence: 0.85
+    rationale: "S2: 복습 시간 미설정은 구체적 시간 약속으로 해결"
+
+  - rule_id: "S2_R2_unrealistic_plan"
+    priority: 95
+    description: "실행 불가능할 정도로 많은 복습량을 계획하는 패턴 탐지"
+    persona_id: 6
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_time_setting"
+      - field: "planned_review_volume"
+        operator: ">"
+        value: "available_time_capacity"
+    action:
+      - "detect: 'unrealistic_plan_pattern'"
+      - "analyze: 'plan_feasibility'"
+      - "generate_description: 'realistic_review_volume'"
+      - "recommend: 'volume_adjustment'"
+      - "display_message: '실현 가능한 복습량으로 조정합니다.'"
+      - "check_point: '계획한 복습량이 현실적인지 확인'"
+      - "teacher_dialog: '복습 계획이 너무 많으면 오히려 실천하기 어려워. 핵심 내용 위주로 줄여볼까?'"
+    confidence: 0.84
+    rationale: "S2: 비현실적 계획은 실현 가능한 양으로 조정"
+
+  - rule_id: "S2_R3_tired_time_allocation"
+    priority: 94
+    description: "집중력이 낮은 시간대에 복습을 배정하는 패턴 탐지"
+    persona_id: 7
+    category: "time_pressure"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_time_setting"
+      - field: "review_time_focus_level"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'tired_time_allocation_pattern'"
+      - "analyze: 'personal_focus_curve'"
+      - "generate_description: 'optimal_focus_time_identification'"
+      - "recommend: 'time_slot_optimization'"
+      - "display_message: '개인의 집중력 높은 시간대 파악 및 복습 시간을 조정합니다.'"
+      - "check_point: '복습 시간이 집중하기 좋은 시간대인지 확인'"
+      - "teacher_dialog: '너무 피곤한 시간에 복습하면 효과가 떨어져. 가장 맑은 정신일 때가 언제야?'"
+    confidence: 0.80
+    rationale: "S2: 피곤한 시간 배정은 개인 집중력 패턴 파악으로 최적화"
+
+  - rule_id: "S2_R4_interval_ignorance"
+    priority: 93
+    description: "에빙하우스 망각곡선을 고려하지 않는 복습 일정 패턴 탐지"
+    persona_id: 8
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_time_setting"
+      - field: "spaced_repetition_applied"
+        operator: "=="
+        value: false
+    action:
+      - "detect: 'interval_ignorance_pattern'"
+      - "analyze: 'current_review_interval'"
+      - "generate_description: 'optimal_review_interval_guide'"
+      - "recommend: 'spaced_repetition_schedule'"
+      - "display_message: '효율적인 복습 간격(1일-3일-7일-30일)을 안내합니다.'"
+      - "check_point: '적절한 복습 간격이 설정되었는지 확인'"
+      - "teacher_dialog: '배운 후 1일, 3일, 7일, 30일에 복습하면 장기 기억에 효과적이야.'"
+    confidence: 0.86
+    rationale: "S2: 복습 간격 무시는 간격 반복 학습 안내로 해결"
+
+  # ========== S3: 필요영역 분석 (need_analysis) - 4개 ==========
+
+  - rule_id: "S3_R1_complete_review_insistence"
+    priority: 92
+    description: "모든 내용을 똑같이 복습하려 하여 효율이 떨어지는 패턴 탐지"
+    persona_id: 9
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "need_analysis"
+      - field: "review_differentiation"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'complete_review_insistence_pattern'"
+      - "analyze: 'content_mastery_levels'"
+      - "generate_description: 'weakness_focused_strategy'"
+      - "recommend: 'priority_based_review'"
+      - "display_message: '약점 중심 복습 전략을 안내합니다.'"
+      - "check_point: '취약한 부분을 우선 복습하는지 확인'"
+      - "teacher_dialog: '모든 걸 똑같이 복습하면 시간이 부족해. 잘 모르는 부분 위주로 복습하는 게 효율적이야.'"
+    confidence: 0.85
+    rationale: "S3: 전체 복습 고집은 약점 중심 전략으로 효율화"
+
+  - rule_id: "S3_R2_weakness_analysis_failure"
+    priority: 91
+    description: "어떤 부분이 약한지 파악하지 못하는 패턴 탐지"
+    persona_id: 10
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "need_analysis"
+      - field: "self_weakness_awareness"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'weakness_analysis_failure_pattern'"
+      - "analyze: 'performance_gap_areas'"
+      - "generate_description: 'diagnostic_test_recommendation'"
+      - "recommend: 'self_assessment_tool'"
+      - "display_message: '자가 진단 테스트를 통한 약점 파악 방법을 안내합니다.'"
+      - "check_point: '자신의 약점을 인식하고 있는지 확인'"
+      - "teacher_dialog: '어디가 약한지 모르겠다면, 간단한 테스트를 통해 확인해볼까?'"
+    confidence: 0.88
+    rationale: "S3: 약점 분석 실패는 진단 테스트로 객관적 파악"
+
+  - rule_id: "S3_R3_weakness_avoidance"
+    priority: 90
+    description: "약한 부분은 피하고 자신있는 부분만 복습하는 패턴 탐지"
+    persona_id: 11
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "need_analysis"
+      - field: "weakness_review_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'weakness_avoidance_pattern'"
+      - "analyze: 'avoidance_emotional_barriers'"
+      - "generate_description: 'weakness_approach_strategy'"
+      - "recommend: 'gradual_weakness_confrontation'"
+      - "display_message: '약점 극복이 성장의 핵심임을 인식시키고 단계적 접근합니다.'"
+      - "check_point: '약한 부분을 복습할 의향이 있는지 확인'"
+      - "teacher_dialog: '어려운 부분을 피하면 계속 약점으로 남아. 조금씩 도전해볼까?'"
+    confidence: 0.88
+    rationale: "S3: 약점 회피는 점진적 도전으로 극복"
+
+  - rule_id: "S3_R4_priority_confusion"
+    priority: 89
+    description: "어떤 내용부터 복습해야 할지 결정하지 못하는 패턴 탐지"
+    persona_id: 12
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "need_analysis"
+      - field: "review_priority_clarity"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'priority_confusion_pattern'"
+      - "analyze: 'content_importance_ranking'"
+      - "generate_description: 'priority_setting_method'"
+      - "recommend: 'importance_urgency_matrix'"
+      - "display_message: '시험/활용 빈도/연결성 기준 우선순위 결정 방법을 안내합니다.'"
+      - "check_point: '복습 우선순위가 설정되었는지 확인'"
+      - "teacher_dialog: '뭐부터 할지 모르겠으면, 시험에 나올 가능성이 높은 것, 기초가 되는 것부터 정해볼까?'"
+    confidence: 0.85
+    rationale: "S3: 우선순위 혼란은 체계적 기준 제공으로 해결"
+
+  # ========== S4: 복습 커리큘럼 정하기 (review_curriculum) - 4개 ==========
+
+  - rule_id: "S4_R1_unplanned_review"
+    priority: 88
+    description: "복습 순서와 계획 없이 무작위로 복습하는 패턴 탐지"
+    persona_id: 13
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_curriculum"
+      - field: "review_structure_score"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'unplanned_review_pattern'"
+      - "analyze: 'review_sequence_effectiveness'"
+      - "generate_description: 'systematic_review_plan'"
+      - "recommend: 'structured_curriculum'"
+      - "display_message: '체계적인 복습 계획 수립 방법을 안내합니다.'"
+      - "check_point: '복습 계획이 체계적으로 수립되었는지 확인'"
+      - "teacher_dialog: '이것저것 뒤죽박죽 복습하면 효과가 떨어져. 순서를 정해서 복습해볼까?'"
+    confidence: 0.84
+    rationale: "S4: 무계획 복습은 체계적 계획 수립으로 효율화"
+
+  - rule_id: "S4_R2_subject_bias"
+    priority: 87
+    description: "특정 과목/단원만 반복 복습하고 다른 것은 무시하는 패턴 탐지"
+    persona_id: 14
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_curriculum"
+      - field: "review_balance_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'subject_bias_pattern'"
+      - "analyze: 'content_coverage_distribution'"
+      - "generate_description: 'balanced_review_plan'"
+      - "recommend: 'proportional_time_allocation'"
+      - "display_message: '균형 잡힌 복습 계획을 수립합니다.'"
+      - "check_point: '모든 필요 영역이 포함되었는지 확인'"
+      - "teacher_dialog: '좋아하는 것만 복습하면 다른 부분이 약해져. 골고루 복습 계획을 세워볼까?'"
+    confidence: 0.84
+    rationale: "S4: 과목 편중은 균형 잡힌 계획으로 보완"
+
+  - rule_id: "S4_R3_monotonous_method"
+    priority: 86
+    description: "항상 같은 방법으로만 복습하여 효과가 떨어지는 패턴 탐지"
+    persona_id: 15
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_curriculum"
+      - field: "review_method_variety"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'monotonous_method_pattern'"
+      - "analyze: 'method_effectiveness_comparison'"
+      - "generate_description: 'diverse_review_methods'"
+      - "recommend: 'method_rotation_strategy'"
+      - "display_message: '다양한 복습 방법(문제풀이, 요약, 설명하기 등)을 안내합니다.'"
+      - "check_point: '다양한 복습 방법을 계획에 포함했는지 확인'"
+      - "teacher_dialog: '항상 같은 방법으로 복습하면 지루해져. 문제 풀기, 마인드맵 그리기, 누군가에게 설명하기 등 다양하게 해봐.'"
+    confidence: 0.80
+    rationale: "S4: 복습 방법 단조는 다양한 방법 소개로 흥미 유지"
+
+  - rule_id: "S4_R4_connection_ignorance"
+    priority: 85
+    description: "관련된 내용을 연결하지 않고 개별적으로 복습하는 패턴 탐지"
+    persona_id: 16
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_curriculum"
+      - field: "content_connection_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'connection_ignorance_pattern'"
+      - "analyze: 'concept_relationship_map'"
+      - "generate_description: 'connected_review_approach'"
+      - "recommend: 'concept_clustering_method'"
+      - "display_message: '관련 개념 연결 복습 방법을 안내합니다.'"
+      - "check_point: '연결된 개념들을 함께 복습하는지 확인'"
+      - "teacher_dialog: '비슷한 개념들을 연결해서 복습하면 이해가 더 깊어져. 관련된 것끼리 묶어볼까?'"
+    confidence: 0.84
+    rationale: "S4: 연결성 무시는 개념 클러스터링으로 심화 이해"
+
+  # ========== S5: 복습실행 (review_execution) - 4개 ==========
+
+  - rule_id: "S5_R1_passive_review"
+    priority: 84
+    description: "단순히 읽기만 하는 수동적 복습 패턴 탐지"
+    persona_id: 17
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_execution"
+      - field: "active_recall_usage"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'passive_review_pattern'"
+      - "analyze: 'review_engagement_level'"
+      - "generate_description: 'active_recall_method'"
+      - "recommend: 'retrieval_practice_technique'"
+      - "display_message: '능동적 복습 방법(인출 연습, 자기 설명)을 안내합니다.'"
+      - "check_point: '능동적으로 복습하고 있는지 확인'"
+      - "teacher_dialog: '그냥 읽기만 하면 금방 잊어버려. 책을 덮고 떠올려보거나, 문제를 풀어보는 게 훨씬 효과적이야.'"
+    confidence: 0.88
+    rationale: "S5: 수동적 복습은 능동적 인출 연습으로 효과 증대"
+
+  - rule_id: "S5_R2_distracted_review"
+    priority: 83
+    description: "복습 중에 다른 것에 신경 쓰여 집중하지 못하는 패턴 탐지"
+    persona_id: 18
+    category: "attention_deficit"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_execution"
+      - field: "review_focus_score"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect: 'distracted_review_pattern'"
+      - "analyze: 'distraction_sources'"
+      - "generate_description: 'focus_environment_setup'"
+      - "recommend: 'distraction_elimination'"
+      - "display_message: '집중 환경 조성 및 방해 요소 제거 방법을 안내합니다.'"
+      - "check_point: '복습에 집중하고 있는지 확인'"
+      - "teacher_dialog: '복습할 때 핸드폰이나 다른 것들은 잠시 멀리 두고, 집중해서 해보자.'"
+    confidence: 0.88
+    rationale: "S5: 복습 중 산만은 환경 조성과 방해 요소 제거로 해결"
+
+  - rule_id: "S5_R3_shallow_review"
+    priority: 82
+    description: "피상적으로만 훑고 지나가는 복습 패턴 탐지"
+    persona_id: 19
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_execution"
+      - field: "review_depth_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'shallow_review_pattern'"
+      - "analyze: 'comprehension_depth'"
+      - "generate_description: 'deep_review_questioning'"
+      - "recommend: 'elaborative_interrogation'"
+      - "display_message: '깊이 있는 복습을 위한 질문 던지기 방법을 안내합니다.'"
+      - "check_point: '복습 내용을 깊이 이해했는지 확인'"
+      - "teacher_dialog: '\"왜 이렇게 되지?\", \"다른 경우에는 어떨까?\" 같은 질문을 스스로 던지면서 복습해봐.'"
+    confidence: 0.84
+    rationale: "S5: 복습 깊이 부족은 자기 질문 기법으로 심화"
+
+  - rule_id: "S5_R4_review_abandonment"
+    priority: 81
+    description: "복습을 시작했다가 중간에 포기하는 패턴 탐지"
+    persona_id: 20
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_execution"
+      - field: "review_completion_rate"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect: 'review_abandonment_pattern'"
+      - "analyze: 'abandonment_triggers'"
+      - "generate_description: 'chunked_review_approach'"
+      - "recommend: 'small_unit_completion'"
+      - "display_message: '작은 단위로 나누어 달성감 느끼게 합니다.'"
+      - "check_point: '복습을 끝까지 완료했는지 확인'"
+      - "teacher_dialog: '한 번에 너무 많이 하려면 힘들어. 10분만 먼저 해보고, 할 수 있으면 더 해보자.'"
+    confidence: 0.88
+    rationale: "S5: 복습 중단은 작은 단위 분할로 완료율 향상"
+
+  # ========== S6: 복습 마무리 (review_closing) - 4개 ==========
+
+  - rule_id: "S6_R1_verification_skip"
+    priority: 80
+    description: "복습 후 이해도를 확인하지 않고 끝내는 패턴 탐지"
+    persona_id: 21
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_closing"
+      - field: "post_review_test_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'verification_skip_pattern'"
+      - "analyze: 'verification_habit'"
+      - "generate_description: 'self_test_routine'"
+      - "recommend: 'post_review_verification'"
+      - "display_message: '복습 후 자가 테스트 루틴을 형성합니다.'"
+      - "check_point: '복습 내용을 확실히 이해했는지 테스트'"
+      - "teacher_dialog: '복습이 끝나면 스스로 테스트해봐. 진짜 알았는지 확인하는 게 중요해.'"
+    confidence: 0.84
+    rationale: "S6: 마무리 점검 생략은 자가 테스트 루틴으로 해결"
+
+  - rule_id: "S6_R2_record_skip"
+    priority: 79
+    description: "복습한 내용과 결과를 기록하지 않는 패턴 탐지"
+    persona_id: 22
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_closing"
+      - field: "review_logging_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'record_skip_pattern'"
+      - "analyze: 'record_keeping_barriers'"
+      - "generate_description: 'review_journal_method'"
+      - "recommend: 'simple_logging_habit'"
+      - "display_message: '복습 일지 작성 습관을 형성합니다.'"
+      - "check_point: '복습 내용을 기록했는지 확인'"
+      - "teacher_dialog: '오늘 뭘 복습했고 어떤 부분이 좋았는지 간단히 적어두면, 다음에 더 효율적으로 복습할 수 있어.'"
+    confidence: 0.78
+    rationale: "S6: 복습 기록 미작성은 간단한 로깅 습관으로 개선"
+
+  - rule_id: "S6_R3_next_review_unplanned"
+    priority: 78
+    description: "다음 복습 일정을 정하지 않고 끝내는 패턴 탐지"
+    persona_id: 23
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_closing"
+      - field: "next_review_scheduled"
+        operator: "=="
+        value: false
+    action:
+      - "detect: 'next_review_unplanned_pattern'"
+      - "analyze: 'scheduling_continuity'"
+      - "generate_description: 'next_session_booking'"
+      - "recommend: 'immediate_scheduling'"
+      - "display_message: '복습 종료 시 다음 복습 예약 루틴을 형성합니다.'"
+      - "check_point: '다음 복습 일정이 정해졌는지 확인'"
+      - "teacher_dialog: '복습을 끝내기 전에 다음에 언제 다시 볼지 정해두자. 그래야 잊어버리지 않아.'"
+    confidence: 0.84
+    rationale: "S6: 다음 복습 미계획은 즉시 스케줄링으로 연속성 확보"
+
+  - rule_id: "S6_R4_growth_recognition_failure"
+    priority: 77
+    description: "복습을 통한 성장을 인식하지 못하는 패턴 탐지"
+    persona_id: 24
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "review_closing"
+      - field: "progress_awareness_score"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'growth_recognition_failure_pattern'"
+      - "analyze: 'progress_tracking_data'"
+      - "generate_description: 'before_after_comparison'"
+      - "recommend: 'growth_visualization'"
+      - "display_message: '복습 전후 비교를 통한 성장 인식을 돕습니다.'"
+      - "check_point: '복습으로 얼마나 성장했는지 인식하는지 확인'"
+      - "teacher_dialog: '복습 전에는 몰랐던 걸 이제는 알게 됐잖아. 조금씩 성장하고 있어!'"
+    confidence: 0.78
+    rationale: "S6: 성과 인정 실패는 가시적 비교로 성장 인식"
+
+  # ========== S7: 마무리 피드백 (closing_feedback) - 4개 ==========
+
+  - rule_id: "S7_R1_feedback_rejection"
+    priority: 76
+    description: "복습 결과에 대한 피드백을 받아들이지 않는 패턴 탐지"
+    persona_id: 25
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing_feedback"
+      - field: "feedback_acceptance_rate"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'feedback_rejection_pattern'"
+      - "analyze: 'feedback_resistance_causes'"
+      - "generate_description: 'feedback_value_explanation'"
+      - "recommend: 'growth_mindset_cultivation'"
+      - "display_message: '피드백의 가치와 활용 방법을 안내합니다.'"
+      - "check_point: '피드백을 긍정적으로 받아들이는지 확인'"
+      - "teacher_dialog: '피드백은 더 잘하기 위한 거야. 부족한 점을 알면 다음에 보완할 수 있잖아.'"
+    confidence: 0.84
+    rationale: "S7: 피드백 수용 거부는 성장 마인드셋 함양으로 해결"
+
+  - rule_id: "S7_R2_feedback_unreflected"
+    priority: 75
+    description: "피드백을 받았지만 다음 복습에 반영하지 않는 패턴 탐지"
+    persona_id: 26
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing_feedback"
+      - field: "feedback_implementation_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'feedback_unreflected_pattern'"
+      - "analyze: 'feedback_tracking_system'"
+      - "generate_description: 'feedback_integration_method'"
+      - "recommend: 'action_item_creation'"
+      - "display_message: '피드백 기록 및 다음 복습 계획에 반영하는 방법을 안내합니다.'"
+      - "check_point: '피드백이 다음 계획에 반영되었는지 확인'"
+      - "teacher_dialog: '받은 피드백을 적어두고, 다음 복습할 때 그 부분을 보완해보자.'"
+    confidence: 0.87
+    rationale: "S7: 피드백 미반영은 액션 아이템화로 실행력 향상"
+
+  - rule_id: "S7_R3_self_assessment_distortion"
+    priority: 74
+    description: "실제보다 높거나 낮게 복습 효과를 평가하는 패턴 탐지"
+    persona_id: 27
+    category: "confidence_distortion"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing_feedback"
+      - field: "assessment_accuracy"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect: 'self_assessment_distortion_pattern'"
+      - "analyze: 'assessment_calibration'"
+      - "generate_description: 'objective_evaluation_criteria'"
+      - "recommend: 'performance_based_assessment'"
+      - "display_message: '객관적 평가 기준(테스트, 문제풀이 정답률)을 제공합니다.'"
+      - "check_point: '자기 평가가 객관적인지 확인'"
+      - "teacher_dialog: '느낌보다는 실제 테스트 결과로 복습 효과를 확인하는 게 정확해.'"
+    confidence: 0.84
+    rationale: "S7: 자기 평가 왜곡은 객관적 기준으로 정확도 향상"
+
+  - rule_id: "S7_R4_improvement_direction_unset"
+    priority: 73
+    description: "복습 후 무엇을 개선할지 방향을 정하지 않는 패턴 탐지"
+    persona_id: 28
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing_feedback"
+      - field: "improvement_plan_clarity"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'improvement_direction_unset_pattern'"
+      - "analyze: 'improvement_opportunity_areas'"
+      - "generate_description: 'specific_improvement_points'"
+      - "recommend: 'concrete_action_planning'"
+      - "display_message: '복습 피드백을 바탕으로 구체적 개선점을 도출합니다.'"
+      - "check_point: '다음에 개선할 점이 명확한지 확인'"
+      - "teacher_dialog: '오늘 복습에서 뭘 더 잘할 수 있었을까? 다음에는 그 부분을 신경 써보자.'"
+    confidence: 0.84
+    rationale: "S7: 개선 방향 미설정은 구체적 액션 플래닝으로 방향성 확보"
+
+  # ========== 복합 상황 대응 룰 (Complex Rules) ==========
+
+  - rule_id: "C1_efficacy_habit_compound"
+    priority: 95
+    description: "효능감 저하 + 습관 부재 복합 상황 (복습 동기와 실행력 모두 부족)"
+    conditions:
+      - AND:
+        - field: "review_efficacy_score"
+          operator: "<"
+          value: 0.4
+        - field: "review_routine_consistency"
+          operator: "<"
+          value: 0.3
+    action:
+      - "detect: 'efficacy_habit_compound_pattern'"
+      - "analyze: 'motivation_routine_gap'"
+      - "recommend: 'micro_habit_with_success_experience'"
+      - "generate_description: '1일 5분 복습으로 작은 성공 경험 축적'"
+      - "display_message: '복습 동기와 습관을 동시에 구축하는 마이크로 접근법을 제안합니다.'"
+      - "teacher_dialog: '복습이 효과있는지도 모르겠고, 습관도 안 됐구나. 하루 5분만 해보자. 작은 성공이 쌓이면 달라질 거야.'"
+    confidence: 0.90
+    rationale: "복합 패턴: 동기+습관 부재는 마이크로 습관과 성공 경험으로 돌파"
+
+  - rule_id: "C2_time_pressure_attention_compound"
+    priority: 94
+    description: "시간 압박 + 주의력 결핍 복합 상황 (촉박한데 집중도 안 됨)"
+    conditions:
+      - AND:
+        - field: "time_pressure_indicator"
+          operator: ">="
+          value: 0.7
+        - field: "attention_deficit_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'time_attention_compound_pattern'"
+      - "analyze: 'time_focus_optimization'"
+      - "recommend: 'pomodoro_with_priority'"
+      - "generate_description: '포모도로 기법 + 핵심 우선 복습 전략'"
+      - "display_message: '시간 관리와 집중력 향상을 동시에 해결하는 통합 접근법을 제안합니다.'"
+      - "teacher_dialog: '시간도 없고 집중도 안 되니 더 힘들지? 25분만 딱 집중해서 가장 중요한 것만 복습하자.'"
+    confidence: 0.89
+    rationale: "복합 패턴: 시간+집중 문제는 포모도로와 우선순위로 효율화"
+
+  - rule_id: "C3_cognitive_emotional_compound"
+    priority: 93
+    description: "인지 과부하 + 감정적 장벽 복합 상황 (어렵고 싫음)"
+    conditions:
+      - AND:
+        - field: "cognitive_load_indicator"
+          operator: ">="
+          value: 0.7
+        - field: "emotional_block_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'cognitive_emotional_compound_pattern'"
+      - "analyze: 'overwhelm_emotional_interplay'"
+      - "recommend: 'simplified_supportive_approach'"
+      - "generate_description: '복습 범위 축소 + 정서적 지지 병행'"
+      - "display_message: '인지적, 정서적 부담을 동시에 경감하는 접근법을 제안합니다.'"
+      - "teacher_dialog: '복습할 게 많고 어렵게 느껴지지? 오늘은 이것 하나만 해보자. 선생님이 도와줄게.'"
+    confidence: 0.88
+    rationale: "복합 패턴: 인지+감정 부담은 단순화와 정서 지지 병행"
+
+  - rule_id: "C4_approach_confidence_compound"
+    priority: 92
+    description: "접근 전략 오류 + 자신감 왜곡 복합 상황 (잘못된 방법 + 과신)"
+    conditions:
+      - AND:
+        - field: "approach_error_indicator"
+          operator: ">="
+          value: 0.6
+        - field: "confidence_distortion_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'approach_confidence_compound_pattern'"
+      - "analyze: 'method_overconfidence_gap'"
+      - "recommend: 'reality_check_with_guidance'"
+      - "generate_description: '객관적 성과 확인 + 올바른 방법 안내'"
+      - "display_message: '실제 성과를 확인하고 효과적인 복습 방법으로 전환합니다.'"
+      - "teacher_dialog: '지금 방법이 잘 되고 있다고 생각하니? 한번 테스트해볼까? 더 효과적인 방법도 있을 수 있어.'"
+    confidence: 0.87
+    rationale: "복합 패턴: 잘못된 방법+과신은 현실 점검과 방법 교정 병행"
+
+  - rule_id: "C5_habit_approach_compound"
+    priority: 91
+    description: "습관 패턴 고착 + 접근 전략 오류 복합 상황 (잘못된 습관 굳어짐)"
+    conditions:
+      - AND:
+        - field: "habit_pattern_indicator"
+          operator: ">="
+          value: 0.7
+        - field: "approach_error_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'habit_approach_compound_pattern'"
+      - "analyze: 'entrenched_wrong_habit'"
+      - "recommend: 'gradual_habit_replacement'"
+      - "generate_description: '기존 습관 점진적 대체 + 새 방법 단계적 도입'"
+      - "display_message: '잘못된 습관을 효과적인 방법으로 점진적으로 대체합니다.'"
+      - "teacher_dialog: '지금까지 익숙한 방법이 있겠지만, 조금씩 새로운 방법을 섞어보면 더 좋아질 수 있어.'"
+    confidence: 0.86
+    rationale: "복합 패턴: 고착된 잘못된 습관은 점진적 대체로 안전하게 교정"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  description: "조건이 일치하지 않는 경우 기본 복습 지원 제공"
+  action:
+    - "detect: 'general_review_support_needed'"
+    - "analyze: 'review_status_overview'"
+    - "recommend: 'general_review_guidance'"
+    - "display_message: '복습 활동 데이터를 분석 중입니다. 추가 정보가 필요할 수 있습니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용 - 조건 불일치 시 일반적 복습 지원 제공"

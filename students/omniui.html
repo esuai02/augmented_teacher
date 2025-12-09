@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAIST 터치수학 - 17가지 혁신 기능</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 메인 컨테이너 */
+        .universe-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: radial-gradient(ellipse at center, #0a0a1e 0%, #000 70%);
+            overflow: hidden;
+        }
+        
+        /* 별 배경 효과 */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* 궤도 효과 */
+        .orbital-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            pointer-events: none;
+        }
+        
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(91, 76, 255, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 60s linear infinite;
+        }
+        
+        .orbit-ring:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            animation-duration: 80s;
+        }
+        
+        .orbit-ring:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            animation-duration: 100s;
+            animation-direction: reverse;
+        }
+        
+        .orbit-ring:nth-child(3) {
+            width: 700px;
+            height: 700px;
+            animation-duration: 120s;
+        }
+        
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        /* 중앙 코어 */
+        .core-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+        }
+        
+        .core {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #5b4cff 0%, #00d4ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 0 60px rgba(91, 76, 255, 0.6),
+                0 0 120px rgba(0, 212, 255, 0.4),
+                inset 0 0 60px rgba(255, 255, 255, 0.1);
+            animation: core-pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes core-pulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 
+                    0 0 60px rgba(91, 76, 255, 0.6),
+                    0 0 120px rgba(0, 212, 255, 0.4),
+                    inset 0 0 60px rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 
+                    0 0 80px rgba(91, 76, 255, 0.8),
+                    0 0 160px rgba(0, 212, 255, 0.6),
+                    inset 0 0 80px rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .core::before {
+            content: '';
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(91, 76, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: core-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes core-glow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+        
+        .core-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 10px rgba(255, 255, 255, 0.5));
+        }
+        
+        .core-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .core:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 기능 아이템 컨테이너 */
+        .features-wheel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+        }
+        
+        /* 기능 아이템 */
+        .feature-node {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 50%;
+            left: 50%;
+            margin: -50px 0 0 -50px;
+            transform-origin: center;
+            animation: orbit 200s linear infinite;
+        }
+        
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(300px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(300px) rotate(-360deg); }
+        }
+        
+        .feature-orb {
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        /* 각 기능의 배경 그라데이션 */
+        .feature-orb::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #5b4cff, #00d4ff, #5b4cff);
+            border-radius: 50%;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            animation: gradient-rotate 3s linear infinite;
+        }
+        
+        @keyframes gradient-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .feature-orb:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-orb::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-orb:hover::after {
+            opacity: 1;
+        }
+        
+        .feature-orb:hover {
+            transform: scale(1.3);
+            background: rgba(30, 30, 40, 0.95);
+            box-shadow: 
+                0 0 40px rgba(91, 76, 255, 0.8),
+                0 0 80px rgba(0, 212, 255, 0.6);
+            z-index: 10;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+        }
+        
+        .feature-orb:hover .feature-icon {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 4px 10px rgba(91, 76, 255, 0.8));
+        }
+        
+        .feature-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-orb:hover .feature-label {
+            opacity: 1;
+            font-size: 0.85rem;
+        }
+        
+        /* 연결선 */
+        .connection-lines {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 700px;
+            pointer-events: none;
+        }
+        
+        .connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(91, 76, 255, 0.3), transparent);
+            transform-origin: left center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-node:hover ~ .connection-lines .connection {
+            opacity: 1;
+        }
+        
+        /* 정보 패널 */
+        .info-panel {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px 40px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        .info-panel.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: all;
+        }
+        
+        .info-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #5b4cff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .info-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        /* 파티클 효과 */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(91, 76, 255, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        @keyframes particle-float {
+            0% {
+                opacity: 0;
+                transform: translate(0, 0) scale(0);
+            }
+            10% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0);
+            }
+        }
+        
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .features-wheel {
+                width: 500px;
+                height: 500px;
+            }
+            
+            .core {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .core-icon {
+                font-size: 2.5rem;
+            }
+            
+            .core-text {
+                font-size: 1rem;
+            }
+            
+            .feature-node {
+                width: 80px;
+                height: 80px;
+                margin: -40px 0 0 -40px;
+            }
+            
+            .feature-icon {
+                font-size: 1.5rem;
+            }
+            
+            .feature-label {
+                font-size: 0.65rem;
+            }
+        }
+        
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            top: 50px;
+            right: 50px;
+            background: rgba(91, 76, 255, 0.9);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="universe-container">
+        <!-- 별 배경 -->
+        <div class="stars" id="stars"></div>
+        
+        <!-- 궤도 효과 -->
+        <div class="orbital-lines">
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+            <div class="orbit-ring"></div>
+        </div>
+        
+        <!-- 중앙 코어 -->
+        <div class="core-container">
+            <div class="core" id="core">
+                <span class="core-icon">🎯</span>
+                <span class="core-text">KAIST<br>터치수학</span>
+            </div>
+        </div>
+        
+        <!-- 기능 휠 -->
+        <div class="features-wheel" id="featuresWheel">
+            <!-- 연결선 -->
+            <div class="connection-lines" id="connectionLines"></div>
+            
+            <!-- 17개 기능 노드 -->
+            <div class="feature-node" style="animation-delay: 0s;">
+                <div class="feature-orb" data-feature="guide" data-name="학습관리 페이지 구조 안내" data-desc="처음 방문하셨나요? 시스템의 전체 구조를 쉽게 이해할 수 있도록 단계별 가이드 투어를 제공합니다">
+                    <span class="feature-icon">🧭</span>
+                    <span class="feature-label">페이지 안내</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -11.76s;">
+                <div class="feature-orb" data-feature="study-room" data-name="내공부방" data-desc="자녀의 개인 학습 공간에서 현재 진행 상황과 학습 통계를 한눈에 확인하세요">
+                    <span class="feature-icon">📚</span>
+                    <span class="feature-label">내공부방</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -23.53s;">
+                <div class="feature-orb" data-feature="results" data-name="공부결과" data-desc="성적 변화를 그래프로 시각화하여 학습 성과를 직관적으로 파악할 수 있습니다">
+                    <span class="feature-icon">📊</span>
+                    <span class="feature-label">공부결과</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -35.29s;">
+                <div class="feature-orb" data-feature="goals" data-name="목표설정" data-desc="자녀와 함께 구체적인 학습 목표를 설정하고 달성 과정을 추적하세요">
+                    <span class="feature-icon">🎯</span>
+                    <span class="feature-label">목표설정</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -47.06s;">
+                <div class="feature-orb" data-feature="pomodoro" data-name="수학일기 (포모도로)" data-desc="25분 집중 학습 기법으로 효율적인 학습 습관을 만들어갑니다">
+                    <span class="feature-icon">⏱️</span>
+                    <span class="feature-label">수학일기</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -58.82s;">
+                <div class="feature-orb" data-feature="parent-app" data-name="KTM 학부모 앱" data-desc="언제 어디서나 자녀의 학습 현황을 확인하고 선생님과 소통하세요">
+                    <span class="feature-icon">📱</span>
+                    <span class="feature-label">학부모 앱</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -70.59s;">
+                <div class="feature-orb" data-feature="notes" data-name="기억노트" data-desc="중요한 개념과 틀린 문제를 체계적으로 관리하여 효과적인 복습이 가능합니다">
+                    <span class="feature-icon">📝</span>
+                    <span class="feature-label">기억노트</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -82.35s;">
+                <div class="feature-orb" data-feature="anki" data-name="안키퀴즈" data-desc="과학적인 반복 학습 시스템으로 장기 기억력을 향상시킵니다">
+                    <span class="feature-icon">🎴</span>
+                    <span class="feature-label">안키퀴즈</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -94.12s;">
+                <div class="feature-orb" data-feature="lectures" data-name="수학특강" data-desc="다양한 주제의 심화 강좌로 수학 실력을 한 단계 높여보세요">
+                    <span class="feature-icon">🎓</span>
+                    <span class="feature-label">수학특강</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -105.88s;">
+                <div class="feature-orb" data-feature="search" data-name="개념검색" data-desc="모르는 수학 개념을 즉시 검색하고 이해할 수 있습니다">
+                    <span class="feature-icon">🔍</span>
+                    <span class="feature-label">개념검색</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -117.65s;">
+                <div class="feature-orb" data-feature="quarterly" data-name="분기목표" data-desc="3개월 단위로 목표를 설정하고 체계적으로 관리합니다">
+                    <span class="feature-icon">📈</span>
+                    <span class="feature-label">분기목표</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -129.41s;">
+                <div class="feature-orb" data-feature="mindset" data-name="성장마인드" data-desc="실패를 성장의 기회로 만드는 마인드셋을 함양합니다">
+                    <span class="feature-icon">🌱</span>
+                    <span class="feature-label">성장마인드</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -141.18s;">
+                <div class="feature-orb" data-feature="challenge" data-name="오늘의 도전" data-desc="매일 새로운 문제에 도전하며 실력을 키워갑니다">
+                    <span class="feature-icon">🏆</span>
+                    <span class="feature-label">오늘의 도전</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -152.94s;">
+                <div class="feature-orb" data-feature="schedule" data-name="시간표" data-desc="주간 학습 일정을 체계적으로 관리하고 계획합니다">
+                    <span class="feature-icon">📅</span>
+                    <span class="feature-label">시간표</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -164.71s;">
+                <div class="feature-orb" data-feature="content" data-name="컨텐츠 페이지" data-desc="풍부한 학습 자료와 콘텐츠를 탐색하고 활용하세요">
+                    <span class="feature-icon">📖</span>
+                    <span class="feature-label">컨텐츠</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -176.47s;">
+                <div class="feature-orb" data-feature="persona" data-name="페르소나 카드 시스템" data-desc="학습 성향을 캐릭터로 시각화하여 재미있게 성장합니다">
+                    <span class="feature-icon">🎭</span>
+                    <span class="feature-label">페르소나</span>
+                </div>
+            </div>
+            
+            <div class="feature-node" style="animation-delay: -188.24s;">
+                <div class="feature-orb" data-feature="teacher" data-name="선생님 환경" data-desc="교사가 학생을 어떻게 관리하고 지도하는지 확인해보세요">
+                    <span class="feature-icon">👩‍🏫</span>
+                    <span class="feature-label">선생님 환경</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 정보 패널 -->
+        <div class="info-panel" id="infoPanel">
+            <h3 class="info-title" id="infoTitle">기능 이름</h3>
+            <p class="info-description" id="infoDesc">기능 설명</p>
+        </div>
+        
+        <!-- 토스트 알림 -->
+        <div class="toast" id="toast">클릭하여 자세히 알아보세요</div>
+    </div>
+    
+    <script>
+        // 별 생성
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (3 + Math.random() * 3) + 's';
+                
+                // 일부 별은 더 크고 밝게
+                if (Math.random() > 0.8) {
+                    star.style.width = '3px';
+                    star.style.height = '3px';
+                    star.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+                }
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 파티클 생성
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 50 + Math.random() * 100;
+            const tx = Math.cos(angle) * distance;
+            const ty = Math.sin(angle) * distance;
+            
+            particle.style.setProperty('--tx', tx + 'px');
+            particle.style.setProperty('--ty', ty + 'px');
+            particle.style.animation = 'particle-float 1s ease-out';
+            
+            document.querySelector('.universe-container').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 1000);
+        }
+        
+        // 연결선 생성
+        function createConnectionLines() {
+            const container = document.getElementById('connectionLines');
+            const centerX = 350;
+            const centerY = 350;
+            
+            for (let i = 0; i < 17; i++) {
+                const line = document.createElement('div');
+                line.className = 'connection';
+                const angle = (i * 21.2) * Math.PI / 180;
+                const length = 300;
+                
+                line.style.width = length + 'px';
+                line.style.left = centerX + 'px';
+                line.style.top = centerY + 'px';
+                line.style.transform = `rotate(${i * 21.2}deg)`;
+                
+                container.appendChild(line);
+            }
+        }
+        
+        // 정보 패널 표시
+        function showInfo(name, desc) {
+            const panel = document.getElementById('infoPanel');
+            const title = document.getElementById('infoTitle');
+            const description = document.getElementById('infoDesc');
+            
+            title.textContent = name;
+            description.textContent = desc;
+            panel.classList.add('show');
+        }
+        
+        function hideInfo() {
+            document.getElementById('infoPanel').classList.remove('show');
+        }
+        
+        // 토스트 알림
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 이벤트 리스너
+        document.querySelectorAll('.feature-orb').forEach(orb => {
+            orb.addEventListener('mouseenter', function(e) {
+                const name = this.getAttribute('data-name');
+                const desc = this.getAttribute('data-desc');
+                showInfo(name, desc);
+                
+                // 파티클 효과
+                const rect = this.getBoundingClientRect();
+                createParticle(
+                    rect.left + rect.width / 2,
+                    rect.top + rect.height / 2
+                );
+            });
+            
+            orb.addEventListener('mouseleave', function() {
+                hideInfo();
+            });
+            
+            orb.addEventListener('click', function() {
+                const feature = this.getAttribute('data-feature');
+                const name = this.getAttribute('data-name');
+                showToast(`${name} 기능을 선택했습니다`);
+                
+                // 클릭 파티클 효과
+                const rect = this.getBoundingClientRect();
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        createParticle(
+                            rect.left + rect.width / 2 + (Math.random() - 0.5) * 20,
+                            rect.top + rect.height / 2 + (Math.random() - 0.5) * 20
+                        );
+                    }, i * 50);
+                }
+            });
+        });
+        
+        // 중앙 코어 클릭
+        document.getElementById('core').addEventListener('click', function() {
+            showToast('17가지 혁신 기능을 탐험해보세요!');
+            
+            // 모든 기능 강조 애니메이션
+            const orbs = document.querySelectorAll('.feature-orb');
+            orbs.forEach((orb, index) => {
+                setTimeout(() => {
+                    orb.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        orb.style.transform = 'scale(1)';
+                    }, 300);
+                }, index * 50);
+            });
+        });
+        
+        // 마우스 이동 효과
+        document.addEventListener('mousemove', (e) => {
+            const core = document.querySelector('.core-container');
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            core.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${y}deg) rotateY(${x}deg)`;
+        });
+        
+        // 초기화
+        createStars();
+        createConnectionLines();
+        
+        // 휠 회전 일시정지/재생
+        let isPaused = false;
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                const nodes = document.querySelectorAll('.feature-node');
+                if (isPaused) {
+                    nodes.forEach(node => {
+                        node.style.animationPlayState = 'running';
+                    });
+                } else {
+                    nodes.forEach(node => {
+                        node.style.animationPlayState = 'paused';
+                    });
+                }
+                isPaused = !isPaused;
+                showToast(isPaused ? '회전 일시정지' : '회전 재개');
+            }
+        });
+    </script>
+</body>
+</html>

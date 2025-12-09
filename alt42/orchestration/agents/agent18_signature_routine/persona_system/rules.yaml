@@ -1,0 +1,692 @@
+# Agent18 Signature Routine - Persona Identification Rules
+# Version: 1.0
+# Created: 2025-12-02
+
+meta:
+  version: "1.0"
+  agent: "agent18_signature_routine"
+  description: "시그너처 루틴 발견을 위한 페르소나 식별 및 컨텍스트 매칭 규칙"
+  default_priority: 50
+
+# ============================================
+# RHYTHM (R) PERSONA RULES
+# ============================================
+
+rules:
+  # R1: 아침형 집중러
+  - id: "R1_MORNING_FOCUSER_PERFORMANCE"
+    name: "아침형 집중러 식별 - 성과 기반"
+    priority: 100
+    conditions:
+      operator: "AND"
+      items:
+        - field: "best_performance_time"
+          operator: "in"
+          value: ["06:00-10:00", "morning"]
+        - field: "morning_session_count"
+          operator: ">="
+          value: 5
+        - field: "morning_performance_ratio"
+          operator: ">="
+          value: 1.2
+    actions:
+      - type: "identify_persona"
+        persona: "R1_MORNING_FOCUSER"
+        confidence: 0.9
+      - type: "set_recommendation"
+        key: "optimal_time"
+        value: "morning"
+
+  - id: "R1_MORNING_FOCUSER_SPEECH"
+    name: "아침형 집중러 식별 - 발화 기반"
+    priority: 90
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["아침에 공부", "새벽에", "일찍 일어나", "오전에 집중", "아침이 좋아"]
+        - field: "preferred_time_stated"
+          operator: "=="
+          value: "morning"
+    actions:
+      - type: "identify_persona"
+        persona: "R1_MORNING_FOCUSER"
+        confidence: 0.7
+      - type: "flag_for_verification"
+        reason: "speech_based_identification"
+
+  # R2: 저녁형 야행러
+  - id: "R2_NIGHT_OWL_PERFORMANCE"
+    name: "저녁형 야행러 식별 - 성과 기반"
+    priority: 100
+    conditions:
+      operator: "AND"
+      items:
+        - field: "best_performance_time"
+          operator: "in"
+          value: ["20:00-02:00", "night", "evening"]
+        - field: "night_session_count"
+          operator: ">="
+          value: 5
+        - field: "night_performance_ratio"
+          operator: ">="
+          value: 1.2
+    actions:
+      - type: "identify_persona"
+        persona: "R2_NIGHT_OWL"
+        confidence: 0.9
+      - type: "set_recommendation"
+        key: "optimal_time"
+        value: "night"
+
+  - id: "R2_NIGHT_OWL_SPEECH"
+    name: "저녁형 야행러 식별 - 발화 기반"
+    priority: 90
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["밤에 공부", "저녁에 집중", "늦게까지", "야간에", "조용할 때"]
+        - field: "preferred_time_stated"
+          operator: "=="
+          value: "night"
+    actions:
+      - type: "identify_persona"
+        persona: "R2_NIGHT_OWL"
+        confidence: 0.7
+
+  # R3: 점심 후 집중러
+  - id: "R3_AFTERNOON_PEAK_PERFORMANCE"
+    name: "점심 후 집중러 식별 - 성과 기반"
+    priority: 100
+    conditions:
+      operator: "AND"
+      items:
+        - field: "best_performance_time"
+          operator: "in"
+          value: ["14:00-18:00", "afternoon"]
+        - field: "afternoon_session_count"
+          operator: ">="
+          value: 5
+        - field: "afternoon_performance_ratio"
+          operator: ">="
+          value: 1.2
+    actions:
+      - type: "identify_persona"
+        persona: "R3_AFTERNOON_PEAK"
+        confidence: 0.9
+
+  # R4: 분산형 학습러
+  - id: "R4_DISTRIBUTED_PATTERN"
+    name: "분산형 학습러 식별 - 패턴 기반"
+    priority: 95
+    conditions:
+      operator: "AND"
+      items:
+        - field: "avg_session_length"
+          operator: "<="
+          value: 30
+        - field: "daily_session_count"
+          operator: ">="
+          value: 3
+        - field: "break_frequency"
+          operator: ">="
+          value: 3
+    actions:
+      - type: "identify_persona"
+        persona: "R4_DISTRIBUTED"
+        confidence: 0.85
+      - type: "set_recommendation"
+        key: "session_style"
+        value: "pomodoro"
+
+  - id: "R4_DISTRIBUTED_SPEECH"
+    name: "분산형 학습러 식별 - 발화 기반"
+    priority: 85
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["오래 못해", "자주 쉬어야", "짧게 짧게", "집중이 안 돼", "조금씩"]
+    actions:
+      - type: "identify_persona"
+        persona: "R4_DISTRIBUTED"
+        confidence: 0.7
+
+  # R5: 몰입형 마라토너
+  - id: "R5_MARATHON_PATTERN"
+    name: "몰입형 마라토너 식별 - 패턴 기반"
+    priority: 95
+    conditions:
+      operator: "AND"
+      items:
+        - field: "avg_session_length"
+          operator: ">="
+          value: 90
+        - field: "continuous_focus_rate"
+          operator: ">="
+          value: 0.8
+    actions:
+      - type: "identify_persona"
+        persona: "R5_MARATHON"
+        confidence: 0.85
+      - type: "set_recommendation"
+        key: "session_style"
+        value: "deep_focus"
+
+# ============================================
+# ACHIEVEMENT (A) PERSONA RULES
+# ============================================
+
+  # A1: 목표 달성형
+  - id: "A1_GOAL_ACHIEVER_BEHAVIOR"
+    name: "목표 달성형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "goal_setting_frequency"
+          operator: ">="
+          value: 0.7
+        - field: "goal_completion_rate"
+          operator: ">="
+          value: 0.6
+        - field: "progress_check_frequency"
+          operator: ">="
+          value: 3
+    actions:
+      - type: "identify_persona"
+        persona: "A1_GOAL_ACHIEVER"
+        confidence: 0.85
+
+  - id: "A1_GOAL_ACHIEVER_SPEECH"
+    name: "목표 달성형 식별 - 발화 기반"
+    priority: 80
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["목표", "계획", "체크", "완료", "진도", "달성"]
+    actions:
+      - type: "identify_persona"
+        persona: "A1_GOAL_ACHIEVER"
+        confidence: 0.6
+
+  # A2: 작은 성취 누적형
+  - id: "A2_SMALL_WINS_BEHAVIOR"
+    name: "작은 성취 누적형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "prefers_small_tasks"
+          operator: "=="
+          value: true
+        - field: "task_granularity"
+          operator: "<="
+          value: 15
+        - field: "frequent_completion_reaction"
+          operator: ">="
+          value: 0.7
+    actions:
+      - type: "identify_persona"
+        persona: "A2_SMALL_WINS"
+        confidence: 0.8
+
+  # A3: 경쟁형 성취러
+  - id: "A3_COMPETITIVE_BEHAVIOR"
+    name: "경쟁형 성취러 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "OR"
+      items:
+        - field: "ranking_interest"
+          operator: ">="
+          value: 0.7
+        - field: "peer_comparison_frequency"
+          operator: ">="
+          value: 3
+    actions:
+      - type: "identify_persona"
+        persona: "A3_COMPETITIVE"
+        confidence: 0.8
+
+  - id: "A3_COMPETITIVE_SPEECH"
+    name: "경쟁형 성취러 식별 - 발화 기반"
+    priority: 80
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["다른 애들", "몇 등", "이기고", "순위", "1등", "비교"]
+    actions:
+      - type: "identify_persona"
+        persona: "A3_COMPETITIVE"
+        confidence: 0.7
+
+  # A4: 자기기록 갱신형
+  - id: "A4_PERSONAL_BEST_BEHAVIOR"
+    name: "자기기록 갱신형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "self_comparison_frequency"
+          operator: ">="
+          value: 3
+        - field: "personal_record_interest"
+          operator: ">="
+          value: 0.7
+        - field: "peer_comparison_frequency"
+          operator: "<="
+          value: 1
+    actions:
+      - type: "identify_persona"
+        persona: "A4_PERSONAL_BEST"
+        confidence: 0.85
+
+# ============================================
+# EXPLORER (E) PERSONA RULES
+# ============================================
+
+  # E1: 호기심 탐험가
+  - id: "E1_CURIOUS_BEHAVIOR"
+    name: "호기심 탐험가 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "question_frequency"
+          operator: ">="
+          value: 5
+        - field: "extended_content_access"
+          operator: ">="
+          value: 3
+    actions:
+      - type: "identify_persona"
+        persona: "E1_CURIOUS"
+        confidence: 0.8
+
+  - id: "E1_CURIOUS_SPEECH"
+    name: "호기심 탐험가 식별 - 발화 기반"
+    priority: 80
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["왜", "어떻게", "더 알고", "궁금", "원리", "이유"]
+    actions:
+      - type: "identify_persona"
+        persona: "E1_CURIOUS"
+        confidence: 0.65
+
+  # E2: 다양성 추구형
+  - id: "E2_VARIETY_BEHAVIOR"
+    name: "다양성 추구형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "learning_method_changes"
+          operator: ">="
+          value: 3
+        - field: "boredom_indicators"
+          operator: ">="
+          value: 2
+    actions:
+      - type: "identify_persona"
+        persona: "E2_VARIETY"
+        confidence: 0.8
+
+  # E3: 실험형 학습러
+  - id: "E3_EXPERIMENTER_BEHAVIOR"
+    name: "실험형 학습러 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "trial_and_error_count"
+          operator: ">="
+          value: 5
+        - field: "failure_tolerance"
+          operator: ">="
+          value: 0.7
+    actions:
+      - type: "identify_persona"
+        persona: "E3_EXPERIMENTER"
+        confidence: 0.8
+
+# ============================================
+# CHALLENGE (C) PERSONA RULES
+# ============================================
+
+  # C1: 난이도 도전형
+  - id: "C1_DIFFICULTY_BEHAVIOR"
+    name: "난이도 도전형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "difficulty_preference"
+          operator: "=="
+          value: "high"
+        - field: "challenge_acceptance_rate"
+          operator: ">="
+          value: 0.8
+    actions:
+      - type: "identify_persona"
+        persona: "C1_DIFFICULTY"
+        confidence: 0.85
+
+  - id: "C1_DIFFICULTY_SPEECH"
+    name: "난이도 도전형 식별 - 발화 기반"
+    priority: 80
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["어려운 거", "도전", "더 어려운", "쉬운 건 재미없"]
+    actions:
+      - type: "identify_persona"
+        persona: "C1_DIFFICULTY"
+        confidence: 0.7
+
+  # C2: 안정권 유지형
+  - id: "C2_COMFORT_BEHAVIOR"
+    name: "안정권 유지형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "difficulty_preference"
+          operator: "=="
+          value: "low"
+        - field: "repetition_preference"
+          operator: ">="
+          value: 0.7
+    actions:
+      - type: "identify_persona"
+        persona: "C2_COMFORT"
+        confidence: 0.8
+
+  # C3: 단계적 성장형
+  - id: "C3_GRADUAL_BEHAVIOR"
+    name: "단계적 성장형 식별 - 행동 기반"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "sequential_learning_preference"
+          operator: ">="
+          value: 0.8
+        - field: "skip_content_rate"
+          operator: "<="
+          value: 0.1
+    actions:
+      - type: "identify_persona"
+        persona: "C3_GRADUAL"
+        confidence: 0.85
+
+# ============================================
+# MEANING (M) PERSONA RULES
+# ============================================
+
+  # M1: 목적 지향형
+  - id: "M1_PURPOSE_SPEECH"
+    name: "목적 지향형 식별 - 발화 기반"
+    priority: 85
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["왜 배워야", "어디에 쓰이", "실제로", "필요한가", "의미"]
+    actions:
+      - type: "identify_persona"
+        persona: "M1_PURPOSE"
+        confidence: 0.75
+
+  # M2: 미래 연결형
+  - id: "M2_FUTURE_SPEECH"
+    name: "미래 연결형 식별 - 발화 기반"
+    priority: 85
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["나중에", "미래", "직업", "꿈", "진로", "되고 싶"]
+    actions:
+      - type: "identify_persona"
+        persona: "M2_FUTURE"
+        confidence: 0.75
+
+  # M3: 현재 집중형
+  - id: "M3_PRESENT_SPEECH"
+    name: "현재 집중형 식별 - 발화 기반"
+    priority: 85
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["지금", "오늘", "바로", "당장", "이번"]
+    actions:
+      - type: "identify_persona"
+        persona: "M3_PRESENT"
+        confidence: 0.7
+
+# ============================================
+# CONTEXT MATCHING RULES
+# ============================================
+
+  # SR01: 첫 루틴 분석 시작
+  - id: "CTX_SR01_FIRST_ANALYSIS"
+    name: "첫 루틴 분석 컨텍스트"
+    priority: 100
+    conditions:
+      operator: "AND"
+      items:
+        - field: "routine_analysis_count"
+          operator: "=="
+          value: 0
+        - field: "session_count"
+          operator: "<="
+          value: 3
+    actions:
+      - type: "set_context"
+        context: "SR01"
+      - type: "set_tone"
+        value: "friendly_exploratory"
+
+  # SR02: 루틴 패턴 발견
+  - id: "CTX_SR02_PATTERN_DISCOVERY"
+    name: "패턴 발견 컨텍스트"
+    priority: 95
+    conditions:
+      operator: "AND"
+      items:
+        - field: "session_count"
+          operator: ">="
+          value: 10
+        - field: "pattern_confidence"
+          operator: ">="
+          value: 0.7
+        - field: "pattern_notified"
+          operator: "=="
+          value: false
+    actions:
+      - type: "set_context"
+        context: "SR02"
+      - type: "set_tone"
+        value: "excited_discovery"
+      - type: "flag"
+        key: "pattern_notified"
+        value: true
+
+  # TP02: 골든타임 발견
+  - id: "CTX_TP02_GOLDEN_TIME"
+    name: "골든타임 발견 컨텍스트"
+    priority: 95
+    conditions:
+      operator: "AND"
+      items:
+        - field: "time_performance_ratio"
+          operator: ">="
+          value: 1.3
+        - field: "golden_time_notified"
+          operator: "=="
+          value: false
+    actions:
+      - type: "set_context"
+        context: "TP02"
+      - type: "set_tone"
+        value: "celebratory"
+
+  # FO01: 루틴 추천
+  - id: "CTX_FO01_ROUTINE_RECOMMEND"
+    name: "루틴 추천 컨텍스트"
+    priority: 90
+    conditions:
+      operator: "AND"
+      items:
+        - field: "analysis_confidence"
+          operator: ">="
+          value: 0.8
+        - field: "routine_recommended"
+          operator: "=="
+          value: false
+    actions:
+      - type: "set_context"
+        context: "FO01"
+      - type: "set_tone"
+        value: "confident_personalized"
+
+  # FO04: 성과 향상 확인
+  - id: "CTX_FO04_IMPROVEMENT"
+    name: "성과 향상 컨텍스트"
+    priority: 92
+    conditions:
+      operator: "AND"
+      items:
+        - field: "performance_improvement"
+          operator: ">="
+          value: 0.1
+        - field: "improvement_notified"
+          operator: "=="
+          value: false
+    actions:
+      - type: "set_context"
+        context: "FO04"
+      - type: "set_tone"
+        value: "celebratory_encouraging"
+
+  # TR03: 일일 리포트
+  - id: "CTX_TR03_DAILY_REPORT"
+    name: "일일 리포트 컨텍스트"
+    priority: 70
+    conditions:
+      operator: "OR"
+      items:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["오늘 얼마나", "오늘 정리", "하루 요약", "일일 리포트"]
+        - field: "daily_report_time"
+          operator: "=="
+          value: true
+    actions:
+      - type: "set_context"
+        context: "TR03"
+      - type: "set_tone"
+        value: "summary_acknowledgment"
+
+# ============================================
+# COMPOSITE PERSONA RULES
+# ============================================
+
+  - id: "CP01_MORNING_GOAL"
+    name: "아침형 목표 달성러 복합 식별"
+    priority: 85
+    conditions:
+      operator: "AND"
+      items:
+        - field: "identified_personas"
+          operator: "contains"
+          value: "R1_MORNING_FOCUSER"
+        - field: "identified_personas"
+          operator: "contains"
+          value: "A1_GOAL_ACHIEVER"
+    actions:
+      - type: "set_composite_persona"
+        personas: ["R1_MORNING_FOCUSER", "A1_GOAL_ACHIEVER"]
+        composite_id: "CP01"
+      - type: "set_recommendation"
+        key: "routine_type"
+        value: "morning_goal_oriented"
+
+  - id: "CP03_DISTRIBUTED_SMALL_WINS"
+    name: "분산형 작은 성취러 복합 식별"
+    priority: 85
+    conditions:
+      operator: "AND"
+      items:
+        - field: "identified_personas"
+          operator: "contains"
+          value: "R4_DISTRIBUTED"
+        - field: "identified_personas"
+          operator: "contains"
+          value: "A2_SMALL_WINS"
+    actions:
+      - type: "set_composite_persona"
+        personas: ["R4_DISTRIBUTED", "A2_SMALL_WINS"]
+        composite_id: "CP03"
+      - type: "set_recommendation"
+        key: "routine_type"
+        value: "short_frequent_wins"
+
+# ============================================
+# FALLBACK RULES
+# ============================================
+
+  - id: "FALLBACK_DEFAULT"
+    name: "기본 폴백 규칙"
+    priority: 1
+    conditions:
+      operator: "AND"
+      items:
+        - field: "identified_personas"
+          operator: "is_empty"
+          value: true
+    actions:
+      - type: "set_context"
+        context: "SR01"
+      - type: "set_tone"
+        value: "friendly_exploratory"
+      - type: "flag"
+        key: "needs_more_data"
+        value: true
+
+# ============================================
+# OPERATORS REFERENCE
+# ============================================
+# ==           : 같음
+# !=           : 다름
+# >            : 보다 큼
+# >=           : 보다 크거나 같음
+# <            : 보다 작음
+# <=           : 보다 작거나 같음
+# in           : 목록에 포함
+# not_in       : 목록에 미포함
+# contains     : 문자열/배열에 포함
+# contains_any : 하나라도 포함
+# contains_all : 모두 포함
+# is_empty     : 비어있음
+# is_not_empty : 비어있지 않음
+# matches      : 정규식 매칭

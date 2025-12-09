@@ -1,0 +1,22 @@
+[GREETING]
+
+{{student_name}}님, 안녕하세요.
+
+[CONTEXT]
+
+지난번에 {{previous_intervention}}에 대해 말씀드렸었는데,
+혹시 확인하셨을까요?
+
+[NO_PRESSURE]
+
+바쁘시거나 여유가 없으셨을 수도 있어요.
+전혀 재촉하려는 게 아니에요.
+
+[REMINDER]
+
+시간이 되실 때 한번 살펴봐 주시면 감사하겠습니다.
+{{reminder_content}}
+
+[AVAILABILITY]
+
+궁금한 점이 있으시면 언제든 물어봐 주세요.

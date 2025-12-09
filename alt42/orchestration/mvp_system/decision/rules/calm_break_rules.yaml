@@ -1,0 +1,129 @@
+# File: mvp_system/decision/rules/calm_break_rules.yaml
+# Mathking Agentic MVP System - Calm Break Decision Rules
+#
+# Purpose: Define decision logic for Calm Break intervention scenario
+# Referenced by: decision/rule_engine.py
+# Policy basis: agents/agent08_calmness/agent08_calmness.md
+
+version: "1.0"
+scenario: "calm_break"
+description: "Decision rules for student calm state intervention"
+
+# Rule execution order: Rules are evaluated in priority order (highest first)
+# First matching rule wins (short-circuit evaluation)
+
+rules:
+  # Rule 1: Critical low calm - immediate break required
+  - rule_id: "calm_break_critical"
+    priority: 100
+    description: "Critical calm score requires immediate intervention"
+    conditions:
+      - field: "calm_score"
+        operator: "less_than"
+        value: 60
+    action: "micro_break"
+    params:
+      duration_minutes: 5
+      message_template: "immediate_rest"
+      urgency: "high"
+    confidence: 0.95
+    rationale: "Calm score {calm_score} is critically low (<60). Immediate 5-minute break recommended to prevent learning inefficiency."
+
+  # Rule 2: Low calm - break recommended
+  - rule_id: "calm_break_low"
+    priority: 90
+    description: "Low calm score suggests break needed"
+    conditions:
+      - field: "calm_score"
+        operator: "less_than"
+        value: 75
+      - field: "calm_score"
+        operator: "greater_than_or_equal"
+        value: 60
+    action: "micro_break"
+    params:
+      duration_minutes: 3
+      message_template: "short_rest"
+      urgency: "medium"
+    confidence: 0.85
+    rationale: "Calm score {calm_score} is low (60-74). 3-minute breathing exercise recommended per agent08 policy."
+
+  # Rule 3: Moderate calm with declining trend - ask teacher
+  - rule_id: "calm_declining_teacher_check"
+    priority: 80
+    description: "Declining calm trend requires teacher evaluation"
+    conditions:
+      - field: "calm_score"
+        operator: "less_than"
+        value: 85
+      - field: "calm_score"
+        operator: "greater_than_or_equal"
+        value: 75
+      - field: "recommendation"
+        operator: "contains"
+        value: "warning"  # From agent08 policy
+    action: "ask_teacher"
+    params:
+      reason: "declining_performance"
+      urgency: "medium"
+    confidence: 0.75
+    rationale: "Calm score {calm_score} is moderate (75-84) but showing decline. Teacher review recommended to assess if intervention needed."
+
+  # Rule 4: Stable moderate calm - monitor only
+  - rule_id: "calm_moderate_monitor"
+    priority: 70
+    description: "Moderate calm, continue monitoring"
+    conditions:
+      - field: "calm_score"
+        operator: "greater_than_or_equal"
+        value: 75
+      - field: "calm_score"
+        operator: "less_than"
+        value: 90
+    action: "none"
+    params:
+      monitor_interval_minutes: 5
+      alert_on_decline: true
+    confidence: 0.80
+    rationale: "Calm score {calm_score} is acceptable (75-89). Continue standard learning with monitoring."
+
+  # Rule 5: High calm - optimal state
+  - rule_id: "calm_optimal"
+    priority: 60
+    description: "High calm score, optimal learning state"
+    conditions:
+      - field: "calm_score"
+        operator: "greater_than_or_equal"
+        value: 90
+    action: "none"
+    params:
+      suggest_challenge: true
+      monitor_interval_minutes: 10
+    confidence: 0.90
+    rationale: "Calm score {calm_score} is high (>=90). Student in optimal state for learning. Consider advanced content per agent08 policy."
+
+# Default fallback rule (if no rules match)
+default_rule:
+  rule_id: "calm_default"
+  action: "none"
+  params:
+    reason: "no_matching_rule"
+  confidence: 0.50
+  rationale: "No specific rule matched. Defaulting to no intervention with continued monitoring."
+
+# Confidence calculation guidelines
+confidence_factors:
+  score_certainty: 0.4  # Weight for score reliability
+  rule_specificity: 0.3  # Weight for rule match precision
+  policy_alignment: 0.3  # Weight for agent08 policy compliance
+
+# SLA constraints
+sla:
+  max_decision_time_ms: 200  # Must decide within 200ms
+  require_rationale: true
+  log_all_evaluations: true
+
+# Metadata
+last_updated: "2025-11-02"
+author: "MVP System Team"
+policy_reference: "agents/agent08_calmness/agent08_calmness.md"

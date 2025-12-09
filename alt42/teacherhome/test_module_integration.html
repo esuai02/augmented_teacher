@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .loading {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .module-data {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>KTM Module Integration Test</h1>
+    
+    <div class="test-section">
+        <div class="test-title">1. Module Loader Status</div>
+        <div id="loaderStatus" class="test-result loading">Checking module loader...</div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">2. Database Connection Test</div>
+        <button onclick="testDatabaseConnection()">Test Database API</button>
+        <div id="dbStatus" class="test-result loading">Click button to test database connection</div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">3. Module Loading Tests</div>
+        
+        <div style="margin-bottom: 10px;">
+            <button onclick="testModule('quarterly')">Test Quarterly</button>
+            <button onclick="testModule('daily')">Test Daily</button>
+            <button onclick="testModule('realtime')">Test Realtime</button>
+            <button onclick="testModule('interaction')">Test Interaction</button>
+            <button onclick="testModule('bias')">Test Bias</button>
+            <button onclick="testModule('development')">Test Development</button>
+            <button onclick="testAllModules()">Test All Modules</button>
+        </div>
+        
+        <div id="moduleResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <div class="test-title">4. Module Data Display</div>
+        <select id="moduleSelect" onchange="displayModuleData()">
+            <option value="">Select a module to view data</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="daily">Daily</option>
+            <option value="realtime">Realtime</option>
+            <option value="interaction">Interaction</option>
+            <option value="bias">Bias</option>
+            <option value="development">Development</option>
+        </select>
+        <div id="moduleDataDisplay" class="module-data" style="display:none;"></div>
+    </div>
+
+    <!-- Load module loader -->
+    <script src="module_loader.js"></script>
+    
+    <!-- Load all modules -->
+    <script src="quarterly/quarterly.js"></script>
+    <script src="daily/daily.js"></script>
+    <script src="realtime/realtime.js"></script>
+    <script src="interaction/interaction.js"></script>
+    <script src="bias/bias.js"></script>
+    <script src="development/development.js"></script>
+    
+    <script>
+        // Check module loader status
+        window.addEventListener('DOMContentLoaded', function() {
+            const loaderStatus = document.getElementById('loaderStatus');
+            
+            if (window.moduleLoader) {
+                loaderStatus.className = 'test-result success';
+                loaderStatus.textContent = '✓ Module loader is loaded and ready';
+            } else {
+                loaderStatus.className = 'test-result error';
+                loaderStatus.textContent = '✗ Module loader not found!';
+            }
+        });
+        
+        // Test database connection
+        async function testDatabaseConnection() {
+            const dbStatus = document.getElementById('dbStatus');
+            dbStatus.className = 'test-result loading';
+            dbStatus.textContent = 'Testing database connection...';
+            
+            try {
+                const response = await fetch('module_data_api.php?action=getAllCategories');
+                const data = await response.json();
+                
+                if (data.success) {
+                    dbStatus.className = 'test-result success';
+                    dbStatus.textContent = `✓ Database API is working. Found ${data.data.length} categories`;
+                } else {
+                    dbStatus.className = 'test-result error';
+                    dbStatus.textContent = `✗ Database API error: ${data.error}`;
+                }
+            } catch (error) {
+                dbStatus.className = 'test-result error';
+                dbStatus.textContent = `✗ Failed to connect to API: ${error.message}`;
+            }
+        }
+        
+        // Test individual module
+        async function testModule(moduleName) {
+            const resultsDiv = document.getElementById('moduleResults');
+            const moduleVar = window[moduleName + 'Module'];
+            
+            // Create or update result div for this module
+            let resultDiv = document.getElementById(`result-${moduleName}`);
+            if (!resultDiv) {
+                resultDiv = document.createElement('div');
+                resultDiv.id = `result-${moduleName}`;
+                resultDiv.className = 'test-result loading';
+                resultsDiv.appendChild(resultDiv);
+            }
+            
+            resultDiv.textContent = `Testing ${moduleName} module...`;
+            
+            if (!moduleVar) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `✗ ${moduleName} module not found in window object`;
+                return;
+            }
+            
+            try {
+                // Test getData function
+                const data = await moduleVar.getData();
+                
+                if (data && data.title) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.textContent = `✓ ${moduleName} module loaded: "${data.title}" with ${data.tabs ? data.tabs.length : 0} tabs`;
+                } else {
+                    resultDiv.className = 'test-result warning';
+                    resultDiv.textContent = `⚠ ${moduleName} module loaded but no data available`;
+                }
+                
+                // Test custom methods
+                const methods = [];
+                for (let key in moduleVar) {
+                    if (typeof moduleVar[key] === 'function' && key !== 'getData') {
+                        methods.push(key);
+                    }
+                }
+                
+                if (methods.length > 0) {
+                    resultDiv.textContent += ` | Methods: ${methods.join(', ')}`;
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.textContent = `✗ ${moduleName} module error: ${error.message}`;
+            }
+        }
+        
+        // Test all modules
+        async function testAllModules() {
+            const modules = ['quarterly', 'daily', 'realtime', 'interaction', 'bias', 'development'];
+            for (const module of modules) {
+                await testModule(module);
+            }
+        }
+        
+        // Display module data
+        async function displayModuleData() {
+            const select = document.getElementById('moduleSelect');
+            const display = document.getElementById('moduleDataDisplay');
+            const moduleName = select.value;
+            
+            if (!moduleName) {
+                display.style.display = 'none';
+                return;
+            }
+            
+            display.style.display = 'block';
+            display.textContent = 'Loading...';
+            
+            const moduleVar = window[moduleName + 'Module'];
+            if (!moduleVar) {
+                display.textContent = `Module ${moduleName} not found`;
+                return;
+            }
+            
+            try {
+                const data = await moduleVar.getData();
+                display.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                display.textContent = `Error loading module data: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

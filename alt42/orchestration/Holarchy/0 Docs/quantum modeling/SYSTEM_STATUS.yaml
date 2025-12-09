@@ -1,0 +1,525 @@
+# ============================================================================
+# SYSTEM_STATUS.yaml
+# Quantum Modeling & Agent Orchestration 시스템 현황 정의서
+# ============================================================================
+# 
+# 목적: Single Source of Truth (SSOT)로서 현재 구현 상태와 목표 설계를 명확히 구분
+# 작성일: 2025-12-08
+# 버전: 1.0.0
+# 
+# ⚠️ 이 파일은 시스템의 "진실"을 정의합니다.
+#    모든 문서와 코드는 이 파일을 참조해야 합니다.
+# ============================================================================
+
+metadata:
+  version: "1.6.0"
+  created: "2025-12-08"
+  last_updated: "2025-12-09"
+  maintainer: "AI Agent Integration Team"
+  status: "active"
+  current_phase: "Phase 0: 문서 정비"
+
+# ============================================================================
+# 1. 에이전트 시스템 현황
+# ============================================================================
+agents:
+  current_implementation:
+    count: 22
+    source_of_truth: "engine_core/config/engine_config.php"
+    registered_agents:
+      - { id: 1,  name: "onboarding",              kr_name: "온보딩",           status: "implemented" }
+      - { id: 2,  name: "exam_schedule",           kr_name: "시험 일정",        status: "implemented" }
+      - { id: 3,  name: "goals_analysis",          kr_name: "목표 분석",        status: "implemented" }
+      - { id: 4,  name: "inspect_weakpoints",      kr_name: "약점 검사",        status: "implemented" }
+      - { id: 5,  name: "learning_emotion",        kr_name: "학습 감정",        status: "implemented" }
+      - { id: 6,  name: "teacher_feedback",        kr_name: "교사 피드백",      status: "implemented" }
+      - { id: 7,  name: "interaction_targeting",   kr_name: "상호작용 타겟팅",  status: "implemented" }
+      - { id: 8,  name: "calmness",                kr_name: "침착도",           status: "implemented" }
+      - { id: 9,  name: "learning_management",     kr_name: "학습 관리",        status: "implemented" }
+      - { id: 10, name: "concept_notes",           kr_name: "개념 노트",        status: "implemented" }
+      - { id: 11, name: "problem_notes",           kr_name: "문제 노트",        status: "implemented" }
+      - { id: 12, name: "rest_routine",            kr_name: "휴식 루틴",        status: "implemented" }
+      - { id: 13, name: "learning_dropout",        kr_name: "학습 이탈",        status: "implemented" }
+      - { id: 14, name: "current_position",        kr_name: "현재 위치",        status: "implemented" }
+      - { id: 15, name: "problem_redefinition",    kr_name: "문제 재정의",      status: "implemented" }
+      - { id: 16, name: "interaction_preparation", kr_name: "상호작용 준비",    status: "implemented" }
+      - { id: 17, name: "remaining_activities",    kr_name: "남은 활동",        status: "implemented" }
+      - { id: 18, name: "signature_routine",       kr_name: "시그니처 루틴",    status: "implemented" }
+      - { id: 19, name: "interaction_content",     kr_name: "상호작용 콘텐츠",  status: "implemented" }
+      - { id: 20, name: "intervention_preparation", kr_name: "개입 준비",       status: "implemented" }
+      - { id: 21, name: "intervention_execution",  kr_name: "개입 실행",        status: "implemented" }
+      - { id: 22, name: "module_improvement",      kr_name: "모듈 개선",        status: "implemented" }
+
+  target_design:
+    count: 22
+    source: "AGENT_INTERDEPENDENCY_DOCUMENTATION.md"
+    status: "synchronized"  # 구현과 설계가 동기화됨
+
+  resolved_issues:
+    - issue_id: "AGENT-001"
+      resolved_date: "2025-12-08"
+      description: "Agent 14 정의 충돌 해결"
+      resolution: "engine_config.php에서 curriculum_innovation → current_position으로 수정"
+      
+    - issue_id: "AGENT-002"
+      resolved_date: "2025-12-08"
+      description: "Agent 22 등록 완료"
+      resolution: "engine_config.php, InterAgentBus.php에 Agent 22 (module_improvement) 추가"
+
+  known_issues: []  # 현재 알려진 이슈 없음
+
+  phase_classification:
+    phase_1_daily_info:
+      name: "Daily Information Collection"
+      agents: [1, 2, 3, 4, 5, 6]
+    phase_2_realtime:
+      name: "Real-time Interaction"
+      agents: [7, 8, 9, 10, 11, 12, 13]
+    phase_3_diagnosis:
+      name: "Diagnosis & Preparation"
+      agents: [14, 15, 16, 17, 18, 19]
+    phase_4_intervention:
+      name: "Intervention & Improvement"
+      agents: [20, 21, 22]
+
+# ============================================================================
+# 2. StateVector (상태 벡터) 현황
+# ============================================================================
+state_vector:
+  current_implementation:
+    dimensions: 8
+    source: "holons/_quantum_persona_mapper.py"
+    components:
+      - { name: "metacognition",        description: "메타인지 (자기 학습 인식)" }
+      - { name: "self_efficacy",        description: "자기효능감" }
+      - { name: "help_seeking",         description: "도움 요청 성향" }
+      - { name: "emotional_regulation", description: "정서 조절" }
+      - { name: "anxiety",              description: "불안 수준" }
+      - { name: "confidence",           description: "자신감" }
+      - { name: "engagement",           description: "참여도/몰입" }
+      - { name: "motivation",           description: "동기 수준" }
+    value_range: "0.0 ~ 1.0"
+
+  target_design:
+    dimensions: 64
+    source: "quantum-orchestration-design.md"
+    component_groups:
+      - { name: "cognitive",   count: 16, description: "인지 차원" }
+      - { name: "affective",   count: 16, description: "정서 차원" }
+      - { name: "behavioral",  count: 16, description: "행동 차원" }
+      - { name: "contextual",  count: 16, description: "컨텍스트 차원" }
+    migration_status: "not_started"
+    migration_complexity: "high"
+
+  known_issues:
+    - issue_id: "SV-001"
+      severity: "high"
+      description: "차원 수 불일치"
+      details: "문서(64차원)와 구현(8차원) 불일치. 8→64 확장 시 기존 코드 대규모 수정 필요"
+      action_required: "현재 8차원을 '구현 상태'로 문서화, 64차원은 '목표 설계'로 분리"
+
+# ============================================================================
+# 3. 파동함수 (Wavefunction) 시스템 현황
+# ============================================================================
+wavefunctions:
+  theory_definition:
+    count: 13
+    source: "quantum-learning-model.md"
+    functions:
+      - { id: 1,  name: "ψ_core",     full_name: "핵심 3상태 파동함수",    basis: "|Correct⟩, |Misconception⟩, |Confusion⟩" }
+      - { id: 2,  name: "ψ_align",    full_name: "정렬 파동함수",          description: "정답 방향 정렬도" }
+      - { id: 3,  name: "ψ_fluct",    full_name: "요동 파동함수",          description: "탐색 에너지" }
+      - { id: 4,  name: "ψ_tunnel",   full_name: "터널링 파동함수",        description: "장벽 돌파 확률" }
+      - { id: 5,  name: "ψ_WM",       full_name: "작업기억 안정도 파동함수", description: "20초 윈도우 기반" }
+      - { id: 6,  name: "ψ_affect",   full_name: "정서 기반 파동함수",     basis: "|Calm⟩, |Tension⟩, |Overload⟩" }
+      - { id: 7,  name: "ψ_routine",  full_name: "루틴 강화 파동함수",     description: "습관/루틴 강화 정도" }
+      - { id: 8,  name: "ψ_engage",   full_name: "이탈/복귀 파동함수",     basis: "|Focus⟩, |Drift⟩, |Drop⟩" }
+      - { id: 9,  name: "ψ_concept",  full_name: "개념 구조 파동함수",     description: "개념 간 얽힘" }
+      - { id: 10, name: "ψ_cascade",  full_name: "연쇄 붕괴 파동함수",     description: "연속 붕괴 확률" }
+      - { id: 11, name: "ψ_meta",     full_name: "메타인지 파동함수",      basis: "|CanDo⟩, |Uncertain⟩" }
+      - { id: 12, name: "ψ_context",  full_name: "상황문맥 파동함수",      description: "문제 해석 맥락" }
+      - { id: 13, name: "ψ_predict",  full_name: "예측 파동함수",          description: "붕괴 시점 예측" }
+
+  implementation_status:
+    holons_python: "partial"  # 시나리오 기반 위상 매핑만 구현
+    agent04_php: "partial"    # 감쇠 진동 모델로 대체 구현
+    full_13_wavefunctions: "not_implemented"
+
+  agent_mapping_status: "not_documented"
+  mapping_required: true
+
+# ============================================================================
+# 4. 페르소나 시스템 현황 (3개 독립 체계)
+# ============================================================================
+persona_systems:
+  - system_id: "PS-A"
+    name: "시나리오 기반 페르소나"
+    count: 54
+    source: "holons/_quantum_persona_mapper.py"
+    layer: "python"
+    status: "active"
+    structure:
+      scenarios: 9  # S0, S1, S2, S3, S4, S5, C, Q, E
+      personas_per_scenario: 6
+      total: 54
+    examples:
+      - "S0_P1: 솔직한 자기 분석가"
+      - "S0_P2: 방어적 최소 응답자"
+      - "S1_P1: 긴급 재조정 수용자"
+    state_vector_mapping: "8차원 StateVector"
+
+  - system_id: "PS-B"
+    name: "아키타입 기반 페르소나"
+    count: 4
+    source: "agent04_inspect_weakpoints/quantum_modeling/QuantumPersonaEngine.php"
+    layer: "php"
+    status: "active"
+    personas:
+      - { code: "S", name: "Sprinter",   icon: "⚡", description: "속도 중심, 직관적, 실수 잦음" }
+      - { code: "D", name: "Diver",      icon: "🤿", description: "원리 중심, 느림, 완벽주의" }
+      - { code: "G", name: "Gamer",      icon: "🎮", description: "보상/경쟁 중심, 도파민 추구" }
+      - { code: "A", name: "Architect",  icon: "🏛️", description: "계획/안정 중심, 리스크 회피" }
+    features:
+      - "감쇠 진동 모델 (Damped Oscillation)"
+      - "골든 타임 계산"
+      - "페르소나 스위칭 경로"
+
+  - system_id: "PS-C"
+    name: "학습 유형 기반 페르소나"
+    count: 4
+    source: "quantum-learning-model.md"
+    layer: "theory"
+    status: "theory_only"
+    personas:
+      - { name: "Hyperia",    type: "INTJ", description: "전략형 분석가, 탑다운형" }
+      - { name: "Explorer",   type: "mixed", description: "충동적 탐색가, 직관 강함" }
+      - { name: "Sensitive",  type: "mixed", description: "불안 동기형 상위권" }
+      - { name: "Drift",      type: "mixed", description: "저동기·저관여" }
+    wavefunction_patterns: "13종 파동함수 패턴 정의됨"
+
+  integration_status: "not_unified"
+  unification_plan: "pending"
+
+# ============================================================================
+# 5. 실시간 튜터 시스템 (Brain/Mind/Mouth)
+# ============================================================================
+realtime_tutor:
+  architecture:
+    layers:
+      - name: "Brain (Quantum Decision Engine)"
+        role: "개입 여부 판단"
+        input: "13종 파동함수 실시간 모니터링"
+        output: "개입/비개입/미세개입 결정"
+        implementation_status: "designed_v1.0"  # IDE 설계 완료
+        ide_component:
+          name: "Intervention Decision Engine (IDE)"
+          version: "1.0"
+          source: "quantum-orchestration-design.md#5.4"
+          steps: 7
+          step_list:
+            - "1. Trigger 식별"
+            - "2. BCE(경계조건) 체크"
+            - "3. 시나리오 후보군 생성"
+            - "4. 시나리오 우선순위 결정"
+            - "5. 필수 충족조건 체크"
+            - "6. 최종 상호작용 선택"
+            - "7. 개입 실행 (Mind → Mouth)"
+          key_components:
+            - "BoundaryConditionEngine"
+            - "ScenarioGenerator"
+            - "PriorityCalculator"
+            - "PrerequisiteChecker"
+            - "InterventionSelector"
+            - "InterventionExecutor"
+          critical_issues:
+            source: "quantum-ide-critical-issues.md"
+            count: 17
+            categories:
+              - { name: "타이밍 문제", count: 2, priority: "critical" }
+              - { name: "우선순위 충돌", count: 2, priority: "critical" }
+              - { name: "계산비용 문제", count: 2, priority: "high" }
+              - { name: "과잉개입 문제", count: 3, priority: "medium" }
+              - { name: "예측실패 문제", count: 2, priority: "critical" }
+              - { name: "파동함수 불안정", count: 3, priority: "high" }
+              - { name: "데이터 매핑 불일치", count: 3, priority: "medium" }
+            implementation_roadmap: "4 phases"
+
+      - name: "Mind (Context Generator - LLM)"
+        role: "대사 및 지문 생성"
+        input: "Brain 판단 결과 + 학생 상태"
+        output: "Script + Instruction + Metadata"
+        implementation_status: "concept"
+
+      - name: "Mouth (Dynamic TTS Engine)"
+        role: "감정 실린 음성 변환"
+        input: "Mind 출력 + 파동함수 값"
+        output: "동적 음성 (tone, speed, emotion)"
+        implementation_status: "concept"
+
+  key_features:
+    - name: "Latency Zero"
+      description: "Streaming API로 첫 음절부터 출력"
+      status: "concept"
+    - name: "Back-channeling"
+      description: "추임새 삽입 (음, 그렇지, 오?)"
+      status: "concept"
+    - name: "Interruption"
+      description: "오개념 임계치 초과 시 끼어들기"
+      status: "concept"
+
+  agent_connection:
+    brain_layer: [7, 8, 9, 10, 11, 13, 14]  # α-Estimator 핵심 에이전트
+    mind_layer: [16, 19]  # 상호작용 준비/콘텐츠
+    mouth_layer: [21]  # 개입 실행
+
+# ============================================================================
+# 6. 코드 레이어 현황
+# ============================================================================
+code_layers:
+  - layer_id: "L1"
+    name: "PHP Core (engine_core/)"
+    path: "agents/engine_core/"
+    key_files:
+      - "config/engine_config.php"
+      - "communication/InterAgentBus.php"
+      - "interfaces/PersonaEngineInterface.php"
+    agent_count: 21
+    status: "production"
+
+  - layer_id: "L2"
+    name: "Python Quantum (holons/)"
+    path: "Holarchy/0 Docs/holons/"
+    key_files:
+      - "_quantum_persona_mapper.py"
+      - "_quantum_entanglement.py"
+      - "_quantum_orchestrator.py"
+    agent_count: 21
+    state_vector_dim: 8
+    persona_count: 54
+    status: "production"
+
+  - layer_id: "L3"
+    name: "PHP Quantum (agent04/quantum_modeling/)"
+    path: "agents/agent04_inspect_weakpoints/quantum_modeling/"
+    key_files:
+      - "QuantumPersonaEngine.php"
+      - "HybridStateStabilizer.php"
+      - "PersonaContextSimulator.php"
+    persona_count: 4
+    status: "production"
+
+  - layer_id: "L4"
+    name: "Documentation (quantum modeling/)"
+    path: "Holarchy/0 Docs/quantum modeling/"
+    key_files:
+      - "quantum-learning-model.md"
+      - "quantum-orchestration-design.md"
+    status: "needs_update"
+
+# ============================================================================
+# 7. 문서 현황 및 동기화 상태
+# ============================================================================
+documentation:
+  quantum_modeling_folder:
+    path: "Holarchy/0 Docs/quantum modeling/"
+    files:
+      - name: "quantum-learning-model.md"
+        version: "1.3"
+        lines: ~1520
+        content: "13종 파동함수, 22단계 에이전트, 실시간 튜터 아키텍처, 실측 데이터 기반 α/β/γ 계산"
+        sync_status: "synchronized"  # 에이전트 동기화 완료
+        notes:
+          - "✅ 에이전트 이름 engine_config.php와 동기화 완료"
+          - "✅ 비가역성 등가 구조 (메타포가 아닌 구조적 동형성) 명확화"
+          - "✅ 실측 데이터 소스(침착도/포모도로/퀴즈) 기반 α,β,γ 계산 방법"
+          - "✅ LLM 대비 차별화 포인트 문서화"
+          - "⚠️ 64차원 StateVector는 이론 모델 (현재 구현: 8차원)"
+
+      - name: "quantum-orchestration-design.md"
+        lines: 1177
+        content: "64차원 StateVector, 22개 에이전트 EntanglementMap"
+        sync_status: "synchronized"  # M-003 작업 완료
+        notes:
+          - "✅ 에이전트 이름 engine_config.php와 동기화 완료"
+          - "⚠️ 64차원 StateVector는 목표 설계 (현재 구현: 8차원)"
+
+      - name: "quantum-ide-critical-issues.md"
+        version: "1.1"
+        created: "2025-12-09"
+        content: "IDE 구현 시 17개 Critical 문제점 및 해결 방향"
+        sync_status: "synchronized"
+        notes:
+          - "🚨 IDE 구현 전 반드시 검토 필요"
+          - "✅ 7개 카테고리, 17개 문제점 정의"
+          - "✅ 코드 수준 해결 패턴 제시"
+          - "✅ 4단계 구현 로드맵 포함"
+          - "✅ 관련 문서 상호 참조 추가"
+
+      - name: "IMPLEMENTATION_GUIDE.md"
+        version: "1.0"
+        created: "2025-12-09"
+        content: "주니어 개발자를 위한 단계별 구현 가이드"
+        sync_status: "new"
+        notes:
+          - "✅ 환경 설정 (PHP/Python/Moodle)"
+          - "✅ 파동함수 구현 예시 코드"
+          - "✅ IDE 7단계 구현 예시"
+          - "✅ 테스트 가이드 및 체크리스트"
+
+  prd:
+    path: "tasks/"
+    files:
+      - name: "0005-prd-quantum-modeling-completion.md"
+        version: "1.0"
+        created: "2025-12-09"
+        content: "Quantum Modeling 시스템 완성 PRD"
+        status: "active"
+        phases:
+          - "Phase 0: 문서 정비 (1주) - 진행중"
+          - "Phase 1: 핵심 구현 (3주) - 대기"
+          - "Phase 2: IDE 구현 (3주) - 대기"
+          - "Phase 3: 검증 (2주) - 대기"
+          - "Phase 4: Critical Issues (2주) - 대기"
+
+  agents_folder:
+    path: "agents/"
+    key_docs:
+      - name: "AGENT_INTERDEPENDENCY_DOCUMENTATION.md"
+        content: "22개 에이전트 상호의존성"
+        sync_status: "good"
+        note: "가장 상세한 에이전트 관계 문서"
+
+      - name: "agent_orchestration/ORCHESTRATION_DESIGN.md"
+        content: "시간 스케일별 오케스트레이션"
+        sync_status: "good"
+
+# ============================================================================
+# 8. 마이그레이션 작업 목록
+# ============================================================================
+migration_tasks:
+  completed:
+    - task_id: "M-001"
+      name: "Agent 14 정의 수정"
+      files: ["engine_core/config/engine_config.php"]
+      change: "curriculum_innovation → current_position"
+      completed_date: "2025-12-08"
+      status: "done"
+
+    - task_id: "M-002"
+      name: "Agent 22 등록"
+      files: 
+        - "engine_core/config/engine_config.php"
+        - "engine_core/communication/InterAgentBus.php"
+      change: "Agent 22 module_improvement 추가"
+      completed_date: "2025-12-08"
+      status: "done"
+
+    - task_id: "M-003"
+      name: "quantum-orchestration-design.md 에이전트 이름 수정"
+      files: ["quantum modeling/quantum-orchestration-design.md"]
+      change: "EntanglementMap.AGENTS, CORE_ENTANGLEMENTS, AGENT_STATE_MAPPING 동기화"
+      completed_date: "2025-12-08"
+      status: "done"
+
+  high: []  # 모든 high 작업 완료
+
+  medium:
+    - task_id: "M-004"
+      name: "00-INDEX.md 생성"
+      description: "quantum modeling 폴더 전체 인덱스"
+      estimated_time: "2시간"
+      risk: "low"
+
+    - task_id: "M-005"
+      name: "AGENT_REGISTRY.yaml 생성"
+      description: "에이전트 정의 SSOT"
+      estimated_time: "2시간"
+      risk: "low"
+
+    - task_id: "M-006"
+      name: "wavefunction-agent-mapping.md 생성"
+      description: "13종 파동함수 ↔ 22개 에이전트 매핑"
+      estimated_time: "2시간"
+      risk: "low"
+
+  low:
+    - task_id: "M-007"
+      name: "StateVector 64차원 확장"
+      description: "8차원 → 64차원 확장 (장기 과제)"
+      estimated_time: "수 주"
+      risk: "high"
+      status: "deferred"
+
+# ============================================================================
+# 9. 버전 히스토리
+# ============================================================================
+version_history:
+  - version: "1.6.0"
+    date: "2025-12-09"
+    changes:
+      - "PRD 0005-prd-quantum-modeling-completion.md 작성"
+      - "IMPLEMENTATION_GUIDE.md 신규 작성 (구현 가이드)"
+      - "모든 문서 간 상호 참조 링크 강화"
+      - "00-INDEX.md v1.3 업데이트 (문서 맵, 로드맵 추가)"
+      - "Phase 0: 문서 정비 시작"
+      - "문서 수 5개 → 7개 (PRD 포함)"
+
+  - version: "1.5.0"
+    date: "2025-12-09"
+    changes:
+      - "quantum-ide-critical-issues.md 신규 문서 추가"
+      - "IDE 구현 시 17개 Critical 문제점 정의"
+      - "7개 카테고리: 타이밍, 우선순위충돌, 계산비용, 과잉개입, 예측실패, 파동함수불안정, 데이터매핑불일치"
+      - "4단계 구현 로드맵 포함"
+      - "00-INDEX.md v1.2 업데이트 (새 문서 인덱싱)"
+      - "realtime_tutor.brain.ide_component에 critical_issues 섹션 추가"
+
+  - version: "1.4.0"
+    date: "2025-12-08"
+    changes:
+      - "quantum-learning-model.md v1.3 업데이트"
+      - "'완전한 등가 구조' 개념 명확화 (메타포가 아닌 구조적 동형성)"
+      - "인지과학적 근거 보강 (Predictive Coding, Selective Attention)"
+      - "실측 데이터 소스(침착도/포모도로/퀴즈) 기반 α,β,γ 계산 방법 명시"
+
+  - version: "1.3.0"
+    date: "2025-12-08"
+    changes:
+      - "quantum-learning-model.md 에이전트 동기화 완료"
+      - "22단계 에이전트 그래프 아키텍처 반영"
+      - "핵심 6종 에이전트 매핑 engine_config.php 기준으로 동기화"
+      - "에이전트 분류에 시스템 에이전트(22) 추가"
+      - "모든 quantum modeling 문서의 sync_status를 synchronized로 업데이트"
+
+  - version: "1.2.0"
+    date: "2025-12-08"
+    changes:
+      - "M-003: quantum-orchestration-design.md 에이전트 동기화 완료"
+      - "AGENTS 정의를 engine_config.php 기준으로 전면 수정"
+      - "CORE_ENTANGLEMENTS 실제 에이전트 관계로 재정의"
+      - "AGENT_STATE_MAPPING 실제 에이전트 기반으로 업데이트"
+      - "WaveFunctionCollapse 에이전트 참조 수정"
+      - "21→22 에이전트 확장 반영 (상관행렬, 활성화 벡터)"
+
+  - version: "1.1.0"
+    date: "2025-12-08"
+    changes:
+      - "M-001: Agent 14 정의 수정 완료 (curriculum_innovation → current_position)"
+      - "M-002: Agent 22 (module_improvement) 등록 완료"
+      - "engine_config.php 22개 에이전트 지원으로 업데이트"
+      - "InterAgentBus.php 22개 에이전트 지원으로 업데이트"
+      - "에이전트 카테고리 재분류 (Agent 14: content → diagnosis)"
+      - "시스템 카테고리 신규 추가 (Agent 22용)"
+
+  - version: "1.0.0"
+    date: "2025-12-08"
+    changes:
+      - "초기 문서 생성"
+      - "에이전트, StateVector, 파동함수, 페르소나 현황 정리"
+      - "코드 레이어 및 문서 동기화 상태 분석"
+      - "마이그레이션 작업 목록 정의"
+
+# ============================================================================
+# 끝
+# ============================================================================
+

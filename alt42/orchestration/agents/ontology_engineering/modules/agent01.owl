@@ -1,0 +1,1434 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#"
+         xmlns:mk-a01-core="http://mathking.kr/ontology/agent01/core/"
+         xmlns:mk-a01-task="http://mathking.kr/ontology/agent01/task/"
+         xmlns:mk-a01-mod="http://mathking.kr/ontology/agent01/modules/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/agent01/">
+    <rdfs:label xml:lang="ko">Agent01 Onboarding Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent01 온보딩 에이전트 전용 온톨로지</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- ============================================ -->
+  <!-- Agent Core Ontology -->
+  <!-- ============================================ -->
+
+  <!-- Agent Core 네임스페이스 속성 정의 (core.owl의 속성을 재사용하되, agent01 전용 네임스페이스로 확장) -->
+  
+  <!-- 기본 추상 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/ContextBase">
+    <rdfs:label xml:lang="ko">ContextBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent01의 모든 Context 클래스가 상속받는 기본 추상 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/alphatutor#Context"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/DecisionBase">
+    <rdfs:label xml:lang="ko">DecisionBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent01의 모든 Decision 클래스가 상속받는 기본 추상 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/alphatutor#DecisionModel"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/ExecutionBase">
+    <rdfs:label xml:lang="ko">ExecutionBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent01의 모든 Execution 클래스가 상속받는 기본 추상 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/alphatutor#ExecutionPlan"/>
+  </owl:Class>
+
+  <!-- 열거형 타입 정의 (owl:oneOf 사용) -->
+  
+  <!-- DifficultyLevel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/DifficultyLevel">
+    <rdfs:label xml:lang="ko">DifficultyLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">수업/문제의 난이도를 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Easy">
+        <rdfs:label xml:lang="ko">Easy</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/EasyToMedium">
+        <rdfs:label xml:lang="ko">EasyToMedium</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Medium">
+        <rdfs:label xml:lang="ko">Medium</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/MediumToHard">
+        <rdfs:label xml:lang="ko">MediumToHard</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Hard">
+        <rdfs:label xml:lang="ko">Hard</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/VeryHard">
+        <rdfs:label xml:lang="ko">VeryHard</rdfs:label>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- AlignmentStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/AlignmentStrategy">
+    <rdfs:label xml:lang="ko">AlignmentStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원-학교-집 진도를 정렬하는 전략을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/BridgeStrategy">
+        <rdfs:label xml:lang="ko">BridgeStrategy</rdfs:label>
+        <rdfs:comment xml:lang="ko">진도 간극 메우기 전략</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/ReinforcementStrategy">
+        <rdfs:label xml:lang="ko">ReinforcementStrategy</rdfs:label>
+        <rdfs:comment xml:lang="ko">보강 전략</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/PreviewStrategy">
+        <rdfs:label xml:lang="ko">PreviewStrategy</rdfs:label>
+        <rdfs:comment xml:lang="ko">예습 전략</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/SynchronizedStrategy">
+        <rdfs:label xml:lang="ko">SynchronizedStrategy</rdfs:label>
+        <rdfs:comment xml:lang="ko">동기화 전략</rdfs:comment>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- ConfidenceLevel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/ConfidenceLevel">
+    <rdfs:label xml:lang="ko">ConfidenceLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 수학 자신감 수준을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/VeryLow">
+        <rdfs:label xml:lang="ko">VeryLow</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Low">
+        <rdfs:label xml:lang="ko">Low</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Medium">
+        <rdfs:label xml:lang="ko">Medium</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/High">
+        <rdfs:label xml:lang="ko">High</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/VeryHigh">
+        <rdfs:label xml:lang="ko">VeryHigh</rdfs:label>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- StressLevel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/StressLevel">
+    <rdfs:label xml:lang="ko">StressLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 수학 스트레스 수준을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/StressLow">
+        <rdfs:label xml:lang="ko">Low</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/StressMedium">
+        <rdfs:label xml:lang="ko">Medium</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/StressHigh">
+        <rdfs:label xml:lang="ko">High</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/StressVeryHigh">
+        <rdfs:label xml:lang="ko">VeryHigh</rdfs:label>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- MathLevel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/MathLevel">
+    <rdfs:label xml:lang="ko">MathLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 전반적인 수학 수준을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Lower">
+        <rdfs:label xml:lang="ko">Lower</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/LowerToMiddle">
+        <rdfs:label xml:lang="ko">LowerToMiddle</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Middle">
+        <rdfs:label xml:lang="ko">Middle</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/MiddleToUpper">
+        <rdfs:label xml:lang="ko">MiddleToUpper</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Upper">
+        <rdfs:label xml:lang="ko">Upper</rdfs:label>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Top">
+        <rdfs:label xml:lang="ko">Top</rdfs:label>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- MathLearningStyle -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/MathLearningStyle">
+    <rdfs:label xml:lang="ko">MathLearningStyle</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 수학 학습 스타일을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/CalculationType">
+        <rdfs:label xml:lang="ko">CalculationType</rdfs:label>
+        <rdfs:comment xml:lang="ko">계산형 - 계산과 연습 문제 중심</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/ConceptType">
+        <rdfs:label xml:lang="ko">ConceptType</rdfs:label>
+        <rdfs:comment xml:lang="ko">개념형 - 개념 이해 중심</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/ApplicationType">
+        <rdfs:label xml:lang="ko">ApplicationType</rdfs:label>
+        <rdfs:comment xml:lang="ko">응용형 - 응용 문제 중심</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/MixedType">
+        <rdfs:label xml:lang="ko">MixedType</rdfs:label>
+        <rdfs:comment xml:lang="ko">혼합형 - 여러 스타일 혼합</rdfs:comment>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- ExamStyle -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/ExamStyle">
+    <rdfs:label xml:lang="ko">ExamStyle</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 시험 대비 성향을 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Cramming">
+        <rdfs:label xml:lang="ko">Cramming</rdfs:label>
+        <rdfs:comment xml:lang="ko">벼락치기 - 시험 직전 집중 학습</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Planned">
+        <rdfs:label xml:lang="ko">Planned</rdfs:label>
+        <rdfs:comment xml:lang="ko">계획형 - 일정에 맞춘 계획적 학습</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Continuous">
+        <rdfs:label xml:lang="ko">Continuous</rdfs:label>
+        <rdfs:comment xml:lang="ko">지속형 - 꾸준한 학습</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/Irregular">
+        <rdfs:label xml:lang="ko">Irregular</rdfs:label>
+        <rdfs:comment xml:lang="ko">불규칙형 - 불규칙한 학습 패턴</rdfs:comment>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- SeverityLevel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/core/SeverityLevel">
+    <rdfs:label xml:lang="ko">SeverityLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제의 심각도를 표현하는 열거형 타입</rdfs:comment>
+    <owl:oneOf rdf:parseType="Collection">
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/SeverityLow">
+        <rdfs:label xml:lang="ko">Low</rdfs:label>
+        <rdfs:comment xml:lang="ko">낮음 - 낮은 우선순위</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/SeverityMedium">
+        <rdfs:label xml:lang="ko">Medium</rdfs:label>
+        <rdfs:comment xml:lang="ko">보통 - 중간 우선순위</rdfs:comment>
+      </rdf:Description>
+      <rdf:Description rdf:about="http://mathking.kr/ontology/agent01/core/SeverityHigh">
+        <rdfs:label xml:lang="ko">High</rdfs:label>
+        <rdfs:comment xml:lang="ko">높음 - 높은 우선순위</rdfs:comment>
+      </rdf:Description>
+    </owl:oneOf>
+  </owl:Class>
+
+  <!-- ============================================ -->
+  <!-- Task Core Ontology -->
+  <!-- ============================================ -->
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/task/OnboardingContextBase">
+    <rdfs:label xml:lang="ko">OnboardingContextBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">온보딩 Task의 모든 Context Module이 상속받는 기본 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/core/ContextBase"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase">
+    <rdfs:label xml:lang="ko">OnboardingDecisionBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">온보딩 Task의 모든 Decision Module이 상속받는 기본 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/core/DecisionBase"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/task/OnboardingExecutionBase">
+    <rdfs:label xml:lang="ko">OnboardingExecutionBase</rdfs:label>
+    <rdfs:comment xml:lang="ko">온보딩 Task의 모든 Execution Module이 상속받는 기본 클래스</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/core/ExecutionBase"/>
+  </owl:Class>
+
+  <!-- ============================================ -->
+  <!-- Task Module Ontology -->
+  <!-- ============================================ -->
+
+  <!-- CandidateProblem: 문제 후보 구조체 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/CandidateProblem">
+    <rdfs:label xml:lang="ko">CandidateProblem</rdfs:label>
+    <rdfs:comment xml:lang="ko">Interpretation Layer에서 도출된 문제 후보 구조체</rdfs:comment>
+  </owl:Class>
+
+  <!-- CandidateProblem 속성 정의 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasProblemId">
+    <rdfs:label xml:lang="ko">hasProblemId</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 ID (예: "P1")</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CandidateProblem"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDescription">
+    <rdfs:label xml:lang="ko">hasDescription</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 설명</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CandidateProblem"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasSeverity">
+    <rdfs:label xml:lang="ko">hasSeverity</rdfs:label>
+    <rdfs:comment xml:lang="ko">심각도 (high/medium/low)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CandidateProblem"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/SeverityLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasWillAlignment">
+    <rdfs:label xml:lang="ko">hasWillAlignment</rdfs:label>
+    <rdfs:comment xml:lang="ko">관련 Will 항목 리스트</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CandidateProblem"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDataSources">
+    <rdfs:label xml:lang="ko">hasDataSources</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 소스 리스트</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CandidateProblem"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- CandidateProblem 제약조건 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/CandidateProblem">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasProblemId"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasDescription"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasSeverity"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasDataSources"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- OnboardingContext -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/OnboardingContext">
+    <rdfs:label xml:lang="ko">OnboardingContext</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 온보딩 정보와 초기 학습 맥락을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingContextBase"/>
+    <!-- Stage 제약조건: hasStage는 반드시 "Context"여야 함 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Context</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- 필수 속성 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasStudentGrade"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasSchool"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasAcademy"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- hasMathConfidence 범위 제약 (0-10) -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasMathConfidence"/>
+        <owl:someValuesFrom>
+          <rdfs:Datatype>
+            <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            <owl:withRestrictions rdf:parseType="Collection">
+              <rdf:Description>
+                <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</xsd:minInclusive>
+                <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</xsd:maxInclusive>
+              </rdf:Description>
+            </owl:withRestrictions>
+          </rdfs:Datatype>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- OnboardingContext 속성 정의 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasStudentGrade">
+    <rdfs:label xml:lang="ko">hasStudentGrade</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생 학년</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasSchool">
+    <rdfs:label xml:lang="ko">hasSchool</rdfs:label>
+    <rdfs:comment xml:lang="ko">학교명 (최대 100자)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAcademy">
+    <rdfs:label xml:lang="ko">hasAcademy</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원명 (최대 100자)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAcademyGrade">
+    <rdfs:label xml:lang="ko">hasAcademyGrade</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 등급(반)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasOnboardingInfo">
+    <rdfs:label xml:lang="ko">hasOnboardingInfo</rdfs:label>
+    <rdfs:comment xml:lang="ko">온보딩 종합 정보 (원시 설문 응답)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMathConfidence">
+    <rdfs:label xml:lang="ko">hasMathConfidence</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 자신감 점수 (0-10)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMathStressLevel">
+    <rdfs:label xml:lang="ko">hasMathStressLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 스트레스 수준 (원시 응답)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMathLevel">
+    <rdfs:label xml:lang="ko">hasMathLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 수준 (원시 응답)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTextbooks">
+    <rdfs:label xml:lang="ko">hasTextbooks</rdfs:label>
+    <rdfs:comment xml:lang="ko">사용 교재 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAcademyTextbook">
+    <rdfs:label xml:lang="ko">hasAcademyTextbook</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 교재</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- LearningContextIntegration -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration">
+    <rdfs:label xml:lang="ko">LearningContextIntegration</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생의 진도, 단원, 정렬 상태를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingContextBase"/>
+    <!-- Stage 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Context</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- hasParent 필수 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasParent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- LearningContextIntegration 속성 정의 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasConceptProgress">
+    <rdfs:label xml:lang="ko">hasConceptProgress</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 진도 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAdvancedProgress">
+    <rdfs:label xml:lang="ko">hasAdvancedProgress</rdfs:label>
+    <rdfs:comment xml:lang="ko">심화 진도 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasUnitMastery">
+    <rdfs:label xml:lang="ko">hasUnitMastery</rdfs:label>
+    <rdfs:comment xml:lang="ko">단원별 마스터리 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCurrentPosition">
+    <rdfs:label xml:lang="ko">hasCurrentPosition</rdfs:label>
+    <rdfs:comment xml:lang="ko">현재 진도 위치 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAcademyProgress">
+    <rdfs:label xml:lang="ko">hasAcademyProgress</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 진도 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCurriculumAlignment">
+    <rdfs:label xml:lang="ko">hasCurriculumAlignment</rdfs:label>
+    <rdfs:comment xml:lang="ko">커리큘럼 정렬 상태 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAcademySchoolHomeAlignment">
+    <rdfs:label xml:lang="ko">hasAcademySchoolHomeAlignment</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원-학교-집 정렬 상태 (원시 데이터)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- LearningContextIntegration 제약조건 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasConceptProgress"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasUnitMastery"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- FirstClassDecisionModel -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel">
+    <rdfs:label xml:lang="ko">FirstClassDecisionModel</rdfs:label>
+    <rdfs:comment xml:lang="ko">첫 수업의 핵심 의사결정 결과를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <!-- Stage 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- hasParent 필수 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasParent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- usesContext 최소 2개 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#usesContext"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">2</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- usesContext는 OnboardingContext와 LearningContextIntegration을 모두 포함해야 함 (타입 제약) -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#usesContext"/>
+        <owl:someValuesFrom rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#usesContext"/>
+        <owl:someValuesFrom rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningContextIntegration"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- FirstClassDecisionModel 속성 정의 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasSelectedProblem">
+    <rdfs:label xml:lang="ko">hasSelectedProblem</rdfs:label>
+    <rdfs:comment xml:lang="ko">선택된 문제 ID</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasProblemPriority">
+    <rdfs:label xml:lang="ko">hasProblemPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 우선순위 리스트</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasProblem">
+    <rdfs:label xml:lang="ko">hasProblem</rdfs:label>
+    <rdfs:comment xml:lang="ko">최종 문제 정의 (10-500자)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDecision">
+    <rdfs:label xml:lang="ko">hasDecision</rdfs:label>
+    <rdfs:comment xml:lang="ko">결정 내용 (10-500자)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasImpact">
+    <rdfs:label xml:lang="ko">hasImpact</rdfs:label>
+    <rdfs:comment xml:lang="ko">예상 영향</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDifficultyLevel">
+    <rdfs:label xml:lang="ko">hasDifficultyLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">난이도 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/DifficultyLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAlignmentStrategy">
+    <rdfs:label xml:lang="ko">hasAlignmentStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">정렬 전략</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/AlignmentStrategy"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasContentRange">
+    <rdfs:label xml:lang="ko">hasContentRange</rdfs:label>
+    <rdfs:comment xml:lang="ko">내용 범위</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasUnitPlan">
+    <rdfs:label xml:lang="ko">hasUnitPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">단원 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDataSources">
+    <rdfs:label xml:lang="ko">hasDataSources</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 소스</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- FirstClassDecisionModel 제약조건 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasProblem"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasDecision"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasDifficultyLevel"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasAlignmentStrategy"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- FirstClassExecutionPlan -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan">
+    <rdfs:label xml:lang="ko">FirstClassExecutionPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">첫 수업의 구체적 실행 계획을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingExecutionBase"/>
+    <!-- Stage 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Execution</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- hasParent 필수 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasParent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- referencesDecision 필수 제약조건 -->
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#referencesDecision"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassDecisionModel"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <!-- referencesDecision과 hasParent는 같은 노드를 참조해야 함 (일치 제약) -->
+    <!-- Note: OWL에서는 직접적인 동등성 제약이 어려우므로, 애플리케이션 레벨에서 검증 필요 -->
+  </owl:Class>
+
+  <!-- FirstClassExecutionPlan 속성 정의 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAction">
+    <rdfs:label xml:lang="ko">hasAction</rdfs:label>
+    <rdfs:comment xml:lang="ko">실행할 행동 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMeasurement">
+    <rdfs:label xml:lang="ko">hasMeasurement</rdfs:label>
+    <rdfs:comment xml:lang="ko">측정 방법 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasFeedback">
+    <rdfs:label xml:lang="ko">hasFeedback</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 수집 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAdjustment">
+    <rdfs:label xml:lang="ko">hasAdjustment</rdfs:label>
+    <rdfs:comment xml:lang="ko">조정 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- FirstClassExecutionPlan 제약조건 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/FirstClassExecutionPlan">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasAction"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/agent01/modules/hasMeasurement"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- ============================================ -->
+  <!-- Q2: 커리큘럼과 루틴 최적화 온톨로지 -->
+  <!-- ============================================ -->
+
+  <!-- CurriculumOptimization -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/CurriculumOptimization">
+    <rdfs:label xml:lang="ko">CurriculumOptimization</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생 성향과 목표 기반 커리큘럼 최적화를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasParent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasProgressPriority">
+    <rdfs:label xml:lang="ko">hasProgressPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">진도별 우선순위</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CurriculumOptimization"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasLearningFlow">
+    <rdfs:label xml:lang="ko">hasLearningFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 흐름</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CurriculumOptimization"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningFlow"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasProblemTypeRatio">
+    <rdfs:label xml:lang="ko">hasProblemTypeRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 유형 비중</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CurriculumOptimization"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDifficultyAdjustment">
+    <rdfs:label xml:lang="ko">hasDifficultyAdjustment</rdfs:label>
+    <rdfs:comment xml:lang="ko">난이도 조절 전략</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CurriculumOptimization"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/DifficultyAdjustmentStrategy"/>
+  </owl:ObjectProperty>
+
+  <!-- GoalBasedCurriculum -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/GoalBasedCurriculum">
+    <rdfs:label xml:lang="ko">GoalBasedCurriculum</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 기반 커리큘럼 설계를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasShortTermGoal">
+    <rdfs:label xml:lang="ko">hasShortTermGoal</rdfs:label>
+    <rdfs:comment xml:lang="ko">단기 목표</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/GoalBasedCurriculum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMidTermGoal">
+    <rdfs:label xml:lang="ko">hasMidTermGoal</rdfs:label>
+    <rdfs:comment xml:lang="ko">중기 목표</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/GoalBasedCurriculum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasLongTermGoal">
+    <rdfs:label xml:lang="ko">hasLongTermGoal</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 목표</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/GoalBasedCurriculum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasGoalFeasibility">
+    <rdfs:label xml:lang="ko">hasGoalFeasibility</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 달성 가능성 평가</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/GoalBasedCurriculum"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- LearningFlow -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/LearningFlow">
+    <rdfs:label xml:lang="ko">LearningFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 흐름을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasFlowSequence">
+    <rdfs:label xml:lang="ko">hasFlowSequence</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 흐름 순서</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningFlow"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasStyleBasedFlow">
+    <rdfs:label xml:lang="ko">hasStyleBasedFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 스타일 기반 흐름</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningFlow"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTimeAllocation">
+    <rdfs:label xml:lang="ko">hasTimeAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간 배분</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningFlow"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/TimeAllocation"/>
+  </owl:ObjectProperty>
+
+  <!-- ProblemTypeRatio -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio">
+    <rdfs:label xml:lang="ko">ProblemTypeRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 유형 비중을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasConceptRatio">
+    <rdfs:label xml:lang="ko">hasConceptRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 문제 비중</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTypeRatio">
+    <rdfs:label xml:lang="ko">hasTypeRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">유형 문제 비중</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAdvancedRatio">
+    <rdfs:label xml:lang="ko">hasAdvancedRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">심화 문제 비중</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasPastExamRatio">
+    <rdfs:label xml:lang="ko">hasPastExamRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">기출 문제 비중</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ProblemTypeRatio"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <!-- DifficultyAdjustmentStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/DifficultyAdjustmentStrategy">
+    <rdfs:label xml:lang="ko">DifficultyAdjustmentStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">난이도 조절 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasStressLevel">
+    <rdfs:label xml:lang="ko">hasStressLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">스트레스 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/DifficultyAdjustmentStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/StressLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasConfidenceLevel">
+    <rdfs:label xml:lang="ko">hasConfidenceLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">자신감 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/DifficultyAdjustmentStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/ConfidenceLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAdjustmentPlan">
+    <rdfs:label xml:lang="ko">hasAdjustmentPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">조절 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/DifficultyAdjustmentStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- ParentInvolvementStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/ParentInvolvementStrategy">
+    <rdfs:label xml:lang="ko">ParentInvolvementStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">부모 개입 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasParentStyle">
+    <rdfs:label xml:lang="ko">hasParentStyle</rdfs:label>
+    <rdfs:comment xml:lang="ko">부모 스타일</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ParentInvolvementStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasInvolvementLevel">
+    <rdfs:label xml:lang="ko">hasInvolvementLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ParentInvolvementStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasFeedbackMethod">
+    <rdfs:label xml:lang="ko">hasFeedbackMethod</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 방식</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/ParentInvolvementStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- RoutineDesign -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/RoutineDesign">
+    <rdfs:label xml:lang="ko">RoutineDesign</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 설계를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingExecutionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Execution</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasStudyHoursPerWeek">
+    <rdfs:label xml:lang="ko">hasStudyHoursPerWeek</rdfs:label>
+    <rdfs:comment xml:lang="ko">주당 학습 시간</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineDesign"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasLearningEnvironment">
+    <rdfs:label xml:lang="ko">hasLearningEnvironment</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 환경</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineDesign"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRoutineStructure">
+    <rdfs:label xml:lang="ko">hasRoutineStructure</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 구조</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineDesign"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- TimeAllocation -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/TimeAllocation">
+    <rdfs:label xml:lang="ko">TimeAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간 배분을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingExecutionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Execution</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasDailyAllocation">
+    <rdfs:label xml:lang="ko">hasDailyAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">일일 시간 배분</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TimeAllocation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasWeeklyAllocation">
+    <rdfs:label xml:lang="ko">hasWeeklyAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">주간 시간 배분</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TimeAllocation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasPriorityBasedAllocation">
+    <rdfs:label xml:lang="ko">hasPriorityBasedAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">우선순위 기반 시간 배분</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TimeAllocation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- ============================================ -->
+  <!-- Q3: 중장기 성장 전략 온톨로지 -->
+  <!-- ============================================ -->
+
+  <!-- LongTermGrowthStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/LongTermGrowthStrategy">
+    <rdfs:label xml:lang="ko">LongTermGrowthStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">중장기 성장 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasParent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+        <owl:onClass rdf:resource="http://mathking.kr/ontology/agent01/modules/OnboardingContext"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasGrowthPlan">
+    <rdfs:label xml:lang="ko">hasGrowthPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">성장 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LongTermGrowthStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRiskFactors">
+    <rdfs:label xml:lang="ko">hasRiskFactors</rdfs:label>
+    <rdfs:comment xml:lang="ko">리스크 요인</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LongTermGrowthStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/RiskPrediction"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTrackingPriorities">
+    <rdfs:label xml:lang="ko">hasTrackingPriorities</rdfs:label>
+    <rdfs:comment xml:lang="ko">트래킹 우선순위</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LongTermGrowthStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/TrackingPriority"/>
+  </owl:ObjectProperty>
+
+  <!-- CompetitionPrepStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/CompetitionPrepStrategy">
+    <rdfs:label xml:lang="ko">CompetitionPrepStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">경시 준비 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCompetitionType">
+    <rdfs:label xml:lang="ko">hasCompetitionType</rdfs:label>
+    <rdfs:comment xml:lang="ko">경시 대회 유형</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CompetitionPrepStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasPrepPeriod">
+    <rdfs:label xml:lang="ko">hasPrepPeriod</rdfs:label>
+    <rdfs:comment xml:lang="ko">준비 기간</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CompetitionPrepStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRiskAssessment">
+    <rdfs:label xml:lang="ko">hasRiskAssessment</rdfs:label>
+    <rdfs:comment xml:lang="ko">리스크 평가</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/CompetitionPrepStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/RiskPrediction"/>
+  </owl:ObjectProperty>
+
+  <!-- UniversityGoalStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/UniversityGoalStrategy">
+    <rdfs:label xml:lang="ko">UniversityGoalStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">진학 목표 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasUniversityGoal">
+    <rdfs:label xml:lang="ko">hasUniversityGoal</rdfs:label>
+    <rdfs:comment xml:lang="ko">진학 목표</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/UniversityGoalStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTargetScore">
+    <rdfs:label xml:lang="ko">hasTargetScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 점수</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/UniversityGoalStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRoadmap">
+    <rdfs:label xml:lang="ko">hasRoadmap</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 로드맵</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/UniversityGoalStrategy"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningRoadmap"/>
+  </owl:ObjectProperty>
+
+  <!-- LearningRoadmap -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/LearningRoadmap">
+    <rdfs:label xml:lang="ko">LearningRoadmap</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 로드맵을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMilestones">
+    <rdfs:label xml:lang="ko">hasMilestones</rdfs:label>
+    <rdfs:comment xml:lang="ko">마일스톤 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningRoadmap"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTimeline">
+    <rdfs:label xml:lang="ko">hasTimeline</rdfs:label>
+    <rdfs:comment xml:lang="ko">타임라인</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningRoadmap"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCheckpoints">
+    <rdfs:label xml:lang="ko">hasCheckpoints</rdfs:label>
+    <rdfs:comment xml:lang="ko">체크포인트 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/LearningRoadmap"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- MathConfidenceGrowth -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/MathConfidenceGrowth">
+    <rdfs:label xml:lang="ko">MathConfidenceGrowth</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 자존감 성장 패턴을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCurrentConfidence">
+    <rdfs:label xml:lang="ko">hasCurrentConfidence</rdfs:label>
+    <rdfs:comment xml:lang="ko">현재 자신감 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/MathConfidenceGrowth"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/ConfidenceLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasConfidenceGrowthPlan">
+    <rdfs:label xml:lang="ko">hasConfidenceGrowthPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">자신감 성장 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/MathConfidenceGrowth"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasInterventionStrategy">
+    <rdfs:label xml:lang="ko">hasInterventionStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 전략</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/MathConfidenceGrowth"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- FatiguePreventionStrategy -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/FatiguePreventionStrategy">
+    <rdfs:label xml:lang="ko">FatiguePreventionStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 방지 전략을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasFatiguePattern">
+    <rdfs:label xml:lang="ko">hasFatiguePattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 패턴</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FatiguePreventionStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasPreventionPlan">
+    <rdfs:label xml:lang="ko">hasPreventionPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">방지 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FatiguePreventionStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRecoveryStrategy">
+    <rdfs:label xml:lang="ko">hasRecoveryStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 전략</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/FatiguePreventionStrategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- RiskPrediction -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/RiskPrediction">
+    <rdfs:label xml:lang="ko">RiskPrediction</rdfs:label>
+    <rdfs:comment xml:lang="ko">조기 리스크 예측을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRiskFactors">
+    <rdfs:label xml:lang="ko">hasRiskFactors</rdfs:label>
+    <rdfs:comment xml:lang="ko">리스크 요인 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RiskPrediction"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasRiskLevel">
+    <rdfs:label xml:lang="ko">hasRiskLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">리스크 수준</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RiskPrediction"/>
+    <rdfs:range rdf:resource="http://mathking.kr/ontology/agent01/core/SeverityLevel"/>
+  </owl:ObjectProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasEarlyWarningSignals">
+    <rdfs:label xml:lang="ko">hasEarlyWarningSignals</rdfs:label>
+    <rdfs:comment xml:lang="ko">조기 경고 신호 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RiskPrediction"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- RoutineSustainability -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/RoutineSustainability">
+    <rdfs:label xml:lang="ko">RoutineSustainability</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 유지 지속성을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasSustainabilityScore">
+    <rdfs:label xml:lang="ko">hasSustainabilityScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">지속 가능성 점수</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineSustainability"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMaintenancePlan">
+    <rdfs:label xml:lang="ko">hasMaintenancePlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">유지 계획</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineSustainability"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasStabilityIndicators">
+    <rdfs:label xml:lang="ko">hasStabilityIndicators</rdfs:label>
+    <rdfs:comment xml:lang="ko">안정성 지표 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineSustainability"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- RoutineMonitoring -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/RoutineMonitoring">
+    <rdfs:label xml:lang="ko">RoutineMonitoring</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 모니터링을 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingExecutionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Execution</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasMonitoringMetrics">
+    <rdfs:label xml:lang="ko">hasMonitoringMetrics</rdfs:label>
+    <rdfs:comment xml:lang="ko">모니터링 지표 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineMonitoring"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasCheckFrequency">
+    <rdfs:label xml:lang="ko">hasCheckFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">점검 빈도</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineMonitoring"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasAlertThresholds">
+    <rdfs:label xml:lang="ko">hasAlertThresholds</rdfs:label>
+    <rdfs:comment xml:lang="ko">알림 임계값 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/RoutineMonitoring"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <!-- TrackingPriority -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/agent01/modules/TrackingPriority">
+    <rdfs:label xml:lang="ko">TrackingPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">트래킹 우선순위를 표현하는 데이터 구조</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://mathking.kr/ontology/agent01/task/OnboardingDecisionBase"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/alphatutor#hasStage"/>
+        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision</owl:hasValue>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasPriorityList">
+    <rdfs:label xml:lang="ko">hasPriorityList</rdfs:label>
+    <rdfs:comment xml:lang="ko">우선순위 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TrackingPriority"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasTrackingFrequency">
+    <rdfs:label xml:lang="ko">hasTrackingFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">트래킹 빈도</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TrackingPriority"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/agent01/modules/hasKeyIndicators">
+    <rdfs:label xml:lang="ko">hasKeyIndicators</rdfs:label>
+    <rdfs:comment xml:lang="ko">핵심 지표 목록</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/agent01/modules/TrackingPriority"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  </owl:DatatypeProperty>
+
+</rdf:RDF>
+

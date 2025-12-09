@@ -1,0 +1,554 @@
+# Rules for Agent 13 - Learning Dropout
+# Generated at: 2025-01-21
+# Purpose: 수학 학습 이탈 조기 탐지 및 맞춤형 개입 설계
+# Source: teacher_level_evaluation.md 기반 수학 특화 확장
+
+version: "1.0"
+scenario: "learning_dropout"
+description: "수학 학습 이탈 조기 탐지 및 예방 개입 - 수학 단원별/난이도별/학원 맥락 통합 분석"
+
+#
+# 포괄형 질문 1: "이 학생의 학습 몰입 흐름이 어느 시점에서 끊기고 있는지, 그 원인을 어떻게 조기 탐지·예방해야 할까?"
+#   - 연계 룰: S0_R1~S0_R6 (수학 특화 정보 수집), S1_R1~S1_R3 (이탈 조기 탐지 및 개입), S8_R1~S8_R4 (기본 이탈 탐지 및 위험도 평가)
+#   - 데이터 소스: pomodoro_pattern, emotion_change_rate, note_taking_trend, goal_input_delay, routine_collapse_point, dropout_prediction, intervention_timing, intervention_message, action_routine, immersion_break_point, dropout_cause
+#   - 온톨로지: DropoutEarlyDetection
+#   - 연계 에이전트: Agent 05 (감정 분석), Agent 18 (시그너처 루틴)
+#
+# 포괄형 질문 2: "이 학생의 집중 회복력을 높이기 위해 어떤 루틴과 환경 변수를 조정해야 할까?"
+#   - 연계 룰: S8_R3 (루틴 보정), S1_R2 (단원별 맞춤형 개입), S2_R1~S2_R3 (난이도별 이탈 분석)
+#   - 데이터 소스: return_success_rate, return_delay_after_dropout, emotion_recovery_speed, fatigue_accumulation_index, routine_maintenance_stability, return_loop_strategy, routine_adjustment, time_intensity_reward, concentration_recovery, environment_variables
+#   - 온톨로지: ConcentrationRecovery
+#   - 연계 에이전트: Agent 05 (감정 회복), Agent 12 (휴식 루틴), Agent 18 (루틴 조정)
+#
+# 포괄형 질문 3: "이 학생이 장기적으로 이탈이 줄고, 자기조절 루틴이 자리잡도록 하기 위해 지금 어떤 피드백 체계를 구축해야 할까?"
+#   - 연계 룰: S8_R4 (에스컬레이션), S3_R1~S3_R3 (학습 단계별 이탈 분석), S4_R1~S4_R3 (학원 맥락 이탈 분석)
+#   - 데이터 소스: weekly_dropout_trend, emotion_rest_data, teacher_intervention_effect, feedback_tolerance, return_loop_completion_rate, self_regulation_routine, emotional_recovery_routine, long_term_dropout_reduction, self_regulation_establishment, feedback_system
+#   - 온톨로지: SelfRegulationRoutine
+#   - 연계 에이전트: Agent 05 (감정/휴식 데이터), Agent 06 (교사 개입 효과), Agent 18 (자기조절 루틴)
+#
+# 자세한 데이터 기반 질문 정의는 data_based_questions.js의 agent13 섹션을 참조하세요.
+#
+
+rules:
+  # ========== S0: 수학 특화 필수 정보 수집 룰 ==========
+  
+  - rule_id: "S0_R1_current_math_unit_collection"
+    priority: 99
+    description: "현재 학습 중인 수학 단원 정보 수집"
+    conditions:
+      - field: "current_math_unit"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "ninactive"
+          operator: ">="
+          value: 1
+    action:
+      - "collect_info: 'current_math_unit'"
+      - "validate: '수학 단원 정보는 학년과 단원명을 포함해야 합니다 (예: 중2-함수)'"
+      - "display_message: '현재 학습 중인 수학 단원을 파악하여 단원별 이탈 패턴을 분석합니다.'"
+      - "question: '현재 학습 중인 수학 단원은 무엇인가요? (예: 중2-함수, 중3-이차방정식)'"
+    confidence: 0.96
+    rationale: "S0: 단원별 이탈 패턴 분석을 위해 현재 단원 정보 필수"
+  
+  - rule_id: "S0_R2_problem_difficulty_collection"
+    priority: 98
+    description: "현재 풀고 있는 문제 난이도 정보 수집"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "eye_count"
+          operator: ">="
+          value: 1
+    action:
+      - "collect_info: 'problem_difficulty'"
+      - "validate: '문제 난이도는 기본형, 유형, 심화 중 하나여야 합니다'"
+      - "display_message: '현재 풀고 있는 문제 난이도를 파악하여 난이도별 이탈 패턴을 분석합니다.'"
+      - "question: '현재 풀고 있는 문제 난이도는? (A) 기본형 (B) 유형 (C) 심화'"
+    confidence: 0.95
+    rationale: "S0: 난이도별 이탈 분석을 위해 문제 난이도 정보 필수"
+  
+  - rule_id: "S0_R3_learning_stage_collection"
+    priority: 97
+    description: "현재 학습 단계 정보 수집 (개념/유형/심화/기출)"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "tlaststroke_min"
+          operator: ">="
+          value: 5
+    action:
+      - "collect_info: 'learning_stage'"
+      - "validate: '학습 단계는 개념 학습, 유형 연습, 심화 문제, 기출 문제 중 하나여야 합니다'"
+      - "display_message: '현재 학습 단계를 파악하여 단계별 이탈 패턴을 분석합니다.'"
+      - "question: '현재 어떤 학습 단계인가요? (A) 개념 학습 (B) 유형 연습 (C) 심화 문제 (D) 기출 문제'"
+    confidence: 0.94
+    rationale: "S0: 학습 단계별 이탈 분석을 위해 현재 단계 정보 필수"
+  
+  - rule_id: "S0_R4_academy_class_understanding_collection"
+    priority: 96
+    description: "학원 수업 이해도 정보 수집"
+    conditions:
+      - field: "academy_class_understanding"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "ninactive"
+          operator: ">="
+          value: 2
+    action:
+      - "collect_info: 'academy_class_understanding'"
+      - "validate: '학원 수업 이해도는 완전히 이해, 대부분 이해, 반만 이해, 거의 이해 못함 중 하나여야 합니다'"
+      - "display_message: '오늘 학원 수업 이해도를 파악하여 학원 맥락 기반 이탈 원인을 분석합니다.'"
+      - "question: '오늘 학원 수업을 이해하셨나요? (A) 완전히 이해 (B) 대부분 이해 (C) 반만 이해 (D) 거의 이해 못함'"
+    confidence: 0.93
+    rationale: "S0: 학원 수업 이해도는 이탈 원인 분석의 핵심 요소"
+  
+  - rule_id: "S0_R5_academy_homework_burden_collection"
+    priority: 95
+    description: "학원 과제 부담 정보 수집"
+    conditions:
+      - field: "academy_homework_burden"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "risk_tier"
+          operator: "=="
+          value: "Medium"
+    action:
+      - "collect_info: 'academy_homework_burden'"
+      - "validate: '학원 과제 부담은 적절함, 조금 많음, 너무 많음 중 하나여야 합니다'"
+      - "display_message: '오늘 학원 과제 양을 파악하여 과제 부담 기반 이탈 원인을 분석합니다.'"
+      - "question: '오늘 학원 과제 양이 적절하신가요? (A) 적절함 (B) 조금 많음 (C) 너무 많음'"
+    confidence: 0.92
+    rationale: "S0: 학원 과제 부담은 이탈 증가의 주요 원인"
+  
+  - rule_id: "S0_R6_math_level_collection"
+    priority: 94
+    description: "수학 성적 수준 정보 수집 (하위/중위/상위)"
+    conditions:
+      - field: "math_level"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "detect_dropout_risk"
+          operator: "=="
+          value: true
+        - field: "risk_tier"
+          operator: "in"
+          value: ["Medium", "High"]
+    action:
+      - "collect_info: 'math_level'"
+      - "validate: '수학 성적 수준은 하위권, 중위권, 상위권 중 하나여야 합니다'"
+      - "display_message: '수학 성적 수준을 파악하여 수준별 맞춤형 이탈 대응 전략을 수립합니다.'"
+      - "question: '현재 수학 성적 수준은? (A) 하위권 (B) 중위권 (C) 상위권'"
+    confidence: 0.91
+    rationale: "S0: 수준별 이탈 원인 차별화를 위해 수학 성적 수준 필수"
+  
+  # ========== S1: 단원별 이탈 패턴 분석 룰 ==========
+  
+  - rule_id: "S1_R1_unit_difficulty_dropout_analysis"
+    priority: 90
+    description: "어려운 단원에서 이탈 증가 패턴 분석"
+    conditions:
+      - field: "current_math_unit"
+        operator: "!="
+        value: null
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+      - OR:
+        - field: "current_math_unit"
+          operator: "contains"
+          value: "함수"
+        - field: "current_math_unit"
+          operator: "contains"
+          value: "도형"
+        - field: "current_math_unit"
+          operator: "contains"
+          value: "이차"
+    action:
+      - "analyze: 'unit_difficulty_dropout_pattern'"
+      - "load_db: 'math_unit_difficulty.yaml'"  # 단원별 난이도 DB 로드
+      - "identify_dropout_patterns: 'difficult_unit_dropout'"
+      - "generate_description: 'difficult_unit_dropout_analysis'"
+      - "display_message: '{current_math_unit} 단원은 난이도가 높아 이탈이 빈번합니다. 기본 개념부터 다시 복습하는 것을 권장합니다.'"
+      - "suggest_easy_win: 'unit_basic_concept_review'"
+      - "recommend_path: '기본 개념 재학습 → 쉬운 문제 연습 → 단원 완료'"
+    confidence: 0.88
+    rationale: "S1: 어려운 단원(함수, 도형, 이차)에서 이탈 증가는 난이도 조정 필요 신호"
+  
+  - rule_id: "S1_R2_unit_specific_intervention"
+    priority: 89
+    description: "단원별 맞춤형 개입 전략 적용"
+    conditions:
+      - field: "current_math_unit"
+        operator: "!="
+        value: null
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+    action:
+      - "analyze: 'unit_specific_dropout_cause'"
+      - "generate_description: 'unit_specific_intervention_strategy'"
+      - "load_db: 'unit_intervention_strategies.yaml'"  # 단원별 개입 전략 DB
+      - "suggest_easy_win: 'unit_specific_easy_task'"
+      - "display_message: '{current_math_unit} 단원 특성에 맞는 쉬운 승리 과제를 제시합니다.'"
+      - "adjust_routine: 'unit_based_session_length'"
+    confidence: 0.87
+    rationale: "S1: 단원별 특성에 맞는 개입 전략이 효과적"
+  
+  # ========== S2: 난이도별 이탈 분석 룰 ==========
+  
+  - rule_id: "S2_R1_difficulty_dropout_analysis"
+    priority: 88
+    description: "심화 문제에서 이탈 증가 시 기본형 전환 제안"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "=="
+        value: "심화"
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+      - OR:
+        - field: "eye_count"
+          operator: ">="
+          value: 2
+        - field: "tlaststroke_min"
+          operator: ">="
+          value: 10
+    action:
+      - "analyze: 'difficulty_based_dropout_pattern'"
+      - "identify_dropout_patterns: 'high_difficulty_dropout'"
+      - "generate_description: 'difficulty_dropout_analysis'"
+      - "display_message: '심화 문제에서 이탈이 증가하고 있습니다. 기본형 문제로 전환하여 학습 흐름을 유지하는 것을 권장합니다.'"
+      - "suggest_easy_win: 'switch_to_basic_problems'"
+      - "recommend_path: '기본형 문제 완료 → 유형 문제 → 심화 문제 순서로 재진입'"
+      - "adjust_routine: 'reduce_difficulty_level'"
+    confidence: 0.86
+    rationale: "S2: 심화 문제에서 이탈 증가는 난이도가 너무 높다는 신호 → 기본형 전환"
+  
+  - rule_id: "S2_R2_difficulty_progression_intervention"
+    priority: 87
+    description: "난이도별 단계적 재진입 전략"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "!="
+        value: null
+      - field: "risk_tier"
+        operator: "=="
+        value: "High"
+    action:
+      - "analyze: 'difficulty_progression_analysis'"
+      - "generate_description: 'difficulty_progression_strategy'"
+      - "suggest_easy_win: 'gradual_difficulty_increase'"
+      - "display_message: '난이도별 단계적 재진입 전략을 제시합니다. 현재 난이도보다 한 단계 낮은 문제부터 시작하세요.'"
+      - "adjust_routine: 'step_by_step_difficulty'"
+    confidence: 0.85
+    rationale: "S2: 단계적 난이도 증가가 이탈 방지에 효과적"
+  
+  # ========== S3: 학원 수업 이해도 기반 이탈 분석 룰 ==========
+  
+  - rule_id: "S3_R1_academy_understanding_dropout_analysis"
+    priority: 86
+    description: "학원 수업 이해 못함으로 인한 이탈 분석"
+    conditions:
+      - field: "academy_class_understanding"
+        operator: "in"
+        value: ["반만 이해", "거의 이해 못함"]
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze: 'academy_understanding_dropout_pattern'"
+      - "identify_dropout_patterns: 'low_understanding_dropout'"
+      - "generate_description: 'academy_understanding_dropout_analysis'"
+      - "display_message: '학원 수업을 이해하지 못한 상태에서 자습 시 이탈이 증가합니다. 이해 못한 내용을 먼저 복습하는 것을 권장합니다.'"
+      - "suggest_easy_win: 'review_unclear_concepts'"
+      - "recommend_path: '학원 교재 개념 부분 재학습 → 이해한 후 문제 풀이 재진입'"
+      - "send_refocus_message: 'academy_concept_review_focus'"
+    confidence: 0.84
+    rationale: "S3: 학원 수업 이해 못함 → 자습 시 이탈 증가 → 예습/복습 강화 필요"
+  
+  - rule_id: "S3_R2_academy_concept_review_intervention"
+    priority: 85
+    description: "학원 수업 이해도 기반 맞춤형 개입"
+    conditions:
+      - field: "academy_class_understanding"
+        operator: "in"
+        value: ["반만 이해", "거의 이해 못함"]
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+    action:
+      - "analyze: 'academy_concept_review_strategy'"
+      - "generate_description: 'academy_concept_review_intervention'"
+      - "suggest_easy_win: 'academy_textbook_concept_review'"
+      - "display_message: '학원 교재의 개념 부분을 다시 보며 이해도를 높인 후 문제 풀이를 재개하세요.'"
+      - "adjust_routine: 'concept_first_then_problems'"
+    confidence: 0.83
+    rationale: "S3: 개념 이해 후 문제 풀이가 이탈 방지에 효과적"
+  
+  # ========== S4: 학습 단계별 이탈 분석 룰 ==========
+  
+  - rule_id: "S4_R1_concept_learning_dropout_intervention"
+    priority: 84
+    description: "개념 학습 중 이탈 시 설명 보강 제안"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "개념 학습"
+      - field: "eye_count"
+        operator: ">="
+        value: 1
+      - field: "tlaststroke_min"
+        operator: ">="
+        value: 5
+    action:
+      - "analyze: 'concept_learning_dropout_pattern'"
+      - "identify_dropout_patterns: 'concept_stage_dropout'"
+      - "generate_description: 'concept_learning_dropout_analysis'"
+      - "display_message: '개념 학습 중 이탈이 감지되었습니다. 시각 자료나 예시를 활용하여 설명을 보강하는 것을 권장합니다.'"
+      - "suggest_easy_win: 'visual_concept_explanation'"
+      - "recommend_path: '시각 자료/예시 활용 개념 학습 → 간단한 확인 문제 → 재진입'"
+      - "send_refocus_message: 'concept_explanation_enhancement'"
+    confidence: 0.82
+    rationale: "S4: 개념 학습 이탈은 설명 부족 가능성 → 시각 자료/예시 보강"
+  
+  - rule_id: "S4_R2_problem_solving_dropout_intervention"
+    priority: 83
+    description: "문제 풀이 중 이탈 시 쉬운 문제 제시"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "유형 연습"
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze: 'problem_solving_dropout_pattern'"
+      - "identify_dropout_patterns: 'problem_stage_dropout'"
+      - "generate_description: 'problem_solving_dropout_analysis'"
+      - "display_message: '문제 풀이 중 이탈이 증가하고 있습니다. 한 단계 쉬운 문제로 전환하여 학습 흐름을 유지하세요.'"
+      - "suggest_easy_win: 'switch_to_easier_problems'"
+      - "recommend_path: '쉬운 문제 1개 완료 → 자신감 회복 → 원래 난이도 재진입'"
+      - "adjust_routine: 'problem_difficulty_adjustment'"
+    confidence: 0.81
+    rationale: "S4: 문제 풀이 이탈은 난이도 높음 가능성 → 쉬운 문제로 전환"
+  
+  # ========== S5: 학원 과제 부담 기반 이탈 분석 룰 ==========
+  
+  - rule_id: "S5_R1_homework_burden_dropout_analysis"
+    priority: 82
+    description: "학원 과제 과다로 인한 이탈 분석"
+    conditions:
+      - field: "academy_homework_burden"
+        operator: "in"
+        value: ["조금 많음", "너무 많음"]
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze: 'homework_burden_dropout_pattern'"
+      - "identify_dropout_patterns: 'high_homework_burden_dropout'"
+      - "generate_description: 'homework_burden_dropout_analysis'"
+      - "display_message: '학원 과제가 많아 이탈이 증가하고 있습니다. 과제 우선순위를 조정하여 집중할 수 있는 과제부터 완료하는 것을 권장합니다.'"
+      - "suggest_easy_win: 'prioritize_homework_tasks'"
+      - "recommend_path: '가장 쉬운 과제 1개 완료 → 성취감 획득 → 다음 과제 진행'"
+      - "adjust_routine: 'homework_priority_adjustment'"
+    confidence: 0.80
+    rationale: "S5: 과제 과다 → 이탈 증가 → 우선순위 조정 필요"
+  
+  # ========== S6: 수학 성적 수준별 이탈 원인 차별화 룰 ==========
+  
+  - rule_id: "S6_R1_low_level_dropout_intervention"
+    priority: 81
+    description: "하위권 학생 이탈 원인 분석 및 대응 (너무 어려워서 포기)"
+    conditions:
+      - field: "math_level"
+        operator: "=="
+        value: "하위권"
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+    action:
+      - "analyze: 'low_level_dropout_cause'"
+      - "identify_dropout_patterns: 'too_difficult_dropout'"
+      - "generate_description: 'low_level_dropout_analysis'"
+      - "display_message: '하위권 학생의 이탈은 대부분 난이도가 너무 높아서입니다. 쉬운 문제부터 차근차근 풀어보세요.'"
+      - "suggest_easy_win: 'start_with_easiest_problems'"
+      - "recommend_path: '가장 쉬운 기본형 문제 1개 완료 → 성취감 → 다음 문제'"
+      - "adjust_routine: 'low_level_focused_session'"
+    confidence: 0.79
+    rationale: "S6: 하위권 → 너무 어려워서 포기 → 쉬운 문제부터"
+  
+  - rule_id: "S6_R2_mid_level_dropout_intervention"
+    priority: 80
+    description: "중위권 학생 이탈 원인 분석 및 대응 (집중력 부족)"
+    conditions:
+      - field: "math_level"
+        operator: "=="
+        value: "중위권"
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+    action:
+      - "analyze: 'mid_level_dropout_cause'"
+      - "identify_dropout_patterns: 'concentration_lack_dropout'"
+      - "generate_description: 'mid_level_dropout_analysis'"
+      - "display_message: '중위권 학생의 이탈은 집중력 부족이 주된 원인입니다. 루틴을 강화하여 집중력을 유지하세요.'"
+      - "suggest_easy_win: 'routine_strengthening_task'"
+      - "recommend_path: '10분 세션 완료 → 1분 휴식 → 다음 세션'"
+      - "adjust_routine: 'mid_level_routine_focus'"
+    confidence: 0.78
+    rationale: "S6: 중위권 → 집중력 부족 → 루틴 강화"
+  
+  - rule_id: "S6_R3_high_level_dropout_intervention"
+    priority: 79
+    description: "상위권 학생 이탈 원인 분석 및 대응 (권태로움)"
+    conditions:
+      - field: "math_level"
+        operator: "=="
+        value: "상위권"
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+    action:
+      - "analyze: 'high_level_dropout_cause'"
+      - "identify_dropout_patterns: 'boredom_dropout'"
+      - "generate_description: 'high_level_dropout_analysis'"
+      - "display_message: '상위권 학생의 이탈은 권태로움이 주된 원인입니다. 도전할 만한 과제를 제시하여 동기를 유지하세요.'"
+      - "suggest_easy_win: 'challenging_task_presentation'"
+      - "recommend_path: '창의 문제/변형 문제 도전 → 흥미 유발 → 재진입'"
+      - "adjust_routine: 'high_level_challenge_focus'"
+    confidence: 0.77
+    rationale: "S6: 상위권 → 권태로움 → 도전 과제 제시"
+  
+  # ========== S7: 수학 학습 스타일별 이탈 패턴 분석 룰 ==========
+  
+  - rule_id: "S7_R1_learning_style_dropout_analysis"
+    priority: 78
+    description: "학습 스타일별 이탈 빈도 높은 활동 파악 및 전환 제안"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+      - field: "ninactive"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze: 'learning_style_dropout_pattern'"
+      - "identify_dropout_patterns: 'style_mismatch_dropout'"
+      - "generate_description: 'learning_style_dropout_analysis'"
+      - "load_db: 'learning_style_activities.yaml'"  # 스타일별 적합 활동 DB
+      - "suggest_easy_win: 'style_matched_activity'"
+      - "display_message: '{math_learning_style} 학습 스타일에 맞는 활동으로 전환하여 이탈을 방지합니다.'"
+      - "adjust_routine: 'style_based_activity_switch'"
+    confidence: 0.76
+    rationale: "S7: 학습 스타일과 맞지 않는 활동에서 이탈 증가 → 스타일 맞는 활동으로 전환"
+  
+  # ========== S8: 기본 이탈 탐지 및 개입 룰 (기존 로직 강화) ==========
+  
+  - rule_id: "S8_R1_basic_dropout_detection"
+    priority: 75
+    description: "기본 이탈 위험도 탐지 (기존 로직)"
+    conditions:
+      - OR:
+        - field: "ninactive"
+          operator: ">="
+          value: 4
+        - field: "npomodoro"
+          operator: "<"
+          value: 2
+        - field: "tlaststroke_min"
+          operator: ">="
+          value: 30
+    action:
+      - "detect_dropout_risk: true"
+      - "calculate_risk_tier: 'High'"
+      - "identify_dropout_patterns: 'basic_high_risk'"
+      - "display_message: '이탈 위험이 높습니다. 즉시 개입이 필요합니다.'"
+      - "send_refocus_message: 'urgent_refocus'"
+      - "suggest_easy_win: 'immediate_easy_task'"
+    confidence: 0.90
+    rationale: "S8: 기본 이탈 탐지 로직 (High 등급)"
+  
+  - rule_id: "S8_R2_medium_risk_intervention"
+    priority: 74
+    description: "중간 위험도 개입"
+    conditions:
+      - field: "risk_tier"
+        operator: "=="
+        value: "Medium"
+    action:
+      - "detect_dropout_risk: true"
+      - "calculate_risk_tier: 'Medium'"
+      - "send_refocus_message: 'gentle_refocus'"
+      - "suggest_easy_win: 'gentle_easy_task'"
+      - "display_message: '이탈 조짐이 감지되었습니다. 짧은 리포커스 후 쉬운 과제부터 시작하세요.'"
+    confidence: 0.85
+    rationale: "S8: 중간 위험도 개입"
+  
+  - rule_id: "S8_R3_routine_adjustment"
+    priority: 73
+    description: "루틴 보정 (세션 길이, 휴식 주기 조정)"
+    conditions:
+      - field: "risk_tier"
+        operator: "in"
+        value: ["Medium", "High"]
+      - field: "npomodoro"
+        operator: "<"
+        value: 5
+    action:
+      - "adjust_routine: 'session_length_reduction'"
+      - "adjust_routine: 'rest_interval_adjustment'"
+      - "display_message: '세션 길이를 15분에서 10분으로 줄이고, 휴식 주기를 50분에서 40분으로 조정합니다.'"
+      - "generate_description: 'routine_adjustment_strategy'"
+    confidence: 0.80
+    rationale: "S8: 포모도로 부족 시 루틴 보정"
+  
+  - rule_id: "S8_R4_escalation_intervention"
+    priority: 72
+    description: "High 등급 연속 발생 시 에스컬레이션"
+    conditions:
+      - field: "risk_tier"
+        operator: "=="
+        value: "High"
+      - field: "consecutive_high_days"
+        operator: ">="
+        value: 2
+    action:
+      - "notify_parents: 'high_risk_escalation'"
+      - "notify_teacher: 'high_risk_escalation'"
+      - "display_message: 'High 등급이 2일 연속 발생하여 보호자 및 담임 선생님께 알림을 전송합니다.'"
+      - "generate_description: 'escalation_report'"
+    confidence: 0.75
+    rationale: "S8: 지속적 High 등급 시 에스컬레이션 (운영정책 준수)"
+
+default_rule:
+  rule_id: "default_dropout_monitoring"
+  action:
+    - "detect_dropout_risk: true"
+    - "calculate_risk_tier: 'Low'"
+    - "display_message: '학습 이탈 위험을 지속적으로 모니터링합니다.'"
+  confidence: 0.5
+  rationale: "기본 모니터링 룰"

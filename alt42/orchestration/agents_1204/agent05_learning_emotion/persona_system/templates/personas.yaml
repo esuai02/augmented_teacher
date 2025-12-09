@@ -1,0 +1,567 @@
+# Agent05 학습 감정 에이전트 - 페르소나 정의
+# 8가지 학습 활동별 페르소나 및 감정 매핑
+# Version: 1.0
+
+metadata:
+  agent_id: agent05
+  agent_name: 학습 감정 분석 에이전트
+  description: 학습 과정에서의 감정을 분석하고 적절한 페르소나로 응대
+  version: "1.0"
+  last_updated: "2024-01-01"
+
+# ===== 활동별 페르소나 정의 =====
+
+activity_personas:
+
+  # 1. 개념 이해 (Concept Understanding)
+  concept_understanding:
+    description: 새로운 수학 개념을 학습하고 이해하는 활동
+    typical_duration: "3-10분"
+    personas:
+      - id: 정리형
+        name: 정리형 학습자
+        description: 체계적으로 정리하며 이해하는 유형
+        characteristics:
+          - 노트 정리를 좋아함
+          - 단계별 설명 선호
+          - 구조화된 정보 요청
+        emotion_triggers:
+          - curiosity
+          - confidence
+        response_style:
+          format: structured
+          detail_level: high
+          use_examples: true
+
+      - id: 반복형
+        name: 반복형 학습자
+        description: 여러 번 반복하며 익히는 유형
+        characteristics:
+          - 같은 설명 반복 요청
+          - 다양한 예시 필요
+          - 확인 질문 많음
+        emotion_triggers:
+          - anxiety
+          - confusion
+        response_style:
+          format: repetitive
+          detail_level: medium
+          patience_required: true
+
+      - id: 탐색형
+        name: 탐색형 학습자
+        description: 깊이 있게 탐구하며 이해하는 유형
+        characteristics:
+          - 추가 질문 많음
+          - 원리 이해 중시
+          - 연결고리 찾기
+        emotion_triggers:
+          - curiosity
+        response_style:
+          format: exploratory
+          detail_level: very_high
+          encourage_questions: true
+
+      - id: 저항형
+        name: 저항형 학습자
+        description: 새로운 개념에 저항감을 느끼는 유형
+        characteristics:
+          - 부정적 반응
+          - 학습 회피 경향
+          - 동기 부족
+        emotion_triggers:
+          - frustration
+          - boredom
+        response_style:
+          format: gentle
+          motivation_focus: true
+          small_steps: true
+
+  # 2. 유형 학습 (Type Learning)
+  type_learning:
+    description: 문제 유형을 파악하고 패턴을 익히는 활동
+    typical_duration: "5-15분"
+    personas:
+      - id: 분석형
+        name: 분석형 학습자
+        description: 문제 유형을 분석하며 익히는 유형
+        characteristics:
+          - 패턴 인식 우수
+          - 분류 체계 선호
+          - 비교 분석 좋아함
+        emotion_triggers:
+          - confidence
+          - curiosity
+        response_style:
+          format: analytical
+          comparison_examples: true
+
+      - id: 직관형
+        name: 직관형 학습자
+        description: 직관적으로 유형을 파악하는 유형
+        characteristics:
+          - 빠른 판단
+          - 시각적 이해 선호
+          - 느낌으로 접근
+        emotion_triggers:
+          - confidence
+        response_style:
+          format: visual
+          quick_tips: true
+
+      - id: 체계형
+        name: 체계형 학습자
+        description: 체계적으로 유형을 정리하는 유형
+        characteristics:
+          - 분류표 작성
+          - 순서대로 학습
+          - 완벽주의 경향
+        emotion_triggers:
+          - anxiety
+          - confidence
+        response_style:
+          format: systematic
+          complete_coverage: true
+
+      - id: 무관심형
+        name: 무관심형 학습자
+        description: 유형 학습에 흥미가 없는 유형
+        characteristics:
+          - 동기 부족
+          - 빠른 종료 원함
+          - 실용성 중시
+        emotion_triggers:
+          - boredom
+        response_style:
+          format: practical
+          relevance_focus: true
+
+  # 3. 문제 풀이 (Problem Solving)
+  problem_solving:
+    description: 수학 문제를 직접 풀어보는 활동
+    typical_duration: "2-20분"
+    personas:
+      - id: 도전형
+        name: 도전형 학습자
+        description: 어려운 문제에 도전하는 유형
+        characteristics:
+          - 높은 난이도 선호
+          - 실패를 두려워하지 않음
+          - 성취감 추구
+        emotion_triggers:
+          - confidence
+          - achievement
+        response_style:
+          format: challenging
+          progressive_difficulty: true
+
+      - id: 보조형
+        name: 보조형 학습자
+        description: 도움을 받으며 풀이하는 유형
+        characteristics:
+          - 힌트 요청 많음
+          - 단계별 안내 필요
+          - 확인 받고 싶어함
+        emotion_triggers:
+          - anxiety
+          - confusion
+        response_style:
+          format: supportive
+          step_by_step: true
+          frequent_check: true
+
+      - id: 완벽형
+        name: 완벽형 학습자
+        description: 완벽한 풀이를 추구하는 유형
+        characteristics:
+          - 실수 허용 안함
+          - 정확성 중시
+          - 재확인 많음
+        emotion_triggers:
+          - anxiety
+          - achievement
+        response_style:
+          format: precise
+          validation_focus: true
+
+      - id: 회피형
+        name: 회피형 학습자
+        description: 문제 풀이를 회피하는 유형
+        characteristics:
+          - 쉬운 문제 선호
+          - 빠른 포기
+          - 자신감 부족
+        emotion_triggers:
+          - anxiety
+          - frustration
+        response_style:
+          format: encouraging
+          low_pressure: true
+          small_wins: true
+
+  # 4. 오답 노트 (Error Note)
+  error_note:
+    description: 틀린 문제를 분석하고 정리하는 활동
+    typical_duration: "3-10분"
+    personas:
+      - id: 분석형
+        name: 분석형 학습자
+        description: 오답 원인을 깊이 분석하는 유형
+        characteristics:
+          - 원인 파악 중시
+          - 패턴 인식
+          - 재발 방지 계획
+        emotion_triggers:
+          - curiosity
+        response_style:
+          format: analytical
+          root_cause_focus: true
+
+      - id: 수용형
+        name: 수용형 학습자
+        description: 오답을 받아들이고 배우는 유형
+        characteristics:
+          - 긍정적 태도
+          - 개선 의지
+          - 피드백 수용
+        emotion_triggers:
+          - confidence
+          - curiosity
+        response_style:
+          format: constructive
+          improvement_focus: true
+
+      - id: 회피형
+        name: 회피형 학습자
+        description: 오답 분석을 피하는 유형
+        characteristics:
+          - 실수 직면 어려움
+          - 빠른 넘김
+          - 감정적 반응
+        emotion_triggers:
+          - frustration
+          - anxiety
+        response_style:
+          format: gentle
+          gradual_exposure: true
+
+      - id: 방어형
+        name: 방어형 학습자
+        description: 오답에 대해 방어적인 유형
+        characteristics:
+          - 변명 경향
+          - 외부 귀인
+          - 자존심 보호
+        emotion_triggers:
+          - frustration
+        response_style:
+          format: non_judgmental
+          self_reflection_guide: true
+
+  # 5. 질의응답 (Q&A)
+  qa:
+    description: AI 튜터와 대화하며 질문하는 활동
+    typical_duration: "1-5분"
+    personas:
+      - id: 적극형
+        name: 적극형 학습자
+        description: 적극적으로 질문하는 유형
+        characteristics:
+          - 질문 많음
+          - 대화 즐김
+          - 호기심 왕성
+        emotion_triggers:
+          - curiosity
+          - confidence
+        response_style:
+          format: interactive
+          encourage_dialogue: true
+
+      - id: 관찰형
+        name: 관찰형 학습자
+        description: 주로 관찰하며 질문하는 유형
+        characteristics:
+          - 질문 전 충분히 관찰
+          - 신중한 질문
+          - 깊이 있는 질문
+        emotion_triggers:
+          - curiosity
+        response_style:
+          format: thorough
+          complete_answers: true
+
+      - id: 의존형
+        name: 의존형 학습자
+        description: 도움에 의존하는 유형
+        characteristics:
+          - 잦은 질문
+          - 확인 요청 많음
+          - 혼자 해결 어려움
+        emotion_triggers:
+          - anxiety
+          - confusion
+        response_style:
+          format: guiding
+          scaffolding: true
+
+      - id: 독립형
+        name: 독립형 학습자
+        description: 독립적으로 해결하려는 유형
+        characteristics:
+          - 최소 질문
+          - 자기 해결 선호
+          - 필요할 때만 질문
+        emotion_triggers:
+          - confidence
+        response_style:
+          format: concise
+          resource_pointing: true
+
+  # 6. 복습 (Review)
+  review:
+    description: 배운 내용을 다시 확인하고 정리하는 활동
+    typical_duration: "5-15분"
+    personas:
+      - id: 계획형
+        name: 계획형 학습자
+        description: 계획적으로 복습하는 유형
+        characteristics:
+          - 복습 스케줄 있음
+          - 체계적 정리
+          - 목표 설정
+        emotion_triggers:
+          - confidence
+        response_style:
+          format: organized
+          progress_tracking: true
+
+      - id: 즉흥형
+        name: 즉흥형 학습자
+        description: 즉흥적으로 복습하는 유형
+        characteristics:
+          - 필요할 때 복습
+          - 유연한 접근
+          - 흥미 기반
+        emotion_triggers:
+          - curiosity
+          - boredom
+        response_style:
+          format: flexible
+          interest_based: true
+
+      - id: 완벽형
+        name: 완벽형 학습자
+        description: 완벽하게 복습하려는 유형
+        characteristics:
+          - 전체 복습 선호
+          - 빠짐없이 확인
+          - 마스터리 추구
+        emotion_triggers:
+          - anxiety
+          - confidence
+        response_style:
+          format: comprehensive
+          completeness_check: true
+
+      - id: 회피형
+        name: 회피형 학습자
+        description: 복습을 피하는 유형
+        characteristics:
+          - 복습 귀찮아함
+          - 새것 선호
+          - 반복 싫어함
+        emotion_triggers:
+          - boredom
+          - fatigue
+        response_style:
+          format: engaging
+          variety_focus: true
+
+  # 7. 뽀모도로 (Pomodoro)
+  pomodoro:
+    description: 집중 시간과 휴식을 번갈아 하는 학습 방법
+    typical_duration: "25분 + 5분 휴식"
+    personas:
+      - id: 몰입형
+        name: 몰입형 학습자
+        description: 깊이 집중하는 유형
+        characteristics:
+          - 높은 집중력
+          - 방해 싫어함
+          - 몰입 상태 유지
+        emotion_triggers:
+          - confidence
+          - achievement
+        response_style:
+          format: minimal_interruption
+          flow_supporting: true
+
+      - id: 산만형
+        name: 산만형 학습자
+        description: 집중 유지가 어려운 유형
+        characteristics:
+          - 잦은 휴식 필요
+          - 다양한 자극 필요
+          - 짧은 집중 시간
+        emotion_triggers:
+          - boredom
+          - fatigue
+        response_style:
+          format: engaging
+          frequent_variety: true
+          short_segments: true
+
+      - id: 균형형
+        name: 균형형 학습자
+        description: 집중과 휴식의 균형을 잘 잡는 유형
+        characteristics:
+          - 리듬 유지
+          - 자기 조절 능력
+          - 적절한 휴식
+        emotion_triggers:
+          - confidence
+        response_style:
+          format: balanced
+          rhythm_supporting: true
+
+      - id: 과몰입형
+        name: 과몰입형 학습자
+        description: 너무 오래 집중하는 유형
+        characteristics:
+          - 휴식 무시
+          - 건강 간과
+          - 지침 경향
+        emotion_triggers:
+          - achievement
+          - fatigue
+        response_style:
+          format: health_conscious
+          break_enforcing: true
+
+  # 8. 홈 체크 (Home Check)
+  home_check:
+    description: 과제와 할 일을 확인하는 활동
+    typical_duration: "1-5분"
+    personas:
+      - id: 계획형
+        name: 계획형 학습자
+        description: 계획적으로 과제를 관리하는 유형
+        characteristics:
+          - 일정 관리 잘함
+          - 우선순위 설정
+          - 마감 준수
+        emotion_triggers:
+          - confidence
+          - achievement
+        response_style:
+          format: organized
+          priority_focus: true
+
+      - id: 즉흥형
+        name: 즉흥형 학습자
+        description: 즉흥적으로 과제를 처리하는 유형
+        characteristics:
+          - 마감 직전 작업
+          - 유연한 일정
+          - 급한 것 먼저
+        emotion_triggers:
+          - anxiety
+        response_style:
+          format: flexible
+          deadline_awareness: true
+
+      - id: 성실형
+        name: 성실형 학습자
+        description: 성실하게 과제를 완수하는 유형
+        characteristics:
+          - 빠짐없이 확인
+          - 꼼꼼한 제출
+          - 책임감 높음
+        emotion_triggers:
+          - confidence
+          - achievement
+        response_style:
+          format: thorough
+          completeness_check: true
+
+      - id: 무관심형
+        name: 무관심형 학습자
+        description: 과제에 관심이 없는 유형
+        characteristics:
+          - 과제 무시
+          - 중요도 인식 부족
+          - 동기 부족
+        emotion_triggers:
+          - boredom
+        response_style:
+          format: motivational
+          relevance_showing: true
+
+# ===== 감정-페르소나 매핑 =====
+
+emotion_persona_mapping:
+  anxiety:
+    preferred_tones: [reassuring, patient, supportive]
+    avoid_tones: [pressuring, critical, rushed]
+    recommended_personas:
+      concept_understanding: [반복형, 저항형]
+      problem_solving: [보조형, 회피형]
+      error_note: [회피형, 방어형]
+      qa: [의존형]
+
+  frustration:
+    preferred_tones: [patient, understanding, alternative_offering]
+    avoid_tones: [dismissive, rushing, critical]
+    recommended_personas:
+      concept_understanding: [저항형]
+      problem_solving: [보조형, 회피형]
+      error_note: [회피형, 방어형]
+
+  confidence:
+    preferred_tones: [encouraging, challenging, progressive]
+    avoid_tones: [patronizing, over_protective]
+    recommended_personas:
+      concept_understanding: [정리형, 탐색형]
+      problem_solving: [도전형, 완벽형]
+      qa: [적극형, 독립형]
+
+  curiosity:
+    preferred_tones: [enthusiastic, exploratory, engaging]
+    avoid_tones: [limiting, dismissive]
+    recommended_personas:
+      concept_understanding: [탐색형]
+      type_learning: [분석형]
+      error_note: [분석형, 수용형]
+      qa: [적극형, 관찰형]
+
+  boredom:
+    preferred_tones: [engaging, varied, interesting]
+    avoid_tones: [repetitive, monotone]
+    recommended_personas:
+      type_learning: [무관심형]
+      review: [회피형]
+      pomodoro: [산만형]
+      home_check: [무관심형]
+
+  fatigue:
+    preferred_tones: [caring, supportive, understanding]
+    avoid_tones: [demanding, pressuring]
+    recommended_personas:
+      review: [회피형]
+      pomodoro: [산만형, 과몰입형]
+
+  achievement:
+    preferred_tones: [celebratory, encouraging, progressive]
+    avoid_tones: [understating, ignoring]
+    recommended_personas:
+      problem_solving: [도전형]
+      pomodoro: [몰입형, 과몰입형]
+      home_check: [계획형, 성실형]
+
+  confusion:
+    preferred_tones: [clarifying, patient, step_by_step]
+    avoid_tones: [complex, rushing, assuming]
+    recommended_personas:
+      concept_understanding: [반복형]
+      problem_solving: [보조형]
+      qa: [의존형]

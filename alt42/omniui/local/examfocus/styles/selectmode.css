@@ -1,0 +1,277 @@
+/**
+ * ExamFocus ®‹  › òt¿ §¿|
+ * 
+ * @package    local_examfocus
+ * @copyright  2025 MathKing
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Tx ËLt */
+.examfocus-selectmode {
+    min-height: calc(100vh - 200px);
+    padding: 20px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* ®‹ t‹ 0¯ §¿| */
+.mode-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mode-card:hover {
+    border-color: #007bff;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+}
+
+.mode-card.active {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.2);
+}
+
+.mode-card.recommended {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
+    position: relative;
+}
+
+.mode-card.recommended::before {
+    content: "îú";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #ffc107;
+    color: white;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ®‹ DtX */
+.mode-icon {
+    margin-bottom: 20px;
+}
+
+.mode-icon i {
+    transition: all 0.3s ease;
+}
+
+.mode-card:hover .mode-icon i {
+    transform: scale(1.1);
+}
+
+/* ®‹ © */
+.mode-card h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.mode-card.active h4 {
+    color: #28a745;
+}
+
+.mode-card.recommended h4 {
+    color: #f57c00;
+}
+
+/* ®‹ $Ö */
+.mode-card p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* ®‹ π’ 0¿ */
+.mode-features {
+    margin-bottom: 15px;
+}
+
+.mode-features .badge {
+    margin: 2px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* ®‹  › Ñº */
+.select-mode-btn {
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mode-card.active .select-mode-btn {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.mode-card.recommended .select-mode-btn {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+}
+
+/* ExamFocus 0 µi §¿| */
+.examfocus-highlight {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.5) !important;
+    animation: highlightGlow 2s ease-in-out;
+}
+
+.examfocus-pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes highlightGlow {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 193, 7, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1) translateY(-5px);
+    }
+    50% {
+        transform: scale(1.02) translateY(-7px);
+    }
+    100% {
+        transform: scale(1) translateY(-5px);
+    }
+}
+
+/* t‹ ¯¨‹ © p */
+#mode-selection-grid .col-lg-6 {
+    display: flex;
+    align-items: stretch;
+}
+
+/* Q êx */
+@media (max-width: 768px) {
+    .mode-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .mode-icon i {
+        font-size: 2em !important;
+    }
+    
+    .mode-card h4 {
+        font-size: 1.2em;
+    }
+    
+    .examfocus-selectmode {
+        padding: 10px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .mode-card {
+        padding: 15px;
+    }
+    
+    .mode-icon i {
+        font-size: 1.8em !important;
+    }
+    
+    .mode-features .badge {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+    
+    .select-mode-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+/* \) ¡‹ */
+.mode-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.mode-card.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ExamFocus 0 §¿| (\ø¸ µi) */
+.examfocus-banner {
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.examfocus-banner .examfocus-header h4 {
+    color: inherit;
+}
+
+.examfocus-banner .btn {
+    border-radius: 20px;
+    font-weight: 500;
+    margin: 0 5px;
+}
+
+/* 1ı/‰( T‹¿ */
+.mode-selection-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.mode-selection-error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+}

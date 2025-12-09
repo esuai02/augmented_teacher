@@ -1,0 +1,632 @@
+<?php
+require_once("/home/moodle/public_html/moodle/config.php");
+global $DB, $USER;
+
+// 에러 출력 방지
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// JSON 응답을 보장하기 위해 헤더 먼저 설정
+header('Content-Type: application/json; charset=utf-8');
+
+// 로그인 체크
+if (!isloggedin()) {
+    echo json_encode(['error' => 'Not logged in']);
+    exit;
+} 
+
+$action = $_POST['action'] ?? '';
+
+// 디버깅용: 모든 POST 데이터 확인
+error_log("patternbank_ajax.php - All POST data: " . json_encode($_POST));
+
+if ($action === 'save_problem') {
+    try {
+        // 필수 필드 검증
+        if (!isset($_POST['cntid']) || !isset($_POST['cnttype']) || !isset($_POST['question']) || !isset($_POST['solution'])) {
+            throw new Exception('Required fields missing');
+        }
+        
+        // 디버깅 정보
+        error_log("Save problem - POST data: " . json_encode($_POST));
+        error_log("Type field received: " . (isset($_POST['type']) ? $_POST['type'] : 'NOT SET'));
+        
+        $problem = new stdClass();  
+        $problem->authorid = $USER->id;   
+        $problem->cntid = $_POST['cntid'];   
+        $problem->cnttype = $_POST['cnttype'];     
+        $problem->question = $_POST['question']; 
+        $problem->solution = $_POST['solution'];
+        // choices가 있으면 사용, 없으면 inputanswer 사용
+        if (isset($_POST['choices'])) {
+            $problem->inputanswer = $_POST['choices'];
+        } else {
+            $problem->inputanswer = $_POST['inputanswer'] ?? null;
+        }
+        $problem->type = $_POST['type'] ?? 'similar';  // 기본값은 'similar'
+        $problem->timecreated = time(); 
+        $problem->timemodified = time();
+        
+        // NULL 값들 
+        $problem->qstnimgurl = null; 
+        $problem->solimgurl = null;
+        $problem->fullqstnimgurl = null;
+        $problem->fullsolimgurl = null;
+          
+
+        // 디버깅용 로그 
+        error_log("Problem object: " . json_encode($problem)); 
+        error_log("Type value: " . $problem->type);
+        
+        // 테이블 구조 확인
+        $columns = $DB->get_columns('abessi_patternbank');
+        $has_type_field = false;
+        foreach ($columns as $column) {
+            if ($column->name === 'type') {
+                $has_type_field = true;
+                error_log("Type field found in table - Type: " . $column->type . ", Max length: " . $column->max_length);
+                break;
+            }
+        }
+        if (!$has_type_field) {
+            error_log("WARNING: type field not found in abessi_patternbank table!");
+        }
+        
+        $id = $DB->insert_record('abessi_patternbank', $problem);
+        
+        error_log("Inserted ID: " . $id);
+        
+        // 삽입된 데이터 확인
+        $inserted = $DB->get_record('abessi_patternbank', ['id' => $id]);
+        error_log("Inserted record type: " . (isset($inserted->type) ? $inserted->type : 'NULL'));
+        
+        echo json_encode(['success' => true, 'id' => $id, 'message' => 'Problem saved successfully', 'type_saved' => $problem->type, 'type_in_db' => isset($inserted->type) ? $inserted->type : 'NULL']);
+    } catch (Exception $e) {
+        error_log("Save problem error: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => $e->getMessage(), 'message' => $e->getMessage()]);
+    }
+    exit; 
+}
+ 
+if ($action === 'get_problem') {
+    try {
+        $id = $_POST['id'];
+        $problem = $DB->get_record('abessi_patternbank', ['id' => $id]);
+        
+        if ($problem) {
+            echo json_encode([
+                'id' => $problem->id,
+                'question' => $problem->question,
+                'solution' => $problem->solution,
+                'inputanswer' => $problem->inputanswer,
+                'qstnimgurl' => $problem->qstnimgurl,
+                'solimgurl' => $problem->solimgurl,
+                'cntid' => $problem->cntid,
+                'cnttype' => $problem->cnttype,
+                'type' => $problem->type ?? 'similar'  
+                
+            ]);
+        } else {
+            echo json_encode(['error' => 'Problem not found']);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+if ($action === 'load_problems') {
+    try {
+        $cntid = $_POST['cntid'];
+        $cnttype = $_POST['cnttype'];
+        $problems = $DB->get_records('abessi_patternbank', ['cntid' => $cntid, 'cnttype' => $cnttype]);
+        
+        $result = [];
+        foreach ($problems as $problem) {
+            $result[] = [
+                'id' => $problem->id,
+                'question' => $problem->question,
+                'solution' => $problem->solution,
+                'inputanswer' => $problem->inputanswer,
+                'type' => $problem->type ?? 'similar'
+            ];
+        }
+        
+        echo json_encode(['success' => true, 'problems' => $result]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+if ($action === 'test') {
+    echo json_encode(['success' => true, 'message' => 'Server connection test successful']);
+    exit;
+}
+
+if ($action === 'update_problem') {
+    try {
+        if (!isset($_POST['id'])) {
+            throw new Exception('Problem ID missing');
+        }
+        
+        $id = intval($_POST['id']); // ID를 정수로 변환
+        error_log("Update problem - ID: $id");
+        
+        // 기존 레코드 가져오기
+        $problem = $DB->get_record('abessi_patternbank', ['id' => $id]);
+        
+        if (!$problem) {
+            throw new Exception('Problem not found with ID: ' . $id);
+        }
+        
+        // 작성자 권한 확인
+        if ($problem->authorid != $USER->id && !is_siteadmin()) {
+            throw new Exception('Permission denied: You can only edit your own problems');
+        }
+        
+        // 테이블 구조 확인 (디버깅용)
+        $columns = $DB->get_columns('abessi_patternbank');
+        $column_names = array_keys($columns);
+        error_log("Table columns: " . json_encode($column_names));
+        error_log("Original record: " . json_encode($problem));
+        
+        // 기존 레코드의 모든 필드를 복사하여 시작
+        $updateData = clone $problem;
+        
+        // 업데이트할 필드만 변경
+        if (isset($_POST['question'])) {
+            $updateData->question = trim($_POST['question']);
+        }
+        
+        if (isset($_POST['solution'])) {
+            $updateData->solution = trim($_POST['solution']);
+        }
+        
+        // choices가 있으면 업데이트
+        if (isset($_POST['choices'])) {
+            $updateData->inputanswer = $_POST['choices'];
+        }
+        
+        // 수정 시간 업데이트
+        $updateData->timemodified = time();
+        
+        error_log("Update data: " . json_encode($updateData));
+        
+        // 데이터베이스 업데이트
+        try {
+            // 데이터 타입 확인
+            error_log("Update data types check:");
+            error_log("ID type: " . gettype($updateData->id) . ", value: " . $updateData->id);
+            error_log("authorid type: " . gettype($updateData->authorid) . ", value: " . $updateData->authorid);
+            error_log("cntid type: " . gettype($updateData->cntid) . ", value: " . $updateData->cntid);
+            error_log("cnttype type: " . gettype($updateData->cnttype) . ", value: " . $updateData->cnttype);
+            
+            // NULL 필드 확인
+            foreach ($updateData as $key => $value) {
+                if (is_null($value)) {
+                    error_log("NULL field found: $key");
+                }
+            }
+            
+            $success = $DB->update_record('abessi_patternbank', $updateData);
+            
+            if ($success) {
+                error_log("Problem updated successfully");
+                echo json_encode(['success' => true, 'message' => 'Problem updated successfully']);
+            } else {
+                throw new Exception('Database update failed');
+            }
+        } catch (dml_exception $e) {
+            error_log("Database error details: " . $e->getMessage());
+            error_log("Error debuginfo: " . $e->debuginfo);
+            error_log("Error backtrace: " . $e->getTraceAsString());
+            
+            // 더 자세한 에러 정보 제공
+            $error_msg = '데이터베이스 쓰기 오류';
+            if (strpos($e->debuginfo, 'Data too long') !== false) {
+                $error_msg = '입력한 데이터가 너무 깁니다';
+            } elseif (strpos($e->debuginfo, 'Incorrect integer value') !== false) {
+                $error_msg = '잘못된 숫자 형식입니다';
+            } elseif (strpos($e->debuginfo, 'Column') !== false && strpos($e->debuginfo, 'cannot be null') !== false) {
+                $error_msg = '필수 필드가 비어있습니다';
+            }
+            
+            throw new Exception($error_msg . ': ' . $e->getMessage());
+        }
+    } catch (Exception $e) {
+        error_log("Update problem error: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => $e->getMessage(), 'message' => $e->getMessage()]);
+    }
+    exit;
+}
+
+if ($action === 'check_table') {
+    try {
+        $columns = $DB->get_columns('abessi_patternbank');
+        $column_names = [];
+        $type_field_info = null;
+        
+        foreach ($columns as $column) {
+            $column_names[] = $column->name;
+            if ($column->name === 'type') {
+                $type_field_info = [
+                    'name' => $column->name,
+                    'type' => $column->type,
+                    'max_length' => $column->max_length,
+                    'not_null' => $column->not_null,
+                    'default' => $column->has_default ? $column->default_value : null
+                ];
+            }
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'columns' => $column_names,
+            'type_field' => $type_field_info,
+            'has_type_field' => !is_null($type_field_info)
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+if ($action === 'generate_similar') {
+    // OpenAI 설정 파일 로드
+    require_once(__DIR__ . '/config/openai_config.php');
+    
+    try {
+        // 필수 파라미터 확인
+        if (!isset($_POST['cntid']) || !isset($_POST['cnttype'])) {
+            throw new Exception('Required parameters missing');
+        }
+        
+        $cntid = $_POST['cntid'];
+        $cnttype = $_POST['cnttype'];
+        $problemType = $_POST['problemType'] ?? 'similar';
+        $imageUrl = $_POST['imageUrl'] ?? '';
+        
+        error_log("PatternBank: Generating similar problems - cntid: $cntid, type: $problemType");
+        
+        // 원본 문제 정보 조회 (가장 최근 문제를 참고용으로 사용)
+        $recentProblem = $DB->get_record_sql(
+            "SELECT question, solution, inputanswer 
+             FROM {abessi_patternbank} 
+             WHERE cntid = ? AND cnttype = ? 
+             ORDER BY id DESC 
+             LIMIT 1",
+            [$cntid, $cnttype]
+        );
+        
+        // 원본 문제 구성
+        $originalProblem = [];
+        if ($recentProblem) {
+            $originalProblem = [
+                'question' => $recentProblem->question,
+                'solution' => $recentProblem->solution
+            ];
+            
+            if (!empty($recentProblem->inputanswer)) {
+                $originalProblem['choices'] = json_decode($recentProblem->inputanswer, true);
+            }
+        }
+        
+        // 이미지 URL이 제공된 경우 이미지 기반 생성
+        if (!empty($imageUrl)) {
+            $originalProblem['imageUrl'] = $imageUrl;
+        }
+        
+        // 원본 문제가 없고 이미지도 없으면 기본 템플릿 사용
+        if (empty($originalProblem) && empty($imageUrl)) {
+            // 기본 수학 문제 템플릿
+            $originalProblem = [
+                'question' => '다음 수열의 일반항을 구하시오: 2, 4, 8, 16, ...',
+                'solution' => '등비수열로 첫째항이 2이고 공비가 2입니다. 따라서 일반항은 $a_n = 2^n$입니다.'
+            ];
+        }
+        
+        // OpenAI API를 통한 유사문제 생성
+        error_log('PatternBank: Calling generateSimilarProblems function');
+        $result = generateSimilarProblems($originalProblem, $problemType);
+        
+        if (!$result['success']) {
+            throw new Exception($result['error'] ?? 'Failed to generate problems');
+        }
+        
+        // 생성된 문제들을 DB에 저장
+        $savedProblems = [];
+        $errors = [];
+        
+        foreach ($result['problems'] as $index => $problem) {
+            try {
+                $problemRecord = new stdClass();
+                $problemRecord->authorid = $USER->id;
+                $problemRecord->cntid = $cntid;
+                $problemRecord->cnttype = $cnttype;
+                $problemRecord->question = $problem['question'];
+                $problemRecord->solution = $problem['solution'];
+                
+                // 선택지가 있으면 JSON 문자열로 저장
+                if (!empty($problem['choices'])) {
+                    $problemRecord->inputanswer = json_encode($problem['choices'], JSON_UNESCAPED_UNICODE);
+                } else {
+                    $problemRecord->inputanswer = null;
+                }
+                
+                $problemRecord->type = $problemType; // similar or modified
+                $problemRecord->timecreated = time();
+                $problemRecord->timemodified = time();
+                
+                // NULL 값들
+                $problemRecord->qstnimgurl = null;
+                $problemRecord->solimgurl = null;
+                $problemRecord->fullqstnimgurl = null;
+                $problemRecord->fullsolimgurl = null;
+                
+                // DB에 저장
+                $id = $DB->insert_record('abessi_patternbank', $problemRecord);
+                
+                if ($id) {
+                    $savedProblems[] = [
+                        'id' => $id,
+                        'number' => $index + 1,
+                        'question' => $problem['question'],
+                        'solution' => $problem['solution'],
+                        'choices' => $problem['choices'] ?? [],
+                        'type' => $problemType
+                    ];
+                    error_log("PatternBank: Problem " . ($index + 1) . " saved with ID: " . $id);
+                } else {
+                    $errors[] = "문제 " . ($index + 1) . " 저장 실패";
+                    error_log("PatternBank: Failed to save problem " . ($index + 1));
+                }
+                
+            } catch (Exception $e) {
+                $errors[] = "문제 " . ($index + 1) . " 저장 오류: " . $e->getMessage();
+                error_log("PatternBank: Error saving problem " . ($index + 1) . ": " . $e->getMessage());
+            }
+        }
+        
+        // 응답 생성
+        $response = [
+            'success' => count($savedProblems) > 0,
+            'problems' => $savedProblems,
+            'totalGenerated' => count($result['problems']),
+            'totalSaved' => count($savedProblems),
+            'usage' => $result['usage'] ?? null
+        ];
+        
+        if (!empty($errors)) {
+            $response['errors'] = $errors;
+        }
+        
+        // 성공 메시지
+        if (count($savedProblems) > 0) {
+            $response['message'] = count($savedProblems) . "개의 " . 
+                ($problemType === 'similar' ? '유사문제' : '변형문제') . 
+                "가 성공적으로 생성되었습니다.";
+        } else {
+            $response['message'] = "문제 생성에 실패했습니다.";
+        }
+        
+        echo json_encode($response);
+        
+    } catch (Exception $e) {
+        error_log("PatternBank generate_similar error: " . $e->getMessage());
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'message' => '유사문제 생성 중 오류가 발생했습니다: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
+if ($action === 'generate_similar_with_prompt') {
+    // OpenAI 설정 파일 로드
+    require_once(__DIR__ . '/config/openai_config.php');
+    
+    try {
+        // 필수 파라미터 확인
+        if (!isset($_POST['originalProblemId']) || !isset($_POST['additionalPrompt'])) {
+            throw new Exception('Required parameters missing');
+        }
+        
+        $originalProblemId = $_POST['originalProblemId'];
+        $additionalPrompt = $_POST['additionalPrompt'] ?? '';
+        $originalQuestion = $_POST['originalQuestion'] ?? '';
+        $originalSolution = $_POST['originalSolution'] ?? '';
+        $cntid = $_POST['cntid'];
+        $cnttype = $_POST['cnttype'];
+        
+        error_log("PatternBank: Generating with prompt for problem ID: $originalProblemId");
+        
+        // 원본 문제 구성
+        $originalProblem = [
+            'question' => $originalQuestion,
+            'solution' => $originalSolution
+        ];
+        
+        // 추가 프롬프트가 있으면 시스템 메시지에 포함
+        $systemMessage = "당신은 한국 고등학교 수학 교육과정 전문가입니다. 주어진 문제와 유사한 난이도와 형식의 문제를 생성해야 합니다. 반드시 유효한 JSON 형식으로 응답해야 합니다.";
+        if (!empty($additionalPrompt)) {
+            $systemMessage .= "\n\n추가 요구사항: " . $additionalPrompt;
+        }
+        
+        // 프롬프트 수정
+        $prompt = PATTERNBANK_SIMILAR_PROBLEM_PROMPT;
+        $prompt .= "\n\n원본 문제:\n" . json_encode($originalProblem, JSON_UNESCAPED_UNICODE);
+        if (!empty($additionalPrompt)) {
+            $prompt .= "\n\n사용자 추가 요구사항: " . $additionalPrompt;
+        }
+        
+        // Call API and store full result
+        $apiResult = generateSimilarProblems($originalProblem, 'similar');
+
+        // CRITICAL FIX: openai_config.php returns JSON strings for errors but arrays for success
+        // Decode if we received a JSON string
+        if (is_string($apiResult)) {
+            $apiResult = json_decode($apiResult, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log("PatternBank: Failed to decode API result JSON: " . json_last_error_msg());
+                echo json_encode([
+                    'success' => false,
+                    'error' => '알 수 없는 오류가 발생했습니다',
+                    'error_type' => 'unknown_error',
+                    'error_details' => [
+                        'type' => 'json_decode_error',
+                        'message' => 'Failed to decode API response: ' . json_last_error_msg()
+                    ]
+                ]);
+                exit;
+            }
+        }
+
+        // Check for API errors first
+        if (!$apiResult['success']) {
+            // Pass through detailed error from openai_config.php
+            echo json_encode([
+                'success' => false,
+                'error' => $apiResult['error'] ?? '알 수 없는 오류',
+                'error_type' => $apiResult['error_type'] ?? 'unknown_error',
+                'error_details' => $apiResult['error_details'] ?? [],
+                'is_token_error' => $apiResult['is_token_error'] ?? false,
+                'max_tokens' => $apiResult['max_tokens'] ?? null,
+                'http_code' => $apiResult['http_code'] ?? null
+            ]);
+            exit;
+        }
+
+        // Extract problems from successful result
+        $problems = $apiResult['problems'] ?? [];
+        
+        // 첫 번째 생성된 문제로 기존 문제 교체
+        if (count($problems) > 0) {
+            $newProblem = $problems[0];
+            
+            // 기존 문제 업데이트
+            $updateData = new stdClass();
+            $updateData->id = intval($originalProblemId);
+            $updateData->question = $newProblem['문항'] ?? $newProblem['question'] ?? '';
+            $updateData->solution = $newProblem['해설'] ?? $newProblem['solution'] ?? '';
+            
+            // 선택지 처리
+            if (isset($newProblem['선택지'])) {
+                $updateData->inputanswer = json_encode($newProblem['선택지'], JSON_UNESCAPED_UNICODE);
+            } elseif (isset($newProblem['choices'])) {
+                $updateData->inputanswer = json_encode($newProblem['choices'], JSON_UNESCAPED_UNICODE);
+            }
+            
+            $updateData->timemodified = time();
+            
+            // 데이터베이스 업데이트
+            $success = $DB->update_record('abessi_patternbank', $updateData);
+            
+            if ($success) {
+                echo json_encode([
+                    'success' => true,
+                    'replacedProblemId' => $originalProblemId,
+                    'message' => '문제가 성공적으로 교체되었습니다.',
+                    'newProblem' => [
+                        'question' => $updateData->question,
+                        'solution' => $updateData->solution,
+                        'choices' => isset($updateData->inputanswer) ? json_decode($updateData->inputanswer, true) : []
+                    ]
+                ]);
+            } else {
+                // More specific database error
+                echo json_encode([
+                    'success' => false,
+                    'error' => '데이터베이스 업데이트 실패',
+                    'error_type' => 'database_error',
+                    'error_details' => [
+                        'type' => 'database_error',
+                        'message' => '문제를 데이터베이스에 저장하는 중 오류가 발생했습니다.'
+                    ]
+                ]);
+                exit;
+            }
+        } else {
+            // No problems generated (should not happen if API succeeded)
+            echo json_encode([
+                'success' => false,
+                'error' => '생성된 문제가 없습니다',
+                'error_type' => 'validation_error',
+                'error_details' => [
+                    'type' => 'validation_error',
+                    'message' => 'API가 성공했지만 문제가 생성되지 않았습니다.'
+                ]
+            ]);
+            exit;
+        }
+        
+    } catch (Exception $e) {
+        error_log("PatternBank generate_similar_with_prompt error: " . $e->getMessage());
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage(),
+            'message' => '문제 교체 중 오류가 발생했습니다: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
+if ($action === 'save_analysis') {
+    try {
+        if (!isset($_POST['cntid']) || !isset($_POST['analysis'])) {
+            throw new Exception('Required parameters missing');
+        }
+        
+        $cntid = $_POST['cntid'];
+        $analysis = $_POST['analysis'];
+        
+        error_log("Save analysis - cntid: $cntid, text length: " . strlen($analysis));
+        
+        // mdl_icontent_pages 테이블 확인
+        $page = $DB->get_record('icontent_pages', ['id' => $cntid]);
+        
+        if (!$page) {
+            error_log("Page not found with id: $cntid");
+            throw new Exception('Page not found with id: ' . $cntid);
+        }
+        
+        // analysis 필드가 없으면 추가
+        $columns = $DB->get_columns('icontent_pages');
+        $has_analysis_field = false;
+        foreach ($columns as $column) {
+            if ($column->name === 'analysis') {
+                $has_analysis_field = true;
+                break;
+            }
+        }
+        
+        if (!$has_analysis_field) {
+            error_log("WARNING: analysis field not found in icontent_pages table!");
+            // 필드가 없는 경우 reflections0 필드에 저장 (임시)
+            $page->reflections0 = $analysis;
+        } else {
+            $page->analysis = $analysis;
+        }
+        
+        $page->timemodified = time();
+        
+        $success = $DB->update_record('icontent_pages', $page);
+        
+        if ($success) {
+            error_log("Analysis saved successfully");
+            echo json_encode(['success' => true, 'message' => 'Analysis saved successfully']);
+        } else {
+            throw new Exception('Failed to save analysis');
+        }
+    } catch (Exception $e) {
+        error_log("Save analysis error: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => $e->getMessage(), 'message' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// 잘못된 액션
+error_log("Invalid action received: " . $action);
+echo json_encode(['success' => false, 'error' => 'Invalid action: ' . $action]);
+?>

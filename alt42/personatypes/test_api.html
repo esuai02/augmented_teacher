@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>API 테스트</title>
+</head>
+<body>
+    <h1>Math Patterns API 테스트</h1>
+    <button onclick="testAPI()">API 테스트</button>
+    <pre id="result"></pre>
+
+    <script>
+    async function testAPI() {
+        try {
+            const response = await fetch('api/get_math_patterns.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: 1
+                })
+            });
+            
+            const data = await response.json();
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            
+            console.log('패턴 수:', data.patterns ? data.patterns.length : 0);
+            console.log('카테고리 수:', data.categories ? data.categories.length : 0);
+            
+        } catch (error) {
+            document.getElementById('result').textContent = 'Error: ' + error.message;
+        }
+    }
+    </script>
+</body>
+</html>

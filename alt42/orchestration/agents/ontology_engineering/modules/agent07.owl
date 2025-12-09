@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent07">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 07 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 07 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 07: Interaction Targeting 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionTiming">
+    <rdfs:label xml:lang="ko">InteractionTiming</rdfs:label>
+    <rdfs:comment xml:lang="ko">상호작용 타이밍을 온톨로지로 표현 (Agent 07 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionForm">
+    <rdfs:label xml:lang="ko">InteractionForm</rdfs:label>
+    <rdfs:comment xml:lang="ko">상호작용 형태를 온톨로지로 표현 (Agent 07 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermRoutineEmotionLoop">
+    <rdfs:label xml:lang="ko">LongTermRoutineEmotionLoop</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 루틴과 정서 루프를 온톨로지로 표현 (Agent 07 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CurrentConcentration">
+    <rdfs:label xml:lang="ko">CurrentConcentration</rdfs:label>
+    <rdfs:comment xml:lang="ko">현재 집중도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionCurve">
+    <rdfs:label xml:lang="ko">EmotionCurve</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 곡선</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningTimeSlot">
+    <rdfs:label xml:lang="ko">LearningTimeSlot</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 시간대</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutinePosition">
+    <rdfs:label xml:lang="ko">RoutinePosition</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 위치 (수업 중/휴식 중/귀가 전)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousInteractionEffect">
+    <rdfs:label xml:lang="ko">PreviousInteractionEffect</rdfs:label>
+    <rdfs:comment xml:lang="ko">직전 상호작용 효과</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPriority">
+    <rdfs:label xml:lang="ko">InterventionPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 우선순위</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WaitTime">
+    <rdfs:label xml:lang="ko">WaitTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">대기 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#GuidanceType">
+    <rdfs:label xml:lang="ko">GuidanceType</rdfs:label>
+    <rdfs:comment xml:lang="ko">유도형 타입</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionTone">
+    <rdfs:label xml:lang="ko">EmotionTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 톤 (활동적·차분·공감형)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreferredInteractionTone">
+    <rdfs:label xml:lang="ko">PreferredInteractionTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">선호 상호작용 톤</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreferredInteractionChannel">
+    <rdfs:label xml:lang="ko">PreferredInteractionChannel</rdfs:label>
+    <rdfs:comment xml:lang="ko">선호 상호작용 채널 (음성·텍스트·시각)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionLengthPreference">
+    <rdfs:label xml:lang="ko">InteractionLengthPreference</rdfs:label>
+    <rdfs:comment xml:lang="ko">상호작용 길이 선호도 (짧게·길게)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ChannelEffectiveness">
+    <rdfs:label xml:lang="ko">ChannelEffectiveness</rdfs:label>
+    <rdfs:comment xml:lang="ko">채널 효과성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExpressionIntensity">
+    <rdfs:label xml:lang="ko">ExpressionIntensity</rdfs:label>
+    <rdfs:comment xml:lang="ko">표현 강도 (격려/조정/리마인드)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionEffectiveness">
+    <rdfs:label xml:lang="ko">InteractionEffectiveness</rdfs:label>
+    <rdfs:comment xml:lang="ko">상호작용 효과성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StudentResponsePattern">
+    <rdfs:label xml:lang="ko">StudentResponsePattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생 반응 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionGoal">
+    <rdfs:label xml:lang="ko">InterventionGoal</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 목표 (즉시 위로/격려, 루틴 강화, 정서 회복, 자기인식 촉진)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineStatus">
+    <rdfs:label xml:lang="ko">RoutineStatus</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionStatus">
+    <rdfs:label xml:lang="ko">EmotionStatus</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfAwarenessLevel">
+    <rdfs:label xml:lang="ko">SelfAwarenessLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기인식 수준</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermRoutine">
+    <rdfs:label xml:lang="ko">LongTermRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionLoop">
+    <rdfs:label xml:lang="ko">EmotionLoop</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서 루프</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionContext">
+    <rdfs:label xml:lang="ko">InterventionContext</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 맥락</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MetacognitionLevel">
+    <rdfs:label xml:lang="ko">MetacognitionLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">메타인지 수준</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfAwarenessNeed">
+    <rdfs:label xml:lang="ko">SelfAwarenessNeed</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기인식 필요성</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 07: Interaction Targeting 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionTiming">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CurrentConcentration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionCurve"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningTimeSlot"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutinePosition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousInteractionEffect"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionPriority"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WaitTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#GuidanceType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionForm">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreferredInteractionTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackAcceptanceRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreferredInteractionChannel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionLengthPreference"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ChannelEffectiveness"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ExpressionIntensity"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionEffectiveness"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudentResponsePattern"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LongTermRoutineEmotionLoop">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionGoal"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfAwarenessLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionLoop"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionContext"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MetacognitionLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfAwarenessNeed"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionHistory"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

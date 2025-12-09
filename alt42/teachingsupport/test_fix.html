@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메시지 API 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>메시지 API 테스트</h1>
+    <button onclick="testAPI()">API 테스트 실행</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>테스트 중...</p>';
+            
+            try {
+                const response = await fetch('get_student_messages.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <h2 class="success">✅ API 테스트 성공</h2>
+                        <p>메시지 수: ${data.stats.total}개</p>
+                        <p>읽지 않은 메시지: ${data.stats.unread}개</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2 class="error">❌ API 테스트 실패</h2>
+                        <p>오류: ${data.error}</p>
+                        <h3>디버그 정보:</h3>
+                        <pre>${JSON.stringify(data.debug_info, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h2 class="error">❌ 네트워크 오류</h2>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

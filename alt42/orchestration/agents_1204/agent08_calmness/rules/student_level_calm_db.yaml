@@ -1,0 +1,153 @@
+# 학생 수준별 침착도 기준 DB
+# File: agent08_calmness/rules/student_level_calm_db.yaml
+# Purpose: 학생 수준별 침착도 기준선 및 관리 전략 정의
+# 
+# 현직 수학선생님의 경험 기반 데이터
+# - 학생 설문: "평소 수학 공부할 때 어떤 느낌이 들었나요?"
+# - 선생님 체크리스트: "이 학생의 침착도 정상 범위"
+# - 텍스트 입력: 선생님의 관찰 기록
+
+version: "1.0"
+description: "학생 수준별 침착도 기준선 및 관리 전략"
+
+student_levels:
+  # 상위권 (상위 20%)
+  top_level:
+    name: "상위권"
+    criteria:
+      - 학년 평균 대비 상위 20%
+      - 수학 성적 90점 이상
+      - 고난도 문제 해결 가능
+    calm_standards:
+      baseline: 90
+      normal_range: [88, 100]
+      decline_threshold: 85
+      intervention_threshold: 80
+      urgent_threshold: 75
+    characteristics:
+      - 높은 침착도 요구
+      - 고난도 문제 대응 가능
+      - 자기 주도 학습 능력
+    calm_management:
+      high_calm_strategy: "심화 문제 제공, 창의 문제 도전"
+      normal_calm_strategy: "표준 학습 진행, 난이도 점진적 상승"
+      low_calm_strategy: "기본 문제로 복습, 개념 재확인"
+      urgent_calm_strategy: "휴식 권장, 쉬운 문제로 워밍업"
+    teacher_notes: |
+      "상위권 학생은 평소 침착도가 높아야 고난도 문제를 해결할 수 있습니다.
+       침착도가 85 이하로 떨어지면 기본 문제로 복습하는 것이 좋고,
+       80 이하로 떨어지면 휴식을 권장해야 합니다."
+
+  # 중위권 (중위 40%)
+  middle_level:
+    name: "중위권"
+    criteria:
+      - 학년 평균 대비 중위 40%
+      - 수학 성적 70~89점
+      - 기본 문제 해결 가능
+    calm_standards:
+      baseline: 85
+      normal_range: [82, 95]
+      decline_threshold: 80
+      intervention_threshold: 75
+      urgent_threshold: 70
+    characteristics:
+      - 적정 침착도 요구
+      - 기본 문제 중심 학습
+      - 단계적 학습 필요
+    calm_management:
+      high_calm_strategy: "유형 문제 제공, 난이도 점진적 상승"
+      normal_calm_strategy: "표준 학습 진행, 기본 문제 중심"
+      low_calm_strategy: "기본 문제로 복습, 개념 재학습"
+      urgent_calm_strategy: "휴식 권장, 쉬운 문제로 워밍업"
+    teacher_notes: |
+      "중위권 학생은 침착도가 85 정도가 정상입니다.
+       침착도가 80 이하로 떨어지면 기본 문제로 복습하는 것이 좋고,
+       75 이하로 떨어지면 휴식을 권장해야 합니다."
+
+  # 하위권 (하위 40%)
+  bottom_level:
+    name: "하위권"
+    criteria:
+      - 학년 평균 대비 하위 40%
+      - 수학 성적 70점 미만
+      - 기본 개념 이해 필요
+    calm_standards:
+      baseline: 80
+      normal_range: [75, 90]
+      decline_threshold: 75
+      intervention_threshold: 70
+      urgent_threshold: 65
+    characteristics:
+      - 점진적 침착도 향상 목표
+      - 기본 개념 중심 학습
+      - 반복 연습 중요
+    calm_management:
+      high_calm_strategy: "기본 문제 제공, 개념 확인"
+      normal_calm_strategy: "기본 개념 학습, 쉬운 문제 연습"
+      low_calm_strategy: "기본 개념 재학습, 쉬운 문제 반복"
+      urgent_calm_strategy: "휴식 권장, 매우 쉬운 문제로 워밍업"
+    teacher_notes: |
+      "하위권 학생은 침착도가 80 정도가 목표입니다.
+       침착도가 75 이하로 떨어지면 기본 개념을 다시 확인하는 것이 좋고,
+       70 이하로 떨어지면 휴식을 권장해야 합니다."
+
+# 학생 수준 판별 기준
+level_identification:
+  methods:
+    - "최근 3개월 수학 성적 평균"
+    - "학년 평균 대비 백분위"
+    - "고난도 문제 해결 능력"
+    - "학습 속도 및 이해도"
+  
+  calculation:
+    score_average:
+      top_level: "90점 이상"
+      middle_level: "70~89점"
+      bottom_level: "70점 미만"
+    percentile:
+      top_level: "상위 20%"
+      middle_level: "중위 40%"
+      bottom_level: "하위 40%"
+
+# 개인 기준선 설정
+personal_baseline:
+  calculation_method: |
+    1. 최근 1개월 침착도 데이터 수집
+    2. 학생 수준별 기준선과 비교
+    3. 개인 평균 침착도 계산
+    4. 기준선 ±5 범위 내이면 개인 기준선으로 설정
+    5. 범위 밖이면 학생 수준별 기준선 사용
+  
+  update_frequency: "월 1회"
+  minimum_data_points: 10
+  
+  adjustment_rules:
+    - 개인 평균이 학생 수준 기준선보다 5점 이상 높으면 상향 조정
+    - 개인 평균이 학생 수준 기준선보다 5점 이상 낮으면 하향 조정
+    - 개인 평균이 학생 수준 기준선 ±5 범위 내이면 유지
+
+# 데이터 수집 방법
+data_collection:
+  student_survey:
+    question: "평소 수학 공부할 때 어떤 느낌이 들었나요?"
+    options:
+      - "자신 있게 공부할 수 있었어요"
+      - "약간 어려웠지만 공부할 수 있었어요"
+      - "많이 어려웠어요"
+      - "공부하기 전에 두려웠어요"
+  
+  teacher_checklist:
+    items:
+      - "이 학생의 침착도 정상 범위는 얼마인가요?"
+      - "이 학생이 침착도가 떨어질 때 주로 어떤 문제가 발생하나요?"
+      - "이 학생에게 효과적인 침착도 관리 전략은 무엇인가요?"
+  
+  text_input:
+    format: |
+      학생: [학생명]
+      수준: [상위권/중위권/하위권]
+      관찰 내용: [선생님이 관찰한 침착도 패턴]
+      개인 기준선: [개인 평균 침착도]
+      개입 전략: [효과적이었던 개입 방법]
+

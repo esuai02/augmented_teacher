@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>상호작용 저장 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 5px; }
+        button { margin: 10px 0; padding: 10px 20px; }
+        .test-section { margin: 20px 0; border: 1px solid #ddd; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>상호작용 저장 API 테스트</h1>
+    
+    <div class="test-section">
+        <h2>1. 상호작용 레코드 생성 테스트</h2>
+        <button onclick="testCreateInteraction()">레코드 생성 테스트</button>
+        <div id="createResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. 해설 업데이트 테스트</h2>
+        <button onclick="testUpdateSolution()">해설 업데이트 테스트</button>
+        <div id="solutionResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. 나레이션 업데이트 테스트</h2>
+        <button onclick="testUpdateNarration()">나레이션 업데이트 테스트</button>
+        <div id="narrationResult"></div>
+    </div>
+
+    <script>
+        let currentInteractionId = null;
+        
+        async function testCreateInteraction() {
+            const resultDiv = document.getElementById('createResult');
+            resultDiv.innerHTML = '<p>테스트 중...</p>';
+            
+            try {
+                const response = await fetch('save_interaction.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'create_interaction',
+                        studentId: 827, // 예시 학생 ID
+                        teacherId: 2,   // 예시 선생님 ID
+                        problemType: 'mathematics',
+                        problemText: '테스트 문제입니다.'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentInteractionId = data.interactionId;
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ 레코드 생성 성공</h3>
+                        <p>상호작용 ID: ${data.interactionId}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ 레코드 생성 실패</h3>
+                        <p>오류: ${data.error}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ 네트워크 오류</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        async function testUpdateSolution() {
+            const resultDiv = document.getElementById('solutionResult');
+            
+            if (!currentInteractionId) {
+                resultDiv.innerHTML = '<p class="error">먼저 상호작용 레코드를 생성해주세요.</p>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>테스트 중...</p>';
+            
+            try {
+                const response = await fetch('save_interaction.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'update_solution',
+                        interactionId: currentInteractionId,
+                        solution: '이것은 테스트 해설입니다.'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ 해설 업데이트 성공</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ 해설 업데이트 실패</h3>
+                        <p>오류: ${data.error}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ 네트워크 오류</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        async function testUpdateNarration() {
+            const resultDiv = document.getElementById('narrationResult');
+            
+            if (!currentInteractionId) {
+                resultDiv.innerHTML = '<p class="error">먼저 상호작용 레코드를 생성해주세요.</p>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p>테스트 중...</p>';
+            
+            try {
+                const response = await fetch('save_interaction.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'update_narration',
+                        interactionId: currentInteractionId,
+                        narration: '이것은 테스트 나레이션입니다.'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <h3 class="success">✅ 나레이션 업데이트 성공</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3 class="error">❌ 나레이션 업데이트 실패</h3>
+                        <p>오류: ${data.error}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3 class="error">❌ 네트워크 오류</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

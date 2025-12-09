@@ -1,0 +1,259 @@
+/**
+ * 타이핑 효과 스타일
+ */
+
+/* 타이핑 커서 */
+.typing-cursor {
+    display: inline-block;
+    animation: blink 1s infinite;
+    color: #7c3aed;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* 로딩 점 애니메이션 */
+.loading-dots span {
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+    100% { content: '.'; }
+}
+
+/* 키워드 하이라이트 */
+.keyword-highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+    display: inline-block;
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.2); }
+}
+
+/* AI 피드백 컨테이너 */
+.ai-feedback-container {
+    background: linear-gradient(135deg, #f5f3ff 0%, #e9e5ff 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.1);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 피드백 헤더 */
+.feedback-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    color: #5b21b6;
+}
+
+.feedback-icon {
+    font-size: 1.5rem;
+    animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 피드백 섹션 */
+.feedback-section {
+    display: flex;
+    gap: 15px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    animation: slideIn 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.feedback-section:nth-child(2) { animation-delay: 0.1s; }
+.feedback-section:nth-child(3) { animation-delay: 0.2s; }
+.feedback-section:nth-child(4) { animation-delay: 0.3s; }
+.feedback-section:nth-child(5) { animation-delay: 0.4s; }
+.feedback-section:nth-child(6) { animation-delay: 0.5s; }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 섹션 아이콘 */
+.section-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+/* 섹션 콘텐츠 */
+.section-content {
+    flex: 1;
+}
+
+.section-content strong {
+    display: block;
+    color: #4c1d95;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 타이핑되는 텍스트 영역 */
+.feedback-positive-text,
+.feedback-improvement-text,
+.feedback-insight-text,
+.feedback-inertia-text,
+.feedback-next-text {
+    color: #374151;
+    line-height: 1.6;
+    min-height: 24px;
+}
+
+/* 질문 리스트 */
+.feedback-questions-list {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.feedback-questions-list li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 10px;
+    color: #4b5563;
+    line-height: 1.5;
+    min-height: 24px;
+}
+
+.feedback-questions-list li::before {
+    content: "💭";
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+/* 피드백 타입별 색상 */
+.feedback-positive {
+    border-left: 4px solid #10b981;
+}
+
+.feedback-improvement {
+    border-left: 4px solid #f59e0b;
+}
+
+.feedback-insight {
+    border-left: 4px solid #3b82f6;
+}
+
+.feedback-inertia {
+    border-left: 4px solid #ef4444;
+}
+
+.feedback-next {
+    border-left: 4px solid #8b5cf6;
+}
+
+/* 다음 액션 버튼 */
+.next-action {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.continue-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.continue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* 에러 메시지 */
+.error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    animation: shake 0.5s ease-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .ai-feedback-container {
+        padding: 20px;
+    }
+    
+    .feedback-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .section-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+    
+    .feedback-header {
+        font-size: 1.1rem;
+    }
+}

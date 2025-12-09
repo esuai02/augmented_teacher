@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>편향 네비게이션 맵 테스트</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .test-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .test-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            padding: 20px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .test-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .test-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .description {
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+            max-width: 800px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .feature-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌌 인지관성 네비게이션 맵</h1>
+    <p class="subtitle">60개 인지관성의 우주적 여정</p>
+    
+    <div class="test-buttons">
+        <button class="test-btn" onclick="openNavigationMap()">
+            🗺️ 네비게이션 맵 열기
+        </button>
+        
+        <button class="test-btn" onclick="openCardLibrary()">
+            🃏 카드 도감 열기
+        </button>
+        
+        <button class="test-btn" onclick="simulateBiasDetection()">
+            🎯 인지관성 감지 시뮬레이션
+        </button>
+    </div>
+    
+    <div class="features">
+        <div class="feature-card">
+            <h3>🧠 5대 클러스터</h3>
+            <p>인식, 판단, 학습, 감정, 사회적 관성군</p>
+        </div>
+        <div class="feature-card">
+            <h3>🎨 시각적 탐험</h3>
+            <p>우주 지도 형태의 인터랙티브 인터페이스</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 진행도 추적</h3>
+            <p>실시간 정복률 및 성취 표시</p>
+        </div>
+        <div class="feature-card">
+            <h3>🔗 연결 관계</h3>
+            <p>인지관성 간 상호작용 시각화</p>
+        </div>
+    </div>
+    
+    <div class="description">
+        <p>
+            readme_personainfo.txt에 정의된 60개의 인지관성을<br>
+            5대 클러스터로 분류하여 탐험할 수 있는 시스템입니다.
+        </p>
+    </div>
+
+    <!-- 필수 JavaScript 파일들 로드 -->
+    <script src="js/bias-cluster-data.js"></script>
+    <script src="js/bias-card-system.js"></script>
+    <script src="js/bias-card-library.js"></script>
+    <script src="js/bias-card-session.js"></script>
+    <script src="js/bias-navigation-map.js"></script>
+    
+    <script>
+        // 테스트 함수들
+        function openNavigationMap() {
+            if (window.biasNavigationMap) {
+                window.biasNavigationMap.open();
+            } else {
+                alert('네비게이션 맵 시스템을 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        function openCardLibrary() {
+            if (window.biasCardLibrary) {
+                window.biasCardLibrary.open();
+            } else {
+                alert('카드 도감 시스템을 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        function simulateBiasDetection() {
+            if (window.biasCardSystem) {
+                // readme_personainfo.txt에서 정의된 인지관성들 사용
+                const testInertias = ['확증관성', '자기과소평가', '재앙화사고'];
+                const randomInertia = testInertias[Math.floor(Math.random() * testInertias.length)];
+                
+                window.biasCardSystem.showDetectionCard(randomInertia, 0.85, {
+                    trigger: '테스트 키워드',
+                    context: '시뮬레이션 테스트'
+                });
+            } else {
+                alert('인지관성 감지 시스템을 로드하는 중입니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        // 시스템 로드 완료 체크
+        window.addEventListener('load', () => {
+            console.log('🌟 인지관성 네비게이션 시스템 로드 완료');
+            console.log('📄 readme_personainfo.txt 기반 60개 인지관성 사용');
+            
+            // 디버깅용 전역 객체들 체크
+            if (window.biasClusterData) {
+                console.log('✅ BiasClusterData 로드됨');
+                console.log('📊 총 클러스터 수:', Object.keys(window.biasClusterData.clusters).length);
+                console.log('📋 클러스터 목록:');
+                Object.keys(window.biasClusterData.clusters).forEach(key => {
+                    const cluster = window.biasClusterData.clusters[key];
+                    console.log(`  - ${cluster.name}: ${cluster.biases.length}개 편향`);
+                });
+            }
+            
+            if (window.biasNavigationMap) {
+                console.log('✅ BiasNavigationMap 로드됨');
+            }
+            
+            if (window.biasCardSystem) {
+                console.log('✅ BiasCardSystem 로드됨');
+            }
+            
+            if (window.biasCardLibrary) {
+                console.log('✅ BiasCardLibrary 로드됨');
+            }
+        });
+
+        // 개발자 도구용 헬퍼 함수들
+        window.debugBiasSystem = {
+            // readme_personainfo.txt의 60개 인지관성 목록 표시
+            showAllInertias: () => {
+                if (window.biasClusterData) {
+                    console.log('📋 readme_personainfo.txt 기반 60개 인지관성 목록:');
+                    Object.values(window.biasClusterData.clusters).forEach(cluster => {
+                        console.log(`\n${cluster.name}:`);
+                        cluster.biases.forEach((bias, index) => {
+                            console.log(`  ${index + 1}. ${bias}`);
+                        });
+                    });
+                }
+            },
+            
+            showAllClusters: () => {
+                if (window.biasClusterData) {
+                    console.table(window.biasClusterData.clusters);
+                }
+            },
+            
+            showRelationships: () => {
+                if (window.biasClusterData) {
+                    console.table(window.biasClusterData.relationships);
+                }
+            },
+            
+            // 진행도 시뮬레이션 (readme_personainfo.txt의 인지관성 사용)
+            simulateProgress: (percentage = 25) => {
+                const allBiases = [];
+                if (window.biasClusterData) {
+                    Object.values(window.biasClusterData.clusters).forEach(cluster => {
+                        allBiases.push(...cluster.biases);
+                    });
+                }
+                
+                const progressCount = Math.floor((percentage / 100) * allBiases.length);
+                const mockProgress = allBiases.slice(0, progressCount);
+                
+                localStorage.setItem('shiningstars_bias_cards', JSON.stringify({
+                    collectedCards: mockProgress,
+                    lastUpdate: new Date().toISOString()
+                }));
+                
+                console.log(`✅ ${percentage}% 진행도 시뮬레이션 완료`);
+                console.log(`📊 정복한 인지관성: ${progressCount}개 / 60개`);
+                alert(`${percentage}% 진행도로 설정되었습니다. 페이지를 새로고침하면 적용됩니다.`);
+            },
+            
+            // 진행도 초기화
+            resetProgress: () => {
+                localStorage.removeItem('shiningstars_bias_cards');
+                console.log('🔄 진행도가 초기화되었습니다.');
+                alert('진행도가 초기화되었습니다. 페이지를 새로고침하면 적용됩니다.');
+            }
+        };
+        
+        console.log('🔧 개발자 도구: window.debugBiasSystem 사용 가능');
+        console.log('📋 사용 가능한 명령어:');
+        console.log('  - debugBiasSystem.showAllInertias() : 60개 인지관성 목록 표시');
+        console.log('  - debugBiasSystem.showAllClusters() : 클러스터 정보 표시');
+        console.log('  - debugBiasSystem.showRelationships() : 인지관성 관계 표시');
+        console.log('  - debugBiasSystem.simulateProgress(50) : 진행도 시뮬레이션');
+        console.log('  - debugBiasSystem.resetProgress() : 진행도 초기화');
+    </script>
+</body>
+</html>

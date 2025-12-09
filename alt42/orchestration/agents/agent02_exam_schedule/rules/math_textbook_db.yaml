@@ -1,0 +1,671 @@
+# 수학 교과서 단원 데이터베이스
+# math_textbook_info.txt 기반 구조화된 데이터
+# 선생님 수준 99% 도달을 위한 핵심 DB
+# 
+# 작성일: 2025-01-27
+# 버전: 2.0
+# 설명: 수학 단원별 상세 정보, 진단목록, 난이도, 학습시간, 출제비중, 선후관계 등
+
+version: "2.0"
+description: "수학 교과서 단원 정보 데이터베이스 - rule 적용 최적화 형식"
+source_file: "math_textbook_info.txt"
+last_updated: "2025-01-27"
+
+# 영역별 단원 구조
+domains:
+  # ========== 수체계 영역 ==========
+  - domain_id: "number_system"
+    domain_name: "수체계 영역"
+    description: "수와 연산의 기초"
+    grade_range: ["초등", "중등1-1"]
+    
+    stages:
+      # 1단계: 큰수
+      - stage_id: "number_system_stage_01"
+        stage_name: "큰수"
+        level: "초등수학"
+        stage_number: 1
+        
+        units:
+          - unit_id: "unit_large_number_10000"
+            unit_name: "만"
+            topics:
+              - topic_name: "만"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=1&cmid=86966&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "'만'이 10,000을 나타내는 것을 이해하는 데 어려움"
+                  frequency: "high"
+                  difficulty_level: 4
+                - type: "practice_insufficient"
+                  description: "만을 기준으로 숫자를 구분하고 읽는 연습 부족"
+                  frequency: "high"
+                  difficulty_level: 3
+            difficulty: 4  # 1-10 척도
+            avg_study_time_concept: 1.0  # 시간
+            avg_study_time_practice: 0.5
+            avg_study_time_advanced: 0.0
+            exam_weight: 0.05  # 출제 비중
+            question_type_distribution:
+              basic: 0.80
+              type: 0.20
+              advanced: 0.00
+            
+          - unit_id: "unit_large_number_5digit"
+            unit_name: "다섯 자리 수"
+            topics:
+              - topic_name: "다섯 자리 수"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=1&cmid=86982&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "다섯 자리 수의 구성(만의 자리부터 일의 자리까지)을 이해하는 데 어려움"
+                  frequency: "high"
+                  difficulty_level: 5
+                - type: "reading_writing"
+                  description: "큰 수를 올바르게 읽고 쓰는 방법의 이해"
+                  frequency: "medium"
+                  difficulty_level: 4
+            difficulty: 5
+            avg_study_time_concept: 1.5
+            avg_study_time_practice: 1.0
+            avg_study_time_advanced: 0.0
+            exam_weight: 0.08
+            question_type_distribution:
+              basic: 0.75
+              type: 0.25
+              advanced: 0.00
+              
+          - unit_id: "unit_large_number_comparison"
+            unit_name: "두 수의 크기 비교"
+            topics:
+              - topic_name: "두 수의 크기 비교"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=1&cmid=86986&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "큰 수끼리의 비교 방법을 이해하고 적용하는 데 어려움"
+                  frequency: "medium"
+                  difficulty_level: 5
+                - type: "application"
+                  description: "자릿수가 다른 두 수의 크기를 비교하는 방법의 이해"
+                  frequency: "medium"
+                  difficulty_level: 4
+            difficulty: 5
+            avg_study_time_concept: 1.0
+            avg_study_time_practice: 1.0
+            avg_study_time_advanced: 0.0
+            exam_weight: 0.07
+            question_type_distribution:
+              basic: 0.70
+              type: 0.30
+              advanced: 0.00
+      
+      # 2단계: 곱셈과 나눗셈
+      - stage_id: "number_system_stage_02"
+        stage_name: "곱셈과 나눗셈"
+        level: "초등수학"
+        stage_number: 2
+        
+        units:
+          - unit_id: "unit_multiplication_100x"
+            unit_name: "100, 1000, 10000의 곱"
+            topics:
+              - topic_name: "100，1000，10000의 곱"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=2&cmid=86967&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_confusion"
+                  description: "100, 1000, 10000 각각의 자릿수와 이들의 곱셈에 대한 개념 혼란"
+                  frequency: "high"
+                  difficulty_level: 5
+                - type: "calculation_error"
+                  description: "큰 수의 곱셈 과정에서의 자릿수 계산 오류"
+                  frequency: "high"
+                  difficulty_level: 6
+                - type: "calculation_error"
+                  description: "100, 1000, 10000을 곱할 때 0의 개수 계산에 대한 혼란"
+                  frequency: "high"
+                  difficulty_level: 4
+            difficulty: 6
+            avg_study_time_concept: 1.5
+            avg_study_time_practice: 2.0
+            avg_study_time_advanced: 0.5
+            exam_weight: 0.10
+            question_type_distribution:
+              basic: 0.70
+              type: 0.25
+              advanced: 0.05
+            prerequisites: ["unit_large_number_5digit"]
+            
+          - unit_id: "unit_multiplication_3digit_x_2digit"
+            unit_name: "(세 자리 수)×(두 자리 수)"
+            topics:
+              - topic_name: "(세 자리 수)×(두 자리 수)"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=2&cmid=86995&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "세 자리 수와 두 자리 수의 곱셈에서 자릿수 이해 부족"
+                  frequency: "high"
+                  difficulty_level: 6
+                - type: "calculation_error"
+                  description: "곱셈 과정 중 순서와 자릿수의 올바른 정렬에 대한 오류"
+                  frequency: "high"
+                  difficulty_level: 7
+                - type: "concept_understanding"
+                  description: "곱셈 결과의 정확도 문제와 계산 과정의 복잡성 이해 부족"
+                  frequency: "medium"
+                  difficulty_level: 6
+            difficulty: 7
+            avg_study_time_concept: 2.0
+            avg_study_time_practice: 3.0
+            avg_study_time_advanced: 1.0
+            exam_weight: 0.15
+            question_type_distribution:
+              basic: 0.60
+              type: 0.30
+              advanced: 0.10
+            prerequisites: ["unit_multiplication_100x"]
+            
+          - unit_id: "unit_division_10s"
+            unit_name: "(몇십)으로 나누기"
+            topics:
+              - topic_name: "(몇십)으로 나누기"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=73&nch=2&cmid=86992&page=1&quizid="
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "나누기의 기본 원리와 '몇십'이라는 표현의 정확한 의미에 대한 이해 부족"
+                  frequency: "high"
+                  difficulty_level: 6
+                - type: "calculation_error"
+                  description: "십의 배수로 나눌 때 자릿수에 따른 간소화 과정의 오류"
+                  frequency: "medium"
+                  difficulty_level: 5
+                - type: "concept_confusion"
+                  description: "나눗셈 결과의 정확도 문제와 나머지 처리에 대한 혼란"
+                  frequency: "medium"
+                  difficulty_level: 6
+            difficulty: 6
+            avg_study_time_concept: 2.0
+            avg_study_time_practice: 2.5
+            avg_study_time_advanced: 0.5
+            exam_weight: 0.12
+            question_type_distribution:
+              basic: 0.65
+              type: 0.30
+              advanced: 0.05
+            prerequisites: ["unit_multiplication_3digit_x_2digit"]
+
+  # ========== 함수 영역 ==========
+  - domain_id: "function"
+    domain_name: "함수 영역"
+    description: "함수와 그래프, 함수의 성질 및 활용"
+    grade_range: ["중등1-1", "중등2-1", "중등3-1", "고등하"]
+    
+    stages:
+      # 1단계: 함수 (중1)
+      - stage_id: "function_stage_01"
+        stage_name: "함수"
+        level: "중등수학 1-1"
+        stage_number: 1
+        
+        units:
+          - unit_id: "middle1_function_basic"
+            unit_name: "함수의 뜻"
+            topics:
+              - topic_name: "함수의 뜻"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=8&cmid=53190&page=1&quizid=86117"
+              - topic_name: "함숫값"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=8&cmid=53192&page=1&quizid=86118"
+              - topic_name: "여러 가지 함수 관계"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=8&cmid=53191&page=1&quizid=86119"
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "함수의 정의와 개념에 대한 이해 부족: 학생들이 함수가 무엇인지, 왜 필요한지 이해하는데 어려움"
+                  frequency: "very_high"
+                  difficulty_level: 8
+                - type: "calculation_error"
+                  description: "함수값의 계산: 함수의 입력값과 출력값을 어떻게 계산하는지 혼동"
+                  frequency: "high"
+                  difficulty_level: 7
+                - type: "concept_understanding"
+                  description: "여러 가지 함수 관계의 이해: 선형 함수, 이차 함수 등 다양한 함수의 관계를 이해하고 구분하는데 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "application"
+                  description: "함수의 그래프 해석: 함수의 그래프를 그리고 이를 해석하는 것이 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "concept_understanding"
+                  description: "함수의 표현 방식: 함수를 수식, 표, 그래프 등 다양한 방식으로 표현하는 것에 혼란"
+                  frequency: "medium"
+                  difficulty_level: 7
+                - type: "application"
+                  description: "함수의 응용 문제 해결: 실제 문제 상황에서 함수를 적용하여 해결하는 데 어려움"
+                  frequency: "high"
+                  difficulty_level: 9
+            difficulty: 8  # 함수는 어려운 단원
+            avg_study_time_concept: 3.0
+            avg_study_time_practice: 4.0
+            avg_study_time_advanced: 2.0
+            exam_weight: 0.30  # 출제 비중 높음
+            question_type_distribution:
+              basic: 0.50
+              type: 0.35
+              advanced: 0.15
+            prerequisites: ["middle1_equation"]  # 일차방정식 완료 필수
+            related_units: ["middle1_graph"]  # 함수와 그래프는 연계 학습 권장
+            learning_order_note: "일차방정식 완료 후 진행. 함수와 그래프는 동시 학습 권장."
+            
+          - unit_id: "middle1_function_graph"
+            unit_name: "함수의 그래프와 활용"
+            topics:
+              - topic_name: "수직선 위의 점의 좌표"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53193&page=1&quizid=86120"
+              - topic_name: "순서쌍"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53194&page=1&quizid=86121"
+              - topic_name: "좌표평면"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53195&page=1&quizid=86122"
+              - topic_name: "함수의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53198&page=1&quizid=86125"
+              - topic_name: "y=ax (a≠0)의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53199&page=1&quizid=86126"
+              - topic_name: "y=a/x (a≠0)의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53200&page=1&quizid=86127"
+              - topic_name: "함수의 활용"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&nch=9&cmid=53202&page=1&quizid=86129"
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "수직선 위의 점의 좌표를 이해하는데 어려움"
+                  frequency: "medium"
+                  difficulty_level: 6
+                - type: "concept_understanding"
+                  description: "순서쌍의 개념을 이해하는데 어려움"
+                  frequency: "medium"
+                  difficulty_level: 6
+                - type: "concept_confusion"
+                  description: "좌표평면과 사분면의 개념을 혼동"
+                  frequency: "high"
+                  difficulty_level: 7
+                - type: "application"
+                  description: "함수의 그래프를 그리는 방법을 이해하는데 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "concept_confusion"
+                  description: "y=ax와 y=a/x의 그래프를 구분하는 데 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "application"
+                  description: "함수의 활용 방법을 이해하는데 어려움"
+                  frequency: "high"
+                  difficulty_level: 9
+            difficulty: 7
+            avg_study_time_concept: 2.5
+            avg_study_time_practice: 3.5
+            avg_study_time_advanced: 2.0
+            exam_weight: 0.20
+            question_type_distribution:
+              basic: 0.55
+              type: 0.30
+              advanced: 0.15
+            prerequisites: ["middle1_function_basic"]
+            related_units: ["middle1_function_basic"]
+            learning_order_note: "함수 단원과 동시 학습 또는 직후 학습 권장."
+      
+      # 3단계: 일차함수와 그 그래프(1) (중2)
+      - stage_id: "function_stage_03"
+        stage_name: "일차함수와 그 그래프(1)"
+        level: "중등수학 2-1"
+        stage_number: 3
+        
+        units:
+          - unit_id: "middle2_linear_function"
+            unit_name: "일차함수"
+            topics:
+              - topic_name: "일차함수"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&nch=9&cmid=53333&page=1&quizid=86250"
+              - topic_name: "일차함수 y=ax+b의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&nch=9&cmid=53334&page=1&quizid=86251"
+              - topic_name: "일차함수의 그래프의 절편"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&nch=9&cmid=53335&page=1&quizid=86252"
+              - topic_name: "일차함수의 그래프의 기울기"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&nch=9&cmid=53336&page=1&quizid=86253"
+              - topic_name: "일차함수의 그래프 그리기"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&nch=9&cmid=53337&page=1&quizid=86254"
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "일차함수의 정의와 특성에 대한 이해 부족"
+                  frequency: "high"
+                  difficulty_level: 7
+                - type: "concept_confusion"
+                  description: "일차함수의 기울기와 절편에 대한 혼동"
+                  frequency: "very_high"
+                  difficulty_level: 8
+                - type: "application"
+                  description: "일차함수의 그래프 그리기에 대한 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "application"
+                  description: "일차함수의 그래프 해석에 대한 어려움"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "application"
+                  description: "일차함수의 실제 적용에 대한 이해 부족"
+                  frequency: "medium"
+                  difficulty_level: 9
+            difficulty: 7
+            avg_study_time_concept: 3.0
+            avg_study_time_practice: 4.0
+            avg_study_time_advanced: 2.0
+            exam_weight: 0.28
+            question_type_distribution:
+              basic: 0.55
+              type: 0.30
+              advanced: 0.15
+            prerequisites: ["middle1_function_basic", "middle1_equation"]
+            related_units: ["middle2_system_equation"]
+            learning_order_note: "일차함수와 연립방정식은 함께 공부하면 효과적."
+      
+      # 6단계: 이차함수의 그래프 (1) (중3)
+      - stage_id: "function_stage_06"
+        stage_name: "이차함수의 그래프 (1)"
+        level: "중등수학 3-1"
+        stage_number: 6
+        
+        units:
+          - unit_id: "middle3_quadratic_function"
+            unit_name: "이차함수"
+            topics:
+              - topic_name: "이차함수의 뜻"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53479&page=1&quizid=86374"
+              - topic_name: "이차함수 y=x², y=x²의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53480&page=1&quizid=86375"
+              - topic_name: "이차함수의 그래프의 축과 꼭짓점"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53481&page=1&quizid=86376"
+              - topic_name: "이차함수 y=ax²의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53482&page=1&quizid=86377"
+              - topic_name: "이차함수 y=ax²+q의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53483&page=1&quizid=86378"
+              - topic_name: "이차함수 y=a(xp)²의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53484&page=1&quizid=86379"
+              - topic_name: "이차함수 y=a(xp)²+q의 그래프"
+                concept_note_url: "https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&nch=9&cmid=53485&page=1&quizid=86380"
+            diagnosis:
+              error_types:
+                - type: "concept_understanding"
+                  description: "이차함수의 그래프가 어떻게 그려지는지 이해하지 못하는 상황"
+                  frequency: "very_high"
+                  difficulty_level: 9
+                - type: "concept_confusion"
+                  description: "a의 값이 양수일 때와 음수일 때 그래프의 모양이 어떻게 달라지는지 이해하지 못하는 상황"
+                  frequency: "high"
+                  difficulty_level: 8
+                - type: "concept_understanding"
+                  description: "이차함수의 최대값과 최소값을 어떻게 알 수 있는지 이해하지 못하는 상황"
+                  frequency: "high"
+                  difficulty_level: 9
+                - type: "application"
+                  description: "이차함수의 그래프를 그릴 때 어떤 순서로 그리는 것이 좋은지 이해하지 못하는 상황"
+                  frequency: "high"
+                  difficulty_level: 8
+            difficulty: 9  # 매우 어려운 단원
+            avg_study_time_concept: 4.0
+            avg_study_time_practice: 5.0
+            avg_study_time_advanced: 3.0
+            exam_weight: 0.30
+            question_type_distribution:
+              basic: 0.45
+              type: 0.35
+              advanced: 0.20
+            prerequisites: ["middle2_linear_function", "middle3_quadratic_equation"]
+            related_units: ["middle3_quadratic_equation"]
+            learning_order_note: "이차함수와 이차방정식은 반드시 함께 학습해야 함."
+
+# ========== 오류 유형 분류 ==========
+error_type_classification:
+  concept_understanding:
+    description: "개념 이해 부족"
+    treatment_strategy: "개념 재학습 모듈 + 개념 설명 강화"
+    typical_causes: ["기초 개념 부족", "추상적 개념 이해 어려움"]
+    
+  concept_confusion:
+    description: "개념 혼동"
+    treatment_strategy: "개념 비교 학습 + 차이점 명확화"
+    typical_causes: ["유사 개념 구분 어려움", "용어 혼동"]
+    
+  calculation_error:
+    description: "계산 실수"
+    treatment_strategy: "반복 연습 모듈 + 계산 과정 점검"
+    typical_causes: ["주의력 부족", "계산 절차 미숙"]
+    
+  application:
+    description: "응용 문제 해결 어려움"
+    treatment_strategy: "유형별 문제 연습 + 단계별 풀이 전략"
+    typical_causes: ["문제 상황 이해 부족", "문제 해결 전략 부재"]
+    
+  reading_writing:
+    description: "읽기/쓰기 어려움"
+    treatment_strategy: "기본 연습 강화"
+    typical_causes: ["기초 기능 부족"]
+    
+  practice_insufficient:
+    description: "연습 부족"
+    treatment_strategy: "반복 연습 강화"
+    typical_causes: ["연습량 부족"]
+
+# ========== 난이도 기준 ==========
+difficulty_scale:
+  description: "1-10 척도 (1=매우 쉬움, 10=매우 어려움)"
+  benchmarks:
+    - level: 1-3
+      description: "기초 단원"
+      typical_units: ["큰수", "기본도형"]
+      
+    - level: 4-6
+      description: "보통 난이도"
+      typical_units: ["정수와 유리수", "일차방정식"]
+      
+    - level: 7-8
+      description: "어려운 단원"
+      typical_units: ["함수", "일차함수", "도형의 성질"]
+      
+    - level: 9-10
+      description: "매우 어려운 단원"
+      typical_units: ["이차함수", "미분", "적분"]
+
+# ========== 학습 시간 기준 ==========
+study_time_guidelines:
+  concept_learning:
+    description: "개념 학습 시간 (시간 단위)"
+    factors:
+      - "단원 난이도"
+      - "학생 수준 (하위권 +50%, 상위권 -30%)"
+      - "교재 특성"
+      
+  practice_learning:
+    description: "유형 연습 시간 (시간 단위)"
+    factors:
+      - "문제 수"
+      - "난이도 분포"
+      - "학생 정답률 목표"
+      
+  advanced_learning:
+    description: "심화 학습 시간 (시간 단위)"
+    factors:
+      - "심화 문제 비중"
+      - "변형 문제 난이도"
+
+# ========== 출제 비중 기준 ==========
+exam_weight_guidelines:
+  description: "시험 출제 비중 (0.0-1.0)"
+  typical_distribution:
+    middle1_midterm:
+      - unit: "정수와 유리수"
+        weight: 0.15
+      - unit: "일차방정식"
+        weight: 0.25
+      - unit: "함수"
+        weight: 0.30
+      - unit: "기본도형"
+        weight: 0.20
+      - unit: "기타"
+        weight: 0.10
+        
+    middle1_final:
+      - unit: "전체 범위"
+        weight: 1.0
+      - note: "함수와 도형 비중 높음"
+
+# ========== 단원 연계 전략 ==========
+unit_relation_strategies:
+  simultaneous_learning:
+    description: "연계 단원 동시 학습"
+    applicable_pairs:
+      - units: ["middle1_function_basic", "middle1_function_graph"]
+        benefit: "함수 개념과 그래프 표현을 함께 이해하면 효과적"
+        recommended: true
+        
+      - units: ["middle2_linear_function", "middle2_system_equation"]
+        benefit: "일차함수와 연립방정식은 함께 공부하면 응용 문제 이해가 쉬움"
+        recommended: true
+        
+      - units: ["middle3_quadratic_function", "middle3_quadratic_equation"]
+        benefit: "이차함수와 이차방정식은 반드시 함께 학습해야 함"
+        recommended: true
+        priority: "high"
+        
+  sequential_learning:
+    description: "선후관계 기반 순차 학습"
+    prerequisite_chains:
+      - chain: ["middle1_integer", "middle1_equation", "middle1_function_basic"]
+        description: "정수와 유리수 → 일차방정식 → 함수 (기초 단원 완료 후 후속 단원 학습)"
+        required: true
+        
+      - chain: ["middle1_equation", "middle2_linear_function"]
+        description: "일차방정식 완료 후 일차함수 학습"
+        required: true
+        
+      - chain: ["middle2_system_equation", "middle3_quadratic_equation"]
+        description: "연립방정식 완료 후 이차방정식 학습"
+        required: true
+
+# ========== 교재별 특성 ==========
+textbook_characteristics:
+  쎈:
+    description: "유형 연습 중심 문제집"
+    difficulty_distribution:
+      A: "기본형, 목표 정답률 80%"
+      B: "유형, 목표 정답률 70%"
+      C: "심화, 목표 정답률 60%"
+    avg_time_per_problem:
+      A: 3  # 분
+      B: 4.5
+      C: 6
+    strength: "문제 유형 다양, 단계별 학습"
+    weakness: "개념 설명 부족"
+    recommended_for: ["중위권 이상", "유형 연습 필요"]
+    
+  개념원리:
+    description: "개념 설명 중심 교재"
+    focus: "개념 이해"
+    avg_time_per_page: 20  # 분
+    strength: "개념 설명 자세, 이해도 향상"
+    weakness: "문제 수 적음"
+    recommended_for: ["하위권", "개념 이해 필요"]
+    
+  RPM:
+    description: "단계별 실력 향상 문제집"
+    stages: ["Easy", "Normal", "Hard"]
+    strength: "단계별 난이도 조절, 실력 향상"
+    recommended_for: ["모든 수준"]
+    
+  블랙라벨:
+    description: "심화 문제집"
+    difficulty: "high"
+    strength: "심화 문제, 변형 문제"
+    recommended_for: ["상위권", "심화 학습 필요"]
+    
+  일품:
+    description: "최고 난이도 문제집"
+    difficulty: "very_high"
+    strength: "최고 난이도 문제, 창의 문제"
+    recommended_for: ["최상위권"]
+
+# ========== 학생 수준별 학습 전략 ==========
+level_based_strategies:
+  하위권:
+    description: "기본 점수 60점 미만"
+    learning_focus:
+      concept: 0.60  # 60%
+      practice: 0.30  # 30%
+      advanced: 0.00  # 0%
+      past_exam: 0.10  # 10%
+    recommended_textbooks: ["개념원리", "쎈 A단계"]
+    learning_method: "개념 중심, 반복 연습"
+    review_cycle: [1, 3, 7]  # 일 단위
+    
+  중위권:
+    description: "기본 점수 60-80점"
+    learning_focus:
+      concept: 0.30  # 30%
+      practice: 0.50  # 50%
+      advanced: 0.10  # 10%
+      past_exam: 0.10  # 10%
+    recommended_textbooks: ["쎈 A/B단계", "RPM Easy/Normal"]
+    learning_method: "문제집 중심, 유형 연습"
+    review_cycle: [1, 5, 14]  # 일 단위
+    
+  상위권:
+    description: "기본 점수 80점 이상"
+    learning_focus:
+      concept: 0.10  # 10%
+      practice: 0.30  # 30%
+      advanced: 0.40  # 40%
+      past_exam: 0.20  # 20%
+    recommended_textbooks: ["쎈 C단계", "RPM Hard", "블랙라벨"]
+    learning_method: "심화 문제, 변형 문제"
+    review_cycle: [3, 7, 21]  # 일 단위
+
+# ========== 복습 주기 (스페이싱) ==========
+spacing_review_cycles:
+  description: "단원별 권장 복습 주기 (일 단위)"
+  cycles:
+    - days: [1, 3, 7, 14]
+      description: "기본 복습 주기 (대부분 단원)"
+      applicable_units: ["정수와 유리수", "일차방정식", "통계"]
+      
+    - days: [1, 3, 7, 14, 30]
+      description: "중요 단원 복습 주기"
+      applicable_units: ["함수", "일차함수", "이차함수"]
+      
+    - days: [1, 5, 14, 30]
+      description: "어려운 단원 복습 주기"
+      applicable_units: ["도형의 성질", "미분", "적분"]
+      
+  adjustment_factors:
+    student_level:
+      하위권: "기본 주기에서 -1일 (더 자주 복습)"
+      중위권: "기본 주기 유지"
+      상위권: "기본 주기에서 +3일 (덜 자주 복습)"
+      
+    unit_difficulty:
+      easy: "기본 주기에서 -2일"
+      normal: "기본 주기 유지"
+      hard: "기본 주기에서 +3일"
+      very_hard: "기본 주기에서 +7일"
+
+# ========== 메타데이터 ==========
+metadata:
+  total_domains: 10  # 예상 영역 수
+  total_stages: 50  # 예상 단계 수
+  total_units: 200  # 예상 단원 수
+  last_full_scan: "2025-01-27"
+  update_frequency: "quarterly"
+  maintainer: "Agent 02 Exam Schedule Team"
+

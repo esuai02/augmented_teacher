@@ -1,0 +1,420 @@
+# Agent07 Persona Identification Rules
+# Version: 1.0
+# Last Updated: 2025-12-02
+
+meta:
+  agent: agent07_interaction_targeting
+  version: "1.0"
+  description: "페르소나 식별을 위한 규칙 정의"
+
+# ============================================
+# SITUATION IDENTIFICATION RULES
+# 먼저 상황(S1~S6)을 식별한 후 페르소나 결정
+# ============================================
+
+situation_rules:
+
+  S1_realtime_problem:
+    id: S1
+    name: "실시간고민"
+    description: "학습 중 즉각적인 도움이 필요한 상황"
+    conditions:
+      any:
+        - context.current_activity == "learning"
+        - context.help_button_clicked == true
+        - context.stuck_duration > 180  # 3분 이상 정체
+        - context.error_count > 3
+        - context.message_contains_keywords: ["모르겠", "어려워", "도와", "막혀", "안돼"]
+    priority: 100  # 높은 우선순위
+
+  S2_pomodoro:
+    id: S2
+    name: "포모도로"
+    description: "집중 학습 세션 중 상태"
+    conditions:
+      all:
+        - context.pomodoro_active == true
+        - context.session_type == "focus"
+    priority: 90
+
+  S3_class_preparation:
+    id: S3
+    name: "수업준비"
+    description: "수업 시작 전 준비 단계"
+    conditions:
+      any:
+        - context.time_to_class < 30  # 수업 30분 전
+        - context.current_activity == "preparation"
+        - context.viewing_preview_material == true
+    priority: 85
+
+  S4_goal_setting:
+    id: S4
+    name: "목표설정"
+    description: "학습 목표 수립 상황"
+    conditions:
+      any:
+        - context.current_activity == "goal_setting"
+        - context.session_start == true
+        - context.weekly_planning == true
+        - context.message_contains_keywords: ["목표", "계획", "하고싶", "해야"]
+    priority: 80
+
+  S5_return_check:
+    id: S5
+    name: "귀가검사"
+    description: "학습 종료 후 회고 단계"
+    conditions:
+      any:
+        - context.current_activity == "reflection"
+        - context.session_ending == true
+        - context.daily_summary == true
+    priority: 75
+
+  S6_curriculum:
+    id: S6
+    name: "커리큘럼"
+    description: "장기 학습 계획 수립"
+    conditions:
+      any:
+        - context.current_activity == "curriculum_planning"
+        - context.viewing_roadmap == true
+        - context.message_contains_keywords: ["커리큘럼", "로드맵", "장기", "진로"]
+    priority: 70
+
+# ============================================
+# PERSONA IDENTIFICATION RULES BY SITUATION
+# ============================================
+
+persona_rules:
+
+  # --- S1: 실시간고민 Personas ---
+
+  S1_P1_urgent_helper:
+    id: S1_P1
+    situation: S1
+    name: "긴급 도움 요청자"
+    conditions:
+      all:
+        - context.help_request_explicit == true
+        - context.problem_articulation >= 0.7
+      any:
+        - context.urgency_expressed == true
+        - context.message_length > 50
+    confidence_boost: 0.1
+    priority: 100
+
+  S1_P2_stuck_unclear:
+    id: S1_P2
+    situation: S1
+    name: "막힘 표현 어려움형"
+    conditions:
+      all:
+        - context.help_request_explicit == false
+        - context.problem_articulation < 0.4
+      any:
+        - context.confusion_signals == true
+        - context.interaction_frequency_decreasing == true
+        - context.message_length < 20
+        - context.message_contains_keywords: ["음", "글쎄", "그냥", "몰라"]
+    confidence_boost: 0.15
+    priority: 90
+
+  S1_P3_exploratory:
+    id: S1_P3
+    situation: S1
+    name: "탐색적 질문자"
+    conditions:
+      any:
+        - context.question_type == "why"
+        - context.concept_curiosity >= 0.6
+        - context.self_discovery_preference == true
+        - context.message_contains_keywords: ["왜", "어떻게", "원리", "이유"]
+    priority: 80
+
+  # --- S2: 포모도로 Personas ---
+
+  S2_P1_focus_declining:
+    id: S2_P1
+    situation: S2
+    name: "집중력 저하형"
+    conditions:
+      any:
+        - context.focus_score < 0.5
+        - context.distraction_signals == true
+        - context.task_switching_frequency > 3
+        - context.idle_time > 60
+    priority: 100
+
+  S2_P2_motivation_declining:
+    id: S2_P2
+    situation: S2
+    name: "동기 이탈형"
+    conditions:
+      any:
+        - context.motivation_score < 0.4
+        - context.meaning_questioning == true
+        - context.early_termination_request == true
+        - context.message_contains_keywords: ["그만", "왜해야", "지겨워", "의미없"]
+    priority: 90
+
+  S2_P3_stable_performer:
+    id: S2_P3
+    situation: S2
+    name: "안정적 수행자"
+    conditions:
+      all:
+        - context.focus_score >= 0.7
+        - context.task_completion_rate >= 0.8
+      none:
+        - context.distraction_signals == true
+        - context.early_termination_request == true
+    priority: 80
+    default_for_situation: true
+
+  # --- S3: 수업준비 Personas ---
+
+  S3_P1_active_preparer:
+    id: S3_P1
+    situation: S3
+    name: "적극적 준비형"
+    conditions:
+      any:
+        - context.preview_activity == true
+        - context.question_preparation == true
+        - context.preparation_level >= 0.7
+        - context.material_access_count > 3
+    priority: 100
+
+  S3_P2_passive_waiter:
+    id: S3_P2
+    situation: S3
+    name: "수동적 대기형"
+    conditions:
+      all:
+        - context.preparation_level < 0.3
+        - context.initiative_score < 0.4
+      any:
+        - context.waiting_passively == true
+        - context.no_activity_duration > 300
+    priority: 90
+
+  S3_P3_anxious_preparer:
+    id: S3_P3
+    situation: S3
+    name: "불안한 준비형"
+    conditions:
+      any:
+        - context.anxiety_signals == true
+        - context.reassurance_seeking_count > 2
+        - context.confidence_score < 0.3
+        - context.message_contains_keywords: ["걱정", "불안", "못할것같", "준비안됐"]
+    priority: 85
+
+  # --- S4: 목표설정 Personas ---
+
+  S4_P1_clear_goal:
+    id: S4_P1
+    situation: S4
+    name: "명확한 목표 보유형"
+    conditions:
+      all:
+        - context.goal_clarity >= 0.7
+        - context.plan_specificity >= 0.6
+      any:
+        - context.self_direction_score >= 0.7
+        - context.goal_statement_length > 30
+    priority: 100
+
+  S4_P2_vague_goal:
+    id: S4_P2
+    situation: S4
+    name: "목표 모호형"
+    conditions:
+      any:
+        - context.goal_clarity < 0.4
+        - context.expression_vague == true
+        - context.decision_difficulty == true
+        - context.message_contains_keywords: ["잘하고싶", "열심히", "좀더", "그냥"]
+    priority: 90
+
+  S4_P3_external_goal:
+    id: S4_P3
+    situation: S4
+    name: "외압형 목표 수용자"
+    conditions:
+      any:
+        - context.goal_source == "external"
+        - context.intrinsic_motivation < 0.4
+        - context.obligation_driven == true
+        - context.message_contains_keywords: ["엄마가", "선생님이", "해야해서", "시켜서"]
+    priority: 85
+
+  # --- S5: 귀가검사 Personas ---
+
+  S5_P1_reflective:
+    id: S5_P1
+    situation: S5
+    name: "성찰적 회고형"
+    conditions:
+      any:
+        - context.reflection_willingness >= 0.7
+        - context.self_assessment_active == true
+        - context.learning_synthesis_attempt == true
+        - context.response_length > 50
+    priority: 100
+
+  S5_P2_rushing:
+    id: S5_P2
+    situation: S5
+    name: "빠른 종료 희망형"
+    conditions:
+      any:
+        - context.termination_urgency == true
+        - context.reflection_avoidance == true
+        - context.response_length < 10
+        - context.message_contains_keywords: ["빨리", "끝내자", "됐어", "가야해"]
+    priority: 90
+
+  S5_P3_self_critical:
+    id: S5_P3
+    situation: S5
+    name: "자기비판형"
+    conditions:
+      any:
+        - context.self_criticism_score >= 0.7
+        - context.achievement_dismissal == true
+        - context.negative_self_talk == true
+        - context.message_contains_keywords: ["못했", "부족", "실패", "후회"]
+    priority: 85
+
+  # --- S6: 커리큘럼 Personas ---
+
+  S6_P1_long_term_vision:
+    id: S6_P1
+    situation: S6
+    name: "장기 비전형"
+    conditions:
+      any:
+        - context.vision_timeframe == "long_term"
+        - context.roadmap_interest >= 0.7
+        - context.milestone_awareness == true
+        - context.message_contains_keywords: ["1년", "장기", "대학", "진로", "미래"]
+    priority: 100
+
+  S6_P2_short_term_focus:
+    id: S6_P2
+    situation: S6
+    name: "단기 집중형"
+    conditions:
+      any:
+        - context.focus_timeframe == "short_term"
+        - context.immediate_needs_priority == true
+        - context.message_contains_keywords: ["이번주", "다음시험", "당장", "지금"]
+    priority: 90
+
+  S6_P3_exploring:
+    id: S6_P3
+    situation: S6
+    name: "방향 탐색형"
+    conditions:
+      any:
+        - context.direction_certainty < 0.4
+        - context.option_exploration == true
+        - context.discovery_oriented == true
+        - context.message_contains_keywords: ["뭘해야", "어떤게", "고민", "선택"]
+    priority: 85
+
+# ============================================
+# DEFAULT FALLBACK RULES
+# ============================================
+
+fallback_rules:
+
+  situation_fallback:
+    description: "상황 식별 실패 시 기본값"
+    default_situation: S4  # 목표설정
+    confidence: 0.3
+
+  persona_fallback:
+    description: "페르소나 식별 실패 시 상황별 기본값"
+    defaults:
+      S1: S1_P2  # 막힘 표현 어려움형 (보수적)
+      S2: S2_P3  # 안정적 수행자
+      S3: S3_P2  # 수동적 대기형
+      S4: S4_P2  # 목표 모호형
+      S5: S5_P1  # 성찰적 회고형
+      S6: S6_P3  # 방향 탐색형
+    confidence: 0.4
+
+# ============================================
+# CONFIDENCE CALCULATION
+# ============================================
+
+confidence_config:
+  base_confidence: 0.5
+  condition_match_boost: 0.1
+  all_conditions_bonus: 0.2
+  keyword_match_boost: 0.05
+  min_confidence: 0.3
+  max_confidence: 1.0
+
+# ============================================
+# RESPONSE MAPPING
+# ============================================
+
+response_mapping:
+  S1_P1:
+    template: "templates/S1_P1_urgent.php"
+    tone: "supportive, direct, solution-focused"
+  S1_P2:
+    template: "templates/S1_P2_stuck.php"
+    tone: "patient, empathetic, exploratory"
+  S1_P3:
+    template: "templates/S1_P3_exploratory.php"
+    tone: "curious, guiding, intellectually engaging"
+  S2_P1:
+    template: "templates/S2_P1_focus.php"
+    tone: "gentle, encouraging, practical"
+  S2_P2:
+    template: "templates/S2_P2_motivation.php"
+    tone: "motivating, meaningful, connecting"
+  S2_P3:
+    template: "templates/S2_P3_stable.php"
+    tone: "affirming, minimal intervention, supportive"
+  S3_P1:
+    template: "templates/S3_P1_active.php"
+    tone: "enthusiastic, challenging, preparatory"
+  S3_P2:
+    template: "templates/S3_P2_passive.php"
+    tone: "inviting, gentle activation, non-pressuring"
+  S3_P3:
+    template: "templates/S3_P3_anxious.php"
+    tone: "calming, reassuring, confidence-building"
+  S4_P1:
+    template: "templates/S4_P1_clear.php"
+    tone: "validating, refining, strategic"
+  S4_P2:
+    template: "templates/S4_P2_vague.php"
+    tone: "clarifying, structured, scaffolding"
+  S4_P3:
+    template: "templates/S4_P3_external.php"
+    tone: "empathetic, autonomy-supportive, meaning-finding"
+  S5_P1:
+    template: "templates/S5_P1_reflective.php"
+    tone: "reflective, deepening, forward-looking"
+  S5_P2:
+    template: "templates/S5_P2_rushing.php"
+    tone: "efficient, respectful, brief"
+  S5_P3:
+    template: "templates/S5_P3_critical.php"
+    tone: "balanced, appreciative, growth-focused"
+  S6_P1:
+    template: "templates/S6_P1_vision.php"
+    tone: "visionary, strategic, milestone-oriented"
+  S6_P2:
+    template: "templates/S6_P2_shortterm.php"
+    tone: "practical, efficient, task-focused"
+  S6_P3:
+    template: "templates/S6_P3_exploring.php"
+    tone: "open, exploratory, discovery-supporting"

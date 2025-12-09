@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent 04 - Problem Activity Data Index</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+        }
+
+        .agent-selector {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .agent-selector select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.95);
+            color: #667eea;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+
+        .agent-selector select:hover {
+            background: white;
+            border-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .data-type-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .data-type-info h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .type-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .type-info-item {
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid;
+            position: relative;
+            cursor: help;
+        }
+        
+        .type-info-item.survey {
+            background: #f0f9f4;
+            border-left-color: #28a745;
+        }
+        
+        .type-info-item.gen {
+            background: #f0f4ff;
+            border-left-color: #007bff;
+        }
+
+        .type-info-item h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .type-info-item .type-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .type-info-item.gen .type-badge {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .type-info-item p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-card .label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .tab-container {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-header {
+            display: flex;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tab-header::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tab-header::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab-header::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .tab-btn {
+            flex: 0 0 auto;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.9em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab-btn.active {
+            background: rgba(255,255,255,0.2);
+            border-bottom-color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 0;
+            width: 100%;
+            min-height: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1em;
+        }
+
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .category-divider::before,
+        .category-divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+        }
+        
+        .category-divider-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+        }
+        
+        .category-divider-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #667eea;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .data-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .data-name {
+            font-weight: 500;
+            color: #333;
+            position: relative;
+            cursor: help;
+        }
+
+        .data-name-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .table-name {
+            font-size: 0.75em;
+            color: #666;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            white-space: normal;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            margin-bottom: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #333;
+        }
+
+        .data-name:hover .tooltip {
+            opacity: 1;
+        }
+
+        .tooltip-table {
+            font-weight: bold;
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .tooltip-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .tooltip-field {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .data-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .type-survey {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .type-gendata {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #ccc;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 0;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding-left: 4px;
+            box-sizing: border-box;
+        }
+
+        .confidence-fill-survey {
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .confidence-fill-gen {
+            background: linear-gradient(90deg, #0d6efd, #0dcaf0);
+        }
+
+        .confidence-value {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #333;
+            z-index: 20;
+        }
+
+        .legend {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 25px;
+            height: 25px;
+            border-radius: 5px;
+        }
+
+        .legend-text {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>📝 Agent 04 - Problem Activity</h1>
+                <p>문제 활동 분석 - 학습활동별 페르소나 분석 및 맞춤 행동유도</p>
+            </div>
+            <div class="agent-selector">
+                <select id="agentSelector">
+                    <option value="agent01_onboarding">Agent 01 - Onboarding</option>
+                    <option value="agent02_exam_schedule">Agent 02 - Exam Schedule</option>
+                    <option value="agent03_goals_analysis">Agent 03 - Goals Analysis</option>
+                    <option value="agent04_problem_activity" selected>Agent 04 - Problem Activity</option>
+                    <option value="agent05_learning_emotion">Agent 05 - Learning Emotion</option>
+                    <option value="agent06_teacher_feedback">Agent 06 - Teacher Feedback</option>
+                    <option value="agent07_interaction_targeting">Agent 07 - Interaction Targeting</option>
+                    <option value="agent08_calmness">Agent 08 - Calmness</option>
+                    <option value="agent09_learning_management">Agent 09 - Learning Management</option>
+                    <option value="agent10_concept_notes">Agent 10 - Concept Notes</option>
+                    <option value="agent11_problem_notes">Agent 11 - Problem Notes</option>
+                    <option value="agent12_rest_routine">Agent 12 - Rest Routine</option>
+                    <option value="agent13_learning_dropout">Agent 13 - Learning Dropout</option>
+                    <option value="agent14_current_position">Agent 14 - Current Position</option>
+                    <option value="agent15_problem_redefinition">Agent 15 - Problem Redefinition</option>
+                    <option value="agent16_interaction_preparation">Agent 16 - Interaction Preparation</option>
+                    <option value="agent17_remaining_activities">Agent 17 - Remaining Activities</option>
+                    <option value="agent18_signature_routine">Agent 18 - Signature Routine</option>
+                    <option value="agent19_interaction_content">Agent 19 - Interaction Content</option>
+                    <option value="agent20_intervention_preparation">Agent 20 - Intervention Preparation</option>
+                    <option value="agent21_intervention_execution">Agent 21 - Intervention Execution</option>
+                    <option value="agent22_module_improvement">Agent 22 - Module Improvement</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="data-type-info">
+            <h2>📊 데이터 유형 설명</h2>
+            <div class="type-info-grid">
+                <div class="type-info-item survey">
+                    <h3>
+                        <span class="type-badge">surv</span>
+                    </h3>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 8px;">학생, 선생님, 학부모 설문을 통해 직접 수집되는 데이터입니다.</p>
+                </div>
+                <div class="type-info-item gen">
+                    <h3>
+                        <span class="type-badge">gen</span>
+                    </h3>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 8px;">측정 난이도가 있는 데이터로, meta와 sys로부터 모델링하여 생성됩니다.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">4</div>
+                <div class="label">총 데이터 항목</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">4</div>
+                <div class="label">surv 항목</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">4</div>
+                <div class="label">gen 항목</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">0</div>
+                <div class="label">sys 항목</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">0</div>
+                <div class="label">rule 항목</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">87.5%</div>
+                <div class="label">평균 신뢰도</div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-header">
+                <button class="tab-btn active" data-tab="all">전체</button>
+                <button class="tab-btn" data-tab="category4">4. 학습 성향 및 습관</button>
+                <button class="tab-btn" data-tab="category5">5. 정서 및 동기</button>
+            </div>
+            
+            <div class="tab-content active" id="tab-all">
+                <div class="category-divider">
+                    <div class="category-divider-content">
+                        <div class="category-divider-title">🧠 4. 학습 성향 및 습관 (2)</div>
+                    </div>
+                </div>
+
+                <div class="category-section" data-category="4">
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 35%;">데이터 이름</th>
+                                    <th style="width: 15%;">유형</th>
+                                    <th style="width: 40%;">신뢰도</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-types="surv gen">
+                                    <td>27</td>
+                                    <td class="data-name">
+                                        <div class="data-name-wrapper">
+                                            <span>고난도 선호도</span>
+                                            <span class="table-name">설문</span>
+                                            <div class="tooltip">
+                                                <div class="tooltip-table">설문 데이터</div>
+                                                <div class="tooltip-fields">
+                                                    <div class="tooltip-field">(설문으로 수집)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="data-type type-survey">surv</span> <span class="data-type type-gendata">gen</span></td>
+                                    <td>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill confidence-fill-survey" style="width: 92%;">92%</div>
+                                            <span class="confidence-value">92%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-types="surv gen">
+                                    <td>40</td>
+                                    <td class="data-name">
+                                        <div class="data-name-wrapper">
+                                            <span>학습 자료 스스로 선택 여부</span>
+                                            <span class="table-name">설문</span>
+                                            <div class="tooltip">
+                                                <div class="tooltip-table">설문 데이터</div>
+                                                <div class="tooltip-fields">
+                                                    <div class="tooltip-field">(설문으로 수집)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="data-type type-survey">surv</span> <span class="data-type type-gendata">gen</span></td>
+                                    <td>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill confidence-fill-survey" style="width: 87%;">87%</div>
+                                            <span class="confidence-value">87%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="category-divider">
+                    <div class="category-divider-content">
+                        <div class="category-divider-title">❤️ 5. 정서 및 동기 정보 (2)</div>
+                    </div>
+                </div>
+
+                <div class="category-section" data-category="5">
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">#</th>
+                                    <th style="width: 35%;">데이터 이름</th>
+                                    <th style="width: 15%;">유형</th>
+                                    <th style="width: 40%;">신뢰도</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-types="surv gen">
+                                    <td>48</td>
+                                    <td class="data-name">
+                                        <div class="data-name-wrapper">
+                                            <span>수업 중 감정 상태 기록</span>
+                                            <span class="table-name">설문</span>
+                                            <div class="tooltip">
+                                                <div class="tooltip-table">설문 데이터</div>
+                                                <div class="tooltip-fields">
+                                                    <div class="tooltip-field">(설문으로 수집)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="data-type type-survey">surv</span> <span class="data-type type-gendata">gen</span></td>
+                                    <td>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill confidence-fill-survey" style="width: 86%;">86%</div>
+                                            <span class="confidence-value">86%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-types="surv gen">
+                                    <td>49</td>
+                                    <td class="data-name">
+                                        <div class="data-name-wrapper">
+                                            <span>질문 요청 경향</span>
+                                            <span class="table-name">설문</span>
+                                            <div class="tooltip">
+                                                <div class="tooltip-table">설문 데이터</div>
+                                                <div class="tooltip-fields">
+                                                    <div class="tooltip-field">(설문으로 수집)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="data-type type-survey">surv</span> <span class="data-type type-gendata">gen</span></td>
+                                    <td>
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill confidence-fill-survey" style="width: 85%;">85%</div>
+                                            <span class="confidence-value">85%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-category4">
+                <div class="category-section" data-category="4">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab-category5">
+                <div class="category-section" data-category="5">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" class="search-box" id="searchInput" placeholder="데이터 검색...">
+            <button class="filter-btn active" data-type="all">전체</button>
+            <button class="filter-btn" data-type="surv">surv</button>
+            <button class="filter-btn" data-type="gen">gen</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color type-survey"></div>
+                <span class="legend-text">surv: 학생, 선생님, 학부모 설문으로 입력되는 데이터</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color type-gendata"></div>
+                <span class="legend-text">gen: 측정 난이도가 있는 데이터 (meta와 sys로부터 모델링)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 탭 전환 기능
+        function initTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const allCategorySections = document.querySelectorAll('#tab-all .category-section');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.dataset.tab;
+                    
+                    // 탭 버튼 활성화
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 탭 컨텐츠 표시
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    const targetContent = document.getElementById(`tab-${targetTab}`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                    
+                    // 전체 탭인 경우 모든 카테고리 표시
+                    if (targetTab === 'all') {
+                        allCategorySections.forEach(section => {
+                            section.style.display = '';
+                        });
+                        // 구분선도 표시
+                        const dividers = document.querySelectorAll('#tab-all .category-divider');
+                        dividers.forEach(divider => {
+                            divider.style.display = 'flex';
+                        });
+                    } else {
+                        // 개별 탭인 경우 구분선 숨기기
+                        const dividers = document.querySelectorAll('#tab-all .category-divider');
+                        dividers.forEach(divider => {
+                            divider.style.display = 'none';
+                        });
+                        // 개별 카테고리 탭인 경우 전체 탭 숨기고 개별 탭에만 표시
+                        allCategorySections.forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        
+                        // 개별 카테고리 탭에 데이터 복사
+                        filterTabData(targetTab);
+                    }
+                });
+            });
+        }
+        
+        // 탭별 데이터 필터링
+        function filterTabData(tabType) {
+            if (tabType === 'all') {
+                return; // 전체 탭은 이미 표시됨
+            }
+            
+            const categoryNum = tabType.replace('category', '');
+            const sourceSection = document.querySelector(`#tab-all .category-section[data-category="${categoryNum}"]`);
+            const targetSection = document.querySelector(`#tab-${tabType} .category-section`);
+            
+            if (!sourceSection || !targetSection) return;
+            
+            // 전체 탭의 해당 카테고리 섹션을 복사
+            targetSection.innerHTML = sourceSection.innerHTML;
+        }
+        
+        // Agent 선택 기능
+        function initAgentSelector() {
+            const selector = document.getElementById('agentSelector');
+            if (selector) {
+                selector.addEventListener('change', function() {
+                    const selectedAgent = this.value;
+                    if (selectedAgent !== 'agent04_problem_activity') {
+                        window.location.href = `../${selectedAgent}/rules/dataindex.html`;
+                    }
+                });
+            }
+        }
+        
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            initAgentSelector();
+            
+            // 검색 기능
+            const searchInput = document.getElementById('searchInput');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                filterRows(searchTerm);
+            });
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterRows(searchInput.value.toLowerCase());
+                });
+            });
+
+            function filterRows(searchTerm) {
+                const activeTab = document.querySelector('.tab-btn.active');
+                const tabType = activeTab ? activeTab.dataset.tab : 'all';
+                const activeFilter = document.querySelector('.filter-btn.active');
+                const filterType = activeFilter ? activeFilter.dataset.type : 'all';
+                
+                // 전체 탭이거나 카테고리 탭 모두 처리
+                const tabContent = document.getElementById(`tab-${tabType}`);
+                if (!tabContent) return;
+                
+                const tableRows = tabContent.querySelectorAll('tbody tr');
+                
+                tableRows.forEach(row => {
+                    const dataName = row.querySelector('.data-name span')?.textContent.toLowerCase() || '';
+                    const dataTypes = row.dataset.types ? row.dataset.types.split(' ') : [];
+                    const matchesSearch = dataName.includes(searchTerm);
+                    const matchesFilter = filterType === 'all' || dataTypes.includes(filterType);
+                    
+                    if (matchesSearch && matchesFilter) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

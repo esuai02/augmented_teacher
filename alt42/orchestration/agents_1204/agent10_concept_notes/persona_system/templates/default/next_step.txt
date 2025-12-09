@@ -1,0 +1,22 @@
+[NEXT_STEP]
+
+{{student_name}}님, 다음 단계를 안내해 드릴게요.
+
+[RECOMMENDATION]
+
+{{recommended_action}}
+
+[REASON]
+
+이 방법을 추천하는 이유:
+{{recommendation_reason}}
+
+[CLOSING]
+
+준비되시면 말씀해 주세요!
+
+<!--
+파일: templates/default/next_step.txt
+변수: student_name, recommended_action, recommendation_reason
+용도: 다음 학습 단계 안내
+-->

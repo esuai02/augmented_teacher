@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 홀론 신경망 네비게이터</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 1rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-subtitle {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .stat-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .stat-badge.holons {
+            background: rgba(6, 182, 212, 0.2);
+            color: #22d3ee;
+            border: 1px solid rgba(6, 182, 212, 0.4);
+        }
+        
+        .stat-badge.tokens {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+        }
+        
+        .stat-badge.status {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+        
+        /* 검색 영역 */
+        .search-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 1rem 1.25rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.3);
+            color: #e2e8f0;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #06b6d4;
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+        
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+        
+        .btn {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* 옵션 영역 */
+        .options-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .option-label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+        
+        .option-input {
+            padding: 0.375rem 0.625rem;
+            border-radius: 0.375rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.3);
+            color: #e2e8f0;
+            font-size: 0.75rem;
+            width: 80px;
+        }
+        
+        /* 결과 영역 */
+        .results-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 900px) {
+            .results-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            padding: 1rem;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .panel-body {
+            padding: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        /* 활성화된 홀론 카드 */
+        .holon-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-left: 3px solid #06b6d4;
+            transition: all 0.2s;
+        }
+        
+        .holon-card:hover {
+            background: rgba(0,0,0,0.4);
+        }
+        
+        .holon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .holon-id {
+            font-weight: 600;
+            color: #22d3ee;
+            font-size: 0.875rem;
+        }
+        
+        .holon-score {
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+        }
+        
+        .holon-summary {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+        
+        .holon-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+        
+        .keyword-tag {
+            background: rgba(255,255,255,0.08);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.65rem;
+            color: #6b7280;
+        }
+        
+        .sections-loaded {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.7rem;
+            margin-right: 0.375rem;
+            margin-bottom: 0.375rem;
+        }
+        
+        .section-badge.W { background: rgba(255, 107, 107, 0.2); color: #FF6B6B; }
+        .section-badge.X { background: rgba(78, 205, 196, 0.2); color: #4ECDC4; }
+        .section-badge.S { background: rgba(69, 183, 209, 0.2); color: #45B7D1; }
+        .section-badge.P { background: rgba(150, 206, 180, 0.2); color: #96CEB4; }
+        .section-badge.E { background: rgba(255, 234, 167, 0.2); color: #FFEAA7; }
+        .section-badge.R { background: rgba(221, 160, 221, 0.2); color: #DDA0DD; }
+        .section-badge.T { background: rgba(243, 156, 18, 0.2); color: #F39C12; }
+        .section-badge.A { background: rgba(155, 89, 182, 0.2); color: #9B59B6; }
+        
+        /* 드릴다운 패널 */
+        .drill-section {
+            margin-top: 1rem;
+        }
+        
+        .coord-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.3);
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .drill-result {
+            background: rgba(0,0,0,0.4);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 0.75rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* 로딩 상태 */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-top-color: #06b6d4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 에러 상태 */
+        .error-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        /* 활성화 로그 */
+        .log-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.75rem;
+        }
+        
+        .log-event {
+            color: #06b6d4;
+            font-weight: 600;
+        }
+        
+        .log-time {
+            color: #4b5563;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1 class="header-title">🧠 홀론 신경망 네비게이터</h1>
+                <p class="header-subtitle">Context Window 최적화를 위한 좌표 기반 활성화 시스템</p>
+            </div>
+            <div class="stats-bar">
+                <span id="holonCount" class="stat-badge holons">홀론: -</span>
+                <span id="tokenUsage" class="stat-badge tokens">토큰: 0 / 4000</span>
+                <span id="statusBadge" class="stat-badge status">대기</span>
+            </div>
+        </header>
+        
+        <!-- 검색 영역 -->
+        <section class="search-section">
+            <form class="search-form" onsubmit="handleSearch(event)">
+                <input 
+                    type="text" 
+                    id="queryInput" 
+                    class="search-input" 
+                    placeholder="검색어를 입력하세요... (예: TTS 중복 재생 오류, 질문하기 기능)"
+                />
+                <button type="submit" class="btn btn-primary">🔍 검색</button>
+                <button type="button" class="btn btn-secondary" onclick="buildIndex()">🔄 인덱스 빌드</button>
+            </form>
+            
+            <div class="options-row">
+                <div class="option-group">
+                    <span class="option-label">Threshold:</span>
+                    <input type="number" id="threshold" class="option-input" value="0.1" step="0.05" min="0" max="1">
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Top K:</span>
+                    <input type="number" id="topK" class="option-input" value="5" min="1" max="20">
+                </div>
+                <div class="option-group">
+                    <span class="option-label">Max Tokens:</span>
+                    <input type="number" id="maxTokens" class="option-input" value="4000" min="500" max="16000" style="width: 100px;">
+                </div>
+            </div>
+        </section>
+        
+        <!-- 결과 영역 -->
+        <section class="results-section">
+            <!-- 활성화된 홀론 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">⚡ 활성화된 홀론</span>
+                    <span id="activatedCount" style="color: #6b7280; font-size: 0.75rem;">0개</span>
+                </div>
+                <div class="panel-body" id="activatedHolons">
+                    <div class="loading">
+                        <p style="color: #6b7280;">검색어를 입력하고 검색 버튼을 클릭하세요</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 드릴다운 & 로그 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🔍 좌표 드릴다운</span>
+                </div>
+                <div class="panel-body">
+                    <div class="drill-section">
+                        <input 
+                            type="text" 
+                            id="coordInput" 
+                            class="coord-input" 
+                            placeholder="좌표 입력 (예: meeting-2025-007.X.issues[0])"
+                            onkeypress="if(event.key==='Enter') drillDown()"
+                        />
+                        <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="drillDown()">드릴다운</button>
+                        <div id="drillResult" class="drill-result" style="display: none;"></div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="font-size: 0.875rem; margin-bottom: 0.75rem; color: #9ca3af;">📋 활성화 로그</h4>
+                        <div id="activationLog" style="max-height: 200px; overflow-y: auto;">
+                            <div class="log-item">
+                                <span class="log-event">ready</span>
+                                <span class="log-time">시스템 준비됨</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        const API_BASE = '../api/query.php';
+        
+        async function handleSearch(event) {
+            event.preventDefault();
+            
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) return;
+            
+            const threshold = document.getElementById('threshold').value;
+            const topK = document.getElementById('topK').value;
+            
+            setStatus('검색 중...', 'loading');
+            addLog('query_start', query);
+            
+            try {
+                const response = await fetch(`${API_BASE}?action=query&q=${encodeURIComponent(query)}&threshold=${threshold}&topK=${topK}&expand=true`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderActivatedHolons(result.data);
+                    updateStats(result.data.stats);
+                    addLog('query_complete', `${result.data.stats.holons_activated}개 홀론 활성화`);
+                    setStatus('완료', 'success');
+                } else {
+                    showError(result.error);
+                    setStatus('오류', 'error');
+                }
+            } catch (error) {
+                showError(error.message);
+                setStatus('오류', 'error');
+            }
+        }
+        
+        function renderActivatedHolons(data) {
+            const container = document.getElementById('activatedHolons');
+            const holons = data.activated_holons || [];
+            
+            if (holons.length === 0) {
+                container.innerHTML = '<div class="loading"><p>연관된 홀론을 찾지 못했습니다</p></div>';
+                document.getElementById('activatedCount').textContent = '0개';
+                return;
+            }
+            
+            let html = '';
+            holons.forEach(holon => {
+                html += `
+                    <div class="holon-card" onclick="setCoordinate('${holon.holon_id}')">
+                        <div class="holon-header">
+                            <span class="holon-id">${holon.holon_id}</span>
+                            <span class="holon-score">Score: ${(holon.score * 100).toFixed(1)}%</span>
+                        </div>
+                        <p class="holon-summary">${holon.W_summary || holon.title}</p>
+                        <div class="holon-keywords">
+                            ${(holon.keywords || []).map(k => `<span class="keyword-tag">${k}</span>`).join('')}
+                        </div>
+                        ${renderSections(holon.sections_loaded)}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('activatedCount').textContent = `${holons.length}개`;
+        }
+        
+        function renderSections(sections) {
+            if (!sections || Object.keys(sections).length === 0) return '';
+            
+            let html = '<div class="sections-loaded">';
+            for (const [section, info] of Object.entries(sections)) {
+                const tokens = info.tokens || info.tokens_needed || 0;
+                const status = info.summary_only ? '⚠️' : '✓';
+                html += `<span class="section-badge ${section}">${status} ${section} (${tokens}t)</span>`;
+            }
+            html += '</div>';
+            return html;
+        }
+        
+        async function drillDown() {
+            const coord = document.getElementById('coordInput').value.trim();
+            if (!coord) return;
+            
+            addLog('drill_down', coord);
+            
+            try {
+                const response = await fetch(`${API_BASE}?action=drill&coord=${encodeURIComponent(coord)}`);
+                const result = await response.json();
+                
+                const resultDiv = document.getElementById('drillResult');
+                resultDiv.style.display = 'block';
+                
+                if (result.success && result.data.success) {
+                    resultDiv.textContent = JSON.stringify(result.data.data, null, 2);
+                    addLog('drill_complete', `${result.data.tokens || 0} tokens`);
+                } else {
+                    resultDiv.textContent = 'Error: ' + (result.data?.error || result.error || '알 수 없는 오류');
+                }
+            } catch (error) {
+                document.getElementById('drillResult').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        function setCoordinate(holonId) {
+            document.getElementById('coordInput').value = holonId + '.W';
+        }
+        
+        async function buildIndex() {
+            setStatus('인덱스 빌드 중...', 'loading');
+            addLog('index_build', '시작');
+            
+            try {
+                const response = await fetch('../index/build_index.php');
+                const result = await response.json();
+                
+                if (result.success) {
+                    addLog('index_complete', `${result.stats.holon_count}개 홀론`);
+                    document.getElementById('holonCount').textContent = `홀론: ${result.stats.holon_count}`;
+                    setStatus('인덱스 빌드 완료', 'success');
+                    alert(`인덱스 빌드 완료!\n- 홀론: ${result.stats.holon_count}개\n- 노드: ${result.stats.node_count}개\n- 연결: ${result.stats.edge_count}개`);
+                } else {
+                    showError(result.error);
+                    setStatus('오류', 'error');
+                }
+            } catch (error) {
+                showError(error.message);
+                setStatus('오류', 'error');
+            }
+        }
+        
+        function updateStats(stats) {
+            document.getElementById('holonCount').textContent = `홀론: ${stats.holons_scanned}`;
+            document.getElementById('tokenUsage').textContent = `토큰: ${stats.total_tokens} / ${stats.max_tokens} (${stats.token_usage_pct}%)`;
+        }
+        
+        function setStatus(text, type) {
+            const badge = document.getElementById('statusBadge');
+            badge.textContent = text;
+            badge.className = 'stat-badge status';
+            
+            if (type === 'loading') {
+                badge.style.background = 'rgba(234, 179, 8, 0.2)';
+                badge.style.color = '#fbbf24';
+                badge.style.borderColor = 'rgba(234, 179, 8, 0.4)';
+            } else if (type === 'success') {
+                badge.style.background = 'rgba(34, 197, 94, 0.2)';
+                badge.style.color = '#4ade80';
+                badge.style.borderColor = 'rgba(34, 197, 94, 0.4)';
+            } else if (type === 'error') {
+                badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                badge.style.color = '#f87171';
+                badge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            }
+        }
+        
+        function addLog(event, detail) {
+            const log = document.getElementById('activationLog');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML = `
+                <div class="log-item">
+                    <span class="log-event">${event}</span>
+                    <span class="log-time">${detail}</span>
+                </div>
+            ` + log.innerHTML;
+        }
+        
+        function showError(message) {
+            document.getElementById('activatedHolons').innerHTML = `
+                <div class="error-box">${message}</div>
+            `;
+        }
+        
+        // 초기 인덱스 상태 확인
+        async function checkIndexStatus() {
+            try {
+                const response = await fetch(`${API_BASE}?action=index_status`);
+                const result = await response.json();
+                
+                if (result.success && result.data.index_exists) {
+                    document.getElementById('holonCount').textContent = `홀론: ${result.data.holon_count}`;
+                    addLog('index_loaded', `${result.data.holon_count}개 홀론`);
+                } else {
+                    addLog('index_missing', '인덱스 빌드 필요');
+                }
+            } catch (error) {
+                addLog('index_error', error.message);
+            }
+        }
+        
+        checkIndexStatus();
+    </script>
+</body>
+</html>
+

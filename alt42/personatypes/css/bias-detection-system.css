@@ -1,0 +1,416 @@
+/**
+ * 🌌 편향 감지 시스템 스타일
+ */
+
+/* 선생님 메모 인터페이스 */
+.teacher-memo-interface {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 400px;
+    background: linear-gradient(135deg, #1a1e3a 0%, #2a2d4a 100%);
+    border: 1px solid #3a3d5a;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #e0e0e0;
+}
+
+.memo-header {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.memo-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    color: white;
+}
+
+.toggle-memo {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.toggle-memo:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.1);
+}
+
+.memo-content {
+    padding: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* 학생 선택 */
+.student-selector {
+    margin-bottom: 20px;
+}
+
+.student-selector label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.student-selector select {
+    width: 100%;
+    padding: 8px 12px;
+    background: #0f1228;
+    border: 1px solid #3a3d5a;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 0.9em;
+}
+
+/* 편향 체크박스 */
+.bias-quick-check {
+    margin-bottom: 20px;
+}
+
+.bias-quick-check h4 {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #667eea;
+}
+
+.bias-checkboxes {
+    display: grid;
+    gap: 8px;
+}
+
+.bias-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.bias-checkboxes label:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.bias-checkboxes input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #667eea;
+}
+
+/* 감정 상태 버튼 */
+.emotional-state {
+    margin-bottom: 20px;
+}
+
+.emotional-state h4 {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #f093fb;
+}
+
+.emotion-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.emotion-btn {
+    padding: 6px 12px;
+    background: rgba(102, 126, 234, 0.2);
+    border: 1px solid #3a3d5a;
+    border-radius: 20px;
+    color: #e0e0e0;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.emotion-btn:hover {
+    background: rgba(102, 126, 234, 0.3);
+    transform: translateY(-1px);
+}
+
+.emotion-btn.selected {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+/* 상세 관찰 내용 */
+.detailed-observation {
+    margin-bottom: 20px;
+}
+
+.detailed-observation h4 {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #4ecdc4;
+}
+
+.detailed-observation textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    background: #0f1228;
+    border: 1px solid #3a3d5a;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 0.9em;
+    font-family: inherit;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.detailed-observation textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+}
+
+.detailed-observation textarea::placeholder {
+    color: #666;
+    font-size: 0.85em;
+}
+
+/* 상황 맥락 */
+.context-info {
+    margin-bottom: 20px;
+}
+
+.context-info h4 {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #45b7d1;
+}
+
+.context-inputs {
+    display: grid;
+    gap: 10px;
+}
+
+.context-inputs label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85em;
+}
+
+.context-inputs select {
+    flex: 1;
+    padding: 6px 10px;
+    background: #0f1228;
+    border: 1px solid #3a3d5a;
+    border-radius: 5px;
+    color: #e0e0e0;
+    font-size: 0.85em;
+}
+
+/* 액션 버튼들 */
+.memo-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.save-memo-btn, .urgent-alert-btn {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.save-memo-btn {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
+}
+
+.save-memo-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+}
+
+.urgent-alert-btn {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+}
+
+.urgent-alert-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+}
+
+/* 긴급 개입 스타일 */
+.urgent-intervention {
+    padding: 15px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    border-radius: 10px;
+    animation: urgentPulse 2s infinite;
+}
+
+.detection-alert {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.05em;
+}
+
+.cosmic-guidance {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.action-suggestion {
+    font-style: italic;
+    opacity: 0.9;
+}
+
+@keyframes urgentPulse {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.9; 
+        transform: scale(1.02);
+    }
+}
+
+.urgent-glow {
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5) !important;
+    animation: urgentGlow 3s ease-out;
+}
+
+@keyframes urgentGlow {
+    0% { 
+        box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+    }
+    100% { 
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    }
+}
+
+/* 성공 메시지 */
+.success-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
+    border-radius: 10px;
+    font-weight: 500;
+    z-index: 10000;
+    animation: successFadeIn 0.5s ease-out, successFadeOut 0.5s ease-out 2.5s;
+}
+
+@keyframes successFadeIn {
+    from { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes successFadeOut {
+    from { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* 실시간 편향 감지 표시 */
+.bias-detection-indicator {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    background: rgba(255, 107, 107, 0.9);
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    font-size: 0.9em;
+    animation: slideInLeft 0.5s ease-out;
+    z-index: 999;
+}
+
+@keyframes slideInLeft {
+    from { 
+        opacity: 0; 
+        transform: translateY(-50%) translateX(-100%);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .teacher-memo-interface {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+        overflow-y: auto;
+    }
+    
+    .memo-content {
+        max-height: none;
+    }
+    
+    .emotion-buttons {
+        justify-content: center;
+    }
+    
+    .memo-actions {
+        flex-direction: column;
+    }
+}
+
+/* 스크롤바 스타일링 */
+.memo-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.memo-content::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+.memo-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 3px;
+}
+
+.memo-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
+}

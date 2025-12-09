@@ -1,0 +1,1811 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 미분 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x→a일_때의_함수의_수렴">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x→a일 때의 함수의 수렴</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49060&amp;page=1&amp;quizid=84705</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — x가 a에 한없이 가까워질 때 함수값이 특정 값에 수렴하는 개념을 이해하고, 극한의 정의를 활용하여 수렴 여부를 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x→a일_때의_함수의_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x→a일 때의 함수의 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49061&amp;page=1&amp;quizid=84706</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — x가 a에 가까워질 때 함수값이 발산하는 경우를 이해하고, 발산의 유형(양의 무한대, 음의 무한대, 진동)을 구분할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_수렴">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x→∞，x→-∞일 때의 함수의 수렴</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49062&amp;page=1&amp;quizid=84707</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — x가 양의 무한대 또는 음의 무한대로 갈 때 함수값이 수렴하는 경우를 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x→∞，x→-∞일 때의 함수의 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49063&amp;page=1&amp;quizid=84708</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — x가 무한대로 갈 때 함수값이 발산하는 경우를 이해하고 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#우극한_좌극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">우극한 좌극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49064&amp;page=1&amp;quizid=84709</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 우극한과 좌극한의 개념을 이해하고, 양쪽 극한값이 같을 때 극한값이 존재함을 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#극한값의_존재">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">극한값의 존재</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49065&amp;page=1&amp;quizid=84710</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 극한값이 존재하는 조건을 이해하고, 우극한과 좌극한을 비교하여 극한값의 존재 여부를 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극한에_대한_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극한에 대한 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49066&amp;page=1&amp;quizid=84711</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 극한의 사칙연산 성질과 합성함수의 극한 성질을 이해하고 활용하여 극한값을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극한에_대한_성질과_관련된_거짓_명제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극한에 대한 성질과 관련된 거짓 명제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49067&amp;page=1&amp;quizid=84712</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 극한의 성질을 잘못 적용하는 경우를 이해하고, 조건을 확인하여 올바르게 극한을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#0/0꼴의_함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">0/0꼴의 함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49068&amp;page=1&amp;quizid=84713</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 0/0꼴의 부정형 극한을 인수분해, 유리화, 로피탈의 정리 등을 활용하여 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#∞/∞꼴의_함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">∞/∞꼴의 함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49069&amp;page=1&amp;quizid=84714</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — ∞/∞꼴의 부정형 극한을 최고차항으로 나누거나 로피탈의 정리를 활용하여 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#∞-∞꼴의_함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">∞-∞꼴의 함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49070&amp;page=1&amp;quizid=84715</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — ∞-∞꼴의 부정형 극한을 통분하거나 유리화하여 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#∞×0꼴의_함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">∞×0꼴의 함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49071&amp;page=1&amp;quizid=84716</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — ∞×0꼴의 부정형 극한을 변형하여 0/0꼴이나 ∞/∞꼴로 바꾸어 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미정계수의_결정">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미정계수의 결정</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49072&amp;page=1&amp;quizid=84717</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 극한값이 주어졌을 때 미정계수를 결정하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극한의_대소_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극한의 대소 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=1&amp;cmid=49073&amp;page=1&amp;quizid=84718</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 극한(수학2) — 함수의 극한값 사이의 대소 관계를 이해하고, 샌드위치 정리를 활용하여 극한값을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#구간">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">구간</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=2&amp;cmid=49075&amp;page=1&amp;quizid=84720</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 연속(수학2) — 열린 구간, 닫힌 구간, 반열린 구간의 개념을 이해하고 구간 표기를 정확히 사용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연속함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연속함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=2&amp;cmid=49076&amp;page=1&amp;quizid=84721</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 연속(수학2) — 함수의 연속성 정의를 이해하고, 주어진 점에서 함수가 연속인지 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연속함수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연속함수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=2&amp;cmid=49077&amp;page=1&amp;quizid=84722</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 연속(수학2) — 연속함수의 사칙연산과 합성함수의 연속성 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#최대·최소_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">최대·최소 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=2&amp;cmid=49078&amp;page=1&amp;quizid=84723</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 연속(수학2) — 닫힌 구간에서 연속인 함수는 최댓값과 최솟값을 가진다는 정리를 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사이값_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사이값 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=2&amp;cmid=49080&amp;page=1&amp;quizid=84724</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 연속(수학2) — 사이값 정리를 이해하고, 방정식의 실근 존재 여부를 판단하는 데 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평균변화율">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평균변화율</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49081&amp;page=1&amp;quizid=84725</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 두 점 사이의 평균변화율을 이해하고 계산할 수 있으며, 이것이 미분계수로 이어지는 과정을 이해할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미분계수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미분계수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49082&amp;page=1&amp;quizid=84726</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 미분계수의 정의를 이해하고 극한을 이용하여 미분계수를 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미분계수의_기하학적_의미">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미분계수의 기하학적 의미</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49083&amp;page=1&amp;quizid=84727</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 미분계수가 접선의 기울기임을 이해하고, 이를 기하학적으로 해석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미분계수를_이용한_극한값의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미분계수를 이용한 극한값의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49084&amp;page=1&amp;quizid=84728</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 미분계수의 정의를 활용하여 특정 형태의 극한값을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미분가능">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미분가능</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49085&amp;page=1&amp;quizid=84729</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 함수가 특정 점에서 미분가능한 조건을 이해하고 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미분가능성과_연속성">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미분가능성과 연속성</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49086&amp;page=1&amp;quizid=84730</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 미분가능하면 연속임을 이해하고, 연속이지만 미분가능하지 않은 경우를 구분할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수가_미분가능하지_않은_경우">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수가 미분가능하지 않은 경우</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49087&amp;page=1&amp;quizid=84731</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 함수가 미분가능하지 않은 경우(첨점, 불연속점 등)를 이해하고 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49088&amp;page=1&amp;quizid=84732</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 도함수의 정의를 이해하고, 도함수를 구하는 방법을 알고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_y=xⁿ과_상수함수의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수 y=xⁿ과 상수함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49089&amp;page=1&amp;quizid=84733</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 거듭제곱 함수와 상수함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_실수배">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 실수배</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49090&amp;page=1&amp;quizid=84734</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 상수배 함수의 도함수는 상수배한 도함수와 같다는 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_곱의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 곱의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49091&amp;page=1&amp;quizid=84735</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 곱의 미분법 공식을 이해하고 두 함수의 곱의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_y=｛f(x)｝ⁿ의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수 y=｛f(x)｝ⁿ의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=3&amp;cmid=49092&amp;page=1&amp;quizid=84736</ar:hasURL>
+    <ar:description xml:lang="ko">미분계수와 도함수(수학2) — 합성함수의 거듭제곱 형태의 도함수를 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#접선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">접선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49093&amp;page=1&amp;quizid=84737</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 접선의 방정식을 구하는 기본 원리를 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#접선의_좌표가_주어질_때_접선의_방정식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">접선의 좌표가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49094&amp;page=1&amp;quizid=84738</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 접점의 좌표가 주어졌을 때 접선의 방정식을 구하는 방법을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기울기가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49095&amp;page=1&amp;quizid=84739</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 접선의 기울기가 주어졌을 때 접선의 방정식을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곡선 밖의 한 점의 좌표가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49096&amp;page=1&amp;quizid=84740</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 곡선 밖의 점을 지나는 접선의 방정식을 구하는 방법을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_곡선의_위치_관계에_대한_고찰">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 곡선의 위치 관계에 대한 고찰</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49097&amp;page=1&amp;quizid=84741</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 두 곡선의 접촉, 교차, 분리 등의 위치 관계를 도함수를 이용하여 분석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#롤의_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">롤의 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49098&amp;page=1&amp;quizid=84742</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 롤의 정리의 조건과 결론을 이해하고, 방정식의 실근 존재 여부를 판단하는 데 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평균값_정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평균값 정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=4&amp;cmid=49099&amp;page=1&amp;quizid=84743</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(1)(수학2) — 평균값 정리를 이해하고, 함수의 증감과 극값을 분석하는 데 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_증가와_감소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 증가와 감소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49100&amp;page=1&amp;quizid=84744</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 도함수의 부호를 이용하여 함수의 증가와 감소 구간을 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_증가와_감소의_판정">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 증가와 감소의 판정</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49101&amp;page=1&amp;quizid=84745</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 도함수를 구하고 부호를 분석하여 함수의 증가·감소 구간을 정확히 판정할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극대와_극소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극대와 극소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49102&amp;page=1&amp;quizid=84746</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 극대값과 극소값의 정의를 이해하고, 도함수를 이용하여 극값을 찾을 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#극값과_미분계수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">극값과 미분계수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49103&amp;page=1&amp;quizid=84747</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 극값에서의 미분계수가 0임을 이해하고, 이를 활용하여 극값을 찾을 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극대와_극소의_판정">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극대와 극소의 판정</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49104&amp;page=1&amp;quizid=84748</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 도함수의 부호 변화를 이용하여 극대와 극소를 판정할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49105&amp;page=1&amp;quizid=84749</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 도함수를 이용하여 함수의 증가·감소와 극값을 파악하고 그래프의 개형을 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항함수의_그래프의_개형과_극값을_가질_조건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항함수의 그래프의 개형과 극값을 가질 조건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49106&amp;page=1&amp;quizid=84750</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 다항함수가 극값을 가지는 조건을 이해하고, 그래프의 개형을 분석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_최대와_최소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 최대와 최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49107&amp;page=1&amp;quizid=84751</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 닫힌 구간에서 함수의 최댓값과 최솟값을 구하는 방법을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#극값이_하나뿐일_때의_함수의_최대와_최소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">극값이 하나뿐일 때의 함수의 최대와 최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=5&amp;cmid=49108&amp;page=1&amp;quizid=84752</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(2)(수학2) — 극값이 하나뿐인 경우 최댓값과 최솟값을 판단하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#방정식의_실근의_개수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">방정식의 실근의 개수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49109&amp;page=1&amp;quizid=84753</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 도함수를 이용하여 방정식의 실근의 개수를 판단하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼차방정식의_근의_판별">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼차방정식의 근의 판별</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49110&amp;page=1&amp;quizid=84754</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 삼차방정식의 실근의 개수를 도함수를 이용하여 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#모든_실수에_대하여_성립하는_부등식의_증명">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">모든 실수에 대하여 성립하는 부등식의 증명</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49111&amp;page=1&amp;quizid=84755</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 도함수를 이용하여 모든 실수에 대하여 성립하는 부등식을 증명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x＞a에서_성립하는_부등식의_증명">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x＞a에서 성립하는 부등식의 증명</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49112&amp;page=1&amp;quizid=84756</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 특정 구간에서 성립하는 부등식을 도함수를 이용하여 증명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#속도와_가속도">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">속도와 가속도</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49113&amp;page=1&amp;quizid=84757</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 위치함수의 도함수가 속도, 속도의 도함수가 가속도임을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#시각에_대한_변화율">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">시각에 대한 변화율</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=62&amp;nch=6&amp;cmid=49114&amp;page=1&amp;quizid=84758</ar:hasURL>
+    <ar:description xml:lang="ko">도함수의 활용(3)(수학2) — 시간에 대한 변화율 문제를 도함수를 이용하여 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48686&amp;page=1&amp;quizid=84835</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 지수함수의 극한을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48687&amp;page=1&amp;quizid=84836</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 로그함수의 극한을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#무리수_e">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">무리수 e</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48688&amp;page=1&amp;quizid=84837</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 자연상수 e의 정의와 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#자연로그">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">자연로그</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48689&amp;page=1&amp;quizid=84838</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 자연로그의 정의와 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#e의_정의를_이용한_지수함수와_로그함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">e의 정의를 이용한 지수함수와 로그함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48690&amp;page=1&amp;quizid=84839</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — e의 정의를 활용하여 지수함수와 로그함수의 극한을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48691&amp;page=1&amp;quizid=84840</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 지수함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=3&amp;cmid=48692&amp;page=1&amp;quizid=84841</ar:hasURL>
+    <ar:description xml:lang="ko">지수함수와 로그함수의 미분(미분과 적분) — 로그함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각함수의_덧셈정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각함수의 덧셈정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48716&amp;page=1&amp;quizid=84873</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 삼각함수의 덧셈정리를 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각함수의_합성">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각함수의 합성</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48717&amp;page=1&amp;quizid=84874</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 삼각함수의 합성을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#배각의_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">배각의 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48718&amp;page=1&amp;quizid=84875</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 배각의 공식을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼배각의_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼배각의 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48719&amp;page=1&amp;quizid=84876</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 삼배각의 공식을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#반각의_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">반각의 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48720&amp;page=1&amp;quizid=84877</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 반각의 공식을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각함수의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각함수의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48721&amp;page=1&amp;quizid=84878</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 삼각함수의 극한을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_sinx/x_tanx/x의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수 sinx/x, tanx/x의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48722&amp;page=1&amp;quizid=84879</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — sinx/x와 tanx/x의 극한값을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각함수의_도함수_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=4&amp;cmid=48723&amp;page=1&amp;quizid=84880</ar:hasURL>
+    <ar:description xml:lang="ko">삼각함수의 미분(미분과 적분) — 삼각함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_몫의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 몫의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48724&amp;page=1&amp;quizid=84881</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 몫의 미분법 공식을 이해하고 두 함수의 몫의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_y=xⁿ_n은_정수_의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수 y=xⁿ (n은 정수)의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48725&amp;page=1&amp;quizid=84882</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 정수 지수를 가진 거듭제곱 함수의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각함수의_도함수_미적2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48726&amp;page=1&amp;quizid=84883</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 삼각함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합성함수의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합성함수의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48727&amp;page=1&amp;quizid=84884</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 연쇄법칙을 이해하고 합성함수의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수함수의_도함수_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48728&amp;page=1&amp;quizid=84885</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 지수함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그함수의_도함수_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그함수의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48729&amp;page=1&amp;quizid=84886</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 로그함수의 도함수를 구하는 공식을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#로그_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">로그 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48730&amp;page=1&amp;quizid=84887</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 로그 미분법을 이해하고 복잡한 함수의 도함수를 구하는 데 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_y=xⁿ_n은_실수_의_도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수 y=xⁿ (n은 실수)의 도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48731&amp;page=1&amp;quizid=84818</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 실수 지수를 가진 거듭제곱 함수의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#음함수의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">음함수의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48828&amp;page=1&amp;quizid=84964</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 음함수의 미분법을 이해하고 음함수로 표현된 함수의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평면_곡선의_접선의_방정식-접점의_좌표가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평면 곡선의 접선의 방정식-접점의 좌표가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48829&amp;page=1&amp;quizid=84965</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 평면 곡선의 접선의 방정식을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#매개변수로_나타낸_함수의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">매개변수로 나타낸 함수의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48835&amp;page=1&amp;quizid=84971</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 매개변수로 표현된 함수의 도함수를 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#역함수의_미분법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">역함수의 미분법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48732&amp;page=1&amp;quizid=84889</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 역함수의 미분법을 이해하고 역함수의 도함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이계도함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이계도함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=5&amp;cmid=48733&amp;page=1&amp;quizid=84890</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 미분법(미분과 적분) — 이계도함수의 개념을 이해하고 구할 수 있으며, 곡선의 오목·볼록을 판단하는 데 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#접선의_방정식_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">접선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48734&amp;page=1&amp;quizid=84891</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 다양한 함수의 접선의 방정식을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#접점의_좌표가_주어질_때_접선의_방정식_구하기_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">접점의 좌표가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48735&amp;page=1&amp;quizid=84892</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 접점의 좌표가 주어졌을 때 접선의 방정식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기울기가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48736&amp;page=1&amp;quizid=84893</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 접선의 기울기가 주어졌을 때 접선의 방정식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곡선 밖의 한 점의 좌표가 주어질 때 접선의 방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48737&amp;page=1&amp;quizid=84894</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 곡선 밖의 점을 지나는 접선의 방정식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_증가와_감소_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 증가와 감소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48738&amp;page=1&amp;quizid=84895</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 다양한 함수의 증가·감소 구간을 도함수를 이용하여 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극대와_극소_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극대와 극소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48739&amp;page=1&amp;quizid=84896</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 다양한 함수의 극대·극소를 도함수를 이용하여 찾을 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_극대와_극소의_판정_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 극대와 극소의 판정</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=6&amp;cmid=48740&amp;page=1&amp;quizid=84897</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(1)(미분과 적분) — 도함수의 부호 변화를 이용하여 극대·극소를 판정할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곡선의_오목과_볼록">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곡선의 오목과 볼록</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49079&amp;page=1&amp;quizid=84898</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 이계도함수를 이용하여 곡선의 오목·볼록을 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#변곡점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">변곡점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49192&amp;page=1&amp;quizid=84899</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 변곡점의 정의를 이해하고 이계도함수를 이용하여 변곡점을 찾을 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_그래프_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49193&amp;page=1&amp;quizid=84900</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 도함수와 이계도함수를 이용하여 함수의 그래프를 정확히 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_최대와_최소_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 최대와 최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49194&amp;page=1&amp;quizid=84901</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 다양한 함수의 최댓값과 최솟값을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#방정식의_실근의_개수_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">방정식의 실근의 개수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49195&amp;page=1&amp;quizid=84902</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 도함수를 이용하여 방정식의 실근의 개수를 판단할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#부등식의_증명_미적">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">부등식의 증명</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">11</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=7&amp;cmid=49196&amp;page=1&amp;quizid=84903</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 함수의 도함수의 활용(2)(미분과 적분) — 도함수를 이용하여 부등식을 증명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x→a일_때의_함수의_수렴">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x→a일_때의_함수의_발산"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x→a일_때의_함수의_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_수렴"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_수렴">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_발산"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x→∞，x→-∞일_때의_함수의_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#우극한_좌극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#우극한_좌극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#극한값의_존재"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#극한값의_존재">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극한에_대한_성질"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_극한에_대한_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극한에_대한_성질과_관련된_거짓_명제"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_극한에_대한_성질과_관련된_거짓_명제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#0/0꼴의_함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#0/0꼴의_함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#∞/∞꼴의_함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#∞/∞꼴의_함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#∞-∞꼴의_함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#∞-∞꼴의_함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#∞×0꼴의_함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#∞×0꼴의_함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미정계수의_결정"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미정계수의_결정">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극한의_대소_관계"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#구간">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연속함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연속함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연속함수의_성질"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연속함수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#최대·최소_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#최대·최소_정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#사이값_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평균변화율">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미분계수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미분계수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미분계수의_기하학적_의미"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미분계수의_기하학적_의미">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미분계수를_이용한_극한값의_계산"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미분계수를_이용한_극한값의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미분가능"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미분가능">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미분가능성과_연속성"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미분가능성과_연속성">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수가_미분가능하지_않은_경우"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수가_미분가능하지_않은_경우">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#도함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_y=xⁿ과_상수함수의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수_y=xⁿ과_상수함수의_도함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_실수배"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_실수배">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_곱의_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_곱의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_y=｛f(x)｝ⁿ의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#접선의_좌표가_주어질_때_접선의_방정식_구하기"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접선의_좌표가_주어질_때_접선의_방정식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_곡선의_위치_관계에_대한_고찰"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_곡선의_위치_관계에_대한_고찰">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#롤의_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#롤의_정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평균값_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_증가와_감소">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_증가와_감소의_판정"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_증가와_감소의_판정">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극대와_극소"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_극대와_극소">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#극값과_미분계수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#극값과_미분계수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극대와_극소의_판정"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_극대와_극소의_판정">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_그래프"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항함수의_그래프의_개형과_극값을_가질_조건"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항함수의_그래프의_개형과_극값을_가질_조건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_최대와_최소"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_최대와_최소">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#극값이_하나뿐일_때의_함수의_최대와_최소"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#방정식의_실근의_개수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼차방정식의_근의_판별"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼차방정식의_근의_판별">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#모든_실수에_대하여_성립하는_부등식의_증명"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#모든_실수에_대하여_성립하는_부등식의_증명">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x＞a에서_성립하는_부등식의_증명"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x＞a에서_성립하는_부등식의_증명">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#속도와_가속도"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#속도와_가속도">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#시각에_대한_변화율"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#무리수_e"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#무리수_e">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#자연로그"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#자연로그">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#e의_정의를_이용한_지수함수와_로그함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#e의_정의를_이용한_지수함수와_로그함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_도함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각함수의_덧셈정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각함수의_합성"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각함수의_합성">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#배각의_공식"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#배각의_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼배각의_공식"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼배각의_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#반각의_공식"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#반각의_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각함수의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각함수의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_sinx/x_tanx/x의_극한"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수_sinx/x_tanx/x의_극한">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각함수의_도함수_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_몫의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_y=xⁿ_n은_정수_의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수_y=xⁿ_n은_정수_의_도함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각함수의_도함수_미적2"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각함수의_도함수_미적2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#합성함수의_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합성함수의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수함수의_도함수_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_도함수_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그함수의_도함수_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그함수의_도함수_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#로그_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#로그_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_y=xⁿ_n은_실수_의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수_y=xⁿ_n은_실수_의_도함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#음함수의_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#음함수의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평면_곡선의_접선의_방정식-접점의_좌표가_주어질_때"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평면_곡선의_접선의_방정식-접점의_좌표가_주어질_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#매개변수로_나타낸_함수의_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#매개변수로_나타낸_함수의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#역함수의_미분법"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#역함수의_미분법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이계도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접선의_방정식_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#접점의_좌표가_주어질_때_접선의_방정식_구하기_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접점의_좌표가_주어질_때_접선의_방정식_구하기_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기울기가_주어질_때_접선의_방정식_구하기_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곡선_밖의_한_점의_좌표가_주어질_때_접선의_방정식_구하기_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_증가와_감소_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_증가와_감소_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극대와_극소_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_극대와_극소_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_극대와_극소의_판정_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곡선의_오목과_볼록">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#변곡점"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#변곡점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_그래프_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_그래프_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_최대와_최소_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_최대와_최소_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#방정식의_실근의_개수_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#방정식의_실근의_개수_미적">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#부등식의_증명_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#구간">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#함수의_극한의_대소_관계"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평균변화율">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사이값_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접선의_방정식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#함수_y=｛f(x)｝ⁿ의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_증가와_감소">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#평균값_정리"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#방정식의_실근의_개수">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#극값이_하나뿐일_때의_함수의_최대와_최소"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수함수의_극한">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시각에_대한_변화율"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각함수의_덧셈정리">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#로그함수의_도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_몫의_미분법">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#삼각함수의_도함수_미적"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#접선의_방정식_미적">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이계도함수"/>
+  </rdf:Description>
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곡선의_오목과_볼록">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#함수의_극대와_극소의_판정_미적"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

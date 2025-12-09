@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타이핑 효과 테스트</title>
+    <link rel="stylesheet" href="css/typing-effects.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #5b21b6;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+        
+        .test-section h2 {
+            color: #7c3aed;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .test-output {
+            min-height: 50px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .test-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        #feedback-test {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🌟 Shining Stars 타이핑 효과 테스트</h1>
+        
+        <!-- 기본 타이핑 테스트 -->
+        <div class="test-section">
+            <h2>1. 기본 타이핑 효과</h2>
+            <div class="test-output" id="basic-output"></div>
+            <div class="test-controls">
+                <button class="test-btn" onclick="testBasicTyping()">타이핑 시작</button>
+                <button class="test-btn" onclick="stopTyping()">중지</button>
+                <button class="test-btn" onclick="clearOutput('basic-output')">초기화</button>
+            </div>
+        </div>
+        
+        <!-- 키워드 하이라이트 테스트 -->
+        <div class="test-section">
+            <h2>2. 키워드 하이라이트</h2>
+            <div class="test-output" id="keyword-output"></div>
+            <div class="test-controls">
+                <button class="test-btn" onclick="testKeywordTyping()">타이핑 시작</button>
+                <button class="test-btn" onclick="clearOutput('keyword-output')">초기화</button>
+            </div>
+        </div>
+        
+        <!-- API 텍스트 생성 테스트 -->
+        <div class="test-section">
+            <h2>3. API 동적 텍스트 생성</h2>
+            <div class="test-output" id="api-output"></div>
+            <div class="test-controls">
+                <button class="test-btn" onclick="testAPIGeneration('welcome')">환영 메시지</button>
+                <button class="test-btn" onclick="testAPIGeneration('encouragement')">격려 메시지</button>
+                <button class="test-btn" onclick="testAPIGeneration('hint')">힌트</button>
+                <button class="test-btn" onclick="clearOutput('api-output')">초기화</button>
+            </div>
+        </div>
+        
+        <!-- 피드백 타이핑 테스트 -->
+        <div class="test-section">
+            <h2>4. AI 피드백 타이핑</h2>
+            <div id="feedback-test"></div>
+            <div class="test-controls">
+                <button class="test-btn" onclick="testFeedbackTyping()">피드백 생성</button>
+                <button class="test-btn" onclick="clearFeedback()">초기화</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Text Service 로드 -->
+    <script src="js/APITextService.js"></script>
+    
+    <script>
+        // 테스트 함수들
+        function testBasicTyping() {
+            const text = "안녕하세요! 🌟 Shining Stars에 오신 것을 환영합니다. 오늘은 수학적 사고의 우주를 함께 탐험해볼까요? 각 노드는 새로운 발견과 통찰을 제공할 것입니다.";
+            const element = document.getElementById('basic-output');
+            
+            window.apiTextService.typeText(element, text, {
+                speed: 30,
+                clearBefore: true,
+                pauseOnPunctuation: true
+            });
+        }
+        
+        function testKeywordTyping() {
+            const text = "수학적 사고를 통해 편향을 극복하고, 패턴을 발견하며, 논리적 해결 방법을 찾아보세요. 창의적인 접근은 새로운 가능성을 열어줍니다.";
+            const element = document.getElementById('keyword-output');
+            
+            window.apiTextService.typeText(element, text, {
+                speed: 35,
+                clearBefore: true,
+                highlightKeywords: true
+            });
+        }
+        
+        async function testAPIGeneration(context) {
+            const element = document.getElementById('api-output');
+            element.innerHTML = '<div class="loading-dots">생성 중<span>...</span></div>';
+            
+            try {
+                const text = await window.apiTextService.generateText(context);
+                await window.apiTextService.typeText(element, text, {
+                    speed: 30,
+                    clearBefore: true,
+                    highlightKeywords: true
+                });
+            } catch (error) {
+                element.textContent = '오류: ' + error.message;
+            }
+        }
+        
+        async function testFeedbackTyping() {
+            const element = document.getElementById('feedback-test');
+            
+            // 샘플 피드백 데이터
+            const sampleFeedback = {
+                positive: "깊이 있는 성찰이 돋보입니다! 구체적인 예시를 들어 설명한 점이 특히 인상적이에요. 🌟",
+                improvement: "다음에는 다른 관점에서도 생각해보면 어떨까요? 예를 들어, 이 개념이 실생활에 어떻게 적용될 수 있을지 고민해보세요.",
+                insight: "수학적 사고는 단순한 계산을 넘어 우리의 사고방식 자체를 변화시킵니다. 당신의 접근은 이러한 변화의 시작을 보여주고 있어요.",
+                questions: [
+                    "이 방법을 다른 문제에도 적용할 수 있을까요?",
+                    "왜 이런 패턴이 나타난다고 생각하나요?",
+                    "비슷한 상황을 일상에서 본 적이 있나요?"
+                ],
+                inertiaOvercome: "확증편향을 인식하고 다양한 가능성을 고려하려는 노력이 보입니다.",
+                nextChallenge: "다음 노드에서는 더 복잡한 패턴을 탐구해볼 예정입니다. 준비되셨나요?"
+            };
+            
+            await window.apiTextService.generateAndTypeFeedback(element, 'feedback', {
+                feedback: sampleFeedback
+            });
+        }
+        
+        function stopTyping() {
+            window.apiTextService.stopTyping();
+        }
+        
+        function clearOutput(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+        
+        function clearFeedback() {
+            document.getElementById('feedback-test').innerHTML = '';
+        }
+        
+        // 페이지 로드 시 초기 메시지
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('✅ API Text Service 로드됨:', window.apiTextService);
+            
+            // 자동으로 첫 번째 테스트 실행
+            setTimeout(() => {
+                testBasicTyping();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

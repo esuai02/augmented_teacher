@@ -1,0 +1,128 @@
+# 학원 과제와 학교 활동 통합 조정 데이터베이스
+# 현직 수학선생님 수준 도달을 위한 핵심 DB
+# 학생설문 및 선생님 체크리스트를 통한 데이터 수집 가정
+
+version: "1.0"
+description: "학원 과제와 학교 활동의 우선순위 및 시간 배분 전략"
+
+# 활동 유형 구분
+activity_types:
+  - type_id: "academy_homework"
+    type_name: "학원 과제"
+    default_priority: 0.8  # 기본 우선순위 (높을수록 우선)
+    typical_submission: "next_day"  # 일반적 제출 일정 (next_day, this_week, flexible)
+    difficulty_multiplier: 1.2  # 난이도 배수 (학원 과제가 일반적으로 더 어려움)
+    time_ratio: 0.6  # 전체 학습 시간 중 비중
+    
+  - type_id: "school_homework"
+    type_name: "학교 숙제"
+    default_priority: 0.6
+    typical_submission: "this_week"
+    difficulty_multiplier: 1.0
+    time_ratio: 0.4
+
+# 우선순위 판단 기준
+priority_factors:
+  - factor: "submission_deadline"
+    weight: 0.4
+    description: "제출 일정이 가까울수록 우선순위 높음"
+    calculation: |
+      if deadline == "today": priority += 0.3
+      elif deadline == "tomorrow": priority += 0.2
+      elif deadline == "this_week": priority += 0.1
+      
+  - factor: "activity_type"
+    weight: 0.3
+    description: "학원 과제는 일반적으로 학교 숙제보다 우선순위 높음"
+    calculation: |
+      if type == "academy_homework": priority += 0.2
+      elif type == "school_homework": priority += 0.1
+      
+  - factor: "difficulty"
+    weight: 0.2
+    description: "어려운 활동은 시간이 더 필요하므로 우선 배정"
+    calculation: |
+      if difficulty == "high": priority += 0.1
+      elif difficulty == "medium": priority += 0.05
+      
+  - factor: "exam_relevance"
+    weight: 0.1
+    description: "시험 관련도가 높을수록 우선순위 높음"
+    calculation: |
+      if exam_relevance == "high": priority += 0.1
+
+# 시간 배분 전략
+time_allocation_strategies:
+  - strategy_id: "balanced"
+    description: "균형 배분"
+    academy_ratio: 0.6
+    school_ratio: 0.4
+    condition: "시간 충분할 때"
+    
+  - strategy_id: "academy_priority"
+    description: "학원 과제 우선"
+    academy_ratio: 0.7
+    school_ratio: 0.3
+    condition: "학원 과제 제출 일정 임박"
+    
+  - strategy_id: "school_priority"
+    description: "학교 숙제 우선"
+    academy_ratio: 0.4
+    school_ratio: 0.6
+    condition: "학교 시험 임박 또는 학원 과제 없음"
+
+# 활동 조정 규칙
+adjustment_rules:
+  - rule_id: "deadline_priority"
+    description: "제출 일정 기반 우선순위"
+    logic: |
+      if academy_deadline == "tomorrow" and school_deadline == "this_week":
+        prioritize academy_homework
+      elif school_deadline == "tomorrow" and academy_deadline == "this_week":
+        prioritize school_homework
+      else:
+        use default_priority
+        
+  - rule_id: "difficulty_adjustment"
+    description: "난이도 기반 시간 조정"
+    logic: |
+      academy_time = base_time × academy_difficulty_multiplier
+      school_time = base_time × school_difficulty_multiplier
+      
+  - rule_id: "time_limited_adjustment"
+    description: "시간 부족 시 조정"
+    logic: |
+      if available_time < required_time:
+        if academy_deadline == "tomorrow":
+          reduce_school_homework or postpone_non_urgent_school
+        else:
+          reduce_least_priority_activities
+
+# 학생설문 항목
+student_survey_items:
+  - question: "학원 과제와 학교 활동 중 어떤 것을 우선순위로 하시나요?"
+    options: ["학원 과제 우선", "학교 활동 우선", "균형", "상황에 따라"]
+    
+  - question: "학원 과제 제출 일정은 어떻게 되나요?"
+    options: ["당일", "다음 날", "이번 주", "유연함"]
+    
+  - question: "학원 과제와 학교 활동 중 어느 것이 더 어렵나요?"
+    options: ["학원 과제", "학교 활동", "비슷함", "상황에 따라"]
+    
+  - question: "전체 학습 시간 중 학원 과제와 학교 활동의 비율은?"
+    options: ["학원 70% 학교 30%", "학원 60% 학교 40%", "학원 50% 학교 50%", "학원 40% 학교 60%"]
+
+# 선생님 체크리스트 항목
+teacher_checklist_items:
+  - item: "학원 과제 우선순위 반영 (예: 학원 과제 > 학교 숙제)"
+  - item: "학원 과제 제출 일정 고려"
+  - item: "학원/학교 활동 시간 배분 비율 설정"
+  - item: "학원 과제 난이도 반영 (일반적으로 학교보다 어려움)"
+
+# 선생님 텍스트 입력 예시
+teacher_text_input_examples:
+  - "학원 과제는 보통 내일 제출이므로 학교 숙제보다 우선순위 높음"
+  - "학원 과제와 학교 활동 시간 배분: 60% 학원, 40% 학교"
+  - "학원 과제가 일반적으로 더 어려워서 시간이 더 필요함"
+  - "학교 시험 임박 시 학교 숙제 우선순위 높임"
+

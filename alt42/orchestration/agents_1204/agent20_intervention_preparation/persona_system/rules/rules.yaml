@@ -1,0 +1,306 @@
+# Agent20 Rules - 개입 준비 에이전트 규칙 정의
+# Version: 1.0
+# URL: https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/agent20_intervention_preparation/persona_system/rules/rules.yaml
+
+version: "1.0"
+agent_id: "agent20"
+description: "개입 준비 에이전트 규칙"
+
+# ==============================================
+# 페르소나 전환 규칙
+# ==============================================
+persona_rules:
+
+  # 분석가 → 전략가 전환
+  - id: "PR001"
+    name: "분석 완료 후 전략 전환"
+    from_persona: "P20_ANALYZER"
+    to_persona: "P20_STRATEGIST"
+    conditions:
+      - field: "intervention_score"
+        operator: ">="
+        value: 0.6
+    priority: 8
+    actions:
+      - type: "select_strategy"
+        params:
+          based_on: "analysis_result"
+
+  # 전략가 → 조정자 전환
+  - id: "PR002"
+    name: "전략 선택 후 협력 조정"
+    from_persona: "P20_STRATEGIST"
+    to_persona: "P20_COORDINATOR"
+    conditions:
+      - field: "strategy_selected"
+        operator: "=="
+        value: true
+      - field: "requires_collaboration"
+        operator: "=="
+        value: true
+    priority: 6
+    actions:
+      - type: "collaborate"
+        params:
+          agents: ["agent19", "agent21"]
+
+  # 조정자 → 감시자 전환
+  - id: "PR003"
+    name: "협력 준비 완료 후 모니터링"
+    from_persona: "P20_COORDINATOR"
+    to_persona: "P20_MONITOR"
+    conditions:
+      - field: "collaboration_ready"
+        operator: "=="
+        value: true
+    priority: 5
+    actions:
+      - type: "log"
+        params:
+          level: "info"
+          message: "개입 모니터링 시작"
+
+  # 감시자 → 전략가 전환 (효과 부족)
+  - id: "PR004"
+    name: "효과 부족 시 전략 재선택"
+    from_persona: "P20_MONITOR"
+    to_persona: "P20_STRATEGIST"
+    conditions:
+      - field: "intervention_effective"
+        operator: "=="
+        value: false
+      - field: "monitoring_duration"
+        operator: ">="
+        value: 120
+    priority: 7
+    actions:
+      - type: "select_strategy"
+        params:
+          exclude_previous: true
+
+  # 긴급 상황 처리
+  - id: "PR005"
+    name: "긴급 상황 즉시 대응"
+    from_persona: "ANY"
+    to_persona: "P20_STRATEGIST"
+    conditions:
+      - field: "emergency"
+        operator: "=="
+        value: true
+    priority: 10
+    actions:
+      - type: "request_intervention"
+        params:
+          type: "immediate_help"
+          priority: 9
+
+# ==============================================
+# 개입 트리거 규칙
+# ==============================================
+intervention_rules:
+
+  # 감정적 지원 필요
+  - id: "IR001"
+    name: "감정적 지원 트리거"
+    conditions:
+      - operator: "OR"
+        conditions:
+          - field: "emotion"
+            operator: "=="
+            value: "anxiety"
+          - field: "emotion"
+            operator: "=="
+            value: "frustration"
+    strategy: "emotional_support"
+    target_agent: "agent21"
+    priority: 8
+    actions:
+      - type: "prepare_intervention"
+        params:
+          strategy: "emotional_support"
+      - type: "notify"
+        params:
+          target: "agent21"
+          message: "감정적 지원이 필요한 학생 감지"
+
+  # 인지적 비계 필요
+  - id: "IR002"
+    name: "인지적 비계 트리거"
+    conditions:
+      - operator: "OR"
+        conditions:
+          - field: "confusion_level"
+            operator: ">"
+            value: 0.7
+          - field: "error_rate"
+            operator: ">"
+            value: 0.5
+          - field: "cognitive_load"
+            operator: ">"
+            value: 0.8
+    strategy: "cognitive_scaffolding"
+    target_agent: "agent19"
+    priority: 7
+    actions:
+      - type: "prepare_intervention"
+        params:
+          strategy: "cognitive_scaffolding"
+      - type: "notify"
+        params:
+          target: "agent19"
+          message: "학습 지원이 필요한 학생 감지"
+
+  # 동기 부여 필요
+  - id: "IR003"
+    name: "동기 부여 트리거"
+    conditions:
+      - operator: "OR"
+        conditions:
+          - field: "emotion"
+            operator: "=="
+            value: "boredom"
+          - field: "engagement"
+            operator: "<"
+            value: 0.3
+    strategy: "motivation_boost"
+    target_agent: "agent18"
+    priority: 6
+    actions:
+      - type: "prepare_intervention"
+        params:
+          strategy: "motivation_boost"
+      - type: "notify"
+        params:
+          target: "agent18"
+          message: "동기 부여가 필요한 학생 감지"
+
+  # 행동 안내 필요
+  - id: "IR004"
+    name: "행동 안내 트리거"
+    conditions:
+      - operator: "OR"
+        conditions:
+          - field: "off_task"
+            operator: "=="
+            value: true
+          - field: "rushing"
+            operator: "=="
+            value: true
+    strategy: "behavior_guidance"
+    target_agent: "agent17"
+    priority: 5
+    actions:
+      - type: "prepare_intervention"
+        params:
+          strategy: "behavior_guidance"
+
+  # 즉각적 도움 필요
+  - id: "IR005"
+    name: "즉각적 도움 트리거"
+    conditions:
+      - operator: "OR"
+        conditions:
+          - field: "stuck"
+            operator: "=="
+            value: true
+          - field: "help_requests"
+            operator: ">="
+            value: 3
+    strategy: "immediate_help"
+    target_agent: "agent21"
+    priority: 9
+    actions:
+      - type: "request_intervention"
+        params:
+          type: "immediate_help"
+          priority: 9
+
+# ==============================================
+# 쿨다운 규칙
+# ==============================================
+cooldown_rules:
+
+  - id: "CD001"
+    name: "기본 쿨다운"
+    after_intervention: true
+    cooldown_minutes: 10
+    exceptions:
+      - condition:
+          field: "emergency"
+          operator: "=="
+          value: true
+        cooldown_minutes: 0
+
+  - id: "CD002"
+    name: "같은 전략 쿨다운"
+    same_strategy: true
+    cooldown_minutes: 15
+
+# ==============================================
+# 협력 규칙
+# ==============================================
+collaboration_rules:
+
+  - id: "CR001"
+    name: "복합 개입 협력"
+    conditions:
+      - field: "risk_signals_count"
+        operator: ">="
+        value: 3
+    collaborators:
+      - agent_id: "agent19"
+        role: "learning_support"
+      - agent_id: "agent21"
+        role: "intervention_executor"
+    priority: 8
+
+  - id: "CR002"
+    name: "감정-학습 복합 협력"
+    conditions:
+      - field: "emotion"
+        operator: "in"
+        value: ["anxiety", "frustration"]
+      - field: "error_rate"
+        operator: ">"
+        value: 0.3
+    collaborators:
+      - agent_id: "agent18"
+        role: "motivation"
+      - agent_id: "agent21"
+        role: "emotional_support"
+    priority: 7
+
+# ==============================================
+# 모니터링 규칙
+# ==============================================
+monitoring_rules:
+
+  - id: "MR001"
+    name: "개입 효과 모니터링"
+    trigger_after: "intervention_start"
+    check_interval_seconds: 30
+    success_criteria:
+      - field: "emotion_trend"
+        operator: "=="
+        value: "improving"
+      - field: "engagement"
+        operator: ">"
+        value: 0.5
+    max_duration_seconds: 300
+
+  - id: "MR002"
+    name: "실패 시 재개입"
+    conditions:
+      - field: "intervention_effective"
+        operator: "=="
+        value: false
+      - field: "retry_count"
+        operator: "<"
+        value: 3
+    actions:
+      - type: "select_strategy"
+        params:
+          exclude_previous: true
+      - type: "adjust_priority"
+        params:
+          adjustment: 1

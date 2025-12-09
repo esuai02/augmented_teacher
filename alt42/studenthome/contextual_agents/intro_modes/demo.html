@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent System Demo - 에이전트 시스템 데모</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .demo-section h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active { background: #28a745; }
+        .status-inactive { background: #dc3545; }
+        .status-pending { background: #ffc107; }
+        
+        .agent-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+        }
+        
+        .agent-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .agent-card .description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Agent System Demo</h1>
+            <p>MD 파일 기반 지능형 에이전트 시스템 데모</p>
+        </div>
+        
+        <div class="grid">
+            <!-- 사용자 데이터 입력 -->
+            <div class="demo-section">
+                <h2>👤 사용자 데이터</h2>
+                <div class="input-group">
+                    <label>사용자 ID</label>
+                    <input type="text" id="userId" value="demo_user" placeholder="사용자 ID를 입력하세요">
+                </div>
+                <div class="input-group">
+                    <label>현재 점수</label>
+                    <input type="number" id="currentScore" value="75" placeholder="0-100">
+                </div>
+                <div class="input-group">
+                    <label>취약 영역</label>
+                    <input type="text" id="weakAreas" value="확률,수열" placeholder="쉼표로 구분">
+                </div>
+                <div class="input-group">
+                    <label>학습 패턴</label>
+                    <select id="studyPattern">
+                        <option value="visual">시각형</option>
+                        <option value="auditory">청각형</option>
+                        <option value="kinesthetic">실습형</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>시험일 (선택)</label>
+                    <input type="date" id="examDate">
+                </div>
+                <div class="input-group">
+                    <label>동기 수준 (0-1)</label>
+                    <input type="number" id="motivationLevel" value="0.7" step="0.1" min="0" max="1">
+                </div>
+                <div class="input-group">
+                    <label>자율성 수준 (0-1)</label>
+                    <input type="number" id="autonomyRate" value="0.6" step="0.1" min="0" max="1">
+                </div>
+            </div>
+            
+            <!-- 시스템 상태 -->
+            <div class="demo-section">
+                <h2>⚡ 시스템 상태</h2>
+                <button class="btn" onclick="getSystemStatus()">상태 확인</button>
+                <button class="btn" onclick="getAvailableAgents()">사용 가능한 에이전트</button>
+                <button class="btn btn-secondary" onclick="cleanupSystem()">시스템 정리</button>
+                <div id="systemStatus" class="result-box" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🎯 에이전트 추천</h2>
+            <button class="btn" onclick="getRecommendation()">추천 받기</button>
+            <div class="loading" id="recommendLoading">추천을 분석하고 있습니다...</div>
+            <div id="recommendation" class="result-box" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🚀 에이전트 실행</h2>
+            <div class="input-group">
+                <label>에이전트 모드</label>
+                <select id="agentMode">
+                    <option value="curriculumcentered">📚 체계적 진도형</option>
+                    <option value="examcentered">✏️ 성과 집중형</option>
+                    <option value="adaptationcentered">🎯 개인 맞춤형</option>
+                    <option value="missioncentered">⚡ 목표 달성형</option>
+                    <option value="reflectioncentered">🧠 사고력 중심형</option>
+                    <option value="selfdriven">🚀 자율학습형</option>
+                    <option value="apprentice">🔍 인지적 도제형</option>
+                    <option value="curiositycentered">🔭 호기심 중심형</option>
+                    <option value="timecentered">🕒 시간 피드백형</option>
+                </select>
+            </div>
+            <button class="btn" onclick="startAgent()">에이전트 시작</button>
+            <button class="btn" onclick="executeAgent()">실행</button>
+            <button class="btn btn-secondary" onclick="stopAgent()">중지</button>
+            
+            <div class="input-group" style="margin-top: 20px;">
+                <label>실행 입력 (JSON)</label>
+                <textarea id="executionInput" rows="3" placeholder='{"action": "analyze", "focus": "progress"}'></textarea>
+            </div>
+            
+            <div class="loading" id="agentLoading">에이전트를 처리하고 있습니다...</div>
+            <div id="agentResult" class="result-box" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🔄 에이전트 블렌딩</h2>
+            <div class="input-group">
+                <label>블렌딩할 모드들 (Ctrl+Click으로 다중 선택)</label>
+                <select id="blendModes" multiple size="5">
+                    <option value="curriculumcentered">📚 체계적 진도형</option>
+                    <option value="examcentered">✏️ 성과 집중형</option>
+                    <option value="adaptationcentered">🎯 개인 맞춤형</option>
+                    <option value="missioncentered">⚡ 목표 달성형</option>
+                    <option value="apprentice">🔍 인지적 도제형</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>상황 설명</label>
+                <input type="text" id="situation" placeholder="예: 시험 임박, 기초 부족, 동기 저하">
+            </div>
+            <button class="btn" onclick="blendAgents()">블렌딩 실행</button>
+            <div id="blendResult" class="result-box" style="display: none;"></div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🔧 에이전트 검증</h2>
+            <div class="input-group">
+                <label>검증할 모드</label>
+                <select id="validateMode">
+                    <option value="curriculumcentered">📚 체계적 진도형</option>
+                    <option value="examcentered">✏️ 성과 집중형</option>
+                    <option value="adaptationcentered">🎯 개인 맞춤형</option>
+                </select>
+            </div>
+            <button class="btn" onclick="validateAgent()">검증하기</button>
+            <div id="validateResult" class="result-box" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentAgentId = null;
+        const API_BASE = 'api.php';
+
+        // API 호출 헬퍼
+        async function apiCall(endpoint, data = null) {
+            const options = {
+                method: data ? 'POST' : 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // 사용자 데이터 수집
+        function getUserData() {
+            return {
+                user_id: document.getElementById('userId').value,
+                current_score: parseInt(document.getElementById('currentScore').value),
+                weak_areas: document.getElementById('weakAreas').value.split(',').map(s => s.trim()),
+                study_pattern: document.getElementById('studyPattern').value,
+                exam_date: document.getElementById('examDate').value,
+                motivation_level: parseFloat(document.getElementById('motivationLevel').value),
+                autonomy_rate: parseFloat(document.getElementById('autonomyRate').value)
+            };
+        }
+
+        // 결과 표시
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result-box ${isError ? 'error' : 'success'}`;
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // 로딩 표시/숨김
+        function toggleLoading(elementId, show = true) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.classList.toggle('show', show);
+            }
+        }
+
+        // 시스템 상태 확인
+        async function getSystemStatus() {
+            try {
+                const result = await apiCall('/status');
+                showResult('systemStatus', result);
+            } catch (error) {
+                showResult('systemStatus', {error: error.message}, true);
+            }
+        }
+
+        // 사용 가능한 에이전트 조회
+        async function getAvailableAgents() {
+            try {
+                const result = await apiCall('/agents');
+                showResult('systemStatus', result);
+            } catch (error) {
+                showResult('systemStatus', {error: error.message}, true);
+            }
+        }
+
+        // 시스템 정리
+        async function cleanupSystem() {
+            try {
+                const result = await apiCall('/cleanup', {});
+                showResult('systemStatus', result);
+            } catch (error) {
+                showResult('systemStatus', {error: error.message}, true);
+            }
+        }
+
+        // 에이전트 추천
+        async function getRecommendation() {
+            toggleLoading('recommendLoading', true);
+            try {
+                const userData = getUserData();
+                const result = await apiCall('/agents/recommend', {user_data: userData});
+                showResult('recommendation', result);
+            } catch (error) {
+                showResult('recommendation', {error: error.message}, true);
+            } finally {
+                toggleLoading('recommendLoading', false);
+            }
+        }
+
+        // 에이전트 시작
+        async function startAgent() {
+            toggleLoading('agentLoading', true);
+            try {
+                const userData = getUserData();
+                const mode = document.getElementById('agentMode').value;
+                
+                const result = await apiCall('/agents/start', {
+                    mode: mode,
+                    user_id: userData.user_id,
+                    user_data: userData
+                });
+                
+                if (result.success && result.data.agent_id) {
+                    currentAgentId = result.data.agent_id;
+                }
+                
+                showResult('agentResult', result);
+            } catch (error) {
+                showResult('agentResult', {error: error.message}, true);
+            } finally {
+                toggleLoading('agentLoading', false);
+            }
+        }
+
+        // 에이전트 실행
+        async function executeAgent() {
+            if (!currentAgentId) {
+                showResult('agentResult', {error: '먼저 에이전트를 시작해주세요'}, true);
+                return;
+            }
+            
+            toggleLoading('agentLoading', true);
+            try {
+                let input = null;
+                const inputText = document.getElementById('executionInput').value.trim();
+                if (inputText) {
+                    try {
+                        input = JSON.parse(inputText);
+                    } catch (e) {
+                        throw new Error('입력 JSON이 올바르지 않습니다: ' + e.message);
+                    }
+                }
+                
+                const result = await apiCall('/agents/execute', {
+                    agent_id: currentAgentId,
+                    input: input
+                });
+                
+                showResult('agentResult', result);
+            } catch (error) {
+                showResult('agentResult', {error: error.message}, true);
+            } finally {
+                toggleLoading('agentLoading', false);
+            }
+        }
+
+        // 에이전트 중지
+        async function stopAgent() {
+            if (!currentAgentId) {
+                showResult('agentResult', {error: '실행 중인 에이전트가 없습니다'}, true);
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/agents/stop', {
+                    agent_id: currentAgentId
+                });
+                
+                currentAgentId = null;
+                showResult('agentResult', result);
+            } catch (error) {
+                showResult('agentResult', {error: error.message}, true);
+            }
+        }
+
+        // 에이전트 블렌딩
+        async function blendAgents() {
+            try {
+                const userData = getUserData();
+                const modeSelect = document.getElementById('blendModes');
+                const selectedModes = Array.from(modeSelect.selectedOptions).map(option => option.value);
+                const situation = document.getElementById('situation').value;
+                
+                if (selectedModes.length < 2) {
+                    showResult('blendResult', {error: '최소 2개 모드를 선택해주세요'}, true);
+                    return;
+                }
+                
+                const result = await apiCall('/agents/blend', {
+                    modes: selectedModes,
+                    situation: situation,
+                    user_id: userData.user_id,
+                    user_data: userData
+                });
+                
+                showResult('blendResult', result);
+            } catch (error) {
+                showResult('blendResult', {error: error.message}, true);
+            }
+        }
+
+        // 에이전트 검증
+        async function validateAgent() {
+            try {
+                const mode = document.getElementById('validateMode').value;
+                
+                const result = await apiCall('/agents/validate', {
+                    mode: mode
+                });
+                
+                showResult('validateResult', result);
+            } catch (error) {
+                showResult('validateResult', {error: error.message}, true);
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 오늘부터 30일 후를 기본 시험일로 설정
+            const examDate = new Date();
+            examDate.setDate(examDate.getDate() + 30);
+            document.getElementById('examDate').value = examDate.toISOString().split('T')[0];
+            
+            // 초기 상태 확인
+            getSystemStatus();
+        });
+    </script>
+</body>
+</html>

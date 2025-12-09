@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API 테스트</title>
+    <meta charset="utf-8">
+</head>
+<body>
+    <h1>Math Patterns API 테스트</h1>
+    
+    <button onclick="testAPI()">API 테스트</button>
+    
+    <h2>결과:</h2>
+    <pre id="result" style="background: #f0f0f0; padding: 20px; min-height: 200px;">
+    버튼을 클릭하여 API를 테스트하세요.
+    </pre>
+    
+    <script>
+    async function testAPI() {
+        const resultEl = document.getElementById('result');
+        resultEl.textContent = '로딩 중...';
+        
+        try {
+            // 절대 경로로 API 호출
+            const response = await fetch('/moodle/local/augmented_teacher/alt42/shiningstars/api/get_math_patterns.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: 1  // 테스트용 user_id
+                })
+            });
+            
+            console.log('Response status:', response.status);
+            const text = await response.text();
+            console.log('Response text:', text);
+            
+            try {
+                const data = JSON.parse(text);
+                resultEl.textContent = JSON.stringify(data, null, 2);
+                
+                // 데이터 요약 출력
+                console.log('패턴 수:', data.patterns ? data.patterns.length : 0);
+                console.log('카테고리 수:', data.categories ? data.categories.length : 0);
+            } catch (parseError) {
+                resultEl.textContent = '파싱 오류:\n' + parseError.message + '\n\n원본 응답:\n' + text;
+            }
+            
+        } catch (error) {
+            resultEl.textContent = '오류 발생:\n' + error.message;
+            console.error('Error:', error);
+        }
+    }
+    </script>
+</body>
+</html>

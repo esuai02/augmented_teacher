@@ -1,0 +1,494 @@
+openapi: 3.0.3
+info:
+  title: Mathking Decision API
+  description: |
+    Mathking 자동개입 v1.0 - 온톨로지 기반 AI 튜터 시스템 API
+
+    **현재 단계**: 리포트/지시문 생성 및 추적만 수행 (LMS 실제 기능 호출은 v2)
+
+    **설계 원칙**:
+    - 규칙엔진 우선 → LLM 보완
+    - 모든 액션은 리포트만 생성
+    - 페르소나 유사도 기반 지시성 강도 조절
+    - 30분 heartbeat 기반
+  version: "1.0.0"
+  contact:
+    name: Mathking Team
+    url: https://mathking.kr
+
+servers:
+  - url: https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/api/v1
+    description: Production server
+  - url: http://localhost:8000/api/v1
+    description: Development server
+
+tags:
+  - name: agents
+    description: 에이전트 관리 및 실행
+  - name: persona
+    description: 페르소나 상태 및 프로필
+  - name: ontology
+    description: 온톨로지 쿼리
+  - name: reports
+    description: 리포트 및 지시문 조회
+  - name: decisions
+    description: 의사결정 로그
+
+paths:
+  /agents:
+    get:
+      tags: [agents]
+      summary: 전체 에이전트 목록 조회
+      description: registry.yaml에 등록된 모든 에이전트 반환
+      responses:
+        '200':
+          description: 에이전트 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agents:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AgentMeta'
+                  total:
+                    type: integer
+
+  /agents/{agent_id}:
+    get:
+      tags: [agents]
+      summary: 특정 에이전트 상세 조회
+      parameters:
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: agent_curriculum
+      responses:
+        '200':
+          description: 에이전트 상세 정보
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDetail'
+
+  /agents/{agent_id}/tasks:
+    get:
+      tags: [agents]
+      summary: 에이전트의 태스크 목록
+      parameters:
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 태스크 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agent_id:
+                    type: string
+                  tasks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TaskSummary'
+
+  /agents/{agent_id}/tasks/{task_id}/simulate:
+    post:
+      tags: [agents]
+      summary: 리포트 전용 의사결정 시뮬레이션
+      description: |
+        주어진 Evidence와 State로 규칙/LLM 실행하여 리포트/지시문 생성
+        (실제 LMS 기능 호출 없음)
+      parameters:
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimulationInput'
+      responses:
+        '200':
+          description: 시뮬레이션 결과
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Decision'
+        '400':
+          description: 잘못된 입력
+        '404':
+          description: 에이전트/태스크 없음
+
+  /persona/{persona_id}/state:
+    get:
+      tags: [persona]
+      summary: 페르소나 현재 상태 조회
+      description: mdl_prsn_activestate에서 최신 상태 반환
+      parameters:
+        - name: persona_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 페르소나 상태
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonaState'
+
+    post:
+      tags: [persona]
+      summary: 페르소나 상태 업데이트
+      description: mdl_prsn_activestate에 새 상태 저장
+      parameters:
+        - name: persona_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonaState'
+      responses:
+        '200':
+          description: 업데이트 성공
+        '400':
+          description: 잘못된 입력
+
+  /persona/{persona_id}/profile:
+    get:
+      tags: [persona]
+      summary: 페르소나 프로필 조회
+      description: mdl_prsn_usermap에서 프로필 반환
+      parameters:
+        - name: persona_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 페르소나 프로필
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonaProfile'
+
+  /ontology/query:
+    post:
+      tags: [ontology]
+      summary: 온톨로지 SPARQL 쿼리
+      description: ontology.jsonld에 대한 쿼리 실행
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                  description: SPARQL 쿼리
+      responses:
+        '200':
+          description: 쿼리 결과
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /reports/{decision_id}:
+    get:
+      tags: [reports]
+      summary: 생성된 리포트/지시문 조회
+      parameters:
+        - name: decision_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 리포트 상세
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  decision_id:
+                    type: string
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportDirective'
+
+  /decisions:
+    get:
+      tags: [decisions]
+      summary: 의사결정 로그 조회
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: string
+        - name: agent_id
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        '200':
+          description: 의사결정 로그 목록
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  decisions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Decision'
+                  total:
+                    type: integer
+
+components:
+  schemas:
+    AgentMeta:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+        heartbeat_min:
+          type: integer
+
+    AgentDetail:
+      allOf:
+        - $ref: '#/components/schemas/AgentMeta'
+        - type: object
+          properties:
+            description:
+              type: string
+            contexts:
+              type: array
+              items:
+                type: string
+            tasks:
+              type: array
+              items:
+                type: string
+            kpis:
+              type: array
+              items:
+                type: string
+
+    TaskSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        goal:
+          type: string
+        kpi:
+          type: array
+          items:
+            type: string
+        triggers:
+          type: array
+          items:
+            type: string
+
+    SimulationInput:
+      type: object
+      required:
+        - evidence
+        - state
+      properties:
+        evidence:
+          $ref: '#/components/schemas/Evidence'
+        state:
+          $ref: '#/components/schemas/PersonaState'
+        dry_run:
+          type: boolean
+          default: false
+
+    Evidence:
+      type: object
+      required:
+        - user_id
+        - metrics
+        - window
+      properties:
+        user_id:
+          type: string
+        metrics:
+          type: object
+          properties:
+            correct_rate:
+              type: number
+            retry_count:
+              type: integer
+            time_on_task_min:
+              type: number
+            progress_delta:
+              type: number
+        window:
+          type: object
+          properties:
+            start_ts:
+              type: string
+              format: date-time
+            end_ts:
+              type: string
+              format: date-time
+        context:
+          type: object
+          properties:
+            class_status:
+              type: string
+              enum: [start, mid, end_30min]
+            week_first_class:
+              type: boolean
+
+    PersonaState:
+      type: object
+      required:
+        - persona_id
+        - affect
+        - focus
+        - load
+        - ts
+      properties:
+        persona_id:
+          type: string
+        affect:
+          type: string
+          enum: [low, med, high]
+        focus:
+          type: number
+          minimum: 0
+          maximum: 1
+        load:
+          type: string
+          enum: [low, med, high]
+        ts:
+          type: string
+          format: date-time
+
+    PersonaProfile:
+      type: object
+      properties:
+        persona_id:
+          type: string
+        user_id:
+          type: string
+        traits:
+          type: array
+          items:
+            type: string
+        similarity_vector:
+          type: array
+          items:
+            type: number
+        directive_strength_modifier:
+          type: number
+
+    Decision:
+      type: object
+      properties:
+        id:
+          type: string
+        agent_id:
+          type: string
+        task_id:
+          type: string
+        persona_id:
+          type: string
+        outcome:
+          type: string
+          enum: [approve, adjust, deny, defer]
+        confidence:
+          type: number
+        rationale:
+          type: string
+        recommended:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReportDirective'
+        cost:
+          type: object
+          properties:
+            tokens:
+              type: integer
+            ms:
+              type: integer
+        ts:
+          type: string
+          format: date-time
+
+    ReportDirective:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [report, directive]
+        template_id:
+          type: string
+        params:
+          type: object
+        priority:
+          type: number
+        idempotency_key:
+          type: string
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

@@ -1,0 +1,666 @@
+/* 인지관성 개선 - 문제풀이 상호작용 시스템 스타일 */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0f1419;
+    color: #e6e8eb;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+.bias-main-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 헤더 스타일 */
+.bias-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #1e40af;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.back-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #e6e8eb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.bias-header h1 {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #e6e8eb;
+    font-size: 0.9rem;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #10b981;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 메인 콘텐츠 */
+.bias-content {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* 단계 선택 영역 */
+.phase-selector {
+    margin-bottom: 2rem;
+}
+
+.phase-selector h2 {
+    color: #60a5fa;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.phase-selector-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.skip-button {
+    position: absolute;
+    right: 0;
+    background-color: #374151;
+    color: #e6e8eb;
+    border: 1px solid #4b5563;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.skip-button:hover {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    transform: translateX(2px);
+}
+
+.phase-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.phase-button {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    border: 2px solid #4b5563;
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    color: #e6e8eb;
+}
+
+.phase-button:hover {
+    border-color: #60a5fa;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(96, 165, 250, 0.3);
+}
+
+.phase-button.active {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.phase-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.phase-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.phase-desc {
+    font-size: 0.9rem;
+    color: #d1d5db;
+    line-height: 1.4;
+}
+
+/* 상호작용 영역 */
+.interaction-area {
+    background-color: #111827;
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid #374151;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 학생 정보 섹션 */
+.student-info-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #374151;
+}
+
+.student-info-section h3 {
+    color: #60a5fa;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.info-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.info-input {
+    background-color: #1f2937;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    color: #e6e8eb;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.info-input:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.info-input option {
+    background-color: #1f2937;
+    color: #e6e8eb;
+}
+
+/* 단계 정보 섹션 */
+.phase-info-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #0f172a;
+    border-radius: 0.75rem;
+    border-left: 4px solid #3b82f6;
+}
+
+.phase-info-section h3 {
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.phase-info-section p {
+    color: #d1d5db;
+    line-height: 1.5;
+}
+
+/* 패턴 선택 섹션 */
+.pattern-selection-section {
+    margin-bottom: 2rem;
+}
+
+.pattern-selection-section h3 {
+    color: #60a5fa;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    transition: max-height 0.3s ease;
+}
+
+.pattern-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.pattern-grid::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+}
+
+.pattern-grid::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 4px;
+}
+
+.pattern-grid::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+.pattern-item {
+    background-color: #1f2937;
+    border: 1px solid #4b5563;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.pattern-item:hover {
+    border-color: #60a5fa;
+    background-color: #374151;
+}
+
+.pattern-item.selected {
+    border-color: #3b82f6;
+    background-color: #1e40af;
+}
+
+.pattern-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.pattern-icon {
+    font-size: 1.5rem;
+}
+
+.pattern-title {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+.pattern-category {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    background-color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    align-self: flex-start;
+}
+
+.pattern-item.selected .pattern-category {
+    background-color: #1e3a8a;
+}
+
+.pattern-description {
+    color: #d1d5db;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.pattern-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+}
+
+.pattern-priority {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.pattern-priority.priority-high {
+    background-color: #dc26264d;
+    color: #fca5a5;
+}
+
+.pattern-priority.priority-medium {
+    background-color: #d9782233;
+    color: #fbbf24;
+}
+
+.pattern-priority.priority-low {
+    background-color: #10b98133;
+    color: #86efac;
+}
+
+.pattern-time {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* 메시지 섹션 */
+.message-section {
+    margin-bottom: 2rem;
+}
+
+.message-section h3 {
+    color: #60a5fa;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.message-preview {
+    background-color: #0f172a;
+    border: 1px solid #374151;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.message-content {
+    color: #e6e8eb;
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.message-content strong {
+    color: #60a5fa;
+    font-weight: 600;
+}
+
+.message-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.edit-message-btn, .send-message-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.edit-message-btn {
+    background-color: #6b7280;
+    color: #ffffff;
+}
+
+.edit-message-btn:hover {
+    background-color: #4b5563;
+}
+
+.send-message-btn {
+    background-color: #059669;
+    color: #ffffff;
+}
+
+.send-message-btn:hover {
+    background-color: #047857;
+}
+
+/* 연쇄상호작용 섹션 */
+.chain-interaction-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: #0f172a;
+    border-radius: 0.75rem;
+    border: 1px solid #1e40af;
+}
+
+.chain-interaction-section h3 {
+    color: #60a5fa;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.similar-students {
+    margin-bottom: 1rem;
+}
+
+.student-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f2937;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #374151;
+}
+
+.student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.student-name {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.student-grade {
+    color: #9ca3af;
+    font-size: 0.85rem;
+}
+
+.student-similarity {
+    color: #60a5fa;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.chain-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.chain-send-btn {
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.chain-send-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* 상태 영역 */
+.status-area {
+    background-color: #111827;
+    border-top: 1px solid #374151;
+    padding: 1rem 2rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.status-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.status-message {
+    background-color: #065f46;
+    color: #6ee7b7;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    border-left: 3px solid #10b981;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 더보기 버튼 스타일 */
+.show-more-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.show-more-btn {
+    background-color: #374151;
+    color: #e6e8eb;
+    border: 1px solid #4b5563;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.show-more-btn:hover {
+    background-color: #4b5563;
+    border-color: #6b7280;
+    transform: translateY(-1px);
+}
+
+.show-more-btn span:last-child {
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+}
+
+/* 체험 모드 스타일 */
+.demo-mode-banner {
+    background-color: #dc2626;
+    color: #ffffff;
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: none;
+}
+
+.demo-mode-banner.active {
+    display: block;
+}
+
+.bias-main-container.demo-mode {
+    padding-top: 3rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .bias-header {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .bias-content {
+        padding: 1rem;
+    }
+    
+    .phase-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-inputs {
+        grid-template-columns: 1fr;
+    }
+    
+    .pattern-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .message-actions {
+        flex-direction: column;
+    }
+    
+    .phase-selector-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .skip-button {
+        position: static;
+        margin-top: 0.5rem;
+    }
+}

@@ -1,0 +1,1263 @@
+# Persona-based Response Rules for Agent 21 - Intervention Execution
+# Version: 1.0
+# Purpose: 개입 반응 유형 기반 맞춤형 후속 개입 전략 결정
+# Reference: personas.md, contextlist.md, ActionExecutor.php, ConditionEvaluator.php
+
+version: "1.0"
+scenario: "intervention_response_handling"
+description: "학생의 개입 반응 유형(A/R/N/D) 식별 및 맞춤형 후속 전략 생성"
+
+# ============================================================
+# SECTION 1: 반응 유형 식별 룰 (Response Type Identification)
+# ============================================================
+
+response_type_identification_rules:
+
+  # === A: 수용형 (Acceptance) 식별 ===
+
+  - rule_id: "RTI_A_001_immediate_complier"
+    priority: 90
+    description: "즉각적 순응자(A_P1) 식별"
+    conditions:
+      - OR:
+        - field: "response_time"
+          operator: "<="
+          value: "1h"
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["네, 그렇게 할게요", "알겠습니다", "바로 시작할게요", "좋아요"]
+        - field: "task_acceptance"
+          operator: "=="
+          value: "immediate"
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P1'"
+      - "set_tone: 'Encouraging'"
+      - "set_intervention_intensity: 'gentle'"
+      - "prioritize_intervention: 'SkillBuilding'"
+    confidence: 0.88
+    rationale: "즉각적인 긍정 응답과 빠른 반응 시간은 수용의 강한 신호"
+
+  - rule_id: "RTI_A_002_engaged_learner"
+    priority: 88
+    description: "적극적 수용자(A_P2) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["더 알려주세요", "어떻게 하면 더 잘할 수 있어요", "추가 자료 있어요?", "좋은 방법 같아요"]
+        - field: "question_count"
+          operator: ">="
+          value: 2
+        - field: "engagement_level"
+          operator: ">="
+          value: "high"
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P2'"
+      - "set_tone: 'Professional'"
+      - "set_information_depth: 'comprehensive'"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.90
+    rationale: "추가 질문과 높은 참여도는 적극적 수용의 핵심 지표"
+
+  - rule_id: "RTI_A_003_conditional_accepter"
+    priority: 85
+    description: "조건부 수용자(A_P3) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이것만 하면 되죠?", "이렇게 해도 될까요?", "대신에", "일단"]
+        - field: "accepts_with_modification"
+          operator: "=="
+          value: true
+        - field: "negotiation_attempt"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P3'"
+      - "set_tone: 'Collaborative'"
+      - "provide_flexibility: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.84
+    rationale: "조건 제시와 협상 시도는 조건부 수용의 신호"
+
+  - rule_id: "RTI_A_004_gradual_accepter"
+    priority: 83
+    description: "점진적 수용자(A_P4) 식별"
+    conditions:
+      - AND:
+        - field: "previous_response_type"
+          operator: "in"
+          value: ["R", "N", "D"]
+        - field: "current_response"
+          operator: "=="
+          value: "positive"
+        - field: "resistance_level"
+          operator: "<="
+          value: "mild"
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P4'"
+      - "set_tone: 'Patient'"
+      - "acknowledge_progress: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.86
+    rationale: "이전 저항/무응답에서 긍정 반응으로 전환은 점진적 수용의 신호"
+
+  - rule_id: "RTI_A_005_surface_accepter"
+    priority: 82
+    description: "표면적 수용자(A_P5) 식별"
+    conditions:
+      - AND:
+        - field: "verbal_agreement"
+          operator: "=="
+          value: true
+        - OR:
+          - field: "actual_action"
+            operator: "=="
+            value: "none"
+          - field: "follow_through"
+            operator: "<="
+            value: 30
+          - field: "response_depth"
+            operator: "=="
+            value: "shallow"
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P5'"
+      - "set_tone: 'Encouraging'"
+      - "add_flag: 'verify_follow_through'"
+      - "set_followup_action: 'check_in'"
+      - "prioritize_intervention: 'BehaviorModification'"
+    confidence: 0.80
+    rationale: "말과 행동의 불일치는 표면적 수용의 경고 신호"
+
+  - rule_id: "RTI_A_006_enthusiastic_accepter"
+    priority: 91
+    description: "열정적 수용자(A_P6) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["정말 좋아요!", "너무 기대돼요", "빨리 해보고 싶어요", "완전 좋은 생각이에요"]
+        - field: "enthusiasm_level"
+          operator: ">="
+          value: "very_high"
+        - field: "exclamation_marks"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_response_type: 'A'"
+      - "identify_persona: 'A_P6'"
+      - "set_tone: 'Encouraging'"
+      - "maintain_momentum: true"
+      - "warn_burnout_risk: true"
+      - "prioritize_intervention: 'GoalSetting'"
+    confidence: 0.89
+    rationale: "높은 열정과 흥분 표현은 열정적 수용의 명확한 신호"
+
+  # === R: 저항형 (Resistance) 식별 ===
+
+  - rule_id: "RTI_R_001_explicit_refuser"
+    priority: 95
+    description: "명시적 거부자(R_P1) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["싫어요", "안 할래요", "하기 싫어요", "거부합니다", "절대 안 해요"]
+        - field: "refusal_explicit"
+          operator: "=="
+          value: true
+        - field: "negative_sentiment"
+          operator: ">="
+          value: 0.8
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P1'"
+      - "set_tone: 'Calm'"
+      - "set_intervention_intensity: 'gentle'"
+      - "activate_alternative_strategy: 'simplify'"
+      - "prioritize_intervention: 'ResistanceHandling'"
+    confidence: 0.94
+    rationale: "명시적 거부 표현은 저항의 가장 분명한 신호"
+
+  - rule_id: "RTI_R_002_passive_resister"
+    priority: 88
+    description: "수동적 저항자(R_P2) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["글쎄요", "나중에요", "생각해볼게요", "음..."]
+        - field: "evasive_responses"
+          operator: ">="
+          value: 2
+        - field: "vague_commitments"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P2'"
+      - "set_tone: 'Patient'"
+      - "set_pace: 'slow'"
+      - "provide_smaller_steps: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.85
+    rationale: "회피적 응답과 모호한 약속은 수동적 저항의 지표"
+
+  - rule_id: "RTI_R_003_negotiator"
+    priority: 86
+    description: "협상적 저항자(R_P3) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["대신에 이건 어때요?", "이것만 빼면 안 돼요?", "다르게 하면요?", "조건이 있어요"]
+        - field: "counter_proposal"
+          operator: "=="
+          value: true
+        - field: "bargaining_behavior"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P3'"
+      - "set_tone: 'Collaborative'"
+      - "allow_negotiation: true"
+      - "find_compromise: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.87
+    rationale: "대안 제시와 협상 시도는 협상적 저항의 핵심 신호"
+
+  - rule_id: "RTI_R_004_excuse_maker"
+    priority: 84
+    description: "핑계형 저항자(R_P4) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["시간이 없어요", "너무 바빠요", "다른 게 먼저예요", "상황이 안 돼요", "힘들어서"]
+        - field: "external_excuse"
+          operator: "=="
+          value: true
+        - field: "blame_external"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P4'"
+      - "set_tone: 'Empathetic'"
+      - "acknowledge_difficulty: true"
+      - "offer_minimal_version: true"
+      - "prioritize_intervention: 'SafetyNet'"
+    confidence: 0.83
+    rationale: "외부 요인 탓과 핑계는 저항의 간접적 표현"
+
+  - rule_id: "RTI_R_005_challenging_resister"
+    priority: 89
+    description: "도전적 저항자(R_P5) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["왜 해야 해요?", "이게 도움이 돼요?", "근거가 뭐예요?", "증명해 봐요"]
+        - field: "challenges_authority"
+          operator: "=="
+          value: true
+        - field: "demands_justification"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P5'"
+      - "set_tone: 'Professional'"
+      - "provide_evidence: true"
+      - "respect_critical_thinking: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.88
+    rationale: "근거 요구와 도전적 질문은 지적 저항의 신호"
+
+  - rule_id: "RTI_R_006_emotional_resister"
+    priority: 92
+    description: "감정적 저항자(R_P6) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["짜증나요", "화나요", "왜 자꾸 그래요", "스트레스 받아요", "싫어"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "frustrated"
+        - field: "anger_indicators"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'R'"
+      - "identify_persona: 'R_P6'"
+      - "set_tone: 'Calm'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "validate_feelings: true"
+      - "pause_task_pressure: true"
+    confidence: 0.91
+    rationale: "부정적 감정 표현과 좌절은 감정적 저항의 명확한 신호"
+
+  # === N: 무응답형 (No Response) 식별 ===
+
+  - rule_id: "RTI_N_001_complete_silence"
+    priority: 93
+    description: "완전 무응답자(N_P1) 식별"
+    conditions:
+      - OR:
+        - field: "response_status"
+          operator: "=="
+          value: "none"
+        - field: "days_since_last_response"
+          operator: ">="
+          value: 3
+        - field: "message_read_but_no_reply"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P1'"
+      - "set_tone: 'Warm'"
+      - "set_followup_action: 'reminder'"
+      - "schedule_reminder: '24h'"
+      - "prioritize_intervention: 'SafetyNet'"
+    confidence: 0.92
+    rationale: "완전한 무응답은 참여 단절의 위험 신호"
+
+  - rule_id: "RTI_N_002_minimal_responder"
+    priority: 86
+    description: "최소 응답자(N_P2) 식별"
+    conditions:
+      - OR:
+        - field: "response_length"
+          operator: "<="
+          value: 3
+        - field: "user_message"
+          operator: "regex"
+          value: "^(네|응|ㅇㅇ|ㅇㅋ|ok|ㄱㄱ)$"
+        - field: "response_pattern"
+          operator: "=="
+          value: "single_word"
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P2'"
+      - "set_tone: 'Encouraging'"
+      - "simplify_questions: true"
+      - "use_yes_no_questions: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.84
+    rationale: "단답형 최소 응답은 참여도 저하의 신호"
+
+  - rule_id: "RTI_N_003_topic_changer"
+    priority: 85
+    description: "주제 회피자(N_P3) 식별"
+    conditions:
+      - OR:
+        - field: "response_relevance"
+          operator: "<="
+          value: 30
+        - field: "changes_topic"
+          operator: "=="
+          value: true
+        - field: "ignores_question"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P3'"
+      - "set_tone: 'Patient'"
+      - "acknowledge_new_topic: true"
+      - "gently_redirect: true"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.82
+    rationale: "주제 변경과 질문 무시는 회피적 무응답의 지표"
+
+  - rule_id: "RTI_N_004_overwhelmed_silent"
+    priority: 90
+    description: "압도된 침묵자(N_P4) 식별"
+    conditions:
+      - AND:
+        - field: "previous_engagement"
+          operator: ">="
+          value: "moderate"
+        - field: "current_response"
+          operator: "=="
+          value: "none"
+        - OR:
+          - field: "recent_task_load"
+            operator: ">="
+            value: "high"
+          - field: "complexity_increase"
+            operator: "=="
+            value: true
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P4'"
+      - "set_tone: 'Warm'"
+      - "reduce_task_load: true"
+      - "check_wellbeing: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.87
+    rationale: "갑작스러운 침묵과 이전 참여도 감소는 압도 상태의 신호"
+
+  - rule_id: "RTI_N_005_technical_barrier"
+    priority: 80
+    description: "기술적 장벽자(N_P5) 식별"
+    conditions:
+      - OR:
+        - field: "access_issues"
+          operator: "=="
+          value: true
+        - field: "platform_familiarity"
+          operator: "=="
+          value: "low"
+        - field: "partial_message_sent"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P5'"
+      - "set_tone: 'Patient'"
+      - "provide_tech_support: true"
+      - "offer_alternative_channels: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.78
+    rationale: "접근 문제와 플랫폼 어려움은 기술적 장벽의 신호"
+
+  - rule_id: "RTI_N_006_forgotten_user"
+    priority: 84
+    description: "망각형 무응답자(N_P6) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["아 깜빡했어요", "잊었어요", "생각이 안 났어요", "까먹었어요"]
+        - field: "pattern_forgetfulness"
+          operator: "=="
+          value: true
+        - AND:
+          - field: "reminder_sent"
+            operator: "=="
+            value: true
+          - field: "response_after_reminder"
+            operator: "=="
+            value: true
+    action:
+      - "identify_response_type: 'N'"
+      - "identify_persona: 'N_P6'"
+      - "set_tone: 'Patient'"
+      - "set_regular_reminders: true"
+      - "simplify_tracking: true"
+      - "prioritize_intervention: 'FollowUpReminder'"
+    confidence: 0.81
+    rationale: "잊음 패턴과 리마인더 후 응답은 망각형의 신호"
+
+  # === D: 지연반응형 (Delayed) 식별 ===
+
+  - rule_id: "RTI_D_001_slow_processor"
+    priority: 85
+    description: "숙고형 지연자(D_P1) 식별"
+    conditions:
+      - AND:
+        - field: "response_time"
+          operator: "between"
+          value: ["24h", "72h"]
+        - field: "response_quality"
+          operator: ">="
+          value: "thoughtful"
+        - field: "mentions_thinking"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P1'"
+      - "set_tone: 'Professional'"
+      - "set_pace: 'adaptive'"
+      - "allow_processing_time: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.86
+    rationale: "신중한 응답과 생각 언급은 숙고형의 신호"
+
+  - rule_id: "RTI_D_002_busy_responder"
+    priority: 83
+    description: "바쁜 지연자(D_P2) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["바빠서 늦었어요", "일이 있었어요", "시간이 안 됐어요", "겨우 확인했어요"]
+        - field: "irregular_response_times"
+          operator: "=="
+          value: true
+        - field: "mentions_schedule_conflict"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P2'"
+      - "set_tone: 'Empathetic'"
+      - "offer_flexible_timing: true"
+      - "batch_communications: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.82
+    rationale: "일정 언급과 불규칙한 응답 시간은 바쁜 상태의 신호"
+
+  - rule_id: "RTI_D_003_hesitant_responder"
+    priority: 87
+    description: "망설이는 지연자(D_P3) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["어떻게 답해야 할지", "뭐라고 해야 할지", "확신이 안 서서", "결정하기 어려워서"]
+        - field: "uncertainty_markers"
+          operator: ">="
+          value: 2
+        - field: "drafts_before_sending"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P3'"
+      - "set_tone: 'Warm'"
+      - "reduce_decision_pressure: true"
+      - "offer_multiple_choice: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.85
+    rationale: "불확실성 표현과 결정 어려움은 망설임의 신호"
+
+  - rule_id: "RTI_D_004_avoidant_delayer"
+    priority: 88
+    description: "회피적 지연자(D_P4) 식별"
+    conditions:
+      - AND:
+        - field: "response_time"
+          operator: ">="
+          value: "48h"
+        - OR:
+          - field: "mentions_avoidance"
+            operator: "=="
+            value: true
+          - field: "apologetic_tone"
+            operator: "=="
+            value: true
+          - field: "user_message"
+            operator: "contains_any"
+            value: ["미루다가", "피하다가", "자꾸 안 하게 되서"]
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P4'"
+      - "set_tone: 'Warm'"
+      - "explore_avoidance_reason: true"
+      - "reduce_anxiety: true"
+      - "prioritize_intervention: 'ResistanceHandling'"
+    confidence: 0.86
+    rationale: "회피 인정과 사과 톤은 회피적 지연의 신호"
+
+  - rule_id: "RTI_D_005_partial_completer"
+    priority: 81
+    description: "부분 완료형 지연자(D_P5) 식별"
+    conditions:
+      - OR:
+        - field: "task_completion"
+          operator: "between"
+          value: [20, 80]
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["일부만 했어요", "조금 했어요", "다 못 했어요", "여기까지만"]
+        - field: "partial_submission"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P5'"
+      - "set_tone: 'Encouraging'"
+      - "acknowledge_effort: true"
+      - "adjust_expectations: true"
+      - "prioritize_intervention: 'SkillBuilding'"
+    confidence: 0.83
+    rationale: "부분 완료와 미완 인정은 진행 중이지만 어려움이 있는 신호"
+
+  - rule_id: "RTI_D_006_comeback_responder"
+    priority: 84
+    description: "복귀형 지연자(D_P6) 식별"
+    conditions:
+      - AND:
+        - field: "days_since_last_response"
+          operator: ">="
+          value: 7
+        - field: "reengagement"
+          operator: "=="
+          value: true
+        - field: "positive_reentry_tone"
+          operator: "=="
+          value: true
+    action:
+      - "identify_response_type: 'D'"
+      - "identify_persona: 'D_P6'"
+      - "set_tone: 'Warm'"
+      - "welcome_back: true"
+      - "avoid_guilt_induction: true"
+      - "log_success: 'reengagement'"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.87
+    rationale: "장기 부재 후 자발적 복귀는 긍정적인 재참여 신호"
+
+# ============================================================
+# SECTION 2: 개입 응답 생성 룰 (Intervention Response Generation)
+# ============================================================
+
+intervention_response_rules:
+
+  # === A: 수용형 대응 응답 ===
+
+  - rule_id: "IRG_A_001_reinforce_acceptance"
+    priority: 88
+    description: "수용형 학생에 대한 강화 응답"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "A"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_by_acceptance_subtype"
+    response_templates:
+      A_P1:
+        opening: "바로 시작하려는 마음이 좋네요!"
+        body: "다만, 천천히 하나씩 확인하면서 진행해도 괜찮아요. {task_details}를 할 때 어려운 점이 있으면 언제든 말해주세요."
+        closing: "이해가 잘 됐는지 중간중간 확인할게요."
+      A_P2:
+        opening: "적극적으로 질문해주셔서 감사해요!"
+        body: "궁금해하신 부분에 대해 자세히 설명드릴게요. {detailed_explanation} 추가로 알고 싶은 점이 있나요?"
+        closing: "이런 호기심이 학습에 정말 도움이 돼요."
+      A_P3:
+        opening: "좋아요, 같이 조율해봐요."
+        body: "제안하신 방식도 좋은 생각이에요. {negotiated_plan} 이렇게 진행하면 어떨까요?"
+        closing: "진행하면서 더 조정이 필요하면 말씀해주세요."
+      A_P4:
+        opening: "변화가 보여서 정말 기뻐요!"
+        body: "처음엔 어려웠을 텐데 이렇게 받아들여주셔서 감사해요. {encouragement}"
+        closing: "이 페이스로 천천히 함께 가봐요."
+      A_P5:
+        opening: "좋아요, 함께 실천해봐요."
+        body: "말씀하신 것처럼 {agreed_action}을 시작해보면 좋겠어요. 작은 것부터 하나씩요."
+        closing: "진행 상황을 {check_in_time}에 한번 확인해볼게요."
+      A_P6:
+        opening: "그 열정이 정말 멋져요!"
+        body: "의욕이 넘치는 건 좋지만, 지치지 않도록 페이스 조절도 중요해요. {sustainable_plan}"
+        closing: "꾸준히 하는 게 가장 중요하다는 거 기억해요."
+
+  # === R: 저항형 대응 응답 ===
+
+  - rule_id: "IRG_R_001_handle_resistance"
+    priority: 90
+    description: "저항형 학생에 대한 대응 응답"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "R"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_by_resistance_subtype"
+    response_templates:
+      R_P1:
+        opening: "솔직하게 말해줘서 고마워요."
+        body: "강요하고 싶지 않아요. 대신, 왜 이게 필요한지 설명해도 될까요? {reason_explanation}"
+        closing: "결정은 학생의 몫이에요. 생각이 바뀌면 언제든 말해주세요."
+      R_P2:
+        opening: "지금 마음이 편하지 않은 것 같아요."
+        body: "천천히 생각해도 돼요. 부담 없이 {minimal_ask}만 해볼 수 있을까요?"
+        closing: "준비되면 말해주세요."
+      R_P3:
+        opening: "좋은 대안이네요!"
+        body: "학생 제안을 반영해서 {modified_plan}으로 해볼까요? 핵심은 유지하면서요."
+        closing: "이 방향이 더 맞는지 해보면서 조정해봐요."
+      R_P4:
+        opening: "바쁜 상황인 거 이해해요."
+        body: "지금 상황에서 할 수 있는 최소한의 것만 해볼까요? {minimal_version}"
+        closing: "상황이 나아지면 그때 더 해도 돼요."
+      R_P5:
+        opening: "좋은 질문이에요. 당연히 이유가 있어야죠."
+        body: "이 활동이 필요한 이유는 {evidence_based_reason}이에요. 관련 자료도 공유해드릴게요."
+        closing: "더 궁금한 점 있으면 말씀해주세요."
+      R_P6:
+        opening: "힘든 감정인 것 같아요. 괜찮아요."
+        body: "지금은 학습 얘기는 잠깐 멈추고, 어떤 기분인지 말해줄 수 있어요?"
+        closing: "마음이 좀 나아지면 그때 다시 얘기해요."
+
+  # === N: 무응답형 대응 응답 ===
+
+  - rule_id: "IRG_N_001_reengage_silent"
+    priority: 92
+    description: "무응답형 학생에 대한 재참여 유도 응답"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "N"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_by_silence_subtype"
+    response_templates:
+      N_P1:
+        opening: "안녕하세요, 잘 지내고 있나요?"
+        body: "메시지가 잘 전달됐는지 확인하고 싶었어요. 바쁜 건지, 다른 이유가 있는지 궁금해요."
+        closing: "답장 부담 없이, 간단히 이모지로라도 답해줘도 괜찮아요."
+      N_P2:
+        opening: "'네' 한 마디라도 고마워요."
+        body: "조금 더 알려줄 수 있어요? A, B, C 중에 하나만 골라줘도 돼요."
+        closing: "짧게 답해도 전혀 괜찮아요."
+      N_P3:
+        opening: "아까 얘기하던 주제 기억나요?"
+        body: "다른 얘기도 좋지만, {original_topic}에 대해 어떻게 생각해요?"
+        closing: "어려우면 그것도 괜찮다고 말해줘도 돼요."
+      N_P4:
+        opening: "요즘 많이 바쁘거나 힘들었나요?"
+        body: "괜찮아요, 천천히 해도 돼요. 지금은 쉬어가도 괜찮아요. {wellbeing_check}"
+        closing: "준비되면 언제든 연락주세요. 기다릴게요."
+      N_P5:
+        opening: "혹시 접속이나 확인에 어려움이 있었나요?"
+        body: "메시지가 잘 안 보이거나, 답장하기 불편한 점이 있으면 알려주세요. {tech_support_offer}"
+        closing: "다른 방법으로 연락해도 돼요."
+      N_P6:
+        opening: "잊을 수 있죠, 괜찮아요!"
+        body: "다시 한번 알려드릴게요. {reminder_content} 매번 리마인더 보내드릴까요?"
+        closing: "까먹어도 괜찮아요. 다시 말해줄게요."
+
+  # === D: 지연반응형 대응 응답 ===
+
+  - rule_id: "IRG_D_001_support_delayed"
+    priority: 86
+    description: "지연반응형 학생에 대한 지원 응답"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "D"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_by_delay_subtype"
+    response_templates:
+      D_P1:
+        opening: "신중하게 생각해주셔서 고마워요."
+        body: "깊이 생각하고 답해주신 거 알아요. {thoughtful_acknowledgment} 시간 필요하면 언제든 말해주세요."
+        closing: "답변 기다리는 동안 부담 갖지 마세요."
+      D_P2:
+        opening: "바쁜 중에 답해줘서 고마워요."
+        body: "시간이 많지 않은 거 알아요. {flexible_options} 중에 편한 시간에 해도 돼요."
+        closing: "일정 괜찮을 때 알려주세요."
+      D_P3:
+        opening: "어떻게 해야 할지 고민됐나 봐요."
+        body: "정답은 없어요. {simplified_choices} 중에 끌리는 거 하나만 골라도 돼요."
+        closing: "틀려도 괜찮아요. 시도하는 게 중요해요."
+      D_P4:
+        opening: "연락해줘서 정말 반가워요."
+        body: "미루게 된 이유가 있을 거예요. 부담됐던 부분이 뭐였어요? {explore_barrier}"
+        closing: "함께 해결 방법을 찾아봐요."
+      D_P5:
+        opening: "일부라도 해줘서 고마워요!"
+        body: "다 하지 못해도 괜찮아요. {acknowledge_partial} 지금까지 한 것도 의미 있어요."
+        closing: "나머지는 천천히 해도 돼요."
+      D_P6:
+        opening: "돌아와서 정말 반가워요!"
+        body: "기다렸어요. 어디서부터 다시 시작하면 좋을지 같이 정해봐요. {reorientation}"
+        closing: "다시 시작하는 것만으로도 대단해요."
+
+# ============================================================
+# SECTION 3: 전환 감지 룰 (Transition Detection)
+# ============================================================
+
+transition_detection_rules:
+
+  # === 긍정적 전환 ===
+
+  - rule_id: "TD_001_R_to_A"
+    priority: 95
+    description: "저항(R)에서 수용(A)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "R"
+      - OR:
+        - field: "current_sentiment"
+          operator: ">="
+          value: 0.6
+        - field: "acceptance_indicators"
+          operator: ">="
+          value: 2
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["해볼게요", "알겠어요", "그렇게 할게요", "좋아요"]
+    action:
+      - "log_transition: 'R_to_A'"
+      - "update_context: 'positive_transition'"
+      - "acknowledge_change: true"
+      - "reinforce_positively: true"
+      - "adjust_intervention_intensity: 'reduce'"
+    confidence: 0.90
+    rationale: "저항에서 수용으로의 전환은 개입 성공의 강한 신호"
+
+  - rule_id: "TD_002_N_to_A"
+    priority: 93
+    description: "무응답(N)에서 수용(A)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "N"
+      - AND:
+        - field: "response_received"
+          operator: "=="
+          value: true
+        - field: "engagement_level"
+          operator: ">="
+          value: "moderate"
+    action:
+      - "log_transition: 'N_to_A'"
+      - "update_context: 'reengagement_success'"
+      - "celebrate_return: true"
+      - "avoid_overwhelming: true"
+    confidence: 0.88
+    rationale: "무응답에서 적극적 참여로의 전환은 재참여 성공 신호"
+
+  - rule_id: "TD_003_D_to_A"
+    priority: 91
+    description: "지연(D)에서 수용(A)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "D"
+      - AND:
+        - field: "response_time"
+          operator: "<="
+          value: "24h"
+        - field: "task_completion"
+          operator: ">="
+          value: 70
+    action:
+      - "log_transition: 'D_to_A'"
+      - "update_context: 'timing_improvement'"
+      - "acknowledge_improvement: true"
+      - "maintain_flexible_expectations: true"
+    confidence: 0.86
+    rationale: "응답 시간 단축과 완료율 향상은 긍정적 변화의 신호"
+
+  - rule_id: "TD_004_N_to_D"
+    priority: 85
+    description: "무응답(N)에서 지연반응(D)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "N"
+      - AND:
+        - field: "response_received"
+          operator: "=="
+          value: true
+        - field: "engagement_level"
+          operator: "<="
+          value: "low"
+    action:
+      - "log_transition: 'N_to_D'"
+      - "update_context: 'partial_reengagement'"
+      - "acknowledge_any_response: true"
+      - "set_followup_action: 'gentle_check_in'"
+    confidence: 0.82
+    rationale: "부분적 재참여도 긍정적 전환의 시작점"
+
+  # === 부정적 전환 ===
+
+  - rule_id: "TD_005_A_to_R"
+    priority: 94
+    description: "수용(A)에서 저항(R)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "A"
+      - OR:
+        - field: "negative_sentiment_increase"
+          operator: "=="
+          value: true
+        - field: "resistance_indicators"
+          operator: ">="
+          value: 2
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["싫어요", "안 할래요", "너무 많아요", "힘들어요"]
+    action:
+      - "log_transition: 'A_to_R'"
+      - "update_context: 'negative_transition'"
+      - "trigger_escalation: 'monitor'"
+      - "identify_cause: true"
+      - "reduce_demands: true"
+      - "increase_support: true"
+    confidence: 0.92
+    rationale: "수용에서 저항으로의 전환은 개입 과부하의 경고 신호"
+
+  - rule_id: "TD_006_A_to_N"
+    priority: 92
+    description: "수용(A)에서 무응답(N)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "A"
+      - AND:
+        - field: "response_status"
+          operator: "=="
+          value: "none"
+        - field: "days_since_last_response"
+          operator: ">="
+          value: 2
+    action:
+      - "log_transition: 'A_to_N'"
+      - "update_context: 'disengagement_warning'"
+      - "trigger_escalation: 'alert'"
+      - "send_wellbeing_check: true"
+      - "reduce_pressure: true"
+    confidence: 0.90
+    rationale: "적극적 참여자의 갑작스러운 무응답은 심각한 경고 신호"
+
+  - rule_id: "TD_007_R_to_N"
+    priority: 96
+    description: "저항(R)에서 무응답(N)으로 전환 감지"
+    conditions:
+      - field: "previous_response_type"
+        operator: "=="
+        value: "R"
+      - AND:
+        - field: "response_status"
+          operator: "=="
+          value: "none"
+        - field: "days_since_last_response"
+          operator: ">="
+          value: 2
+    action:
+      - "log_transition: 'R_to_N'"
+      - "update_context: 'complete_disengagement'"
+      - "trigger_escalation: 'human_review'"
+      - "consider_parent_notify: true"
+      - "pause_interventions: true"
+    confidence: 0.94
+    rationale: "저항 후 무응답은 완전 이탈의 위험 신호 - 즉각적 개입 필요"
+
+# ============================================================
+# SECTION 4: 톤 및 페이스 조절 룰 (Tone & Pace Adjustment)
+# ============================================================
+
+tone_pace_rules:
+
+  - rule_id: "TP_001_resistance_high"
+    priority: 95
+    description: "높은 저항 - 부드러운 톤과 느린 페이스"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "R"
+      - field: "resistance_level"
+        operator: ">="
+        value: "moderate"
+    action:
+      - "set_tone: 'Calm'"
+      - "set_pace: 'slow'"
+      - "reduce_demands: true"
+      - "increase_validation: true"
+      - "avoid_confrontation: true"
+    message_modifications:
+      opening: "괜찮아요, 천천히 생각해도 돼요."
+      transitions: "부담 없이요..."
+      closing: "준비되면 말해주세요."
+
+  - rule_id: "TP_002_emotional_distress"
+    priority: 100
+    description: "정서적 고통 - 따뜻한 톤과 매우 느린 페이스"
+    conditions:
+      - OR:
+        - field: "emotional_state"
+          operator: "in"
+          value: ["frustrated", "anxious", "overwhelmed", "sad"]
+        - field: "persona"
+          operator: "in"
+          value: ["R_P6", "N_P4"]
+    action:
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "pause_task_focus: true"
+      - "validate_feelings: true"
+    message_modifications:
+      opening: "힘든 시간인 것 같아요. 괜찮아요."
+      transitions: "천천히요..."
+      closing: "마음이 좀 나아지면 그때 다시 얘기해요."
+
+  - rule_id: "TP_003_high_engagement"
+    priority: 85
+    description: "높은 참여도 - 전문적 톤과 적응적 페이스"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "A"
+      - field: "engagement_level"
+        operator: ">="
+        value: "high"
+    action:
+      - "set_tone: 'Professional'"
+      - "set_pace: 'adaptive'"
+      - "increase_information_depth: true"
+      - "provide_challenges: true"
+    message_modifications:
+      opening: "좋은 질문이에요."
+      transitions: "더 자세히 살펴보면..."
+      closing: "더 궁금한 점 있으면 언제든 물어봐요."
+
+  - rule_id: "TP_004_delayed_response"
+    priority: 80
+    description: "지연 반응 - 인내심 있는 톤"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "D"
+    action:
+      - "set_tone: 'Patient'"
+      - "set_pace: 'adaptive'"
+      - "avoid_rush: true"
+      - "acknowledge_timing: true"
+    message_modifications:
+      opening: "답해줘서 고마워요."
+      transitions: "여유 있게요..."
+      closing: "시간 필요하면 말해주세요."
+
+  - rule_id: "TP_005_minimal_response"
+    priority: 82
+    description: "최소 응답 - 격려하는 톤"
+    conditions:
+      - field: "persona"
+        operator: "=="
+        value: "N_P2"
+    action:
+      - "set_tone: 'Encouraging'"
+      - "set_pace: 'slow'"
+      - "simplify_messages: true"
+      - "use_short_questions: true"
+      - "celebrate_any_response: true"
+    message_modifications:
+      opening: "답해줘서 고마워요!"
+      transitions: "간단하게요..."
+      closing: "한 마디라도 고마워요."
+
+# ============================================================
+# SECTION 5: 에스컬레이션 트리거 룰 (Escalation Triggers)
+# ============================================================
+
+escalation_rules:
+
+  - rule_id: "ESC_001_crisis_mention"
+    priority: 100
+    description: "위기 언급 감지 - 즉시 에스컬레이션"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["죽고 싶어", "자해", "포기할 거야", "다 싫어", "사라지고 싶어"]
+        - field: "crisis_indicators"
+          operator: "=="
+          value: true
+    action:
+      - "trigger_escalation: 'immediate'"
+      - "notify_supervisor: true"
+      - "pause_all_interventions: true"
+      - "activate_crisis_protocol: true"
+    confidence: 0.99
+    rationale: "정신 건강 위기 신호는 즉각적인 전문가 개입 필요"
+
+  - rule_id: "ESC_002_prolonged_no_response"
+    priority: 95
+    description: "장기 무응답 - 부모 알림 고려"
+    conditions:
+      - AND:
+        - field: "response_type"
+          operator: "=="
+          value: "N"
+        - field: "days_since_last_response"
+          operator: ">="
+          value: 7
+        - field: "reminder_count"
+          operator: ">="
+          value: 2
+    action:
+      - "trigger_escalation: 'human_review'"
+      - "set_followup_action: 'parent_notify'"
+      - "log_concern: 'prolonged_disengagement'"
+    confidence: 0.92
+    rationale: "7일 이상 무응답은 추가 지원 필요"
+
+  - rule_id: "ESC_003_repeated_resistance"
+    priority: 90
+    description: "반복 저항 - 전략 재검토"
+    conditions:
+      - AND:
+        - field: "response_type"
+          operator: "=="
+          value: "R"
+        - field: "consecutive_resistance_count"
+          operator: ">="
+          value: 3
+    action:
+      - "trigger_escalation: 'alert'"
+      - "request_strategy_review: true"
+      - "consider_approach_change: true"
+    confidence: 0.88
+    rationale: "3회 연속 저항은 현재 접근 방식의 효과 없음을 시사"
+
+  - rule_id: "ESC_004_transition_negative"
+    priority: 92
+    description: "부정적 전환 - 즉각적 주의"
+    conditions:
+      - OR:
+        - field: "transition"
+          operator: "=="
+          value: "A_to_R"
+        - field: "transition"
+          operator: "=="
+          value: "R_to_N"
+    action:
+      - "trigger_escalation: 'alert'"
+      - "pause_current_intervention: true"
+      - "initiate_wellbeing_check: true"
+    confidence: 0.90
+    rationale: "부정적 전환은 즉각적인 개입 조정 필요"
+
+  - rule_id: "ESC_005_emotional_crisis"
+    priority: 98
+    description: "감정적 위기 - 정서 지원 우선"
+    conditions:
+      - AND:
+        - field: "persona"
+          operator: "=="
+          value: "R_P6"
+        - field: "emotional_intensity"
+          operator: ">="
+          value: "high"
+    action:
+      - "trigger_escalation: 'alert'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "pause_academic_pressure: true"
+      - "consider_counselor_referral: true"
+    confidence: 0.94
+    rationale: "강한 감정적 반응은 학습 전 정서 안정이 필요"
+
+  - rule_id: "ESC_006_multiple_failed_reengagement"
+    priority: 88
+    description: "재참여 실패 반복 - 대안 전략 필요"
+    conditions:
+      - AND:
+        - field: "reengagement_attempts"
+          operator: ">="
+          value: 3
+        - field: "reengagement_success"
+          operator: "=="
+          value: false
+    action:
+      - "trigger_escalation: 'human_review'"
+      - "activate_alternative_strategy: 'parent_involve'"
+      - "consider_channel_change: true"
+    confidence: 0.85
+    rationale: "반복된 재참여 실패는 다른 접근 방식 필요"
+
+# ============================================================
+# SECTION 6: 후속 조치 스케줄링 룰 (Follow-up Scheduling)
+# ============================================================
+
+followup_scheduling_rules:
+
+  - rule_id: "FS_001_acceptance_followup"
+    priority: 70
+    description: "수용형 후속 조치 스케줄"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "A"
+    action:
+      - "schedule_reminder: '72h'"
+      - "set_followup_action: 'progress_check'"
+      - "set_check_in_frequency: 'weekly'"
+
+  - rule_id: "FS_002_resistance_followup"
+    priority: 75
+    description: "저항형 후속 조치 스케줄"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "R"
+    action:
+      - "schedule_reminder: '48h'"
+      - "set_followup_action: 'gentle_check_in'"
+      - "offer_alternative_approach: true"
+
+  - rule_id: "FS_003_no_response_followup"
+    priority: 85
+    description: "무응답형 후속 조치 스케줄"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "N"
+    action:
+      - "schedule_reminder: '24h'"
+      - "set_followup_action: 'reminder'"
+      - "escalate_after: '7d'"
+      - "max_reminders: 3"
+
+  - rule_id: "FS_004_delayed_followup"
+    priority: 72
+    description: "지연반응형 후속 조치 스케줄"
+    conditions:
+      - field: "response_type"
+        operator: "=="
+        value: "D"
+    action:
+      - "schedule_reminder: '48h'"
+      - "set_followup_action: 'flexible_check_in'"
+      - "allow_extended_response_time: true"
+
+# ============================================================
+# DEFAULT FALLBACK
+# ============================================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "use_balanced_tone"
+    - "maintain_supportive_environment"
+    - "continue_observation"
+    - "set_followup_action: 'check_in'"
+    - "schedule_reminder: '48h'"
+  message: "상황을 더 파악하면서 맞춤형으로 진행할게요."
+  confidence: 0.5
+
+# ============================================================
+# METADATA
+# ============================================================
+
+metadata:
+  created: "2025-12-03"
+  author: "Agent21 PersonaSystem"
+  response_types:
+    - code: "A"
+      name: "Acceptance (수용)"
+      subtypes: ["enthusiastic", "engaged", "conditional", "gradual", "surface", "enthusiastic"]
+    - code: "R"
+      name: "Resistance (저항)"
+      subtypes: ["explicit", "passive", "negotiating", "excuse", "challenging", "emotional"]
+    - code: "N"
+      name: "No Response (무응답)"
+      subtypes: ["complete", "minimal", "topic_change", "overwhelmed", "technical", "forgotten"]
+    - code: "D"
+      name: "Delayed (지연반응)"
+      subtypes: ["thoughtful", "busy", "hesitant", "avoidant", "partial", "comeback"]
+  transitions:
+    positive: ["R_to_A", "N_to_A", "N_to_D", "D_to_A"]
+    negative: ["A_to_R", "A_to_N", "R_to_N"]
+  escalation_levels: ["monitor", "alert", "human_review", "immediate"]

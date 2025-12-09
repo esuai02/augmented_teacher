@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>JavaScript Performance Benchmarks - attendance_teacher.php</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .test-result:last-child {
+            border-bottom: none;
+        }
+        .status-pass {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        .status-fail {
+            color: #f87171;
+            font-weight: bold;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .summary {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .grade {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        #testLog {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ JavaScript Performance Benchmarks</h1>
+        <h2>attendance_teacher.php Performance Testing</h2>
+        
+        <button onclick="runAllBenchmarks()">🚀 Run All Benchmarks</button>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar">0%</div>
+        </div>
+        
+        <div id="testResults"></div>
+        
+        <div id="testLog"></div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <h2>📊 Performance Summary</h2>
+            <div class="grade" id="grade"></div>
+            <div id="summaryDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        // Include the optimized functions from attendance_teacher.php
+        const DOMCache = {
+            elements: {},
+            get(id) {
+                if (!this.elements[id]) {
+                    this.elements[id] = document.getElementById(id);
+                }
+                return this.elements[id];
+            },
+            querySelector(selector) {
+                const key = 'qs_' + selector;
+                if (!this.elements[key]) {
+                    this.elements[key] = document.querySelector(selector);
+                }
+                return this.elements[key];
+            },
+            querySelectorAll(selector) {
+                return document.querySelectorAll(selector);
+            },
+            clear() {
+                this.elements = {};
+            }
+        };
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        const rafSchedule = {
+            queue: [],
+            scheduled: false,
+            schedule(callback) {
+                this.queue.push(callback);
+                if (!this.scheduled) {
+                    this.scheduled = true;
+                    requestAnimationFrame(() => {
+                        const callbacks = this.queue.slice();
+                        this.queue = [];
+                        this.scheduled = false;
+                        callbacks.forEach(cb => cb());
+                    });
+                }
+            }
+        };
+
+        // Benchmark Suite
+        class PerformanceBenchmark {
+            constructor() {
+                this.results = {};
+                this.currentProgress = 0;
+            }
+            
+            log(message) {
+                const logDiv = document.getElementById('testLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logDiv.innerHTML += `[${timestamp}] ${message}<br>`;
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+            
+            updateProgress(percent) {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = percent + '%';
+                progressBar.textContent = percent + '%';
+            }
+            
+            // Test 1: DOM Caching Performance
+            async testDOMCaching() {
+                this.log('🔍 Testing DOM Caching Performance...');
+                const iterations = 10000;
+                
+                // Test without caching
+                const startNoCache = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    document.getElementById('testElement' + (i % 10));
+                }
+                const noCacheTime = performance.now() - startNoCache;
+                
+                // Create test elements
+                for (let i = 0; i < 10; i++) {
+                    const el = document.createElement('div');
+                    el.id = 'testElement' + i;
+                    document.body.appendChild(el);
+                }
+                
+                // Test with caching
+                const startCache = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    DOMCache.get('testElement' + (i % 10));
+                }
+                const cacheTime = performance.now() - startCache;
+                
+                // Cleanup
+                for (let i = 0; i < 10; i++) {
+                    const el = document.getElementById('testElement' + i);
+                    if (el) el.remove();
+                }
+                
+                const improvement = ((noCacheTime - cacheTime) / noCacheTime) * 100;
+                
+                this.results.domCaching = {
+                    noCacheTime: noCacheTime.toFixed(2),
+                    cacheTime: cacheTime.toFixed(2),
+                    improvement: improvement.toFixed(2),
+                    status: improvement > 30 ? 'PASS' : 'FAIL'
+                };
+                
+                this.log(`✅ DOM Caching: ${improvement.toFixed(2)}% improvement`);
+                return this.results.domCaching;
+            }
+            
+            // Test 2: Event Delegation Performance
+            async testEventDelegation() {
+                this.log('🔍 Testing Event Delegation Performance...');
+                
+                // Create test buttons
+                const container = document.createElement('div');
+                container.id = 'testContainer';
+                for (let i = 0; i < 100; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'test-btn';
+                    btn.dataset.id = i;
+                    container.appendChild(btn);
+                }
+                document.body.appendChild(container);
+                
+                let clickCount = 0;
+                
+                // Test individual listeners
+                const startIndividual = performance.now();
+                const listeners = [];
+                container.querySelectorAll('.test-btn').forEach(btn => {
+                    const listener = () => clickCount++;
+                    btn.addEventListener('click', listener);
+                    listeners.push({ btn, listener });
+                });
+                const individualSetupTime = performance.now() - startIndividual;
+                
+                // Cleanup individual listeners
+                listeners.forEach(({ btn, listener }) => {
+                    btn.removeEventListener('click', listener);
+                });
+                
+                // Test delegation
+                const startDelegation = performance.now();
+                const delegatedListener = (e) => {
+                    if (e.target.classList.contains('test-btn')) {
+                        clickCount++;
+                    }
+                };
+                container.addEventListener('click', delegatedListener);
+                const delegationSetupTime = performance.now() - startDelegation;
+                
+                // Cleanup
+                container.remove();
+                
+                const improvement = ((individualSetupTime - delegationSetupTime) / individualSetupTime) * 100;
+                
+                this.results.eventDelegation = {
+                    individualTime: individualSetupTime.toFixed(2),
+                    delegationTime: delegationSetupTime.toFixed(2),
+                    improvement: improvement.toFixed(2),
+                    status: improvement > 50 ? 'PASS' : 'FAIL'
+                };
+                
+                this.log(`✅ Event Delegation: ${improvement.toFixed(2)}% improvement`);
+                return this.results.eventDelegation;
+            }
+            
+            // Test 3: Debounce Performance
+            async testDebounce() {
+                this.log('🔍 Testing Debounce Performance...');
+                
+                let callCount = 0;
+                const expensiveOperation = () => {
+                    callCount++;
+                    // Simulate expensive operation
+                    let sum = 0;
+                    for (let i = 0; i < 100000; i++) {
+                        sum += Math.random();
+                    }
+                };
+                
+                // Test without debounce
+                callCount = 0;
+                const startNoDebounce = performance.now();
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(expensiveOperation, i * 10);
+                }
+                await new Promise(resolve => setTimeout(resolve, 1100));
+                const noDebounceCount = callCount;
+                const noDebounceTime = performance.now() - startNoDebounce;
+                
+                // Test with debounce
+                callCount = 0;
+                const debouncedOperation = debounce(expensiveOperation, 100);
+                const startDebounce = performance.now();
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(debouncedOperation, i * 10);
+                }
+                await new Promise(resolve => setTimeout(resolve, 1100));
+                const debounceCount = callCount;
+                const debounceTime = performance.now() - startDebounce;
+                
+                const callReduction = ((noDebounceCount - debounceCount) / noDebounceCount) * 100;
+                
+                this.results.debounce = {
+                    noDebounceCount,
+                    debounceCount,
+                    callReduction: callReduction.toFixed(2),
+                    status: callReduction > 80 ? 'PASS' : 'FAIL'
+                };
+                
+                this.log(`✅ Debounce: ${callReduction.toFixed(2)}% call reduction`);
+                return this.results.debounce;
+            }
+            
+            // Test 4: RAF Batching Performance
+            async testRAFBatching() {
+                this.log('🔍 Testing RAF Batching Performance...');
+                
+                // Create test elements
+                const elements = [];
+                for (let i = 0; i < 50; i++) {
+                    const el = document.createElement('div');
+                    el.style.position = 'absolute';
+                    el.style.width = '10px';
+                    el.style.height = '10px';
+                    el.style.background = 'red';
+                    document.body.appendChild(el);
+                    elements.push(el);
+                }
+                
+                // Test without RAF batching
+                const startNoBatch = performance.now();
+                elements.forEach((el, i) => {
+                    el.style.transform = `translateX(${i * 10}px)`;
+                    el.style.opacity = Math.random();
+                });
+                const noBatchTime = performance.now() - startNoBatch;
+                
+                // Reset elements
+                elements.forEach(el => {
+                    el.style.transform = '';
+                    el.style.opacity = '';
+                });
+                
+                // Test with RAF batching
+                const startBatch = performance.now();
+                rafSchedule.schedule(() => {
+                    elements.forEach((el, i) => {
+                        el.style.transform = `translateX(${i * 10}px)`;
+                        el.style.opacity = Math.random();
+                    });
+                });
+                await new Promise(resolve => requestAnimationFrame(resolve));
+                const batchTime = performance.now() - startBatch;
+                
+                // Cleanup
+                elements.forEach(el => el.remove());
+                
+                const improvement = ((noBatchTime - batchTime) / noBatchTime) * 100;
+                
+                this.results.rafBatching = {
+                    noBatchTime: noBatchTime.toFixed(2),
+                    batchTime: batchTime.toFixed(2),
+                    improvement: improvement.toFixed(2),
+                    status: improvement > 20 ? 'PASS' : 'FAIL'
+                };
+                
+                this.log(`✅ RAF Batching: ${improvement.toFixed(2)}% improvement`);
+                return this.results.rafBatching;
+            }
+            
+            // Test 5: Memory Efficiency
+            async testMemoryEfficiency() {
+                this.log('🔍 Testing Memory Efficiency...');
+                
+                if (!performance.memory) {
+                    this.log('⚠️ Memory API not available in this browser');
+                    this.results.memory = {
+                        status: 'SKIP',
+                        message: 'Memory API not available'
+                    };
+                    return this.results.memory;
+                }
+                
+                // Force garbage collection if available
+                if (window.gc) window.gc();
+                
+                const startMemory = performance.memory.usedJSHeapSize;
+                
+                // Create many cached elements
+                for (let i = 0; i < 1000; i++) {
+                    DOMCache.get('testMemory' + i);
+                }
+                
+                const peakMemory = performance.memory.usedJSHeapSize;
+                
+                // Clear cache
+                DOMCache.clear();
+                
+                // Force garbage collection if available
+                if (window.gc) window.gc();
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                const endMemory = performance.memory.usedJSHeapSize;
+                
+                const memoryUsed = (peakMemory - startMemory) / 1024 / 1024; // Convert to MB
+                const memoryFreed = (peakMemory - endMemory) / 1024 / 1024;
+                
+                this.results.memory = {
+                    memoryUsed: memoryUsed.toFixed(2),
+                    memoryFreed: memoryFreed.toFixed(2),
+                    status: memoryUsed < 10 ? 'PASS' : 'FAIL'
+                };
+                
+                this.log(`✅ Memory: Used ${memoryUsed.toFixed(2)}MB, Freed ${memoryFreed.toFixed(2)}MB`);
+                return this.results.memory;
+            }
+            
+            // Calculate performance grade
+            calculateGrade() {
+                let score = 0;
+                let totalTests = 0;
+                let passedTests = 0;
+                
+                for (const [key, result] of Object.entries(this.results)) {
+                    if (result.status !== 'SKIP') {
+                        totalTests++;
+                        if (result.status === 'PASS') {
+                            passedTests++;
+                            score += 20; // Each test worth 20 points
+                        }
+                    }
+                }
+                
+                let grade = 'F';
+                if (score >= 90) grade = 'A+';
+                else if (score >= 80) grade = 'A';
+                else if (score >= 70) grade = 'B';
+                else if (score >= 60) grade = 'C';
+                else if (score >= 50) grade = 'D';
+                
+                return {
+                    grade,
+                    score,
+                    totalTests,
+                    passedTests,
+                    failedTests: totalTests - passedTests
+                };
+            }
+            
+            // Display results
+            displayResults() {
+                const resultsDiv = document.getElementById('testResults');
+                resultsDiv.innerHTML = '';
+                
+                for (const [testName, result] of Object.entries(this.results)) {
+                    const section = document.createElement('div');
+                    section.className = 'test-section';
+                    
+                    let html = `<h3>${this.formatTestName(testName)}</h3>`;
+                    
+                    for (const [key, value] of Object.entries(result)) {
+                        if (key !== 'status') {
+                            html += `
+                                <div class="test-result">
+                                    <span>${this.formatKey(key)}:</span>
+                                    <span>${value}${key.includes('Time') ? 'ms' : ''}</span>
+                                </div>
+                            `;
+                        }
+                    }
+                    
+                    html += `
+                        <div class="test-result">
+                            <span>Status:</span>
+                            <span class="status-${result.status.toLowerCase()}">${result.status}</span>
+                        </div>
+                    `;
+                    
+                    section.innerHTML = html;
+                    resultsDiv.appendChild(section);
+                }
+                
+                // Display summary
+                const gradeInfo = this.calculateGrade();
+                const summaryDiv = document.getElementById('summary');
+                const gradeDiv = document.getElementById('grade');
+                const detailsDiv = document.getElementById('summaryDetails');
+                
+                summaryDiv.style.display = 'block';
+                gradeDiv.textContent = `Grade: ${gradeInfo.grade}`;
+                gradeDiv.style.color = gradeInfo.score >= 70 ? '#4ade80' : '#f87171';
+                
+                detailsDiv.innerHTML = `
+                    <p>Score: ${gradeInfo.score}/100</p>
+                    <p>Tests Passed: ${gradeInfo.passedTests}/${gradeInfo.totalTests}</p>
+                    <p>Success Rate: ${((gradeInfo.passedTests / gradeInfo.totalTests) * 100).toFixed(2)}%</p>
+                `;
+            }
+            
+            formatTestName(name) {
+                return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            }
+            
+            formatKey(key) {
+                return key.replace(/([A-Z])/g, ' $1').toLowerCase().replace(/^./, str => str.toUpperCase());
+            }
+        }
+        
+        // Run all benchmarks
+        async function runAllBenchmarks() {
+            const benchmark = new PerformanceBenchmark();
+            
+            benchmark.log('🚀 Starting JavaScript Performance Benchmarks...');
+            benchmark.updateProgress(0);
+            
+            await benchmark.testDOMCaching();
+            benchmark.updateProgress(20);
+            
+            await benchmark.testEventDelegation();
+            benchmark.updateProgress(40);
+            
+            await benchmark.testDebounce();
+            benchmark.updateProgress(60);
+            
+            await benchmark.testRAFBatching();
+            benchmark.updateProgress(80);
+            
+            await benchmark.testMemoryEfficiency();
+            benchmark.updateProgress(100);
+            
+            benchmark.displayResults();
+            benchmark.log('✅ All benchmarks completed!');
+            
+            // Save results to console for automated testing
+            console.log('Benchmark Results:', benchmark.results);
+            console.log('Performance Grade:', benchmark.calculateGrade());
+        }
+    </script>
+</body>
+</html>

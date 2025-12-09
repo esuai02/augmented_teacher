@@ -1,0 +1,876 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 방정식 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 일차방정식의 풀이 (중등수학 1-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53178&amp;page=1&amp;quizid=86105</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 등식의 개념을 이해하고 등식의 성질을 활용하여 방정식을 풀 수 있다. 등식과 방정식, 항등식의 차이를 구분할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#방정식과_항등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">방정식과 항등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53179&amp;page=1&amp;quizid=86106</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 방정식과 항등식의 차이를 이해하고, 방정식의 해를 구할 수 있다. 미지수가 포함된 등식에서 해가 존재하는지 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53180&amp;page=1&amp;quizid=86107</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 등식의 양변에 같은 수를 더하거나 빼거나 곱하거나 나누어도 등식이 성립함을 이해하고 이를 방정식 풀이에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식의 성질을 이용한 방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53181&amp;page=1&amp;quizid=86108</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 등식의 성질을 단계적으로 적용하여 방정식을 풀고, 해를 검증할 수 있다. 방정식 풀이 과정에서 발생하는 변수와 계수의 관계를 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53182&amp;page=1&amp;quizid=86109</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 이항의 개념을 이해하고 등식의 성질을 이용하여 항을 한 변에서 다른 변으로 옮기는 방법을 익힐 수 있다. 부호 변화를 정확히 처리할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53183&amp;page=1&amp;quizid=86110</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 일차방정식의 정의를 이해하고 ax+b=0 (a≠0) 형태로 정리할 수 있다. 일차방정식의 해가 유일하게 존재함을 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53184&amp;page=1&amp;quizid=86111</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 일차방정식을 단계적으로 풀어 해를 구하고, 해의 유일성을 확인할 수 있다. 연산 순서를 정확히 이해하고 적용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_일차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 일차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53185&amp;page=1&amp;quizid=86112</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이(중등수학 1-1) — 분수, 소수, 괄호가 포함된 복잡한 일차방정식을 정리하고 풀 수 있다. 분모의 최소공배수를 이용한 통분과 소수점 이동을 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 일차방정식의 활용 (중등수학 1-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식의_활용_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식의 활용(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53186&amp;page=1&amp;quizid=86113</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용(중등수학 1-1) — 실생활 문제를 일차방정식으로 모델링하고 해를 구하여 문제를 해결할 수 있다. 변수를 설정하고 방정식을 세우는 과정을 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거리, 속력, 시간에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53187&amp;page=1&amp;quizid=86114</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용(중등수학 1-1) — 거리=속력×시간 관계를 이용하여 일차방정식을 세우고, 두 물체의 움직임을 비교하는 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#소금물의_농도에_대한_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">소금물의 농도에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53188&amp;page=1&amp;quizid=86115</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용(중등수학 1-1) — 농도=용질의 양/용액의 양 관계를 이용하여 일차방정식을 세우고, 농도 문제를 해결할 수 있다. 두 용액을 섞는 경우를 다룬다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#규칙을_찾는_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">규칙을 찾는 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53189&amp;page=1&amp;quizid=86116</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용(중등수학 1-1) — 수열이나 패턴에서 규칙을 찾아 일차방정식으로 표현하고, n번째 항이나 특정 조건을 만족하는 항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 순서 관계 (precedes) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#방정식과_항등식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#방정식과_항등식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등식의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_활용_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_일차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#소금물의_농도에_대한_문제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#소금물의_농도에_대한_문제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#규칙을_찾는_문제"/>
+  </rdf:Description>
+
+  <!-- 3단계: 연립일차방정식의 풀이 (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 2개인 일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53310&amp;page=1&amp;quizid=86227</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 미지수가 2개인 일차방정식의 형태를 이해하고, 해가 무수히 많음을 이해한다. ax+by+c=0 형태로 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_해">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 2개인 일차방정식의 해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53311&amp;page=1&amp;quizid=86228</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 미지수가 2개인 일차방정식의 해를 순서쌍으로 표현하고, 해가 무수히 많음을 이해한다. 특정 해를 찾는 방법을 익힌다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_2개인_연립일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 2개인 연립일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53312&amp;page=1&amp;quizid=86229</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 두 개의 일차방정식을 연립하여 유일한 해를 구할 수 있다. 연립방정식의 해가 교점의 좌표임을 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#대입법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">대입법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53313&amp;page=1&amp;quizid=86230</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 한 방정식을 한 미지수에 대해 정리하여 다른 방정식에 대입하는 대입법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#가감법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">가감법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53314&amp;page=1&amp;quizid=86231</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 두 방정식을 더하거나 빼서 한 미지수를 소거하는 가감법을 이해하고 적용할 수 있다. 계수를 맞추는 방법을 익힌다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_연립방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 연립방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53315&amp;page=1&amp;quizid=86232</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 분수나 소수가 포함된 연립방정식을 정리하고 대입법 또는 가감법으로 풀 수 있다. 적절한 방법을 선택한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#A_B_C_꼴의_연립방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">A=B=C 꼴의 연립방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53316&amp;page=1&amp;quizid=86233</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — A=B=C 형태의 방정식을 두 개의 방정식으로 분리하여 연립방정식으로 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#해가_특수한_연립방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">해가 특수한 연립방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=7&amp;cmid=53317&amp;page=1&amp;quizid=86234</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 풀이(중등수학 2-1) — 해가 없거나 무수히 많은 경우를 판별하고, 계수의 비율을 이용하여 해의 개수를 결정할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 연립일차방정식의 활용 (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연립일차방정식의_활용_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연립일차방정식의 활용(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=8&amp;cmid=53318&amp;page=1&amp;quizid=86235</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 활용(중등수학 2-1) — 실생활 문제를 연립일차방정식으로 모델링하고 해를 구하여 문제를 해결할 수 있다. 두 개의 미지수를 설정한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_연립방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거리, 속력, 시간에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=8&amp;cmid=53319&amp;page=1&amp;quizid=86236</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 활용(중등수학 2-1) — 두 물체의 움직임을 연립일차방정식으로 표현하고, 만나는 지점이나 추월하는 시점을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#농도에_대한_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">농도에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=8&amp;cmid=53320&amp;page=1&amp;quizid=86237</ar:hasURL>
+    <ar:description xml:lang="ko">연립일차방정식의 활용(중등수학 2-1) — 두 가지 용액을 섞거나 농도를 조절하는 문제를 연립일차방정식으로 해결할 수 있다. 용질의 양과 용액의 양을 고려한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 선행 학습 관계 (dependsOn) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_활용_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연립일차방정식의_활용_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#연립일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <!-- 3단계 순서 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_해"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_해">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미지수가_2개인_연립일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_2개인_연립일차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#대입법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#대입법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#가감법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#가감법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_연립방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복잡한_연립방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#A_B_C_꼴의_연립방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#A_B_C_꼴의_연립방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#해가_특수한_연립방정식"/>
+  </rdf:Description>
+
+  <!-- 4단계 순서 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연립일차방정식의_활용_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_연립방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제_연립방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#농도에_대한_문제"/>
+  </rdf:Description>
+
+  <!-- 5단계: 이차방정식의 풀이 (중등수학 3-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_뜻_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 뜻</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53464&amp;page=1&amp;quizid=86359</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차방정식 ax²+bx+c=0 (a≠0)의 정의를 이해하고, 일차방정식과의 차이를 구분할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_해_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53465&amp;page=1&amp;quizid=86360</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차방정식의 해가 0개, 1개, 또는 2개일 수 있음을 이해하고, 해를 구하는 방법을 익힌다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해를_이용한_이차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해를 이용한 이차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53466&amp;page=1&amp;quizid=86361</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차식을 인수분해하여 (x-a)(x-b)=0 형태로 만들고 해를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_중근">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 중근</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53467&amp;page=1&amp;quizid=86362</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차방정식이 완전제곱식으로 인수분해될 때 중근이 발생함을 이해하고, 중근의 의미를 파악한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#제곱근을_이용한_이차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">제곱근을 이용한 이차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53468&amp;page=1&amp;quizid=86363</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — x²=a 형태의 이차방정식을 제곱근을 이용하여 풀 수 있다. 양수, 0, 음수에 따른 해의 개수를 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#완전제곱식을_이용한_이차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">완전제곱식을 이용한 이차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53469&amp;page=1&amp;quizid=86364</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차방정식을 완전제곱식 (x+p)²=q 형태로 변형하여 제곱근을 이용해 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_근의_공식_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 근의 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53470&amp;page=1&amp;quizid=86365</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 이차방정식의 근의 공식 x=(-b±√(b²-4ac))/(2a)를 이해하고 적용하여 해를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x의_계수가_짝수인_이차방정식의_근의_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x의 계수가 짝수인 이차방정식의 근의 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53471&amp;page=1&amp;quizid=86366</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — b=2b'일 때 간단한 근의 공식 x=(-b'±√(b'²-ac))/a를 이용하여 계산을 간소화할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_이차방정식의_풀이_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 이차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53472&amp;page=1&amp;quizid=86367</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 분수, 소수, 괄호가 포함된 이차방정식을 정리하고 적절한 방법으로 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통부분이_있는_이차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통부분이 있는 이차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=7&amp;cmid=53473&amp;page=1&amp;quizid=86368</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 풀이(중등수학 3-1) — 공통부분을 치환하여 이차방정식으로 변형하고, 치환된 값으로부터 원래 방정식의 해를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 6단계: 이차방정식의 활용 (중등수학 3-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_근의_개수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 근의 개수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=8&amp;cmid=53474&amp;page=1&amp;quizid=86369</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 활용(중등수학 3-1) — 판별식 D=b²-4ac의 부호에 따라 근의 개수를 판별할 수 있다. D&gt;0이면 서로 다른 두 근, D=0이면 중근, D&lt;0이면 해가 없다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_근과_계수의_관계_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 근과 계수의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=8&amp;cmid=53475&amp;page=1&amp;quizid=86370</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 활용(중등수학 3-1) — 이차방정식 ax²+bx+c=0의 두 근을 α, β라 할 때, α+β=-b/a, αβ=c/a 관계를 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#계수가_유리수인_이차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">계수가 유리수인 이차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=8&amp;cmid=53476&amp;page=1&amp;quizid=86371</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 활용(중등수학 3-1) — 계수가 유리수인 이차방정식을 정수 계수로 변환하여 풀 수 있다. 분모의 최소공배수를 이용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=8&amp;cmid=53477&amp;page=1&amp;quizid=86372</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 활용(중등수학 3-1) — 두 근을 알 때 근과 계수의 관계를 이용하여 이차방정식을 구할 수 있다. (x-α)(x-β)=0 형태로 표현한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_활용_중등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 활용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=8&amp;cmid=53478&amp;page=1&amp;quizid=86373</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식의 활용(중등수학 3-1) — 실생활 문제를 이차방정식으로 모델링하고 해를 구하여 문제를 해결할 수 있다. 면적, 거리, 시간 등 다양한 상황에 적용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5-6단계 선행 학습 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_뜻_중등">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_활용_중등">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이차방정식의_근의_공식_중등"/>
+  </rdf:Description>
+
+  <!-- 5단계 순서 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_뜻_중등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식의_해_중등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_해_중등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해를_이용한_이차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해를_이용한_이차방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식의_중근"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_중근">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#제곱근을_이용한_이차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#제곱근을_이용한_이차방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#완전제곱식을_이용한_이차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#완전제곱식을_이용한_이차방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식의_근의_공식_중등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_근의_공식_중등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x의_계수가_짝수인_이차방정식의_근의_공식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x의_계수가_짝수인_이차방정식의_근의_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_이차방정식의_풀이_중등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복잡한_이차방정식의_풀이_중등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통부분이_있는_이차방정식의_풀이"/>
+  </rdf:Description>
+
+  <!-- 6단계 순서 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_근의_개수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식의_근과_계수의_관계_중등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_근과_계수의_관계_중등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#계수가_유리수인_이차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#계수가_유리수인_이차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차방정식의_활용_중등"/>
+  </rdf:Description>
+
+  <!-- 7단계: 이차방정식 (고등수학 상) - 주요 주제만 포함 -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#방정식과_일차방정식_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">방정식과 일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=4&amp;cmid=48497&amp;page=1&amp;quizid=84469</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식(고등수학 상) — 방정식의 기본 개념과 일차방정식의 풀이를 복습하고, 고등수학 수준의 방정식 이론을 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#절댓값_기호를_포함한_방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">절댓값 기호를 포함한 방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=4&amp;cmid=48499&amp;page=1&amp;quizid=84471</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식(고등수학 상) — 절댓값 기호가 포함된 방정식을 구간별로 나누어 풀 수 있다. |x-a|=b 형태의 방정식을 해결한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_뜻과_근의_종류">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 뜻과 근의 종류</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=4&amp;cmid=48500&amp;page=1&amp;quizid=84472</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식(고등수학 상) — 이차방정식의 정의와 실근, 허근, 중근의 개념을 이해하고 판별식을 이용하여 근의 종류를 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_근의_판별_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 근의 판별</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=4&amp;cmid=48502&amp;page=1&amp;quizid=84474</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식(고등수학 상) — 판별식 D=b²-4ac를 이용하여 근의 개수와 종류를 판별하고, 계수의 조건을 이용하여 근의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식의_근과_계수의_관계_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식의 근과 계수의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=4&amp;cmid=48505&amp;page=1&amp;quizid=84477</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식(고등수학 상) — 이차방정식의 두 근과 계수 사이의 관계를 이해하고, 근의 합과 곱을 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 8단계: 이차방정식과 이차함수 (고등수학 상) - 주요 주제만 포함 -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=5&amp;cmid=48511&amp;page=1&amp;quizid=84483</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식과 이차함수(고등수학 상) — 이차함수 y=ax²+bx+c의 그래프를 그릴 수 있고, 꼭짓점, 축, 대칭성을 이해한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차방정식과_이차함수의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차방정식과 이차함수의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=5&amp;cmid=48514&amp;page=1&amp;quizid=84486</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식과 이차함수(고등수학 상) — 이차방정식의 해가 이차함수의 그래프와 x축의 교점임을 이해하고, 그래프를 이용하여 방정식을 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_최대_최소">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 최대·최소</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=5&amp;cmid=48519&amp;page=1&amp;quizid=84491</ar:hasURL>
+    <ar:description xml:lang="ko">이차방정식과 이차함수(고등수학 상) — 이차함수의 꼭짓점을 이용하여 최대값 또는 최소값을 구할 수 있고, 제한된 범위에서의 최대·최소를 다룬다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 9단계: 삼차방정식과 사차방정식 (고등수학 상) - 주요 주제만 포함 -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#고차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">고차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=6&amp;cmid=48522&amp;page=1&amp;quizid=84494</ar:hasURL>
+    <ar:description xml:lang="ko">삼차방정식과 사차방정식(고등수학 상) — 삼차방정식과 사차방정식의 정의를 이해하고, 인수정리와 치환을 이용하여 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼차방정식의_근과_계수의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼차방정식의 근과 계수의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=6&amp;cmid=48526&amp;page=1&amp;quizid=84498</ar:hasURL>
+    <ar:description xml:lang="ko">삼차방정식과 사차방정식(고등수학 상) — 삼차방정식의 세 근과 계수 사이의 관계를 이해하고, 근의 합, 곱, 곱의 합을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 10단계: 연립방정식 (고등수학 상) - 주요 주제만 포함 -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_3개인_연립일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 3개인 연립일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=7&amp;cmid=48888&amp;page=1&amp;quizid=84503</ar:hasURL>
+    <ar:description xml:lang="ko">연립방정식(고등수학 상) — 세 개의 미지수를 가진 연립일차방정식을 가우스 소거법이나 대입법으로 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_2개인_연립이차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 2개인 연립이차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=7&amp;cmid=48889&amp;page=1&amp;quizid=84504</ar:hasURL>
+    <ar:description xml:lang="ko">연립방정식(고등수학 상) — 두 개의 이차방정식으로 이루어진 연립방정식을 대입법이나 인수분해를 이용하여 풀 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#부정방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">부정방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=7&amp;cmid=48892&amp;page=1&amp;quizid=84507</ar:hasURL>
+    <ar:description xml:lang="ko">연립방정식(고등수학 상) — 미지수의 개수가 방정식의 개수보다 많은 부정방정식을 이해하고, 정수 조건이나 실수 조건을 만족하는 해를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 고등수학 단계 선행 학습 관계 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차방정식의_뜻과_근의_종류">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이차방정식의_뜻_중등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_그래프">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이차방정식의_뜻과_근의_종류"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#고차방정식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이차방정식의_근의_판별_고등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_3개인_연립일차방정식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#미지수가_2개인_연립일차방정식"/>
+  </rdf:Description>
+
+</rdf:RDF>
+
