@@ -1,0 +1,25 @@
+# API 설정 파일 (API 키 포함)
+api_config.php
+
+# 로그 파일
+*.log
+narration_error.log
+
+# 테스트 파일
+test_*.php
+
+# 백업 파일
+*.bak
+*.backup
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# IDE 파일
+.vscode/
+.idea/
+
+# 임시 파일
+*.tmp
+*.temp

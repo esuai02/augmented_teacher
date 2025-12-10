@@ -7,10 +7,7 @@
  */
 
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
-
-// OpenAI API 키 설정
-define('OPENAI_API_KEY_SECURE', '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');
+global $DB, $USER, $CFG;
 
 // 에러 리포팅 설정
 error_reporting(E_ALL & ~E_NOTICE);
@@ -203,7 +200,7 @@ function generateNarration($system_prompt, $user_prompt) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
-                'Authorization: Bearer ' . OPENAI_API_KEY_SECURE
+                'Authorization: Bearer ' . $CFG->openai_api_key
             ));
             curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
@@ -353,7 +350,7 @@ function generateSingleTTS($text, $voice, $output_file) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
-            'Authorization: Bearer ' . OPENAI_API_KEY_SECURE
+            'Authorization: Bearer ' . $CFG->openai_api_key
         ));
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 

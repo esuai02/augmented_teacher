@@ -8,3 +8,4 @@ alt42_android/
 credentials/
 service-account.json
 .env
+.aider*

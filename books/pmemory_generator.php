@@ -30,7 +30,7 @@ try {
     require_once(dirname(__FILE__) . '/api_config.php');
 
     include_once("/home/moodle/public_html/moodle/config.php");
-    global $DB, $USER;
+    global $DB, $USER, $CFG;
 
     // 디버그 로깅 함수
     function debug_log($message) {
@@ -159,7 +159,7 @@ Critical Rules:
         CURLOPT_POSTFIELDS => json_encode($data),
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . OPENAI_API_KEY
+            'Authorization: Bearer ' . $CFG->openai_api_key
         ],
         CURLOPT_TIMEOUT => defined('API_TIMEOUT') ? API_TIMEOUT : 60,
         CURLOPT_SSL_VERIFYPEER => false
@@ -233,7 +233,7 @@ Critical Rules:
             CURLOPT_POSTFIELDS => json_encode($ttsData),
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
-                'Authorization: Bearer ' . OPENAI_API_KEY
+                'Authorization: Bearer ' . $CFG->openai_api_key
             ],
             CURLOPT_TIMEOUT => defined('TTS_API_TIMEOUT') ? TTS_API_TIMEOUT : 90,
             CURLOPT_SSL_VERIFYPEER => false
