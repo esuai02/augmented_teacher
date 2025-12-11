@@ -209,7 +209,7 @@ PROMPT;
     $ch = curl_init('https://api.openai.com/v1/chat/completions');
     
     $postData = [
-        'model' => 'gpt-4o',
+        'model' => 'gpt-5.1',
         'messages' => $messages,
         'temperature' => 0.7,
         'max_tokens' => 1000,

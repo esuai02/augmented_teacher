@@ -1,25 +1,85 @@
 <?php
+/**
+ * ktm_teaching_interactions 데이터 조회 API
+ * 
+ * 파라미터:
+ * - id 또는 interactionid: 기본 키(id)로 조회
+ * - contentsid: contentsid 컬럼으로 조회
+ * - contentstype: contentsid와 함께 사용 시 추가 조건
+ * - format: 'default' 또는 'section' (StepPlayer용)
+ */
+
 include_once("/home/moodle/public_html/moodle/config.php");
 global $DB, $USER;
 require_login();
 
 header('Content-Type: application/json');
 
-// 'id' 또는 'interactionid' 또는 'contentsid' 파라미터 모두 지원
-$id = $_GET['id'] ?? $_GET['interactionid'] ?? $_GET['contentsid'] ?? 0;
+// 파라미터 파싱
+$id = $_GET['id'] ?? $_GET['interactionid'] ?? null;
+$contentsid = $_GET['contentsid'] ?? null;
+$contentstype = $_GET['contentstype'] ?? null;
 $format = $_GET['format'] ?? 'default'; // 'default' 또는 'section'
 
-if (!$id) {
-    echo json_encode(['success' => false, 'error' => 'ID가 필요합니다.']);
+// ID가 하나도 없으면 에러
+if (!$id && !$contentsid) {
+    echo json_encode(['success' => false, 'error' => 'ID 또는 contentsid가 필요합니다.']);
     exit;
 }
 
 try {
-    // 상호작용 데이터 가져오기
-    $interaction = $DB->get_record('ktm_teaching_interactions', array('id' => $id));
+    $interaction = null;
+    
+    // 1. id 또는 interactionid로 조회 (기본 키)
+    if ($id) {
+        $interaction = $DB->get_record('ktm_teaching_interactions', ['id' => $id]);
+        if ($interaction) {
+            error_log("[get_interaction_data.php] id=$id 로 조회 성공");
+        }
+    }
+    
+    // 2. contentsid로 조회 (contentsid 컬럼)
+    if (!$interaction && $contentsid) {
+        // contentstype이 함께 제공된 경우
+        if ($contentstype !== null && $contentstype !== '') {
+            $interaction = $DB->get_record_sql(
+                "SELECT * FROM {ktm_teaching_interactions} 
+                 WHERE contentsid = ? AND contentstype = ? 
+                 AND audio_url IS NOT NULL AND audio_url != '' 
+                 ORDER BY id DESC LIMIT 1",
+                [$contentsid, $contentstype]
+            );
+            if ($interaction) {
+                error_log("[get_interaction_data.php] contentsid=$contentsid, contentstype=$contentstype 로 조회 성공 (id={$interaction->id})");
+            }
+        }
+        
+        // contentstype 없이 contentsid로만 조회
+        if (!$interaction) {
+            $interaction = $DB->get_record_sql(
+                "SELECT * FROM {ktm_teaching_interactions} 
+                 WHERE contentsid = ? 
+                 AND audio_url IS NOT NULL AND audio_url != '' 
+                 ORDER BY id DESC LIMIT 1",
+                [$contentsid]
+            );
+            if ($interaction) {
+                error_log("[get_interaction_data.php] contentsid=$contentsid 로만 조회 성공 (id={$interaction->id})");
+            }
+        }
+    }
+    
+    // 3. 여전히 없으면 contentsid를 id로 시도 (하위 호환성)
+    if (!$interaction && $contentsid && is_numeric($contentsid)) {
+        $interaction = $DB->get_record('ktm_teaching_interactions', ['id' => $contentsid]);
+        if ($interaction) {
+            error_log("[get_interaction_data.php] contentsid=$contentsid 를 id로 조회 성공 (fallback)");
+        }
+    }
     
     if (!$interaction) {
-        echo json_encode(['success' => false, 'error' => '상호작용 데이터를 찾을 수 없습니다.']);
+        $searchInfo = $id ? "id=$id" : "contentsid=$contentsid";
+        echo json_encode(['success' => false, 'error' => "상호작용 데이터를 찾을 수 없습니다. ($searchInfo)"]);
         exit;
     }
     
@@ -65,13 +125,18 @@ try {
             $audioSections[] = '';
         }
         
+        // faqtext도 함께 반환 (있는 경우)
+        $faqtext = $interaction->faqtext ?? null;
+        
         // StepPlayer 형식으로 반환
         echo json_encode([
             'success' => true,
             'data' => [
                 'sections' => $audioSections,
                 'text_sections' => $textSections,
-                'total_sections' => $totalSections
+                'total_sections' => $totalSections,
+                'faqtext' => $faqtext,
+                'interaction_id' => $interaction->id  // 실제 id도 반환
             ]
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
@@ -100,12 +165,13 @@ try {
         'solutionText' => $interaction->solution_text,
         'narrationText' => $interaction->narration_text,
         'audioUrl' => $interaction->audio_url,
+        'faqtext' => $interaction->faqtext ?? null,
         'modificationPrompt' => $interaction->modification_prompt ?? '',
         'status' => $interaction->status,
         'score' => $interaction->score ?? null,
         'timecreated' => $interaction->timecreated,
         'timemodified' => $interaction->timemodified
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
     
 } catch (Exception $e) {
     echo json_encode([

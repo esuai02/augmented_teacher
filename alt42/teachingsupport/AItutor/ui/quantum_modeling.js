@@ -1,9 +1,9 @@
 /**
  * Quantum Collapse Learning Maze - Visualization Engine
- * y=x²-ax 정삼각형 문제 양자 경로 분석
+ * 인지맵 시각화 - DB 기반 동적 렌더링
  *
  * React 코드를 Vanilla JS로 변환
- * 정답: a=2√3 | 모든 가능한 풀이/오류 경로 시각화
+ * 모든 노드/엣지/개념 데이터를 DB에서 불러옴
  *
  * 파일: quantum_modeling.js
  * 위치: alt42/teachingsupport/AItutor/ui/
@@ -13,131 +13,89 @@
     'use strict';
 
     // ========================================
-    // 데이터 정의 (React 코드에서 변환)
+    // DB에서 불러온 데이터 사용
+    // window.QUANTUM_DATA는 quantum_modeling.php에서 설정됨
     // ========================================
 
-    const CONCEPTS = {
-        factor: { id: 'factor', name: '인수분해', icon: '🧩', color: '#10b981' },
-        vertex: { id: 'vertex', name: '꼭짓점 공식', icon: '📍', color: '#8b5cf6' },
-        distance: { id: 'distance', name: '거리 계산', icon: '📏', color: '#f59e0b' },
-        equilateral: { id: 'equilateral', name: '정삼각형 성질', icon: '△', color: '#06b6d4' },
-        midpoint: { id: 'midpoint', name: '중점 공식', icon: '◐', color: '#ec4899' },
-        complete_sq: { id: 'complete_sq', name: '완전제곱식', icon: '²', color: '#3b82f6' },
-        equation: { id: 'equation', name: '방정식 풀이', icon: '⚖️', color: '#ef4444' },
-        condition: { id: 'condition', name: '조건 확인', icon: '✓', color: '#14b8a6' },
-        graph: { id: 'graph', name: '그래프 해석', icon: '📈', color: '#a855f7' },
-        height: { id: 'height', name: '삼각형 높이', icon: '↕', color: '#f97316' },
-    };
+    // 개념 데이터 (DB에서 불러옴)
+    let CONCEPTS = {};
+    
+    // 노드 데이터 (DB에서 불러옴)
+    let NODES = {};
+    
+    // 엣지 데이터 (DB에서 불러옴)
+    let EDGES = [];
+    
+    // 단계 이름 (DB에서 불러옴)
+    let STAGE_NAMES = ['시작'];
 
-    // 기본 노드 (하드코딩) - DB 데이터와 병합됨
-    const BASE_NODES = {
-        start: { id: 'start', x: 500, y: 50, label: '문제 인식', type: 'start', stage: 0, concepts: [], desc: '이차함수, 정삼각형 조건 파악' },
+    // ========================================
+    // DB 데이터 초기화 함수
+    // ========================================
 
-        // Stage 1: 문제 해석
-        s1_full: { id: 's1_full', x: 200, y: 170, label: '완전 이해', type: 'correct', stage: 1, concepts: ['graph'], desc: 'A,B는 x절편, C는 꼭짓점, 정삼각형 조건' },
-        s1_partial: { id: 's1_partial', x: 500, y: 170, label: '부분 이해', type: 'partial', stage: 1, concepts: ['graph'], desc: '점들의 의미는 알지만 정삼각형 조건 모호' },
-        s1_confuse: { id: 's1_confuse', x: 800, y: 170, label: '혼란', type: 'confused', stage: 1, concepts: [], desc: '무엇을 구해야 할지 모름' },
-
-        // Stage 2: x절편 구하기
-        s2_factor: { id: 's2_factor', x: 100, y: 310, label: 'x(x-a)=0', type: 'correct', stage: 2, concepts: ['factor'], desc: '인수분해로 x=0, x=a' },
-        s2_formula: { id: 's2_formula', x: 280, y: 310, label: '근의 공식', type: 'partial', stage: 2, concepts: ['equation'], desc: '근의 공식 사용 (비효율적이지만 정답)' },
-        s2_sign_err: { id: 's2_sign_err', x: 500, y: 310, label: 'x=-a 오류', type: 'wrong', stage: 2, concepts: ['factor'], desc: 'x(x-a)=0에서 x=0, x=-a로 착각' },
-        s2_forget_zero: { id: 's2_forget_zero', x: 700, y: 310, label: 'x=0 누락', type: 'wrong', stage: 2, concepts: ['factor'], desc: 'x-a=0만 풀어서 x=a만 구함' },
-        s2_stuck: { id: 's2_stuck', x: 900, y: 310, label: '막힘', type: 'confused', stage: 2, concepts: [], desc: '어떻게 교점을 구하는지 모름' },
-
-        // Stage 3: 꼭짓점 구하기
-        s3_complete: { id: 's3_complete', x: 80, y: 460, label: '완전제곱식', type: 'correct', stage: 3, concepts: ['complete_sq', 'vertex'], desc: 'y=(x-a/2)²-a²/4 → C(a/2, -a²/4)' },
-        s3_formula: { id: 's3_formula', x: 260, y: 460, label: '꼭짓점 공식', type: 'correct', stage: 3, concepts: ['vertex'], desc: 'x=-b/2a=a/2, y 대입' },
-        s3_mid_sub: { id: 's3_mid_sub', x: 440, y: 460, label: '중점 대입', type: 'partial', stage: 3, concepts: ['midpoint'], desc: 'A,B 중점의 x좌표를 대입' },
-        s3_sign_err: { id: 's3_sign_err', x: 640, y: 460, label: 'y좌표 부호오류', type: 'wrong', stage: 3, concepts: ['vertex'], desc: 'C(a/2, a²/4)로 착각 (양수)' },
-        s3_coef_err: { id: 's3_coef_err', x: 860, y: 460, label: '계수 착각', type: 'wrong', stage: 3, concepts: ['vertex'], desc: '-b/2a에서 a=1 대입 오류' },
-
-        // Stage 4: 정삼각형 조건 접근법
-        s4_height: { id: 's4_height', x: 100, y: 610, label: '높이 활용', type: 'correct', stage: 4, concepts: ['equilateral', 'height'], desc: 'MC = (√3/2)AB 관계 사용' },
-        s4_sides: { id: 's4_sides', x: 300, y: 610, label: '세 변 같음', type: 'correct', stage: 4, concepts: ['equilateral', 'distance'], desc: 'AB=BC=CA 조건 사용' },
-        s4_angle: { id: 's4_angle', x: 500, y: 610, label: '60° 조건', type: 'partial', stage: 4, concepts: ['equilateral'], desc: '각도 60° 조건으로 접근 (복잡)' },
-        s4_iso_only: { id: 's4_iso_only', x: 700, y: 610, label: '이등변만', type: 'wrong', stage: 4, concepts: ['distance'], desc: 'BC=CA만 확인, AB 무시' },
-        s4_height_err: { id: 's4_height_err', x: 900, y: 610, label: '높이공식 오류', type: 'wrong', stage: 4, concepts: ['height'], desc: '√3/2 대신 1/2 또는 √3 사용' },
-
-        // Stage 5: 거리 계산
-        s5_ab_correct: { id: 's5_ab_correct', x: 100, y: 760, label: 'AB=a 정확', type: 'correct', stage: 5, concepts: ['distance'], desc: '|a-0|=a' },
-        s5_mc_correct: { id: 's5_mc_correct', x: 300, y: 760, label: 'MC=a²/4', type: 'correct', stage: 5, concepts: ['distance', 'midpoint'], desc: 'M(a/2,0), C(a/2,-a²/4) → MC=a²/4' },
-        s5_bc_calc: { id: 's5_bc_calc', x: 500, y: 760, label: 'BC 거리계산', type: 'partial', stage: 5, concepts: ['distance'], desc: '√[(a-a/2)²+(a²/4)²] 계산' },
-        s5_ab_err: { id: 's5_ab_err', x: 700, y: 760, label: 'AB=2a 오류', type: 'wrong', stage: 5, concepts: ['distance'], desc: 'AB를 2a로 착각' },
-        s5_mc_sign: { id: 's5_mc_sign', x: 900, y: 760, label: 'MC 부호오류', type: 'wrong', stage: 5, concepts: ['distance'], desc: 'MC=-a²/4 (음수 처리 실패)' },
-
-        // Stage 6: 방정식 설정
-        s6_eq_correct: { id: 's6_eq_correct', x: 150, y: 910, label: 'a²/4=(√3/2)a', type: 'correct', stage: 6, concepts: ['equation', 'equilateral'], desc: '정삼각형 높이 관계식 설정' },
-        s6_eq_sides: { id: 's6_eq_sides', x: 400, y: 910, label: 'a=BC 설정', type: 'correct', stage: 6, concepts: ['equation', 'distance'], desc: 'AB=BC에서 방정식 유도' },
-        s6_eq_wrong: { id: 's6_eq_wrong', x: 650, y: 910, label: '관계식 오류', type: 'wrong', stage: 6, concepts: ['equation'], desc: 'a²/4 = a/2 등 잘못된 관계' },
-        s6_sqrt_err: { id: 's6_sqrt_err', x: 880, y: 910, label: '√3 누락', type: 'wrong', stage: 6, concepts: ['equilateral'], desc: '높이=(1/2)×밑변으로 착각' },
-
-        // Stage 7: 최종 답
-        s7_success: { id: 's7_success', x: 200, y: 1060, label: '💥 a=2√3', type: 'success', stage: 7, concepts: ['equation', 'condition'], desc: 'a²-2√3a=0 → a=2√3 (a>0)' },
-        s7_success2: { id: 's7_success2', x: 450, y: 1060, label: '✨ a=2√3', type: 'success', stage: 7, concepts: ['equation', 'condition'], desc: '세 변 방법으로도 동일 결과' },
-        s7_fail_calc: { id: 's7_fail_calc', x: 680, y: 1060, label: '❌ 계산오류', type: 'fail', stage: 7, concepts: ['equation'], desc: 'a=√3 또는 a=2 등 오답' },
-        s7_fail_cond: { id: 's7_fail_cond', x: 900, y: 1060, label: '❌ a=0 선택', type: 'fail', stage: 7, concepts: ['condition'], desc: 'a>0 조건 무시하고 a=0' },
-    };
-
-    // 기본 엣지 (하드코딩) - DB 데이터와 병합됨
-    const BASE_EDGES = [
-        ['start', 's1_full'], ['start', 's1_partial'], ['start', 's1_confuse'],
-        ['s1_full', 's2_factor'], ['s1_full', 's2_formula'], ['s1_partial', 's2_formula'], ['s1_partial', 's2_sign_err'],
-        ['s1_confuse', 's2_stuck'], ['s1_confuse', 's2_forget_zero'],
-        ['s2_factor', 's3_complete'], ['s2_factor', 's3_formula'], ['s2_formula', 's3_formula'], ['s2_formula', 's3_mid_sub'],
-        ['s2_sign_err', 's3_sign_err'], ['s2_forget_zero', 's3_coef_err'], ['s2_stuck', 's3_mid_sub'],
-        ['s3_complete', 's4_height'], ['s3_complete', 's4_sides'], ['s3_formula', 's4_height'], ['s3_formula', 's4_sides'],
-        ['s3_mid_sub', 's4_angle'], ['s3_mid_sub', 's4_sides'], ['s3_sign_err', 's4_height_err'], ['s3_coef_err', 's4_iso_only'],
-        ['s4_height', 's5_ab_correct'], ['s4_height', 's5_mc_correct'], ['s4_sides', 's5_bc_calc'], ['s4_sides', 's5_ab_correct'],
-        ['s4_angle', 's5_bc_calc'], ['s4_iso_only', 's5_ab_err'], ['s4_height_err', 's5_mc_sign'],
-        ['s5_ab_correct', 's6_eq_correct'], ['s5_mc_correct', 's6_eq_correct'], ['s5_bc_calc', 's6_eq_sides'],
-        ['s5_ab_err', 's6_eq_wrong'], ['s5_mc_sign', 's6_sqrt_err'],
-        ['s6_eq_correct', 's7_success'], ['s6_eq_sides', 's7_success2'], ['s6_eq_wrong', 's7_fail_calc'], ['s6_sqrt_err', 's7_fail_cond'],
-    ];
-
-    const STAGE_NAMES = ['시작', '문제해석', 'x절편', '꼭짓점', '접근법', '거리계산', '방정식', '최종'];
-
-    // 실제 사용할 노드/엣지 (DB 데이터 병합 후)
-    let NODES = { ...BASE_NODES };
-    let EDGES = [...BASE_EDGES];
-
-    // DB 데이터 병합 함수
-    function mergeDbData() {
-        if (!window.QUANTUM_DATA) return;
-        
-        const dbNodes = window.QUANTUM_DATA.dbNodes || [];
-        const dbEdges = window.QUANTUM_DATA.dbEdges || [];
-        
-        // DB 노드 병합 (기존 노드와 중복되지 않는 것만)
-        dbNodes.forEach(node => {
-            if (!NODES[node.id]) {
-                NODES[node.id] = {
-                    id: node.id,
-                    x: node.x,
-                    y: node.y,
-                    label: node.label,
-                    type: node.type,
-                    stage: node.stage,
-                    concepts: node.concepts || [],
-                    desc: node.desc || '',
-                    fromDb: true  // DB에서 온 노드 표시
-                };
-                console.log('[quantum_modeling.js] DB 노드 추가:', node.id, node.label);
-            }
-        });
-        
-        // DB 엣지 병합 (중복 체크)
-        dbEdges.forEach(edge => {
-            const exists = EDGES.some(e => e[0] === edge[0] && e[1] === edge[1]);
-            if (!exists) {
-                EDGES.push(edge);
-                console.log('[quantum_modeling.js] DB 엣지 추가:', edge[0], '->', edge[1]);
-            }
-        });
-        
-        if (dbNodes.length > 0 || dbEdges.length > 0) {
-            console.log('[quantum_modeling.js] DB 데이터 병합 완료:', dbNodes.length, '노드,', dbEdges.length, '엣지');
+    function initializeDataFromDb() {
+        if (!window.QUANTUM_DATA) {
+            console.error('[quantum_modeling.js] window.QUANTUM_DATA가 없습니다!');
+            return false;
         }
+        
+        const data = window.QUANTUM_DATA;
+        
+        // 개념 데이터 로드
+        if (data.concepts && Object.keys(data.concepts).length > 0) {
+            CONCEPTS = data.concepts;
+            console.log('[quantum_modeling.js] 개념 로드:', Object.keys(CONCEPTS).length, '개');
+        } else {
+            console.warn('[quantum_modeling.js] 개념 데이터가 없습니다. 기본값 사용');
+            CONCEPTS = getDefaultConcepts();
+        }
+        
+        // 노드 데이터 로드
+        if (data.nodes && Object.keys(data.nodes).length > 0) {
+            NODES = data.nodes;
+            console.log('[quantum_modeling.js] 노드 로드:', Object.keys(NODES).length, '개');
+        } else {
+            console.warn('[quantum_modeling.js] 노드 데이터가 없습니다. seed_quantum_data.sql을 실행해주세요.');
+            // 최소한의 시작 노드 생성
+            NODES = {
+                start: { id: 'start', x: 500, y: 50, label: '시작', type: 'start', stage: 0, concepts: [], desc: 'DB에서 노드 데이터를 불러오지 못했습니다.' }
+            };
+        }
+        
+        // 엣지 데이터 로드
+        if (data.edges && data.edges.length > 0) {
+            EDGES = data.edges;
+            console.log('[quantum_modeling.js] 엣지 로드:', EDGES.length, '개');
+        } else {
+            console.warn('[quantum_modeling.js] 엣지 데이터가 없습니다.');
+            EDGES = [];
+        }
+        
+        // 단계 이름 로드
+        if (data.stageNames && data.stageNames.length > 0) {
+            STAGE_NAMES = data.stageNames;
+            console.log('[quantum_modeling.js] 단계 이름 로드:', STAGE_NAMES.length, '개');
+        } else {
+            STAGE_NAMES = ['시작'];
+        }
+        
+        return true;
+    }
+
+    // 기본 개념 데이터 (DB에 데이터가 없을 때 fallback)
+    function getDefaultConcepts() {
+        return {
+            factor: { id: 'factor', name: '인수분해', icon: '🧩', color: '#10b981' },
+            vertex: { id: 'vertex', name: '꼭짓점 공식', icon: '📍', color: '#8b5cf6' },
+            distance: { id: 'distance', name: '거리 계산', icon: '📏', color: '#f59e0b' },
+            equilateral: { id: 'equilateral', name: '정삼각형 성질', icon: '△', color: '#06b6d4' },
+            midpoint: { id: 'midpoint', name: '중점 공식', icon: '◐', color: '#ec4899' },
+            complete_sq: { id: 'complete_sq', name: '완전제곱식', icon: '²', color: '#3b82f6' },
+            equation: { id: 'equation', name: '방정식 풀이', icon: '⚖️', color: '#ef4444' },
+            condition: { id: 'condition', name: '조건 확인', icon: '✓', color: '#14b8a6' },
+            graph: { id: 'graph', name: '그래프 해석', icon: '📈', color: '#a855f7' },
+            height: { id: 'height', name: '삼각형 높이', icon: '↕', color: '#f97316' },
+        };
     }
 
     // ========================================
@@ -330,10 +288,13 @@
     function renderConceptPanel() {
         const container = document.getElementById('concept-list');
         const countEl = document.getElementById('activated-count');
+        const totalEl = document.getElementById('total-concepts');
         const progressEl = document.getElementById('concept-progress');
         if (!container) return;
 
-        container.innerHTML = Object.values(CONCEPTS).map(c => {
+        const conceptList = Object.values(CONCEPTS);
+        
+        container.innerHTML = conceptList.map(c => {
             const isActive = state.activatedConcepts.has(c.id);
             const isColl = state.collapsingConcept === c.id;
             let cls = 'relative flex items-center gap-2 px-3 py-2 rounded-lg transition-all ';
@@ -360,8 +321,10 @@
         }).join('');
 
         if (countEl) countEl.textContent = state.activatedConcepts.size;
+        if (totalEl) totalEl.textContent = conceptList.length;
         if (progressEl) {
-            progressEl.style.width = `${(state.activatedConcepts.size / Object.keys(CONCEPTS).length) * 100}%`;
+            const progress = conceptList.length > 0 ? (state.activatedConcepts.size / conceptList.length) * 100 : 0;
+            progressEl.style.width = `${progress}%`;
         }
     }
 
@@ -656,7 +619,9 @@
             concepts: new Set(newConcepts)
         });
 
-        if (node.stage === 7) {
+        // 최종 단계 확인 (동적으로 판단)
+        const maxStage = Math.max(...Object.values(NODES).map(n => n.stage || 0));
+        if (node.stage === maxStage) {
             state.isComplete = true;
         }
 
@@ -944,8 +909,11 @@
     async function init() {
         console.log('[quantum_modeling.js] 초기화 시작');
 
-        // DB 데이터 병합 (가장 먼저 실행)
-        mergeDbData();
+        // DB 데이터 초기화
+        if (!initializeDataFromDb()) {
+            console.error('[quantum_modeling.js] 데이터 초기화 실패');
+            return;
+        }
 
         if (window.QUANTUM_DATA) {
             state.contentId = window.QUANTUM_DATA.contentId || null;
@@ -974,7 +942,7 @@
         // 드래그 이벤트 초기화
         initDragEvents();
         
-        console.log('[quantum_modeling.js] 초기화 완료 - 총 노드:', Object.keys(NODES).length, ', 총 엣지:', EDGES.length);
+        console.log('[quantum_modeling.js] 초기화 완료 - 총 노드:', Object.keys(NODES).length, ', 총 엣지:', EDGES.length, ', 총 개념:', Object.keys(CONCEPTS).length);
     }
 
     // DOM 로드 후 초기화
@@ -1348,4 +1316,3 @@
     }
 
 })();
-

@@ -1,10 +1,10 @@
 <?php
 /**
  * 양자 붕괴 학습 미로 (Quantum Collapse Learning Maze)
- * y=x²-ax 정삼각형 문제 - 양자 경로 분석
+ * 인지맵 시각화 - DB 기반 동적 렌더링
  *
  * React 없이 순수 PHP + Vanilla JS 구현
- * 정답: a=2√3 | 모든 가능한 풀이/오류 경로 시각화
+ * 모든 노드/엣지/개념 데이터를 DB에서 불러옴
  *
  * 파일: quantum_modeling.php
  * 위치: alt42/teachingsupport/AItutor/ui/
@@ -94,59 +94,134 @@ if (!empty($contentId)) {
     }
 }
 
-// DB에서 추가된 노드/엣지 조회
+// ========================================
+// DB에서 인지맵 데이터 조회
+// ========================================
+
 $dbNodes = [];
 $dbEdges = [];
 $dbConcepts = [];
+$stageNames = ['시작']; // 기본값
+$contentMeta = [
+    'title' => '',
+    'answer' => ''
+];
 
-if (!empty($contentId)) {
+// ★★★ 수정: 항상 기본 인지맵 데이터를 먼저 불러온 후, 사용자별 데이터 병합 ★★★
+$baseContentId = 'default_equilateral';  // 기본 인지맵 데이터 (seed SQL에 저장된 ID)
+$userContentId = $contentId;  // 사용자별 추가 데이터 (URL에서 받은 ID)
+
+try {
+    // 1. 기본 인지맵에서 컨텐츠 메타데이터 조회 (제목, 정답, 단계 이름)
+    $contentRecord = $DB->get_record('at_quantum_contents', ['content_id' => $baseContentId, 'is_active' => 1]);
+    if ($contentRecord) {
+        $contentMeta['title'] = $contentRecord->title ?? '';
+        $contentMeta['answer'] = $contentRecord->answer ?? '';
+        $stageNames = json_decode($contentRecord->stage_names ?? '[]', true) ?: ['시작'];
+    }
+    
+    // 2. 기본 인지맵에서 개념(Concepts) 조회
+    $conceptsResult = $DB->get_records('at_quantum_concepts', ['content_id' => $baseContentId, 'is_active' => 1], 'order_index ASC');
+    if ($conceptsResult) {
+        foreach ($conceptsResult as $concept) {
+            $dbConcepts[$concept->concept_id] = [
+                'id' => $concept->concept_id,
+                'name' => $concept->name,
+                'icon' => $concept->icon ?? '📌',
+                'color' => $concept->color ?? '#64748b'
+            ];
+        }
+    }
+    
+    // 3. 기본 인지맵에서 노드(Nodes) 조회
+    $nodesResult = $DB->get_records('at_quantum_nodes', ['content_id' => $baseContentId, 'is_active' => 1], 'stage ASC, order_index ASC');
+    if ($nodesResult) {
+        foreach ($nodesResult as $node) {
+            $dbNodes[$node->node_id] = [
+                'id' => $node->node_id,
+                'x' => (int)$node->x,
+                'y' => (int)$node->y,
+                'label' => $node->label,
+                'type' => $node->type,
+                'stage' => (int)$node->stage,
+                'desc' => $node->description ?? '',
+                'concepts' => []
+            ];
+        }
+    }
+    
+    // 4. 기본 인지맵에서 노드-개념 연결 조회
+    $nodeConceptsResult = $DB->get_records('at_quantum_node_concepts', ['content_id' => $baseContentId], 'order_index ASC');
+    if ($nodeConceptsResult) {
+        foreach ($nodeConceptsResult as $nc) {
+            if (isset($dbNodes[$nc->node_id])) {
+                $dbNodes[$nc->node_id]['concepts'][] = $nc->concept_id;
+            }
+        }
+    }
+    
+    // 5. 기본 인지맵에서 엣지(Edges) 조회
+    $edgesResult = $DB->get_records('at_quantum_edges', ['content_id' => $baseContentId, 'is_active' => 1]);
+    if ($edgesResult) {
+        foreach ($edgesResult as $edge) {
+            $dbEdges[] = [$edge->source_node_id, $edge->target_node_id];
+        }
+    }
+    
+    // DB에 기본 데이터가 없으면 로그 출력
+    if (empty($dbNodes)) {
+        error_log("[quantum_modeling.php:$analysisId] 경고: 기본 인지맵 데이터가 없습니다. seed_quantum_data.sql을 실행해주세요.");
+    }
+    
+} catch (Exception $e) {
+    error_log("[quantum_modeling.php:$analysisId] 기본 인지맵 조회 오류: " . $e->getMessage());
+}
+
+// 사용자별 추가 노드/엣지 병합 (AI가 추가한 것들)
+if (!empty($userContentId)) {
     try {
-        // 추가된 노드 조회
-        $nodesResult = $DB->get_records('at_quantum_nodes', ['content_id' => $contentId, 'is_active' => 1]);
-        if ($nodesResult) {
-            foreach ($nodesResult as $node) {
-                $dbNodes[] = [
-                    'id' => $node->node_id,
-                    'x' => (int)$node->x,
-                    'y' => (int)$node->y,
-                    'label' => $node->label,
-                    'type' => $node->type,
-                    'stage' => (int)$node->stage,
-                    'desc' => $node->description ?? '',
-                    'concepts' => []
-                ];
-            }
-        }
-        
-        // 추가된 엣지 조회
-        $edgesResult = $DB->get_records('at_quantum_edges', ['content_id' => $contentId, 'is_active' => 1]);
-        if ($edgesResult) {
-            foreach ($edgesResult as $edge) {
-                $dbEdges[] = [$edge->source_node_id, $edge->target_node_id];
-            }
-        }
-        
-        // 노드-개념 연결 조회
-        $nodeConceptsResult = $DB->get_records('at_quantum_node_concepts', ['content_id' => $contentId]);
-        if ($nodeConceptsResult) {
-            $nodeConcepts = [];
-            foreach ($nodeConceptsResult as $nc) {
-                if (!isset($nodeConcepts[$nc->node_id])) {
-                    $nodeConcepts[$nc->node_id] = [];
-                }
-                $nodeConcepts[$nc->node_id][] = $nc->concept_id;
-            }
-            // 노드에 개념 연결
-            foreach ($dbNodes as &$node) {
-                if (isset($nodeConcepts[$node['id']])) {
-                    $node['concepts'] = $nodeConcepts[$node['id']];
+        // 사용자 contentId로 추가된 노드 병합
+        $additionalNodes = $DB->get_records('at_quantum_nodes', ['content_id' => $userContentId, 'is_active' => 1]);
+        if ($additionalNodes) {
+            foreach ($additionalNodes as $node) {
+                if (!isset($dbNodes[$node->node_id])) {
+                    $dbNodes[$node->node_id] = [
+                        'id' => $node->node_id,
+                        'x' => (int)$node->x,
+                        'y' => (int)$node->y,
+                        'label' => $node->label,
+                        'type' => $node->type,
+                        'stage' => (int)$node->stage,
+                        'desc' => $node->description ?? '',
+                        'concepts' => [],
+                        'fromDb' => true  // AI/사용자가 추가한 노드 표시
+                    ];
                 }
             }
-            unset($node);
         }
         
+        // 사용자 contentId로 추가된 엣지 병합
+        $additionalEdges = $DB->get_records('at_quantum_edges', ['content_id' => $userContentId, 'is_active' => 1]);
+        if ($additionalEdges) {
+            foreach ($additionalEdges as $edge) {
+                $edgePair = [$edge->source_node_id, $edge->target_node_id];
+                if (!in_array($edgePair, $dbEdges)) {
+                    $dbEdges[] = $edgePair;
+                }
+            }
+        }
+        
+        // 사용자 contentId로 추가된 노드-개념 연결 병합
+        $additionalNodeConcepts = $DB->get_records('at_quantum_node_concepts', ['content_id' => $userContentId]);
+        if ($additionalNodeConcepts) {
+            foreach ($additionalNodeConcepts as $nc) {
+                if (isset($dbNodes[$nc->node_id]) && !in_array($nc->concept_id, $dbNodes[$nc->node_id]['concepts'])) {
+                    $dbNodes[$nc->node_id]['concepts'][] = $nc->concept_id;
+                }
+            }
+        }
     } catch (Exception $e) {
-        error_log("[quantum_modeling.php:$analysisId] DB 노드/엣지 조회 오류: " . $e->getMessage());
+        error_log("[quantum_modeling.php:$analysisId] 사용자 데이터 병합 오류: " . $e->getMessage());
     }
 }
 
@@ -154,6 +229,7 @@ if (!empty($contentId)) {
 $initialData = json_encode([
     'analysisId' => $analysisId,
     'contentId' => $contentId,
+    'mapContentId' => $baseContentId,
     'contentsType' => $contentsType,
     'questionData' => $questionData,
     'imageUrl' => $imageUrl,
@@ -163,16 +239,24 @@ $initialData = json_encode([
     'userName' => $USER->firstname ?? 'Guest',
     'sessionId' => $existingSessionId,
     'hasExistingSession' => $hasExistingSession,
-    'dbNodes' => $dbNodes,
-    'dbEdges' => $dbEdges
+    // 인지맵 데이터 (DB에서 불러옴)
+    'nodes' => $dbNodes,
+    'edges' => $dbEdges,
+    'concepts' => $dbConcepts,
+    'stageNames' => $stageNames,
+    'contentMeta' => $contentMeta
 ], JSON_UNESCAPED_UNICODE);
+
+// 동적 타이틀/설명 생성
+$pageTitle = !empty($contentMeta['title']) ? $contentMeta['title'] : '🔮 인지맵 - 양자 경로 분석';
+$pageDesc = !empty($contentMeta['answer']) ? "정답: {$contentMeta['answer']} | 모든 가능한 풀이/오류 경로 시각화" : "모든 가능한 풀이/오류 경로 시각화";
 ?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔮 y=x²-ax 정삼각형 문제 - 양자 경로 분석</title>
+    <title><?php echo htmlspecialchars($pageTitle); ?></title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -263,10 +347,10 @@ $initialData = json_encode([
         <!-- 헤더 -->
         <header class="flex items-center justify-between mb-4">
             <div>
-                <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                    🔮 y=x²-ax 정삼각형 문제 - 양자 경로 분석
+                <h1 id="page-title" class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <?php echo htmlspecialchars($pageTitle); ?>
                 </h1>
-                <p class="text-slate-400 text-sm">정답: a=2√3 | 모든 가능한 풀이/오류 경로 시각화</p>
+                <p id="page-desc" class="text-slate-400 text-sm"><?php echo htmlspecialchars($pageDesc); ?></p>
             </div>
             <div class="flex gap-2">
                 <!-- 인지맵 성장시키기 버튼 -->
@@ -339,7 +423,7 @@ $initialData = json_encode([
                         <!-- JS에서 동적 생성 -->
                     </div>
                     <div class="mt-3 pt-3 border-t border-white/10 text-sm text-slate-400">
-                        진행도: <span id="activated-count" class="text-white font-bold">0</span>/<span id="total-concepts">10</span>
+                        진행도: <span id="activated-count" class="text-white font-bold">0</span>/<span id="total-concepts">0</span>
                         <div class="mt-2 h-2 bg-slate-700 rounded-full overflow-hidden">
                             <div id="concept-progress" class="h-full bg-gradient-to-r from-cyan-500 to-purple-500 transition-all" style="width: 0%"></div>
                         </div>
@@ -613,26 +697,36 @@ $initialData = json_encode([
  * DB 참조 정보
  * ========================================
  *
- * 테이블: mdl_abessi_messages
- * - wboardid (VARCHAR): 화이트보드 ID (파라미터로 받음)
- * - contentsid (VARCHAR): 콘텐츠 ID
- * - contentstype (VARCHAR): 콘텐츠 유형
- * - tlaststroke (INT): 마지막 스트로크 타임스탬프
+ * 테이블: mdl_at_quantum_contents
+ * - content_id (VARCHAR): 콘텐츠 ID
+ * - title (VARCHAR): 문제 제목
+ * - answer (VARCHAR): 정답
+ * - stage_names (TEXT): JSON 형태의 단계 이름 배열
  *
- * 테이블: mdl_question
- * - id (INT): 문제 ID
- * - questiontext (TEXT): 문제 텍스트 (HTML)
- * - generalfeedback (TEXT): 해설 텍스트 (HTML)
+ * 테이블: mdl_at_quantum_concepts
+ * - concept_id (VARCHAR): 개념 ID
+ * - content_id (VARCHAR): 콘텐츠 ID
+ * - name (VARCHAR): 개념 이름
+ * - icon (VARCHAR): 아이콘
+ * - color (VARCHAR): 색상 코드
  *
- * 테이블: ktm_teaching_interactions (선택적)
- * - contentsid (VARCHAR): 콘텐츠 ID
- * - narration_text (TEXT): 나레이션 텍스트
- * - image_url (VARCHAR): 이미지 URL
- * - faqtext (TEXT): FAQ 텍스트
+ * 테이블: mdl_at_quantum_nodes
+ * - node_id (VARCHAR): 노드 ID
+ * - content_id (VARCHAR): 콘텐츠 ID
+ * - label (VARCHAR): 노드 라벨
+ * - type (VARCHAR): 노드 타입 (start/correct/wrong/partial/confused/success/fail)
+ * - stage (INT): 단계 번호
+ * - x, y (INT): 좌표
+ * - description (TEXT): 설명
  *
- * 테이블: ktm_teaching_contents (선택적)
- * - contentsid (VARCHAR): 콘텐츠 ID
- * - questiontext (TEXT): 문제 텍스트
- * - questionimage (VARCHAR): 문제 이미지 URL
+ * 테이블: mdl_at_quantum_node_concepts
+ * - node_id (VARCHAR): 노드 ID
+ * - concept_id (VARCHAR): 개념 ID
+ * - content_id (VARCHAR): 콘텐츠 ID
+ *
+ * 테이블: mdl_at_quantum_edges
+ * - source_node_id (VARCHAR): 출발 노드 ID
+ * - target_node_id (VARCHAR): 도착 노드 ID
+ * - content_id (VARCHAR): 콘텐츠 ID
  */
 ?>
