@@ -528,6 +528,218 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         .btn-secondary:hover {
             border-color: var(--primary);
         }
+
+        /* 인지노드 미로 시각화 */
+        #quantum-maze {
+            width: 100%;
+            height: 600px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        #maze-svg {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+
+        #maze-svg:active {
+            cursor: grabbing;
+        }
+
+        .maze-node {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .maze-node:hover {
+            filter: brightness(1.3);
+            transform: scale(1.1);
+        }
+
+        .maze-node.visited {
+            opacity: 0.7;
+        }
+
+        .maze-node.current {
+            filter: brightness(1.5) drop-shadow(0 0 8px var(--primary));
+            animation: pulse-node 2s infinite;
+        }
+
+        @keyframes pulse-node {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .maze-path {
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.6;
+        }
+
+        .maze-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .scale-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .scale-slider {
+            flex: 1;
+            height: 6px;
+            background: var(--bg-dark);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .scale-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .scale-btn {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            min-width: 60px;
+        }
+
+        .maze-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .maze-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .suggestion-item {
+            padding: 15px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .suggestion-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .version-item {
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .version-item:hover {
+            border-color: var(--primary);
+            background: var(--bg-hover);
+        }
+
+        .version-item.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -548,6 +760,81 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         </div>
 
         <div class="grid">
+            <!-- 인지노드 미로 시각화 -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🧠 인지노드 미로</div>
+                        <div class="maze-actions">
+                            <button class="btn btn-secondary maze-btn" onclick="if(typeof toggleGrowthMenu==='function') toggleGrowthMenu()">
+                                🌱 성장
+                            </button>
+                            <button class="btn btn-secondary maze-btn" onclick="if(typeof openVersionHistory==='function') openVersionHistory()">
+                                📜 버전
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 맵 크기 조절 컨트롤 -->
+                    <div class="maze-controls">
+                        <div class="scale-controls">
+                            <span style="font-size: 0.85rem; color: var(--text-secondary); min-width: 60px;">크기:</span>
+                            <input type="range" id="mapScaleSlider" class="scale-slider" min="50" max="200" value="100" 
+                                   oninput="if(typeof updateMapScale==='function') updateMapScale(this.value)">
+                            <span id="scaleValue" style="font-size: 0.85rem; color: var(--text-primary); min-width: 40px; text-align: right;">100%</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-secondary scale-btn" onclick="if(typeof updateMapScale==='function') updateMapScale(50)">축소</button>
+                            <button class="btn btn-secondary scale-btn" onclick="if(typeof updateMapScale==='function') updateMapScale(100)">기본</button>
+                            <button class="btn btn-secondary scale-btn" onclick="if(typeof updateMapScale==='function') updateMapScale(150)">확대</button>
+                        </div>
+                        <div style="display: flex; gap: 6px; margin-left: auto;">
+                            <button class="btn btn-secondary maze-btn" onclick="if(typeof backtrackOne==='function') backtrackOne()">
+                                ⬅️ 뒤로
+                            </button>
+                            <button class="btn btn-secondary maze-btn" onclick="if(typeof resetMaze==='function') resetMaze()">
+                                🔄 리셋
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SVG 미로 -->
+                    <div id="quantum-maze">
+                        <svg id="maze-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet">
+                            <!-- 경로들 -->
+                            <path class="maze-path" d="M 100 300 L 200 300" />
+                            <path class="maze-path" d="M 200 300 L 300 200" />
+                            <path class="maze-path" d="M 300 200 L 400 200" />
+                            <path class="maze-path" d="M 400 200 L 500 300" />
+                            <path class="maze-path" d="M 500 300 L 600 300" />
+                            <path class="maze-path" d="M 600 300 L 700 400" />
+                            
+                            <!-- 노드들 -->
+                            <circle class="maze-node current" cx="100" cy="300" r="15" fill="#6366f1" data-node-id="1" onclick="if(typeof handleNodeClick==='function') handleNodeClick(1)" />
+                            <text x="100" y="305" text-anchor="middle" fill="white" font-size="10" font-weight="bold">1</text>
+                            
+                            <circle class="maze-node" cx="200" cy="300" r="12" fill="#10b981" data-node-id="2" onclick="if(typeof handleNodeClick==='function') handleNodeClick(2)" />
+                            <text x="200" y="305" text-anchor="middle" fill="white" font-size="9">2</text>
+                            
+                            <circle class="maze-node" cx="300" cy="200" r="12" fill="#f59e0b" data-node-id="3" onclick="if(typeof handleNodeClick==='function') handleNodeClick(3)" />
+                            <text x="300" y="205" text-anchor="middle" fill="white" font-size="9">3</text>
+                            
+                            <circle class="maze-node" cx="400" cy="200" r="12" fill="#ef4444" data-node-id="4" onclick="if(typeof handleNodeClick==='function') handleNodeClick(4)" />
+                            <text x="400" y="205" text-anchor="middle" fill="white" font-size="9">4</text>
+                            
+                            <circle class="maze-node" cx="500" cy="300" r="12" fill="#8b5cf6" data-node-id="5" onclick="if(typeof handleNodeClick==='function') handleNodeClick(5)" />
+                            <text x="500" y="305" text-anchor="middle" fill="white" font-size="9">5</text>
+                            
+                            <circle class="maze-node" cx="600" cy="300" r="12" fill="#06b6d4" data-node-id="6" onclick="if(typeof handleNodeClick==='function') handleNodeClick(6)" />
+                            <text x="600" y="305" text-anchor="middle" fill="white" font-size="9">6</text>
+                            
+                            <circle class="maze-node" cx="700" cy="400" r="12" fill="#ec4899" data-node-id="7" onclick="if(typeof handleNodeClick==='function') handleNodeClick(7)" />
+                            <text x="700" y="405" text-anchor="middle" fill="white" font-size="9">7</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
             <!-- 메인 상태 모니터 -->
             <div class="col-8">
                 <div class="card">
@@ -715,6 +1002,56 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                     </div>
                     <div class="sim-log" id="simLog">
                         <div class="log-entry prediction">🚀 [<?php echo date('H:i:s'); ?>] 시스템 초기화 완료 | 초기 상태: <?php echo round($hybridState['predicted_state'] * 100); ?>% 집중</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 성장 메뉴 모달 -->
+    <div id="growthModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🌱 인지노드 성장</div>
+                <button class="modal-close" onclick="if(typeof closeGrowthModal==='function') closeGrowthModal()">&times;</button>
+            </div>
+            <div>
+                <p style="margin-bottom: 15px; color: var(--text-secondary);">인지노드를 성장시켜 학습 경로를 확장하세요.</p>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="if(typeof generateSuggestion==='function') generateSuggestion()" style="width: 100%;">
+                        🤖 AI 제안 받기
+                    </button>
+                </div>
+                <div id="suggestionsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI 제안 모달 -->
+    <div id="suggestionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">💡 AI 제안</div>
+                <button class="modal-close" onclick="if(typeof closeSuggestionModal==='function') closeSuggestionModal()">&times;</button>
+            </div>
+            <div id="suggestionContent">
+                <p>AI가 학습 경로를 분석 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 버전 관리 모달 -->
+    <div id="versionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">📜 버전 관리</div>
+                <button class="modal-close" onclick="if(typeof closeVersionHistory==='function') closeVersionHistory()">&times;</button>
+            </div>
+            <div id="versionList">
+                <div class="version-item active" onclick="if(typeof rollbackVersion==='function') rollbackVersion(0)">
+                    <div style="font-weight: 600;">현재 버전</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                        <?php echo date('Y-m-d H:i:s'); ?>
                     </div>
                 </div>
             </div>
@@ -961,6 +1298,275 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             updateUI(hybridState);
             startAutoLoop();
             addLog('⚛️ HybridStateStabilizer 연결됨 | User ID: <?php echo $userId; ?>', 'prediction');
+            
+            // 미로 초기화
+            initMaze();
+        });
+
+        // ============================================================================
+        // 인지노드 미로 시각화 기능
+        // ============================================================================
+        
+        let mazeState = {
+            currentNode: 1,
+            visitedNodes: [1],
+            path: [1],
+            scale: 100,
+            versions: [{
+                id: 0,
+                timestamp: new Date().toISOString(),
+                node: 1,
+                path: [1]
+            }]
+        };
+
+        // 미로 초기화
+        function initMaze() {
+            updateMazeDisplay();
+            updateMapScale(100);
+        }
+
+        // 맵 크기 조절
+        function updateMapScale(value) {
+            mazeState.scale = parseInt(value);
+            const svg = document.getElementById('maze-svg');
+            if (svg) {
+                const scale = value / 100;
+                svg.style.transform = `scale(${scale})`;
+                svg.style.transformOrigin = 'center center';
+                
+                // 컨테이너 크기 조절
+                const container = document.getElementById('quantum-maze');
+                if (container) {
+                    const baseHeight = 600;
+                    container.style.height = (baseHeight * scale) + 'px';
+                }
+            }
+            
+            // 슬라이더 및 값 업데이트
+            const slider = document.getElementById('mapScaleSlider');
+            const valueDisplay = document.getElementById('scaleValue');
+            if (slider) slider.value = value;
+            if (valueDisplay) valueDisplay.textContent = value + '%';
+            
+            addLog('🔍 맵 크기 조절: ' + value + '%', 'prediction');
+        }
+
+        // 노드 클릭 핸들러
+        function handleNodeClick(nodeId) {
+            if (mazeState.visitedNodes.includes(nodeId)) {
+                addLog('⚠️ 이미 방문한 노드입니다: ' + nodeId, 'event');
+                return;
+            }
+
+            mazeState.currentNode = nodeId;
+            mazeState.visitedNodes.push(nodeId);
+            mazeState.path.push(nodeId);
+            
+            updateMazeDisplay();
+            addLog('📍 노드 ' + nodeId + ' 방문', 'event');
+        }
+
+        // 미로 표시 업데이트
+        function updateMazeDisplay() {
+            const nodes = document.querySelectorAll('.maze-node');
+            nodes.forEach(node => {
+                const nodeId = parseInt(node.getAttribute('data-node-id'));
+                node.classList.remove('current', 'visited');
+                
+                if (nodeId === mazeState.currentNode) {
+                    node.classList.add('current');
+                } else if (mazeState.visitedNodes.includes(nodeId)) {
+                    node.classList.add('visited');
+                }
+            });
+        }
+
+        // 뒤로가기
+        function backtrackOne() {
+            if (mazeState.path.length <= 1) {
+                addLog('⚠️ 더 이상 뒤로 갈 수 없습니다', 'event');
+                return;
+            }
+
+            mazeState.path.pop();
+            mazeState.currentNode = mazeState.path[mazeState.path.length - 1];
+            updateMazeDisplay();
+            addLog('⬅️ 한 단계 뒤로 이동: 노드 ' + mazeState.currentNode, 'event');
+        }
+
+        // 리셋
+        function resetMaze() {
+            if (!confirm('미로를 초기 상태로 리셋하시겠습니까?')) {
+                return;
+            }
+
+            mazeState.currentNode = 1;
+            mazeState.visitedNodes = [1];
+            mazeState.path = [1];
+            updateMazeDisplay();
+            addLog('🔄 미로 리셋 완료', 'prediction');
+        }
+
+        // 성장 메뉴 토글
+        function toggleGrowthMenu() {
+            const modal = document.getElementById('growthModal');
+            if (modal) {
+                modal.classList.toggle('active');
+            }
+        }
+
+        // 성장 모달 열기
+        function openGrowthModal() {
+            const modal = document.getElementById('growthModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        // 성장 모달 닫기
+        function closeGrowthModal() {
+            const modal = document.getElementById('growthModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // AI 제안 생성
+        async function generateSuggestion() {
+            const content = document.getElementById('suggestionContent');
+            if (content) {
+                content.innerHTML = '<p>🤖 AI가 학습 경로를 분석 중...</p>';
+            }
+
+            const modal = document.getElementById('suggestionModal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+
+            // 시뮬레이션: AI 제안 생성
+            setTimeout(() => {
+                const suggestions = [
+                    {
+                        id: 1,
+                        title: '인지 패턴 연결',
+                        description: '노드 3과 노드 5를 연결하여 새로운 학습 경로를 만들어보세요.',
+                        confidence: 0.85
+                    },
+                    {
+                        id: 2,
+                        title: '약점 보완',
+                        description: '노드 4의 약점을 보완하기 위해 추가 연습을 권장합니다.',
+                        confidence: 0.72
+                    }
+                ];
+
+                if (content) {
+                    let html = '';
+                    suggestions.forEach(suggestion => {
+                        html += `
+                            <div class="suggestion-item">
+                                <div style="font-weight: 600; margin-bottom: 8px;">${suggestion.title}</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px;">
+                                    ${suggestion.description}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;">
+                                    확신도: ${Math.round(suggestion.confidence * 100)}%
+                                </div>
+                                <div class="suggestion-actions">
+                                    <button class="btn btn-primary" onclick="if(typeof approveSuggestion==='function') approveSuggestion(${suggestion.id})">
+                                        ✅ 승인
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="if(typeof rejectSuggestion==='function') rejectSuggestion(${suggestion.id})">
+                                        ❌ 거부
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    content.innerHTML = html;
+                }
+            }, 1500);
+
+            addLog('🤖 AI 제안 생성 중...', 'prediction');
+        }
+
+        // AI 제안 승인
+        function approveSuggestion(suggestionId) {
+            addLog('✅ AI 제안 ' + suggestionId + ' 승인됨', 'event');
+            closeSuggestionModal();
+            closeGrowthModal();
+        }
+
+        // AI 제안 거부
+        function rejectSuggestion(suggestionId) {
+            addLog('❌ AI 제안 ' + suggestionId + ' 거부됨', 'event');
+            closeSuggestionModal();
+        }
+
+        // 제안 모달 닫기
+        function closeSuggestionModal() {
+            const modal = document.getElementById('suggestionModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // 버전 관리 열기
+        function openVersionHistory() {
+            const modal = document.getElementById('versionModal');
+            const list = document.getElementById('versionList');
+            
+            if (modal && list) {
+                // 버전 목록 생성
+                let html = '';
+                mazeState.versions.forEach((version, index) => {
+                    const date = new Date(version.timestamp);
+                    const isActive = index === mazeState.versions.length - 1;
+                    html += `
+                        <div class="version-item ${isActive ? 'active' : ''}" onclick="if(typeof rollbackVersion==='function') rollbackVersion(${index})">
+                            <div style="font-weight: 600;">버전 ${index + 1} ${isActive ? '(현재)' : ''}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">
+                                ${date.toLocaleString('ko-KR')} | 노드: ${version.node} | 경로: [${version.path.join(', ')}]
+                            </div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+                modal.classList.add('active');
+            }
+        }
+
+        // 버전 관리 닫기
+        function closeVersionHistory() {
+            const modal = document.getElementById('versionModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // 버전 롤백
+        function rollbackVersion(versionIndex) {
+            if (versionIndex >= mazeState.versions.length) {
+                addLog('⚠️ 잘못된 버전 인덱스입니다', 'error');
+                return;
+            }
+
+            const version = mazeState.versions[versionIndex];
+            mazeState.currentNode = version.node;
+            mazeState.visitedNodes = [...version.path];
+            mazeState.path = [...version.path];
+            
+            updateMazeDisplay();
+            closeVersionHistory();
+            addLog('📜 버전 ' + (versionIndex + 1) + '로 롤백 완료', 'event');
+        }
+
+        // 모달 외부 클릭 시 닫기
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
         });
     </script>
 </body>

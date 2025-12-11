@@ -681,6 +681,309 @@ $entanglementData = $bridge->getEntanglementMap();
         .legend-color.strength-3 { background: #2da44e; }
         .legend-color.strength-4 { background: #57ab5a; }
         .legend-color.strength-5 { background: #7ee787; }
+
+        /* ============================================ */
+        /* 반응형 디자인 및 크기 조절 기능 개선 */
+        /* ============================================ */
+
+        /* 반응형 그리드 - 태블릿 */
+        @media (max-width: 1200px) {
+            .grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+            .state-card, .analysis-card, .recommendations-card, .dimensions-card {
+                grid-column: span 6;
+            }
+            .entanglement-card {
+                grid-column: span 6;
+            }
+            .entanglement-container {
+                flex-direction: column;
+            }
+            .phase-legend {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* 반응형 그리드 - 모바일 */
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 10px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .user-info {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .state-card, .analysis-card, .recommendations-card, .dimensions-card, .entanglement-card {
+                grid-column: span 1;
+            }
+            .card {
+                padding: 15px;
+            }
+            .radar-container {
+                max-width: 280px;
+            }
+            .dimension-label {
+                width: 80px;
+                font-size: 10px;
+            }
+            .matrix-table th, .matrix-table td {
+                width: 20px;
+                height: 20px;
+                font-size: 8px;
+            }
+            .status-footer {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            .api-links {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .entanglement-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .stat-item {
+                min-width: 80px;
+            }
+        }
+
+        /* 카드 크기 제한 */
+        .card {
+            min-height: 200px;
+            max-height: none;
+            overflow: auto;
+        }
+
+        .state-card {
+            min-height: 380px;
+        }
+
+        .analysis-card {
+            min-height: 350px;
+        }
+
+        .recommendations-card {
+            min-height: 350px;
+        }
+
+        .dimensions-card {
+            min-height: 380px;
+        }
+
+        /* 매트릭스 스크롤 개선 */
+        .matrix-section {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 500px;
+            position: relative;
+        }
+
+        .matrix-table {
+            min-width: 600px;
+        }
+
+        /* 버튼 스타일 개선 */
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn.loading {
+            background: #30363d;
+        }
+
+        .refresh-btn .spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        .refresh-btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .refresh-btn.loading .icon {
+            display: none;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 확대/축소 컨트롤 */
+        .zoom-controls {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .zoom-btn {
+            padding: 6px 12px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #c9d1d9;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .zoom-btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .zoom-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 토스트 알림 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: #238636;
+            color: white;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.error {
+            background: #f85149;
+        }
+
+        .toast.warning {
+            background: #f0883e;
+        }
+
+        /* 로딩 오버레이 */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(13, 17, 23, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 12px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #30363d;
+            border-top-color: #58a6ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* 카드 위치 조정용 클래스 */
+        .card {
+            position: relative;
+        }
+
+        /* 크기 조절 핸들 */
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            cursor: se-resize;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+
+        .resize-handle:hover {
+            opacity: 0.8;
+        }
+
+        .resize-handle::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid #58a6ff;
+            border-bottom: 2px solid #58a6ff;
+        }
+
+        /* 전체화면 토글 버튼 */
+        .fullscreen-btn {
+            padding: 4px 8px;
+            background: transparent;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            color: #8b949e;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            background: #21262d;
+            color: #c9d1d9;
+        }
+
+        /* 카드 전체화면 모드 */
+        .card.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            border-radius: 0;
+            max-height: 100vh;
+            overflow: auto;
+        }
+
+        .card.fullscreen .fullscreen-btn::before {
+            content: '⊙';
+        }
     </style>
 </head>
 <body>
@@ -697,17 +1000,25 @@ $entanglementData = $bridge->getEntanglementMap();
                     <div style="font-weight: 500; color: #c9d1d9;"><?php echo htmlspecialchars($USER->username ?? 'User'); ?></div>
                     <div style="font-size: 12px;">ID: <?php echo $userid; ?></div>
                 </div>
-                <button class="refresh-btn" onclick="location.reload()">🔄 새로고침</button>
+                <button class="refresh-btn" id="refreshBtn" onclick="refreshDashboard()">
+                    <span class="icon">🔄</span>
+                    <span class="spinner">⟳</span>
+                    <span class="text">새로고침</span>
+                </button>
             </div>
         </div>
 
         <!-- Main Grid -->
         <div class="grid">
             <!-- StateVector Radar Chart -->
-            <div class="card state-card">
+            <div class="card state-card" id="stateCard">
+                <div class="loading-overlay"><div class="loading-spinner"></div></div>
                 <div class="card-header">
                     <span class="card-title">📊 8D StateVector</span>
-                    <span class="card-badge"><?php echo $stateData['success'] ? '✅ Active' : '❌ Error'; ?></span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="card-badge"><?php echo $stateData['success'] ? '✅ Active' : '❌ Error'; ?></span>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen('stateCard')" title="전체화면">⛶</button>
+                    </div>
                 </div>
                 <div class="radar-container">
                     <canvas id="stateRadar"></canvas>
@@ -715,13 +1026,17 @@ $entanglementData = $bridge->getEntanglementMap();
             </div>
 
             <!-- State Analysis -->
-            <div class="card analysis-card">
+            <div class="card analysis-card" id="analysisCard">
+                <div class="loading-overlay"><div class="loading-spinner"></div></div>
                 <div class="card-header">
                     <span class="card-title">🔬 상태 분석</span>
-                    <span class="card-badge"><?php
-                        $risk = $analysisData['analysis']['risk_level'] ?? 'Unknown';
-                        echo $risk;
-                    ?></span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="card-badge"><?php
+                            $risk = $analysisData['analysis']['risk_level'] ?? 'Unknown';
+                            echo $risk;
+                        ?></span>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen('analysisCard')" title="전체화면">⛶</button>
+                    </div>
                 </div>
 
                 <?php
@@ -761,12 +1076,16 @@ $entanglementData = $bridge->getEntanglementMap();
             </div>
 
             <!-- Agent Recommendations -->
-            <div class="card recommendations-card">
+            <div class="card recommendations-card" id="recommendationsCard">
+                <div class="loading-overlay"><div class="loading-spinner"></div></div>
                 <div class="card-header">
                     <span class="card-title">🎯 에이전트 추천 순위</span>
-                    <span class="card-badge"><?php
-                        echo htmlspecialchars($recommendationsData['recommendations']['matched_persona'] ?? 'Unknown');
-                    ?></span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="card-badge"><?php
+                            echo htmlspecialchars($recommendationsData['recommendations']['matched_persona'] ?? 'Unknown');
+                        ?></span>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen('recommendationsCard')" title="전체화면">⛶</button>
+                    </div>
                 </div>
                 <div class="agent-list">
                     <?php
@@ -794,10 +1113,14 @@ $entanglementData = $bridge->getEntanglementMap();
             </div>
 
             <!-- Dimension Bars -->
-            <div class="card dimensions-card">
+            <div class="card dimensions-card" id="dimensionsCard">
+                <div class="loading-overlay"><div class="loading-spinner"></div></div>
                 <div class="card-header">
                     <span class="card-title">📈 차원별 상세</span>
-                    <span class="card-badge">8 Dimensions</span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="card-badge">8 Dimensions</span>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen('dimensionsCard')" title="전체화면">⛶</button>
+                    </div>
                 </div>
                 <div class="dimension-bars">
                     <?php
@@ -820,10 +1143,19 @@ $entanglementData = $bridge->getEntanglementMap();
             </div>
 
             <!-- Entanglement Map -->
-            <div class="card entanglement-card">
+            <div class="card entanglement-card" id="entanglementCard">
+                <div class="loading-overlay"><div class="loading-spinner"></div></div>
                 <div class="card-header">
                     <span class="card-title">🔗 22 Agent Entanglement Map</span>
-                    <span class="card-badge"><?php echo count($entanglementData['agents'] ?? []) . ' Agents'; ?></span>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span class="card-badge"><?php echo count($entanglementData['agents'] ?? []) . ' Agents'; ?></span>
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="zoomMatrix(-0.1)" title="축소">−</button>
+                            <button class="zoom-btn" onclick="zoomMatrix(0.1)" title="확대">+</button>
+                            <button class="zoom-btn" onclick="resetMatrixZoom()" title="원래 크기">⟲</button>
+                        </div>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen('entanglementCard')" title="전체화면">⛶</button>
+                    </div>
                 </div>
                 <div class="entanglement-container">
                     <!-- Matrix Heatmap -->
@@ -1138,6 +1470,257 @@ $entanglementData = $bridge->getEntanglementMap();
                 });
             });
         })();
+    </script>
+
+    <!-- Toast Notification Element -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Enhanced JavaScript Functions -->
+    <script>
+        // ============================================
+        // Toast Notification System
+        // ============================================
+        function showToast(message, type = 'success', duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ============================================
+        // AJAX Dashboard Refresh
+        // ============================================
+        let isRefreshing = false;
+        let radarChart = null;
+
+        async function refreshDashboard() {
+            if (isRefreshing) return;
+
+            const btn = document.getElementById('refreshBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
+            isRefreshing = true;
+
+            // Show loading overlays on all cards
+            document.querySelectorAll('.loading-overlay').forEach(el => {
+                el.classList.add('active');
+            });
+
+            try {
+                // Fetch all data in parallel
+                const [stateRes, analysisRes, recommendationsRes, entanglementRes] = await Promise.all([
+                    fetch('?action=state&format=json&_t=' + Date.now()),
+                    fetch('?action=analysis&format=json&_t=' + Date.now()),
+                    fetch('?action=recommendations&agents=5,8,10,12&format=json&_t=' + Date.now()),
+                    fetch('?action=entanglement&format=json&_t=' + Date.now())
+                ]);
+
+                const [stateData, analysisData, recommendationsData, entanglementData] = await Promise.all([
+                    stateRes.json(),
+                    analysisRes.json(),
+                    recommendationsRes.json(),
+                    entanglementRes.json()
+                ]);
+
+                // Update Radar Chart
+                updateRadarChart(stateData);
+
+                // Update timestamp
+                document.querySelector('.status-footer div').innerHTML =
+                    '<span class="status-dot ' + (stateData.data_interface_available ? 'active' : 'inactive') + '"></span>' +
+                    'Data Interface: ' + (stateData.data_interface_available ? '연결됨' : '미연결') +
+                    '&nbsp;|&nbsp;최종 업데이트: ' + new Date().toLocaleString('ko-KR');
+
+                showToast('✅ 대시보드가 새로고침되었습니다.', 'success');
+
+            } catch (error) {
+                console.error('Dashboard refresh error:', error);
+                showToast('❌ 새로고침 실패: ' + error.message, 'error');
+            } finally {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                isRefreshing = false;
+
+                // Hide loading overlays
+                document.querySelectorAll('.loading-overlay').forEach(el => {
+                    el.classList.remove('active');
+                });
+            }
+        }
+
+        function updateRadarChart(stateData) {
+            const stateVector = stateData.state_vector || {};
+            const newData = [
+                stateVector.cognitive_clarity || 0,
+                stateVector.emotional_stability || 0,
+                stateVector.engagement_level || 0,
+                stateVector.concept_mastery || 0,
+                stateVector.routine_strength || 0,
+                stateVector.metacognitive_awareness || 0,
+                stateVector.dropout_risk || 0,
+                stateVector.intervention_readiness || 0
+            ];
+
+            // Get the chart instance
+            const chartInstance = Chart.getChart('stateRadar');
+            if (chartInstance) {
+                chartInstance.data.datasets[0].data = newData;
+                chartInstance.update('active');
+            }
+        }
+
+        // ============================================
+        // Fullscreen Toggle
+        // ============================================
+        function toggleFullscreen(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+
+            card.classList.toggle('fullscreen');
+
+            // Update button text
+            const btn = card.querySelector('.fullscreen-btn');
+            if (card.classList.contains('fullscreen')) {
+                btn.textContent = '✕';
+                btn.title = '전체화면 종료';
+                showToast('전체화면 모드 (ESC로 종료)', 'success', 2000);
+            } else {
+                btn.textContent = '⛶';
+                btn.title = '전체화면';
+            }
+
+            // Resize chart if needed
+            if (cardId === 'stateCard') {
+                setTimeout(() => {
+                    const chartInstance = Chart.getChart('stateRadar');
+                    if (chartInstance) chartInstance.resize();
+                }, 100);
+            }
+        }
+
+        // ESC key to exit fullscreen
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.card.fullscreen').forEach(card => {
+                    card.classList.remove('fullscreen');
+                    const btn = card.querySelector('.fullscreen-btn');
+                    if (btn) {
+                        btn.textContent = '⛶';
+                        btn.title = '전체화면';
+                    }
+                });
+            }
+        });
+
+        // ============================================
+        // Matrix Zoom Controls
+        // ============================================
+        let matrixScale = 1;
+        const minScale = 0.5;
+        const maxScale = 2;
+
+        function zoomMatrix(delta) {
+            matrixScale = Math.max(minScale, Math.min(maxScale, matrixScale + delta));
+            applyMatrixZoom();
+        }
+
+        function resetMatrixZoom() {
+            matrixScale = 1;
+            applyMatrixZoom();
+            showToast('매트릭스 크기 초기화', 'success', 1500);
+        }
+
+        function applyMatrixZoom() {
+            const matrix = document.getElementById('entanglementMatrix');
+            if (matrix) {
+                matrix.style.transform = `scale(${matrixScale})`;
+                matrix.style.transformOrigin = 'top left';
+            }
+        }
+
+        // ============================================
+        // Keyboard Shortcuts
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            // R key for refresh
+            if (e.key === 'r' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    refreshDashboard();
+                }
+            }
+
+            // + / - for matrix zoom
+            if (e.key === '+' || e.key === '=') {
+                zoomMatrix(0.1);
+            } else if (e.key === '-') {
+                zoomMatrix(-0.1);
+            }
+
+            // 0 to reset zoom
+            if (e.key === '0') {
+                resetMatrixZoom();
+            }
+        });
+
+        // ============================================
+        // Auto-refresh (optional, uncomment to enable)
+        // ============================================
+        // setInterval(refreshDashboard, 30000);
+
+        // ============================================
+        // Touch/Swipe Support for Mobile
+        // ============================================
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 100;
+            const diff = touchStartX - touchEndX;
+
+            // Right to left swipe - could trigger next card focus
+            if (diff > swipeThreshold) {
+                // Optional: implement card navigation
+            }
+            // Left to right swipe - refresh
+            else if (diff < -swipeThreshold) {
+                refreshDashboard();
+            }
+        }
+
+        // ============================================
+        // Window Resize Handler
+        // ============================================
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                const chartInstance = Chart.getChart('stateRadar');
+                if (chartInstance) {
+                    chartInstance.resize();
+                }
+            }, 250);
+        });
+
+        // ============================================
+        // Initialization
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Quantum Dashboard] Phase 8.2 Initialized');
+            console.log('[Quantum Dashboard] Keyboard shortcuts: R=Refresh, +/-=Zoom, 0=Reset, ESC=Exit fullscreen');
+        });
     </script>
 </body>
 </html>
