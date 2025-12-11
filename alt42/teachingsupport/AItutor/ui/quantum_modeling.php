@@ -111,6 +111,8 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>인지노드 시각화 | Quantum Modeling</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -206,7 +208,18 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         .col-6 { grid-column: span 6; }
         .col-4 { grid-column: span 4; }
 
+        @media (max-width: 1400px) {
+            .col-8 { grid-column: span 7; }
+            .col-6 { grid-column: span 5; }
+            .col-4 { grid-column: span 12; }
+        }
+
         @media (max-width: 1200px) {
+            .col-8, .col-6 { grid-column: span 6; }
+            .col-4 { grid-column: span 12; }
+        }
+
+        @media (max-width: 992px) {
             .col-8, .col-6, .col-4 { grid-column: span 12; }
         }
 
@@ -528,6 +541,363 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         .btn-secondary:hover {
             border-color: var(--primary);
         }
+
+        /* 차트 컨테이너 */
+        .chart-container {
+            position: relative;
+            height: 280px;
+            margin: 15px 0;
+        }
+
+        .chart-container.small {
+            height: 200px;
+        }
+
+        /* 인지노드 네트워크 */
+        .cognitive-network {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .cognitive-node {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+
+        .cognitive-node:hover {
+            transform: scale(1.15);
+            z-index: 10;
+        }
+
+        .cognitive-node .icon {
+            font-size: 1.3rem;
+            margin-bottom: 3px;
+        }
+
+        .cognitive-node .value {
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .cognitive-node.focus {
+            background: linear-gradient(135deg, #10b981, #059669);
+            left: 50%;
+            top: 15%;
+            transform: translateX(-50%);
+        }
+
+        .cognitive-node.flow {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            left: 80%;
+            top: 40%;
+            transform: translateX(-50%);
+        }
+
+        .cognitive-node.struggle {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            left: 65%;
+            top: 75%;
+            transform: translateX(-50%);
+        }
+
+        .cognitive-node.lost {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            left: 35%;
+            top: 75%;
+            transform: translateX(-50%);
+        }
+
+        .cognitive-node.center {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            font-size: 0.85rem;
+        }
+
+        .cognitive-node.center .icon {
+            font-size: 1.5rem;
+        }
+
+        .cognitive-node.center .value {
+            font-size: 1.1rem;
+        }
+
+        /* 노드 연결선 SVG */
+        .network-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .network-connections line {
+            stroke: var(--border);
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+            opacity: 0.5;
+        }
+
+        .network-connections line.active {
+            stroke: var(--primary);
+            stroke-width: 3;
+            stroke-dasharray: none;
+            opacity: 0.8;
+            animation: pulse-line 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        /* 게이지 차트 */
+        .gauge-container {
+            position: relative;
+            width: 180px;
+            height: 100px;
+            margin: 0 auto;
+        }
+
+        .gauge-bg {
+            position: absolute;
+            width: 180px;
+            height: 90px;
+            border-radius: 90px 90px 0 0;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+
+        .gauge-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 180px;
+            height: 90px;
+            border-radius: 90px 90px 0 0;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            transform-origin: bottom center;
+            transition: transform 0.5s ease;
+        }
+
+        .gauge-center {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 70px;
+            border-radius: 70px 70px 0 0;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+        }
+
+        .gauge-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .gauge-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* 미니 스파크라인 */
+        .sparkline-container {
+            height: 40px;
+            margin-top: 10px;
+        }
+
+        /* 통계 그리드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: var(--bg-dark);
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-item .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .stat-item .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 3px;
+        }
+
+        .stat-item.positive .stat-value { color: var(--success); }
+        .stat-item.warning .stat-value { color: var(--warning); }
+        .stat-item.negative .stat-value { color: var(--danger); }
+        .stat-item.neutral .stat-value { color: var(--primary); }
+
+        /* 탭 시스템 */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--bg-dark);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 반응형 추가 */
+        @media (max-width: 992px) {
+            .chart-container {
+                height: 240px;
+            }
+
+            .cognitive-network {
+                height: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .confidence-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .cognitive-node {
+                width: 55px;
+                height: 55px;
+                font-size: 0.6rem;
+            }
+
+            .cognitive-node .icon {
+                font-size: 1rem;
+            }
+
+            .cognitive-node.center {
+                width: 70px;
+                height: 70px;
+            }
+
+            .chart-container {
+                height: 220px;
+            }
+
+            .cognitive-network {
+                height: 260px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cognitive-node {
+                width: 48px;
+                height: 48px;
+                font-size: 0.55rem;
+            }
+
+            .cognitive-node .icon {
+                font-size: 0.9rem;
+                margin-bottom: 2px;
+            }
+
+            .cognitive-node .value {
+                font-size: 0.75rem;
+            }
+
+            .cognitive-node.center {
+                width: 60px;
+                height: 60px;
+            }
+
+            .stat-item .stat-value {
+                font-size: 1.2rem;
+            }
+
+            .stat-item .stat-label {
+                font-size: 0.65rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -548,23 +918,150 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         </div>
 
         <div class="grid">
+            <!-- 인지노드 네트워크 시각화 -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🧠 인지노드 네트워크</div>
+                        <span class="status-badge online" style="font-size: 0.7rem;">
+                            <span class="dot"></span>
+                            실시간
+                        </span>
+                    </div>
+                    <div class="cognitive-network" id="cognitiveNetwork">
+                        <!-- SVG 연결선 -->
+                        <svg class="network-connections" id="networkConnections">
+                            <line id="line-focus-center" x1="50%" y1="15%" x2="50%" y2="50%"></line>
+                            <line id="line-flow-center" x1="80%" y1="40%" x2="50%" y2="50%"></line>
+                            <line id="line-struggle-center" x1="65%" y1="75%" x2="50%" y2="50%"></line>
+                            <line id="line-lost-center" x1="35%" y1="75%" x2="50%" y2="50%"></line>
+                            <line id="line-focus-flow" x1="50%" y1="15%" x2="80%" y2="40%"></line>
+                            <line id="line-struggle-lost" x1="65%" y1="75%" x2="35%" y2="75%"></line>
+                        </svg>
+
+                        <!-- 인지 노드들 -->
+                        <div class="cognitive-node focus" id="node-focus">
+                            <span class="icon">🎯</span>
+                            <span class="value" id="nodeValue-focus"><?php echo round($hybridState['state_vector']['focus'] * 100); ?>%</span>
+                            <span>집중</span>
+                        </div>
+                        <div class="cognitive-node flow" id="node-flow">
+                            <span class="icon">🌊</span>
+                            <span class="value" id="nodeValue-flow"><?php echo round($hybridState['state_vector']['flow'] * 100); ?>%</span>
+                            <span>몰입</span>
+                        </div>
+                        <div class="cognitive-node struggle" id="node-struggle">
+                            <span class="icon">💪</span>
+                            <span class="value" id="nodeValue-struggle"><?php echo round($hybridState['state_vector']['struggle'] * 100); ?>%</span>
+                            <span>고군분투</span>
+                        </div>
+                        <div class="cognitive-node lost" id="node-lost">
+                            <span class="icon">😶</span>
+                            <span class="value" id="nodeValue-lost"><?php echo round($hybridState['state_vector']['lost'] * 100); ?>%</span>
+                            <span>이탈</span>
+                        </div>
+                        <div class="cognitive-node center" id="node-center">
+                            <span class="icon">⚛️</span>
+                            <span class="value" id="nodeValue-center"><?php echo round($hybridState['predicted_state'] * 100); ?>%</span>
+                            <span>인지상태</span>
+                        </div>
+                    </div>
+
+                    <!-- 통계 그리드 -->
+                    <div class="stats-grid">
+                        <div class="stat-item <?php echo $hybridState['confidence'] >= 0.6 ? 'positive' : ($hybridState['confidence'] >= 0.3 ? 'warning' : 'negative'); ?>" id="statConfidence">
+                            <div class="stat-value"><?php echo round($hybridState['confidence'] * 100); ?>%</div>
+                            <div class="stat-label">확신도</div>
+                        </div>
+                        <div class="stat-item warning" id="statUncertainty">
+                            <div class="stat-value"><?php echo round($hybridState['uncertainty'] * 100); ?>%</div>
+                            <div class="stat-label">불확실성</div>
+                        </div>
+                        <div class="stat-item neutral" id="statLoopCount">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Fast Loop</div>
+                        </div>
+                        <div class="stat-item <?php echo $hybridState['needs_ping'] ? 'negative' : 'positive'; ?>" id="statPing">
+                            <div class="stat-value"><?php echo $hybridState['needs_ping'] ? '필요' : 'OK'; ?></div>
+                            <div class="stat-label">Active Ping</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 차트 패널 -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">📊 상태 분석</div>
+                    </div>
+
+                    <!-- 탭 네비게이션 -->
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('radar')">레이더</button>
+                        <button class="tab" onclick="switchTab('history')">히스토리</button>
+                        <button class="tab" onclick="switchTab('bars')">바 차트</button>
+                    </div>
+
+                    <!-- 레이더 차트 탭 -->
+                    <div class="tab-content active" id="tab-radar">
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 히스토리 탭 -->
+                    <div class="tab-content" id="tab-history">
+                        <div class="chart-container">
+                            <canvas id="historyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 바 차트 탭 -->
+                    <div class="tab-content" id="tab-bars">
+                        <div class="state-vector-bars">
+                            <?php
+                            $stateVector = $hybridState['state_vector'];
+                            $stateLabels = ['focus' => '집중', 'flow' => '몰입', 'struggle' => '고군분투', 'lost' => '이탈'];
+                            $stateIcons = ['focus' => '🎯', 'flow' => '🌊', 'struggle' => '💪', 'lost' => '😶'];
+                            foreach ($stateVector as $state => $value):
+                            ?>
+                            <div class="state-bar-container">
+                                <div class="state-bar">
+                                    <div class="state-bar-fill <?php echo $state; ?>"
+                                         id="stateBar_<?php echo $state; ?>"
+                                         style="height: <?php echo $value * 100; ?>%"></div>
+                                </div>
+                                <div class="state-bar-label">
+                                    <?php echo $stateIcons[$state]; ?> <?php echo $stateLabels[$state]; ?>
+                                </div>
+                                <div class="state-bar-value" id="stateBarValue_<?php echo $state; ?>">
+                                    <?php echo round($value * 100); ?>%
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 메인 상태 모니터 -->
             <div class="col-8">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">📊 실시간 상태 모니터</div>
+                        <div class="card-title">📈 실시간 상태 모니터</div>
+                        <span id="loopCount" style="font-size: 0.8rem; color: var(--text-secondary);">0회</span>
                     </div>
 
                     <div class="realtime-indicator">
                         <div class="pulse"></div>
-                        <span>Fast Loop 실행 중 (0.5초 주기)</span>
-                        <span style="margin-left: auto; color: var(--text-secondary);" id="loopCount">0회</span>
+                        <span>Kalman Filter + Active Ping 하이브리드 추적</span>
                     </div>
 
                     <!-- 집중도 미터 -->
                     <div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span>집중도 (Predicted State)</span>
+                            <span>예측 집중도 (Predicted State)</span>
                             <span id="stateValue"><?php echo round($hybridState['predicted_state'] * 100); ?>%</span>
                         </div>
                         <div class="state-meter">
@@ -576,52 +1073,54 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                         </div>
                     </div>
 
-                    <!-- 확신도 패널 -->
-                    <div class="confidence-panel">
-                        <?php
-                        $conf = $hybridState['confidence'];
-                        $confClass = $conf >= 0.6 ? 'high' : ($conf >= 0.3 ? 'medium' : 'low');
-                        ?>
-                        <div class="confidence-item <?php echo $confClass; ?>" id="confidencePanel">
-                            <div class="icon"><?php echo $confClass === 'high' ? '✅' : ($confClass === 'medium' ? '⚠️' : '❓'); ?></div>
-                            <div class="label">확신도</div>
-                            <div class="value" id="confidenceValue"><?php echo round($conf * 100); ?>%</div>
-                        </div>
-                        <div class="confidence-item">
-                            <div class="icon">📊</div>
-                            <div class="label">불확실성</div>
-                            <div class="value" id="uncertaintyValue"><?php echo round($hybridState['uncertainty'] * 100); ?>%</div>
-                        </div>
-                        <div class="confidence-item" id="pingNeeded" style="<?php echo $hybridState['needs_ping'] ? '' : 'opacity: 0.5;'; ?>">
-                            <div class="icon">📡</div>
-                            <div class="label">Active Ping</div>
-                            <div class="value"><?php echo $hybridState['needs_ping'] ? '필요' : '불필요'; ?></div>
+                    <!-- Kalman 시각화 (항상 표시) -->
+                    <div id="kalmanViz" style="margin-top: 20px;">
+                        <h5 style="font-size: 0.85rem; margin-bottom: 10px;">⚖️ Kalman Filter 보정 상태</h5>
+                        <div class="kalman-viz">
+                            <div class="kalman-box prediction">
+                                <div class="label">예측</div>
+                                <div class="value" id="kalmanPred"><?php echo round($hybridState['predicted_state'] * 100); ?>%</div>
+                            </div>
+                            <span class="kalman-arrow">→</span>
+                            <div class="kalman-gain">
+                                <div class="label">Gain (K)</div>
+                                <div class="value" id="kalmanK">-</div>
+                            </div>
+                            <span class="kalman-arrow">→</span>
+                            <div class="kalman-box measurement">
+                                <div class="label">측정</div>
+                                <div class="value" id="kalmanMeas">-</div>
+                            </div>
+                            <span class="kalman-arrow">→</span>
+                            <div class="kalman-box result">
+                                <div class="label">보정</div>
+                                <div class="value" id="kalmanRes"><?php echo round($hybridState['predicted_state'] * 100); ?>%</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 상태 벡터 바 차트 -->
-                    <h4 style="margin: 25px 0 15px; font-size: 0.95rem;">상태 분포 (State Vector)</h4>
-                    <div class="state-vector-bars">
-                        <?php
-                        $stateVector = $hybridState['state_vector'];
-                        $stateLabels = ['focus' => '집중', 'flow' => '몰입', 'struggle' => '고군분투', 'lost' => '이탈'];
-                        $stateIcons = ['focus' => '🎯', 'flow' => '🌊', 'struggle' => '💪', 'lost' => '😶'];
-                        foreach ($stateVector as $state => $value):
-                        ?>
-                        <div class="state-bar-container">
-                            <div class="state-bar">
-                                <div class="state-bar-fill <?php echo $state; ?>"
-                                     id="stateBar_<?php echo $state; ?>"
-                                     style="height: <?php echo $value * 100; ?>%"></div>
+                    <!-- 확신도/불확실성 미니 차트 -->
+                    <div style="display: flex; gap: 20px; margin-top: 20px;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                                <span>확신도</span>
+                                <span id="confidenceValue"><?php echo round($hybridState['confidence'] * 100); ?>%</span>
                             </div>
-                            <div class="state-bar-label">
-                                <?php echo $stateIcons[$state]; ?> <?php echo $stateLabels[$state]; ?>
-                            </div>
-                            <div class="state-bar-value" id="stateBarValue_<?php echo $state; ?>">
-                                <?php echo round($value * 100); ?>%
+                            <div class="state-meter" style="height: 20px;">
+                                <div class="state-meter-fill" id="confidenceMeterFill"
+                                     style="width: <?php echo $hybridState['confidence'] * 100; ?>%; background: linear-gradient(90deg, #ef4444, #10b981);"></div>
                             </div>
                         </div>
-                        <?php endforeach; ?>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                                <span>불확실성</span>
+                                <span id="uncertaintyValue"><?php echo round($hybridState['uncertainty'] * 100); ?>%</span>
+                            </div>
+                            <div class="state-meter" style="height: 20px;">
+                                <div class="state-meter-fill" id="uncertaintyMeterFill"
+                                     style="width: <?php echo $hybridState['uncertainty'] * 100; ?>%; background: linear-gradient(90deg, #10b981, #ef4444);"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -730,9 +1229,25 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         let loopCount = 0;
         let fastLoopId = null;
 
+        // 히스토리 데이터 (최근 50개)
+        let stateHistory = {
+            timestamps: [],
+            predicted: [],
+            confidence: [],
+            focus: [],
+            flow: [],
+            struggle: [],
+            lost: []
+        };
+
+        // Chart.js 인스턴스
+        let radarChart = null;
+        let historyChart = null;
+
         const CONFIDENCE_DECAY = 0.99;
         const UNCERTAINTY_GROWTH = 1.05;
         const PING_THRESHOLD = 0.4;
+        const MAX_HISTORY = 50;
 
         const EVENT_SIGNALS = {
             'correct_answer': 0.9,
@@ -750,7 +1265,263 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             'idle_long': 0.1
         };
 
-        // UI 업데이트
+        // 탭 전환
+        function switchTab(tabName) {
+            // 모든 탭 비활성화
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // 선택한 탭 활성화
+            document.querySelector(`.tab[onclick*="${tabName}"]`).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // 차트 리사이즈
+            if (tabName === 'radar' && radarChart) radarChart.resize();
+            if (tabName === 'history' && historyChart) historyChart.resize();
+        }
+
+        // 레이더 차트 초기화
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['집중 (Focus)', '몰입 (Flow)', '고군분투 (Struggle)', '이탈 (Lost)'],
+                    datasets: [{
+                        label: '상태 벡터',
+                        data: [
+                            hybridState.state_vector.focus * 100,
+                            hybridState.state_vector.flow * 100,
+                            hybridState.state_vector.struggle * 100,
+                            hybridState.state_vector.lost * 100
+                        ],
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: [
+                            '#10b981', '#6366f1', '#f59e0b', '#ef4444'
+                        ],
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 25,
+                                color: '#94a3b8',
+                                backdropColor: 'transparent'
+                            },
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.2)'
+                            },
+                            angleLines: {
+                                color: 'rgba(148, 163, 184, 0.2)'
+                            },
+                            pointLabels: {
+                                color: '#f1f5f9',
+                                font: {
+                                    size: 11,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 히스토리 차트 초기화
+        function initHistoryChart() {
+            const ctx = document.getElementById('historyChart').getContext('2d');
+            historyChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: '집중도',
+                            data: [],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: '확신도',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#94a3b8',
+                                usePointStyle: true,
+                                padding: 15
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            display: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(148, 163, 184, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: value => value + '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 히스토리에 데이터 추가
+        function addToHistory(state) {
+            const now = new Date();
+            const timeLabel = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            stateHistory.timestamps.push(timeLabel);
+            stateHistory.predicted.push(Math.round(state.predicted_state * 100));
+            stateHistory.confidence.push(Math.round(state.confidence * 100));
+            stateHistory.focus.push(Math.round(state.state_vector.focus * 100));
+            stateHistory.flow.push(Math.round(state.state_vector.flow * 100));
+            stateHistory.struggle.push(Math.round(state.state_vector.struggle * 100));
+            stateHistory.lost.push(Math.round(state.state_vector.lost * 100));
+
+            // 최대 개수 유지
+            if (stateHistory.timestamps.length > MAX_HISTORY) {
+                stateHistory.timestamps.shift();
+                stateHistory.predicted.shift();
+                stateHistory.confidence.shift();
+                stateHistory.focus.shift();
+                stateHistory.flow.shift();
+                stateHistory.struggle.shift();
+                stateHistory.lost.shift();
+            }
+        }
+
+        // 인지노드 네트워크 업데이트
+        function updateCognitiveNetwork(state) {
+            // 노드 값 업데이트
+            document.getElementById('nodeValue-focus').textContent = Math.round(state.state_vector.focus * 100) + '%';
+            document.getElementById('nodeValue-flow').textContent = Math.round(state.state_vector.flow * 100) + '%';
+            document.getElementById('nodeValue-struggle').textContent = Math.round(state.state_vector.struggle * 100) + '%';
+            document.getElementById('nodeValue-lost').textContent = Math.round(state.state_vector.lost * 100) + '%';
+            document.getElementById('nodeValue-center').textContent = Math.round(state.predicted_state * 100) + '%';
+
+            // 지배 상태에 따른 연결선 활성화
+            const dominant = state.dominant_state;
+            document.querySelectorAll('.network-connections line').forEach(line => {
+                line.classList.remove('active');
+            });
+
+            const lineId = 'line-' + dominant + '-center';
+            const activeLine = document.getElementById(lineId);
+            if (activeLine) {
+                activeLine.classList.add('active');
+            }
+
+            // 노드 크기 조절 (상태값에 따라)
+            const nodes = ['focus', 'flow', 'struggle', 'lost'];
+            nodes.forEach(n => {
+                const node = document.getElementById('node-' + n);
+                const val = state.state_vector[n];
+                const scale = 0.8 + (val * 0.4); // 0.8 ~ 1.2
+                if (n === dominant) {
+                    node.style.transform = `translateX(-50%) scale(${scale * 1.1})`;
+                    node.style.boxShadow = '0 0 20px rgba(99, 102, 241, 0.5)';
+                } else {
+                    node.style.transform = `translateX(-50%) scale(${scale})`;
+                    node.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+                }
+            });
+        }
+
+        // 차트 업데이트
+        function updateCharts(state) {
+            // 레이더 차트
+            if (radarChart) {
+                radarChart.data.datasets[0].data = [
+                    state.state_vector.focus * 100,
+                    state.state_vector.flow * 100,
+                    state.state_vector.struggle * 100,
+                    state.state_vector.lost * 100
+                ];
+                radarChart.update('none');
+            }
+
+            // 히스토리 차트
+            if (historyChart) {
+                historyChart.data.labels = stateHistory.timestamps;
+                historyChart.data.datasets[0].data = stateHistory.predicted;
+                historyChart.data.datasets[1].data = stateHistory.confidence;
+                historyChart.update('none');
+            }
+        }
+
+        // 통계 그리드 업데이트
+        function updateStatsGrid(state) {
+            // 확신도
+            const confStat = document.getElementById('statConfidence');
+            confStat.querySelector('.stat-value').textContent = Math.round(state.confidence * 100) + '%';
+            confStat.className = 'stat-item ' + (state.confidence >= 0.6 ? 'positive' : (state.confidence >= 0.3 ? 'warning' : 'negative'));
+
+            // 불확실성
+            const uncStat = document.getElementById('statUncertainty');
+            uncStat.querySelector('.stat-value').textContent = Math.round(state.uncertainty * 100) + '%';
+
+            // 루프 카운트
+            document.getElementById('statLoopCount').querySelector('.stat-value').textContent = loopCount;
+
+            // 핑 상태
+            const pingStat = document.getElementById('statPing');
+            pingStat.querySelector('.stat-value').textContent = state.needs_ping ? '필요' : 'OK';
+            pingStat.className = 'stat-item ' + (state.needs_ping ? 'negative' : 'positive');
+        }
+
+        // UI 업데이트 (통합)
         function updateUI(state) {
             if (!state) state = hybridState;
 
@@ -761,22 +1532,13 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                 'focus': 'Focus', 'flow': 'Flow', 'struggle': 'Struggle', 'lost': 'Lost'
             }[state.dominant_state] || 'Focus';
 
-            // 확신도
+            // 확신도/불확실성 미터
             document.getElementById('confidenceValue').textContent = Math.round(state.confidence * 100) + '%';
+            document.getElementById('confidenceMeterFill').style.width = (state.confidence * 100) + '%';
             document.getElementById('uncertaintyValue').textContent = Math.round(state.uncertainty * 100) + '%';
+            document.getElementById('uncertaintyMeterFill').style.width = (state.uncertainty * 100) + '%';
 
-            const confPanel = document.getElementById('confidencePanel');
-            confPanel.className = 'confidence-item ' +
-                (state.confidence >= 0.6 ? 'high' : (state.confidence >= 0.3 ? 'medium' : 'low'));
-            confPanel.querySelector('.icon').textContent =
-                state.confidence >= 0.6 ? '✅' : (state.confidence >= 0.3 ? '⚠️' : '❓');
-
-            // Ping 필요 여부
-            const pingPanel = document.getElementById('pingNeeded');
-            pingPanel.style.opacity = state.needs_ping ? '1' : '0.5';
-            pingPanel.querySelector('.value').textContent = state.needs_ping ? '필요' : '불필요';
-
-            // 상태 벡터 바
+            // 상태 벡터 바 (바 차트 탭)
             for (const [key, val] of Object.entries(state.state_vector)) {
                 const bar = document.getElementById('stateBar_' + key);
                 const value = document.getElementById('stateBarValue_' + key);
@@ -786,6 +1548,16 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
 
             // 루프 카운트
             document.getElementById('loopCount').textContent = loopCount + '회';
+
+            // 인지노드 네트워크 업데이트
+            updateCognitiveNetwork(state);
+
+            // 통계 그리드 업데이트
+            updateStatsGrid(state);
+
+            // 히스토리에 추가 & 차트 업데이트
+            addToHistory(state);
+            updateCharts(state);
         }
 
         // 로그 추가
@@ -958,8 +1730,17 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
 
         // 초기화
         document.addEventListener('DOMContentLoaded', () => {
+            // 차트 초기화
+            initRadarChart();
+            initHistoryChart();
+
+            // UI 및 자동 루프 시작
             updateUI(hybridState);
             startAutoLoop();
+
+            // 초기 히스토리 데이터 추가
+            addToHistory(hybridState);
+
             addLog('⚛️ HybridStateStabilizer 연결됨 | User ID: <?php echo $userId; ?>', 'prediction');
         });
     </script>
