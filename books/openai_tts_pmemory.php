@@ -1,8 +1,13 @@
 ﻿<?php
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 
-$secret_key = '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';
+// Moodle config.php에서 API 키 가져오기
+$secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+// API 키 검증
+if (empty($secret_key)) {
+    die('오류: API 키가 설정되지 않았습니다. Moodle config.php에서 $CFG->openai_api_key를 확인하세요.');
+}
 $userrole=$DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22' ORDER BY id DESC LIMIT 1 "); 
 $role=$userrole->data;
 require_login();
@@ -375,10 +380,12 @@ document.getElementById("audio_upload").onclick = function ()
     </div>
 
     <script>
-        const apikey = "<?php echo $secret_key; ?>";
         const contentsid = "<?php echo $contentsid; ?>"; // PHP에서 JavaScript로 전달
         const contentstype = "<?php echo $contentstype; ?>"; // PHP에서 JavaScript로 전달
+        const apikey = "<?php echo $secret_key; ?>"; // API 키 (openai_tts.php와 동일 방식)
         let audioBuffers = []; // 오디오 버퍼를 저장할 배열
+
+        console.log("TTS 직접 API 모드 활성화 - openai_tts.php와 동일 방식");
         let sectionBuffers = []; // 각 구간별 오디오 버퍼 (@ 구분)
         let currentSection = 0; // 현재 재생 중인 구간
         let totalSections = 0; // 전체 구간 수
@@ -386,8 +393,14 @@ document.getElementById("audio_upload").onclick = function ()
         let currentAudioSource = null; // 현재 재생 중인 오디오 소스
         let combinedUploaded = false; // 병합 파일 업로드 여부 플래그
 
-        // 기본 TTS 생성 함수
+        // 기본 TTS 생성 함수 (openai_tts.php와 동일한 직접 API 호출 방식)
         const generateSpeech = async (text, voice) => {
+            // 텍스트 길이 확인 (TTS API 제한: 4096자)
+            if (text.length > 4096) {
+                console.warn("텍스트가 4096자를 초과합니다. 잘라서 처리합니다.");
+                text = text.substring(0, 4096);
+            }
+
             const fetchOptions = {
                 method: "POST",
                 headers: {
@@ -402,14 +415,21 @@ document.getElementById("audio_upload").onclick = function ()
             };
 
             try {
+                console.log("TTS API 직접 호출 시작, 텍스트 길이:", text.length);
                 const response = await fetch("https://api.openai.com/v1/audio/speech", fetchOptions);
-                if (!response.ok) throw new Error("음성 생성 실패");
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`API 오류 (${response.status}): ${errorData.error?.message || response.statusText}`);
+                }
+
                 const audioData = await response.arrayBuffer();
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const audioBuffer = await audioContext.decodeAudioData(audioData);
+                console.log("TTS 생성 성공, 오디오 길이:", audioBuffer.duration, "초");
                 return audioBuffer;
             } catch (error) {
-                console.error(error);
+                console.error("TTS API 호출 실패:", error);
                 throw error;
             }
         };

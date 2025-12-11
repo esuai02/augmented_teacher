@@ -6,7 +6,7 @@ ob_start();
 
 // 에러 핸들링 설정 - 모든 에러 출력 차단
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 0); 
 ini_set('display_startup_errors', 0);
 ini_set('log_errors', 1);
 ini_set('error_log', dirname(__FILE__) . '/pmemory_narration_error.log');
@@ -32,23 +32,11 @@ try {
 
     debug_log("절차기억 나레이션 생성 시작");
 
-    // 설정 파일 포함
-    $configFile = dirname(__FILE__) . '/api_config.php';
-    if (!file_exists($configFile)) {
-        throw new Exception("[generate_pmemory_narration.php:" . __LINE__ . "] API 설정 파일을 찾을 수 없습니다: " . $configFile);
-    }
-    require_once($configFile);
-    debug_log("API 설정 파일 로드 완료");
-
-    // Moodle 설정 포함
-    $moodleConfig = "/home/moodle/public_html/moodle/config.php";
-    if (file_exists($moodleConfig)) {
-        include_once($moodleConfig);
-        global $DB, $USER;
-        debug_log("Moodle 설정 로드 완료");
-    } else {
-        throw new Exception("[generate_pmemory_narration.php:" . __LINE__ . "] Moodle 설정 파일을 찾을 수 없습니다");
-    }
+    // Moodle 설정 포함 (openai_tts.php와 동일)
+    include_once("/home/moodle/public_html/moodle/config.php");
+    global $DB, $USER, $CFG;
+    debug_log("Moodle 설정 로드 완료");
+    $secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
 
     // 파라미터 받기 및 검증
     $contentsid = isset($_POST['contentsid']) ? intval($_POST['contentsid']) : 0;
@@ -155,32 +143,24 @@ PROMPT;
 
     debug_log("OpenAI API 호출 준비");
 
-    // API 키 확인
-    if (!defined('OPENAI_API_KEY') || empty(OPENAI_API_KEY)) {
-        throw new Exception("[generate_pmemory_narration.php:" . __LINE__ . "] OpenAI API 키가 설정되지 않았습니다");
-    }
-
-    // API 키 설정
-    $apiKey = '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';
-
     // OpenAI GPT API 호출
     $apiUrl = 'https://api.openai.com/v1/chat/completions';
     $headers = [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . $apiKey
+        'Authorization: Bearer ' . $secret_key
     ];
 
     $data = [
-        'model' => 'gpt-5.1',
+        'model' => 'gpt-4o',
         'messages' => [
             ['role' => 'system', 'content' => $systemPrompt],
             ['role' => 'user', 'content' => $userPrompt]
         ],
         'max_completion_tokens' => 4000,
         'temperature' => 0.7
-    ];
+    ]; 
 
-    debug_log("OpenAI API 호출 시작 (모델: gpt-5.1)");
+    debug_log("OpenAI API 호출 시작 (모델: gpt-4o)");
 
     $ch = curl_init($apiUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

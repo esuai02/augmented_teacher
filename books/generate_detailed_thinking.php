@@ -6,7 +6,7 @@
  */
 
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 header('Content-Type: application/json');
@@ -32,8 +32,11 @@ try {
     $contentstype = isset($data['contentstype']) ? $data['contentstype'] : '';
     $nstep = isset($data['nstep']) ? intval($data['nstep']) : 0;
 
-    // OpenAI API 키
-    $secret_key = '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';
+    // API 키를 $CFG에서 가져오기
+    $secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($secret_key)) {
+        throw new Exception('API 키가 설정되지 않았습니다. (generate_detailed_thinking.php)');
+    }
 
     // 프롬프트 구성 (1단계: 자세히 생각하기만 생성)
     $prompt = "전체 대본 내용:\n{$context}\n\n";

@@ -13,7 +13,7 @@ include_once("/home/moodle/public_html/moodle/config.php");
 if (file_exists(__DIR__ . '/../config.php')) {
     require_once(__DIR__ . '/../config.php');
 }
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 // 에러 출력 설정 (개발 중)
@@ -21,8 +21,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// OpenAI API 키 설정 (teachingagent.php 방식)
-$secret_key = defined('OPENAI_API_KEY') ? OPENAI_API_KEY : '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';
+// API 키를 $CFG에서 가져오기
+$secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($secret_key)) {
+    error_log('[AItutor/index.php] File: ' . basename(__FILE__) . ', Line: ' . __LINE__ . ', Error: API 키가 설정되지 않았습니다.');
+}
 
 // 학생 ID 확인
 $studentid = isset($_GET['studentid']) ? $_GET['studentid'] : $USER->id;

@@ -1,11 +1,16 @@
 <?php
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 header('Content-Type: application/json');
 
-$secret_key = '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';
+// API 키를 $CFG에서 가져오기
+$secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($secret_key)) {
+    echo json_encode(['success' => false, 'error' => 'API 키가 설정되지 않았습니다.']);
+    exit();
+}
 
 $scriptText = $_POST['scriptText'];
 $contentsid = $_POST['contentsid'];

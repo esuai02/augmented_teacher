@@ -46,7 +46,7 @@ try {
     $moodleConfig = "/home/moodle/public_html/moodle/config.php";
     if (file_exists($moodleConfig)) {
         include_once($moodleConfig);
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
         debug_log("Moodle 설정 로드 완료");
     } else {
         throw new Exception("Moodle 설정 파일을 찾을 수 없습니다 (generate_essay_instruction.php line " . __LINE__ . ")");
@@ -201,8 +201,11 @@ try {
         throw new Exception("OpenAI API 키가 설정되지 않았습니다 (generate_essay_instruction.php line " . __LINE__ . ")");
     }
 
-    // 사용자가 제공한 새 API 키 사용
-    $apiKey = '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';
+    // API 키를 $CFG에서 가져오기
+    $apiKey = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($apiKey)) {
+        throw new Exception("API 키가 설정되지 않았습니다. (generate_essay_instruction.php line " . __LINE__ . ")");
+    }
 
     // OpenAI GPT API 호출
     $apiUrl = 'https://api.openai.com/v1/chat/completions';

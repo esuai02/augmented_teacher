@@ -1,14 +1,17 @@
 ﻿<?php
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 
 // 에러 표시 설정 (디버깅용, 운영 환경에서는 비활성화해야 합니다)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-$secret_key = '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';
+// API 키를 $CFG에서 가져오기
+$secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($secret_key)) {
+    die('오류: API 키가 설정되지 않았습니다. (openai_realtime.php)');
+}
 $userrole = $DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22' ORDER BY id DESC LIMIT 1"); 
 $role = $userrole->data;
 require_login();

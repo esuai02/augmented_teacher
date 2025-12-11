@@ -6,12 +6,18 @@
  */
 
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 header('Content-Type: application/json; charset=utf-8');
 
 try {
+    // API 키를 $CFG에서 가져오기
+    $apiKey = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($apiKey)) {
+        throw new Exception('API 키가 설정되지 않았습니다. [파일: generate_tts_script.php]');
+    }
+
     // 입력 파라미터 확인
     if (!isset($_POST['contentsid']) || !isset($_POST['contentstype'])) {
         throw new Exception('필수 파라미터가 누락되었습니다. [파일: generate_tts_script.php, 위치: 입력 검증]');
@@ -53,9 +59,6 @@ try {
 
     // HTML 태그 제거
     $contentText = strip_tags($contentText);
-
-    // OpenAI API 키
-    $apiKey = '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';
 
     // GPT 프롬프트 구성
     $systemPrompt = "작은 의미단위로 완결성있게 설명 후 요약. 그리고 준비하는 시간을 가지고 준비가 되면 다음 소주제로 넘어 가는 방식으로 잘게 잘게 쪼개서 진행해줘. 작은 예시들을 통하여 확실히 확인하는 방식으로 진행해줘.

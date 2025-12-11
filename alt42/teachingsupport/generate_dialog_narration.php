@@ -1,6 +1,10 @@
 <?php
 /////////////////////////////// 대화형 나레이션 자동 생성 및 TTS 생성 (ktm_teaching_interactions용) ///////////////////////////////
 
+// Moodle config.php 로드
+include_once("/home/moodle/public_html/moodle/config.php");
+global $CFG;
+
 // 출력 버퍼링 시작 (에러가 JSON 응답을 방해하지 않도록)
 ob_start();
 
@@ -1129,18 +1133,14 @@ Output examples:
 
     debug_log("OpenAI API 호출 준비");
 
-    // API 키 설정 (TTS 생성 함수에서도 사용 가능하도록 전역 변수로 설정)
-    $apiKey = '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';
-    
-    // 환경 변수가 있으면 우선 사용
-    $envApiKey = getenv('OPENAI_API_KEY');
-    // API 키 형식 검증: sk- 또는 sk-proj-로 시작하고 최소 20자 이상
-    if ($envApiKey && preg_match('/^sk(-proj)?-[a-zA-Z0-9_-]{20,}$/', $envApiKey)) {
-        $apiKey = $envApiKey;
-        debug_log("환경 변수에서 API 키 사용");
-    } else {
-        debug_log("하드코딩된 API 키 사용");
+    // API 키를 $CFG에서 가져오기
+    global $CFG;
+    $apiKey = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($apiKey)) {
+        error_log('[generate_dialog_narration.php] File: ' . basename(__FILE__) . ', Line: ' . __LINE__ . ', Error: API 키가 설정되지 않았습니다.');
+        throw new Exception('API 키가 설정되지 않았습니다.');
     }
+    debug_log("$CFG에서 API 키 로드됨");
 
     // OpenAI GPT API 호출
     $apiUrl = 'https://api.openai.com/v1/chat/completions';

@@ -2,13 +2,20 @@
 /**
  * AI 설정 파일
  *
- * 중요: 이 파일을 .gitignore에 추가하세요!
- * 실제 API 키로 교체 후 사용
+ * API 키는 Moodle $CFG->openai_api_key에서 가져옴
  */
+include_once("/home/moodle/public_html/moodle/config.php");
+global $CFG;
+
+// API 키 검증
+$openai_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($openai_key)) {
+    error_log('[ai_config.php] File: ' . __FILE__ . ', Line: ' . __LINE__ . ', Error: API 키가 설정되지 않았습니다.');
+}
 
 return [
-    // OpenAI API 키 (필수)
-    'openai_api_key' => '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',
+    // OpenAI API 키 ($CFG에서 가져옴)
+    'openai_api_key' => $openai_key,
 
     // 모델 설정 (선택)
     'models' => [

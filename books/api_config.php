@@ -5,14 +5,30 @@
  *
  * 주의: 이 파일은 버전 관리 시스템에 포함되지 않아야 합니다.
  * .gitignore에 추가하세요.
+ *
+ * 파일 위치: /books/api_config.php
+ * 관련 DB: 없음 (설정 파일)
  */
 
-// OpenAI API 키 - 환경변수에서 먼저 읽고, 없으면 하드코딩된 값 사용
-// 실제 운영 환경에서는 환경변수 사용을 권장합니다.
-// 서버에서: export OPENAI_API_KEY="your-api-key-here"
+// Moodle config.php 로드 (아직 로드되지 않은 경우에만)
+if (!isset($CFG)) {
+    include_once("/home/moodle/public_html/moodle/config.php");
+}
+global $CFG;
 
-$apiKey = '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';
-define('OPENAI_API_KEY', $apiKey);
+// OpenAI API 키 - Moodle $CFG에서 가져오기 (보안 강화)
+// Moodle config.php에 다음과 같이 설정:
+// $CFG->openai_api_key = 'your-api-key-here';
+$apiKey = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+
+if (empty($apiKey)) {
+    // 폴백: 환경변수에서 읽기 시도
+    $apiKey = getenv('OPENAI_API_KEY');
+}
+
+if (!defined('OPENAI_API_KEY')) {
+    define('OPENAI_API_KEY', $apiKey);
+}
 
 // TTS 설정
 define('TTS_MODEL', 'tts-1');

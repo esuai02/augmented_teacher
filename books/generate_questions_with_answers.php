@@ -8,12 +8,18 @@
  */
 
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 header('Content-Type: application/json; charset=utf-8');
 
 try {
+    // API 키를 $CFG에서 가져오기
+    $secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($secret_key)) {
+        throw new Exception('API 키가 설정되지 않았습니다. - File: ' . basename(__FILE__) . ', Line: ' . __LINE__);
+    }
+
     // 입력 데이터 받기
     $input = json_decode(file_get_contents('php://input'), true);
 
@@ -43,9 +49,6 @@ try {
         $totalSteps,
         $forceRegenerate ? ' (force regenerate)' : ''
     ));
-
-    // OpenAI API 키
-    $secret_key = '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';
 
     // 컨텐츠 타입별 원본 텍스트 로드
     $originalContent = '';

@@ -1,9 +1,13 @@
 <?php
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 //require_login();
 
-$secret_key = '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';
+// API 키를 $CFG에서 가져오기
+$secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($secret_key)) {
+    error_log('[student_inbox.php] File: ' . basename(__FILE__) . ', Line: ' . __LINE__ . ', Error: API 키가 설정되지 않았습니다.');
+}
 
 $studentid = $_GET['studentid'] ?? $USER->id;
 $page = optional_param('page', 0, PARAM_INT);

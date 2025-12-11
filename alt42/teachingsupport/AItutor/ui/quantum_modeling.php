@@ -459,7 +459,7 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
 
         /* 시뮬레이션 로그 */
         .sim-log {
-            max-height: 250px;
+            max-height: 180px;
             overflow-y: auto;
             padding: 10px;
             background: var(--bg-dark);
@@ -478,6 +478,258 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         .log-entry.event { border-left-color: var(--success); }
         .log-entry.ping { border-left-color: var(--warning); }
         .log-entry.error { border-left-color: var(--danger); }
+
+        /* 인지노드 네트워크 시각화 */
+        .node-network {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .node-network svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .cognitive-node {
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .cognitive-node:hover {
+            filter: brightness(1.3);
+        }
+
+        .node-label {
+            font-size: 11px;
+            fill: var(--text-primary);
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .node-value {
+            font-size: 10px;
+            fill: var(--text-secondary);
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .node-connection {
+            stroke: var(--border);
+            stroke-width: 2;
+            fill: none;
+            transition: all 0.5s ease;
+        }
+
+        .node-connection.active {
+            stroke: var(--primary);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5));
+        }
+
+        /* 레이더 차트 */
+        .radar-chart {
+            position: relative;
+            width: 100%;
+            height: 200px;
+        }
+
+        .radar-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .radar-polygon {
+            fill: rgba(99, 102, 241, 0.3);
+            stroke: var(--primary);
+            stroke-width: 2;
+            transition: all 0.5s ease;
+        }
+
+        .radar-axis {
+            stroke: var(--border);
+            stroke-width: 1;
+        }
+
+        .radar-ring {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 1;
+            stroke-dasharray: 4;
+        }
+
+        /* 실시간 파형 */
+        .waveform-container {
+            height: 60px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .waveform-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 상태 트랜지션 링 */
+        .state-ring {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto;
+        }
+
+        .state-ring svg {
+            transform: rotate(-90deg);
+        }
+
+        .ring-bg {
+            fill: none;
+            stroke: var(--bg-dark);
+            stroke-width: 12;
+        }
+
+        .ring-progress {
+            fill: none;
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+        }
+
+        .ring-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .ring-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .ring-text {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* 미니 스탯 카드 */
+        .mini-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mini-stat {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .mini-stat .icon {
+            font-size: 1.2rem;
+        }
+
+        .mini-stat .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .mini-stat .label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* 확장된 col 클래스 */
+        .col-5 { grid-column: span 5; }
+        .col-7 { grid-column: span 7; }
+        .col-3 { grid-column: span 3; }
+
+        /* 반응형 레이아웃 최적화 */
+        @media (max-width: 1400px) {
+            .col-5 { grid-column: span 6; }
+            .col-7 { grid-column: span 6; }
+            .state-ring {
+                width: 140px;
+                height: 140px;
+            }
+            .ring-value { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 1200px) {
+            .col-5, .col-7, .col-3 { grid-column: span 12; }
+            .node-network { height: 250px; }
+            .state-ring {
+                width: 130px;
+                height: 130px;
+            }
+            .mini-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { flex-direction: column; gap: 10px; }
+            .header h1 { font-size: 1.2rem; }
+            .node-network { height: 200px; }
+            .state-ring {
+                width: 100px;
+                height: 100px;
+            }
+            .ring-value { font-size: 1.2rem; }
+            .ring-text { font-size: 0.65rem; }
+            .state-vector-bars { gap: 5px; }
+            .state-bar { height: 70px; }
+            .mini-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .kalman-viz {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .kalman-box { padding: 8px 12px; }
+            .ping-btn { padding: 6px 12px; font-size: 0.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .confidence-panel {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .state-ring {
+                width: 80px;
+                height: 80px;
+            }
+            .ring-value { font-size: 1rem; }
+            .event-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* 개선된 상태 바 */
+        .state-bar {
+            height: 100px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 노드 펄스 애니메이션 */
+        @keyframes nodePulse {
+            0%, 100% { r: 28; opacity: 1; }
+            50% { r: 32; opacity: 0.8; }
+        }
+
+        .node-pulse {
+            animation: nodePulse 2s infinite;
+        }
 
         /* 실시간 인디케이터 */
         .realtime-indicator {
@@ -548,17 +800,137 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
         </div>
 
         <div class="grid">
+            <!-- 인지노드 네트워크 시각화 -->
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🧠 인지노드 네트워크</div>
+                        <span class="status-badge online" style="font-size: 0.7rem; padding: 3px 8px;">
+                            <span class="dot"></span>
+                            Live
+                        </span>
+                    </div>
+
+                    <div class="node-network" id="nodeNetwork">
+                        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <!-- 그라디언트 정의 -->
+                                <radialGradient id="focusGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#10b981;stop-opacity:0.8" />
+                                </radialGradient>
+                                <radialGradient id="flowGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.8" />
+                                </radialGradient>
+                                <radialGradient id="struggleGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+                                </radialGradient>
+                                <radialGradient id="lostGrad" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.8" />
+                                </radialGradient>
+                                <!-- 발광 효과 -->
+                                <filter id="glow">
+                                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                    <feMerge>
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- 연결선 -->
+                            <g class="connections">
+                                <line class="node-connection" id="conn_focus_flow" x1="130" y1="90" x2="270" y2="90"/>
+                                <line class="node-connection" id="conn_focus_struggle" x1="130" y1="90" x2="130" y2="210"/>
+                                <line class="node-connection" id="conn_flow_lost" x1="270" y1="90" x2="270" y2="210"/>
+                                <line class="node-connection" id="conn_struggle_lost" x1="130" y1="210" x2="270" y2="210"/>
+                                <line class="node-connection" id="conn_focus_lost" x1="130" y1="90" x2="270" y2="210" style="stroke-dasharray: 5,5;"/>
+                                <line class="node-connection" id="conn_flow_struggle" x1="270" y1="90" x2="130" y2="210" style="stroke-dasharray: 5,5;"/>
+                            </g>
+
+                            <!-- 중앙 상태 표시 -->
+                            <g class="center-state" transform="translate(200, 150)">
+                                <circle r="25" fill="var(--bg-dark)" stroke="var(--border)" stroke-width="2"/>
+                                <text class="node-label" y="5" fill="var(--text-primary)" id="centerStateText">⚛️</text>
+                            </g>
+
+                            <!-- Focus 노드 -->
+                            <g class="cognitive-node" id="node_focus" transform="translate(130, 90)">
+                                <circle class="node-pulse" r="28" fill="url(#focusGrad)" filter="url(#glow)"/>
+                                <text class="node-label" y="-35">🎯 집중</text>
+                                <text class="node-value" y="5" id="nodeVal_focus"><?php echo round($hybridState['state_vector']['focus'] * 100); ?>%</text>
+                            </g>
+
+                            <!-- Flow 노드 -->
+                            <g class="cognitive-node" id="node_flow" transform="translate(270, 90)">
+                                <circle r="28" fill="url(#flowGrad)" filter="url(#glow)"/>
+                                <text class="node-label" y="-35">🌊 몰입</text>
+                                <text class="node-value" y="5" id="nodeVal_flow"><?php echo round($hybridState['state_vector']['flow'] * 100); ?>%</text>
+                            </g>
+
+                            <!-- Struggle 노드 -->
+                            <g class="cognitive-node" id="node_struggle" transform="translate(130, 210)">
+                                <circle r="28" fill="url(#struggleGrad)" filter="url(#glow)"/>
+                                <text class="node-label" y="45">💪 고군분투</text>
+                                <text class="node-value" y="5" id="nodeVal_struggle"><?php echo round($hybridState['state_vector']['struggle'] * 100); ?>%</text>
+                            </g>
+
+                            <!-- Lost 노드 -->
+                            <g class="cognitive-node" id="node_lost" transform="translate(270, 210)">
+                                <circle r="28" fill="url(#lostGrad)" filter="url(#glow)"/>
+                                <text class="node-label" y="45">😶 이탈</text>
+                                <text class="node-value" y="5" id="nodeVal_lost"><?php echo round($hybridState['state_vector']['lost'] * 100); ?>%</text>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <!-- 상태 링 (원형 진행 표시) -->
+                    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                        <div class="state-ring" id="confidenceRing">
+                            <svg viewBox="0 0 160 160">
+                                <circle class="ring-bg" cx="80" cy="80" r="65"/>
+                                <circle class="ring-progress" cx="80" cy="80" r="65"
+                                        stroke="var(--success)"
+                                        stroke-dasharray="408.4"
+                                        stroke-dashoffset="<?php echo 408.4 * (1 - $hybridState['confidence']); ?>"
+                                        id="confidenceRingProgress"/>
+                            </svg>
+                            <div class="ring-label">
+                                <div class="ring-value" id="ringConfidence"><?php echo round($hybridState['confidence'] * 100); ?>%</div>
+                                <div class="ring-text">확신도</div>
+                            </div>
+                        </div>
+                        <div class="state-ring" id="stateRing">
+                            <svg viewBox="0 0 160 160">
+                                <circle class="ring-bg" cx="80" cy="80" r="65"/>
+                                <circle class="ring-progress" cx="80" cy="80" r="65"
+                                        stroke="var(--primary)"
+                                        stroke-dasharray="408.4"
+                                        stroke-dashoffset="<?php echo 408.4 * (1 - $hybridState['predicted_state']); ?>"
+                                        id="stateRingProgress"/>
+                            </svg>
+                            <div class="ring-label">
+                                <div class="ring-value" id="ringState"><?php echo round($hybridState['predicted_state'] * 100); ?>%</div>
+                                <div class="ring-text">집중도</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 메인 상태 모니터 -->
-            <div class="col-8">
+            <div class="col-7">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">📊 실시간 상태 모니터</div>
-                    </div>
-
-                    <div class="realtime-indicator">
-                        <div class="pulse"></div>
-                        <span>Fast Loop 실행 중 (0.5초 주기)</span>
-                        <span style="margin-left: auto; color: var(--text-secondary);" id="loopCount">0회</span>
+                        <div class="realtime-indicator" style="margin: 0; padding: 6px 12px;">
+                            <div class="pulse"></div>
+                            <span>Fast Loop</span>
+                            <span style="margin-left: 5px; color: var(--text-secondary);" id="loopCount">0회</span>
+                        </div>
                     </div>
 
                     <!-- 집중도 미터 -->
@@ -600,7 +972,7 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                     </div>
 
                     <!-- 상태 벡터 바 차트 -->
-                    <h4 style="margin: 25px 0 15px; font-size: 0.95rem;">상태 분포 (State Vector)</h4>
+                    <h4 style="margin: 20px 0 12px; font-size: 0.9rem;">상태 분포 (State Vector)</h4>
                     <div class="state-vector-bars">
                         <?php
                         $stateVector = $hybridState['state_vector'];
@@ -627,7 +999,7 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             </div>
 
             <!-- 컨트롤 패널 -->
-            <div class="col-4">
+            <div class="col-5">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">🎛️ 시뮬레이션 컨트롤</div>
@@ -705,7 +1077,7 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             </div>
 
             <!-- 시뮬레이션 로그 -->
-            <div class="col-12">
+            <div class="col-7">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">📋 시뮬레이션 로그</div>
@@ -715,6 +1087,55 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                     </div>
                     <div class="sim-log" id="simLog">
                         <div class="log-entry prediction">🚀 [<?php echo date('H:i:s'); ?>] 시스템 초기화 완료 | 초기 상태: <?php echo round($hybridState['predicted_state'] * 100); ?>% 집중</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kalman Filter 시각화 패널 -->
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">⚖️ Kalman Filter 보정</div>
+                    </div>
+                    <div id="kalmanVizPanel">
+                        <div class="kalman-viz">
+                            <div class="kalman-box prediction">
+                                <div class="label">예측(P)</div>
+                                <div class="value" id="kalmanPredVal"><?php echo round($hybridState['predicted_state'] * 100); ?>%</div>
+                            </div>
+                            <span class="kalman-arrow">+</span>
+                            <div class="kalman-gain">
+                                <div class="label">K·(M-P)</div>
+                                <div class="value" id="kalmanKVal">0</div>
+                            </div>
+                            <span class="kalman-arrow">=</span>
+                            <div class="kalman-box result">
+                                <div class="label">보정(X)</div>
+                                <div class="value" id="kalmanResVal"><?php echo round($hybridState['predicted_state'] * 100); ?>%</div>
+                            </div>
+                        </div>
+                        <div class="mini-stats">
+                            <div class="mini-stat">
+                                <div class="icon">📡</div>
+                                <div class="value" id="totalPings">0</div>
+                                <div class="label">Active Pings</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="icon">⚡</div>
+                                <div class="value" id="totalEvents">0</div>
+                                <div class="label">이벤트</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="icon">🔄</div>
+                                <div class="value" id="totalCorrections">0</div>
+                                <div class="label">보정 횟수</div>
+                            </div>
+                            <div class="mini-stat">
+                                <div class="icon">⏱️</div>
+                                <div class="value" id="avgResponseTime">-</div>
+                                <div class="label">평균 응답</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -748,6 +1169,14 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             'long_pause': 0.25,
             'tab_switch': 0.1,
             'idle_long': 0.1
+        };
+
+        // 통계 카운터
+        let statsCounter = {
+            totalPings: 0,
+            totalEvents: 0,
+            totalCorrections: 0,
+            responseTimes: []
         };
 
         // UI 업데이트
@@ -786,6 +1215,134 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
 
             // 루프 카운트
             document.getElementById('loopCount').textContent = loopCount + '회';
+
+            // 인지노드 네트워크 업데이트
+            updateNodeNetwork(state);
+
+            // 상태 링 업데이트
+            updateStateRings(state);
+
+            // 통계 업데이트
+            updateStats();
+        }
+
+        // 인지노드 네트워크 업데이트
+        function updateNodeNetwork(state) {
+            const stateVector = state.state_vector;
+            const dominant = state.dominant_state;
+
+            // 노드 값 업데이트
+            for (const [key, val] of Object.entries(stateVector)) {
+                const nodeVal = document.getElementById('nodeVal_' + key);
+                if (nodeVal) nodeVal.textContent = Math.round(val * 100) + '%';
+
+                // 노드 크기 조절 (dominant 상태일 경우 강조)
+                const node = document.getElementById('node_' + key);
+                if (node) {
+                    const circle = node.querySelector('circle');
+                    if (circle) {
+                        const baseR = 28;
+                        const scale = 1 + (val * 0.3); // 값에 따라 최대 30% 크기 증가
+                        circle.setAttribute('r', Math.round(baseR * scale));
+
+                        // dominant 상태에 펄스 애니메이션 추가
+                        if (key === dominant) {
+                            circle.classList.add('node-pulse');
+                        } else {
+                            circle.classList.remove('node-pulse');
+                        }
+                    }
+                }
+            }
+
+            // 중앙 상태 텍스트 업데이트
+            const centerText = document.getElementById('centerStateText');
+            if (centerText) {
+                const stateEmojis = { 'focus': '🎯', 'flow': '🌊', 'struggle': '💪', 'lost': '😶' };
+                centerText.textContent = stateEmojis[dominant] || '⚛️';
+            }
+
+            // 연결선 활성화 (dominant 상태와 연결된 선)
+            const connections = {
+                'focus': ['conn_focus_flow', 'conn_focus_struggle', 'conn_focus_lost'],
+                'flow': ['conn_focus_flow', 'conn_flow_lost', 'conn_flow_struggle'],
+                'struggle': ['conn_focus_struggle', 'conn_struggle_lost', 'conn_flow_struggle'],
+                'lost': ['conn_flow_lost', 'conn_struggle_lost', 'conn_focus_lost']
+            };
+
+            // 모든 연결선 비활성화
+            document.querySelectorAll('.node-connection').forEach(conn => {
+                conn.classList.remove('active');
+            });
+
+            // dominant 상태 연결선 활성화
+            if (connections[dominant]) {
+                connections[dominant].forEach(connId => {
+                    const conn = document.getElementById(connId);
+                    if (conn) conn.classList.add('active');
+                });
+            }
+        }
+
+        // 상태 링 업데이트
+        function updateStateRings(state) {
+            const circumference = 408.4; // 2 * π * 65
+
+            // 확신도 링
+            const confProgress = document.getElementById('confidenceRingProgress');
+            if (confProgress) {
+                const confOffset = circumference * (1 - state.confidence);
+                confProgress.style.strokeDashoffset = confOffset;
+
+                // 색상 변경
+                if (state.confidence >= 0.6) {
+                    confProgress.style.stroke = 'var(--success)';
+                } else if (state.confidence >= 0.3) {
+                    confProgress.style.stroke = 'var(--warning)';
+                } else {
+                    confProgress.style.stroke = 'var(--danger)';
+                }
+            }
+            const ringConf = document.getElementById('ringConfidence');
+            if (ringConf) ringConf.textContent = Math.round(state.confidence * 100) + '%';
+
+            // 집중도 링
+            const stateProgress = document.getElementById('stateRingProgress');
+            if (stateProgress) {
+                const stateOffset = circumference * (1 - state.predicted_state);
+                stateProgress.style.strokeDashoffset = stateOffset;
+
+                // 색상 변경
+                if (state.predicted_state >= 0.7) {
+                    stateProgress.style.stroke = 'var(--success)';
+                } else if (state.predicted_state >= 0.4) {
+                    stateProgress.style.stroke = 'var(--primary)';
+                } else {
+                    stateProgress.style.stroke = 'var(--danger)';
+                }
+            }
+            const ringState = document.getElementById('ringState');
+            if (ringState) ringState.textContent = Math.round(state.predicted_state * 100) + '%';
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('totalPings').textContent = statsCounter.totalPings;
+            document.getElementById('totalEvents').textContent = statsCounter.totalEvents;
+            document.getElementById('totalCorrections').textContent = statsCounter.totalCorrections;
+
+            if (statsCounter.responseTimes.length > 0) {
+                const avg = statsCounter.responseTimes.reduce((a, b) => a + b, 0) / statsCounter.responseTimes.length;
+                document.getElementById('avgResponseTime').textContent = avg.toFixed(1) + 's';
+            }
+        }
+
+        // Kalman 시각화 업데이트
+        function updateKalmanViz(prevState, measurement, kalmanGain, newState) {
+            document.getElementById('kalmanPredVal').textContent = Math.round(prevState * 100) + '%';
+            document.getElementById('kalmanKVal').textContent = ((kalmanGain || 0) * (measurement - prevState)).toFixed(2);
+            document.getElementById('kalmanResVal').textContent = Math.round(newState * 100) + '%';
+            statsCounter.totalCorrections++;
         }
 
         // 로그 추가
@@ -877,9 +1434,15 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             const pingNames = {1: 'Subtle (미세 자극)', 2: 'Nudge (넛지)', 3: 'Alert (직접 질문)'};
             addLog('📡 Active Ping 발사: ' + pingNames[level], 'ping');
 
+            // 통계 카운터 증가
+            statsCounter.totalPings++;
+            updateStats();
+
             // 버튼 활성화
             document.querySelectorAll('.ping-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('pingBtn' + level).classList.add('active');
+
+            const pingStartTime = Date.now();
 
             try {
                 const result = await apiCall('fire_ping', { level });
@@ -897,8 +1460,20 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                         });
 
                         if (respResult.success) {
+                            const prevState = hybridState.predicted_state;
                             hybridState = respResult.state;
                             updateUI(hybridState);
+
+                            // 응답 시간 기록
+                            const actualResponseTime = (Date.now() - pingStartTime) / 1000;
+                            statsCounter.responseTimes.push(actualResponseTime);
+                            if (statsCounter.responseTimes.length > 50) {
+                                statsCounter.responseTimes.shift(); // 최근 50개만 유지
+                            }
+
+                            // Kalman 시각화 업데이트
+                            const measurement = responded ? 0.85 : 0.15;
+                            updateKalmanViz(prevState, measurement, respResult.result?.kalman_gain || 0.5, hybridState.predicted_state);
 
                             const msg = responded
                                 ? '✅ 반응 감지! (' + responseTime.toFixed(1) + '초) → 상태 붕괴: Focus'
@@ -917,8 +1492,14 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
 
         // 이벤트 시뮬레이션 (Kalman Correction)
         async function simulateEvent(eventType) {
+            // 통계 카운터 증가
+            statsCounter.totalEvents++;
+            updateStats();
+
             try {
                 const prevState = hybridState.predicted_state;
+                const measurement = EVENT_SIGNALS[eventType] || 0.5;
+
                 const result = await apiCall('kalman_correction', {
                     event_type: eventType,
                     event_data: {}
@@ -928,14 +1509,23 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
                     hybridState = result.state;
                     updateUI(hybridState);
 
-                    // Kalman 시각화 업데이트
-                    const viz = document.getElementById('kalmanViz');
-                    viz.style.display = 'block';
+                    // 새로운 Kalman 패널 업데이트
+                    const kalmanGain = result.result.kalman_gain || 0.5;
+                    updateKalmanViz(prevState, measurement, kalmanGain, hybridState.predicted_state);
 
-                    document.getElementById('kalmanPred').textContent = Math.round(prevState * 100) + '%';
-                    document.getElementById('kalmanMeas').textContent = Math.round(EVENT_SIGNALS[eventType] * 100) + '%';
-                    document.getElementById('kalmanK').textContent = result.result.kalman_gain?.toFixed(2) || '-';
-                    document.getElementById('kalmanRes').textContent = Math.round(hybridState.predicted_state * 100) + '%';
+                    // 기존 Kalman 시각화 업데이트 (존재하는 경우)
+                    const viz = document.getElementById('kalmanViz');
+                    if (viz) {
+                        viz.style.display = 'block';
+                        const kalmanPred = document.getElementById('kalmanPred');
+                        const kalmanMeas = document.getElementById('kalmanMeas');
+                        const kalmanK = document.getElementById('kalmanK');
+                        const kalmanRes = document.getElementById('kalmanRes');
+                        if (kalmanPred) kalmanPred.textContent = Math.round(prevState * 100) + '%';
+                        if (kalmanMeas) kalmanMeas.textContent = Math.round(measurement * 100) + '%';
+                        if (kalmanK) kalmanK.textContent = kalmanGain.toFixed(2);
+                        if (kalmanRes) kalmanRes.textContent = Math.round(hybridState.predicted_state * 100) + '%';
+                    }
 
                     addLog('⚡ [' + eventType + '] Kalman 보정: ' +
                            Math.round(prevState * 100) + '% → ' +

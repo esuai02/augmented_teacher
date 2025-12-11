@@ -6,7 +6,7 @@
  */
 
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 header('Content-Type: application/json');
@@ -34,8 +34,11 @@ try {
     $nstep = isset($data['nstep']) ? intval($data['nstep']) : 0;
     $questionNum = isset($data['questionNum']) ? intval($data['questionNum']) : 0;
 
-    // OpenAI API 키
-    $secret_key = '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';
+    // API 키를 $CFG에서 가져오기
+    $secret_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+    if (empty($secret_key)) {
+        throw new Exception('API 키가 설정되지 않았습니다. (get_additional_answer.php)');
+    }
 
     // OpenAI API 호출을 위한 프롬프트 구성
     $prompt = "다음은 수학 문제에 대한 설명입니다:\n\n{$context}\n\n학생의 질문: {$question}\n\n위 질문에 대해 친절하고 명확하게 답변해주세요. 학생이 이해하기 쉽게 설명해주세요.";

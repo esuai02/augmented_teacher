@@ -1,9 +1,20 @@
 <?php
 // OpenAI API 설정
-// 실제 운영 환경에서는 이 파일을 .gitignore에 추가하고
-// 환경변수나 보안된 설정 파일에서 읽어오도록 수정하세요
+// Moodle $CFG에서 API 키를 가져옵니다.
 
-define('OPENAI_API_KEY', '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'); // 실제 API 키로 교체
+// Moodle config.php 로드 (아직 로드되지 않은 경우에만)
+if (!isset($CFG)) {
+    include_once("/home/moodle/public_html/moodle/config.php");
+}
+global $CFG;
+
+// API 키를 $CFG에서 가져오기
+$openai_api_key = isset($CFG->openai_api_key) ? $CFG->openai_api_key : '';
+if (empty($openai_api_key)) {
+    $openai_api_key = getenv('OPENAI_API_KEY');
+}
+
+define('OPENAI_API_KEY', $openai_api_key);
 define('OPENAI_MODEL', 'gpt-4o'); // o3 모델 출시 시 'o3'로 변경
 
 // API 설정
