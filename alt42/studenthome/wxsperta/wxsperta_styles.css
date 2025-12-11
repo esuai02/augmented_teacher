@@ -807,6 +807,13 @@ body::before {
     opacity: 1;
 }
 
+/* 모달 바디 래퍼 (기본) */
+.modal-body-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
 .fullscreen-modal-header {
     display: flex;
     justify-content: space-between;
@@ -934,6 +941,53 @@ body::before {
     display: flex;
     flex-direction: column;
     position: relative;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* 분할 레이아웃 모드 */
+.fullscreen-modal.split-view .modal-body-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.fullscreen-modal.split-view .iframe-container {
+    flex: 0 0 66.67%;
+    width: 66.67%;
+    border-right: 1px solid rgba(79, 195, 247, 0.2);
+}
+
+.fullscreen-modal.split-view .chat-container {
+    flex: 0 0 33.33%;
+    width: 33.33%;
+    min-width: 320px;
+    display: flex !important;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 모바일 반응형: 작은 화면에서는 채팅이 전체 차지 */
+@media (max-width: 900px) {
+    .fullscreen-modal.split-view .iframe-container {
+        display: none;
+    }
+    
+    .fullscreen-modal.split-view .chat-container {
+        flex: 1;
+        width: 100%;
+        min-width: 100%;
+    }
 }
 
 .fullscreen-close-btn {

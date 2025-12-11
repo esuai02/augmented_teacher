@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시스템 통합 테스트</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .test-result {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background: #3182ce;
+        }
+        .loading {
+            text-align: center;
+            color: #718096;
+            padding: 20px;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔧 시스템 통합 테스트</h1>
+        
+        <button onclick="runTests()">테스트 실행</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="loading">테스트 실행 중...</div>';
+            
+            const tests = [
+                {
+                    name: '1. API 통합 테스트',
+                    async test() {
+                        // save_interaction.php 테스트
+                        const testData = {
+                            action: 'create_interaction',
+                            studentId: 2,  // 테스트용 학생 ID
+                            teacherId: 2,  // 테스트용 선생님 ID
+                            problemType: 'test',
+                            problemText: '테스트 문제',
+                            modificationPrompt: '통합 테스트'
+                        };
+                        
+                        const response = await fetch('save_interaction.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(testData)
+                        });
+                        
+                        const result = await response.json();
+                        return {
+                            success: result.success,
+                            message: result.success ? 
+                                `✓ save_interaction.php 정상 작동 (ID: ${result.interactionId})` : 
+                                `✗ save_interaction.php 오류: ${result.error}`
+                        };
+                    }
+                },
+                {
+                    name: '2. 새로운 요청 가져오기',
+                    async test() {
+                        const response = await fetch('get_new_requests.php?teacherid=2');
+                        const result = await response.json();
+                        
+                        return {
+                            success: result.success,
+                            message: result.success ? 
+                                `✓ get_new_requests.php 정상 작동 (${result.total}개 요청)` :
+                                `✗ get_new_requests.php 오류: ${result.error}`
+                        };
+                    }
+                },
+                {
+                    name: '3. 학생 메시지 가져오기',
+                    async test() {
+                        const response = await fetch('get_student_messages.php?studentid=2&page=0&perpage=5');
+                        const result = await response.json();
+                        
+                        return {
+                            success: result.success,
+                            message: result.success ? 
+                                `✓ get_student_messages.php 정상 작동 (${result.messages ? result.messages.length : 0}개 메시지)` :
+                                `✗ get_student_messages.php 오류: ${result.error}`
+                        };
+                    }
+                },
+                {
+                    name: '4. 파일 시스템 확인',
+                    async test() {
+                        const files = [
+                            'student_inbox.php',
+                            'teachingagent.php',
+                            'save_interaction.php',
+                            'get_new_requests.php',
+                            'get_student_messages.php'
+                        ];
+                        
+                        const checks = [];
+                        for (const file of files) {
+                            try {
+                                const response = await fetch(file, { method: 'HEAD' });
+                                checks.push(`✓ ${file}: 존재`);
+                            } catch (e) {
+                                checks.push(`✗ ${file}: 없음`);
+                            }
+                        }
+                        
+                        // 백업 파일 확인
+                        try {
+                            const response = await fetch('simple_save_interaction.php', { method: 'HEAD' });
+                            checks.push('✗ simple_save_interaction.php: 아직 존재 (제거 필요)');
+                        } catch (e) {
+                            checks.push('✓ simple_save_interaction.php: 제거됨');
+                        }
+                        
+                        return {
+                            success: true,
+                            message: checks.join('\n')
+                        };
+                    }
+                },
+                {
+                    name: '5. 워크플로우 테스트',
+                    async test() {
+                        const steps = [];
+                        
+                        // Step 1: 학생이 질문 제출
+                        const submitData = {
+                            action: 'create_interaction',
+                            studentId: 817,
+                            teacherId: 2,
+                            problemType: '시중교재',
+                            problemText: '워크플로우 테스트',
+                            problemImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
+                        };
+                        
+                        const submitResponse = await fetch('save_interaction.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(submitData)
+                        });
+                        
+                        const submitResult = await submitResponse.json();
+                        if (submitResult.success) {
+                            steps.push(`✓ 학생 질문 제출 성공 (ID: ${submitResult.interactionId})`);
+                            
+                            // Step 2: 선생님이 새로운 요청 확인
+                            const requestsResponse = await fetch('get_new_requests.php?teacherid=2');
+                            const requestsResult = await requestsResponse.json();
+                            
+                            if (requestsResult.success) {
+                                const found = requestsResult.requests.find(r => r.id == submitResult.interactionId);
+                                if (found) {
+                                    steps.push('✓ 선생님 화면에 새로운 요청 표시됨');
+                                } else {
+                                    steps.push('✗ 선생님 화면에 요청이 표시되지 않음');
+                                }
+                            }
+                        } else {
+                            steps.push(`✗ 학생 질문 제출 실패: ${submitResult.error}`);
+                        }
+                        
+                        return {
+                            success: true,
+                            message: steps.join('\n')
+                        };
+                    }
+                }
+            ];
+            
+            let html = '';
+            
+            for (const test of tests) {
+                html += `<div class="test-section">`;
+                html += `<div class="test-title">${test.name}</div>`;
+                
+                try {
+                    const result = await test.test();
+                    const className = result.success ? 'success' : 'error';
+                    html += `<div class="test-result ${className}"><pre>${result.message}</pre></div>`;
+                } catch (error) {
+                    html += `<div class="test-result error"><pre>테스트 실행 오류: ${error.message}</pre></div>`;
+                }
+                
+                html += `</div>`;
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+        
+        // 페이지 로드 시 자동 실행
+        window.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

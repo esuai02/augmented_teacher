@@ -1,0 +1,685 @@
+/**
+ * 양자 붕괴 학습 미로 - 스타일시트
+ * Quantum Collapse Learning Maze Styles
+ */
+
+/* ========== 기본 리셋 ========== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ========== 폰트 ========== */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    min-height: 100vh;
+    color: #f1f5f9;
+    overflow-x: hidden;
+}
+
+/* ========== 스크롤바 ========== */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+}
+
+/* ========== 글로우 효과 ========== */
+.glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+}
+
+.glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+}
+
+.glow-amber {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+}
+
+/* ========== 애니메이션 ========== */
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes collapse {
+    0% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-collapse {
+    animation: collapse 0.5s ease-out;
+}
+
+/* ========== 노드 스타일 ========== */
+.quantum-node {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.quantum-node:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+.quantum-node.selected {
+    transform: scale(1.15);
+}
+
+.quantum-node.available {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.quantum-node.user-node {
+    stroke-dasharray: 4 2;
+}
+
+.quantum-node.verified {
+    stroke-width: 3;
+}
+
+/* ========== 엣지 스타일 ========== */
+.quantum-edge {
+    transition: all 0.3s ease;
+}
+
+.quantum-edge.active {
+    stroke-width: 3;
+    filter: drop-shadow(0 0 8px currentColor);
+}
+
+.quantum-edge.available {
+    stroke-dasharray: 6 4;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+/* ========== 개념 패널 ========== */
+.concept-item {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.concept-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: 0.5s;
+}
+
+.concept-item.active::before {
+    left: 100%;
+}
+
+.concept-item.collapsing {
+    animation: collapse 0.5s ease-out;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+}
+
+/* ========== 버튼 스타일 ========== */
+.quantum-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.quantum-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.quantum-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========== 로딩 스피너 ========== */
+.loading-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid #06b6d4;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+/* ========== 카드 스타일 ========== */
+.quantum-card {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.quantum-card:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
+}
+
+/* ========== 상태 표시 ========== */
+.status-correct {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #10b981;
+}
+
+.status-partial {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: rgba(139, 92, 246, 0.5);
+    color: #8b5cf6;
+}
+
+.status-wrong {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+}
+
+.status-confused {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #f59e0b;
+}
+
+/* ========== 뱃지 ========== */
+.quantum-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.quantum-badge:hover {
+    transform: scale(1.05);
+}
+
+/* ========== 모달 ========== */
+.quantum-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.quantum-modal {
+    background: #1e293b;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 500px;
+    width: 100%;
+    animation: modal-enter 0.3s ease;
+}
+
+@keyframes modal-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ========== 입력 필드 ========== */
+.quantum-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.quantum-input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.quantum-input::placeholder {
+    color: #64748b;
+}
+
+/* ========== 진행 바 ========== */
+.quantum-progress {
+    height: 6px;
+    background: #1e293b;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.quantum-progress-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* ========== 툴팁 ========== */
+.quantum-tooltip {
+    position: relative;
+}
+
+.quantum-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.quantum-tooltip:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 8px);
+}
+
+/* ========== 반응형 ========== */
+@media (max-width: 1024px) {
+    #concept-panel {
+        width: 180px;
+    }
+    
+    #question-panel {
+        width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    #concept-panel,
+    #question-panel {
+        display: none;
+    }
+    
+    main {
+        width: 100%;
+    }
+}
+
+/* ========== 그라데이션 텍스트 ========== */
+.gradient-text {
+    background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ========== 유저 노드 표시 ========== */
+.user-node-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    border: 2px solid #0f172a;
+}
+
+/* ========== 검증 상태 ========== */
+.verified-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.pending-badge {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ========== 유기적 뉴런 배양 시스템 ========== */
+
+/* 사용자 노드 스타일 */
+.quantum-node.user-node-pending circle {
+    stroke-dasharray: 4 2;
+    opacity: 0.7;
+}
+
+.quantum-node.user-node-verified circle {
+    stroke-width: 3;
+}
+
+/* 뉴런 배양 모달 */
+#neuron-culture-modal .neuron-type-btn.active {
+    transform: scale(1.02);
+}
+
+/* 맥락적 넛지 팝업 애니메이션 */
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* 노드 생성 효과 */
+@keyframes node-grow {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.quantum-node.new-node {
+    animation: node-grow 0.5s ease-out;
+}
+
+/* 경로 연결 효과 */
+@keyframes edge-draw {
+    from {
+        stroke-dashoffset: 100;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.quantum-edge.new-edge {
+    stroke-dasharray: 100;
+    animation: edge-draw 0.5s ease-out forwards;
+}
+
+/* 뉴런 타입 선택 버튼 */
+.neuron-type-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.neuron-type-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: 0.5s;
+}
+
+.neuron-type-btn:hover::before {
+    left: 100%;
+}
+
+/* 학습자 유형 뱃지 */
+.learner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.learner-badge.intuitive {
+    background: rgba(139, 92, 246, 0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.learner-badge.standard {
+    background: rgba(6, 182, 212, 0.2);
+    color: #22d3ee;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.learner-badge.analytical {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.learner-badge.calculative {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* ========== 절제된 양자 효과 ========== */
+
+/* 양자 노드 기본 상태 - 부드러운 글로우 */
+.quantum-node circle {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 0 3px rgba(139, 92, 246, 0.2));
+}
+
+.quantum-node:hover circle {
+    filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.35));
+}
+
+/* 선택된 노드 - 미묘한 강조 */
+.quantum-node.selected circle {
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.4));
+}
+
+/* 양자 연결선 - 부드러운 전환 */
+.quantum-edge {
+    transition: stroke-opacity 0.3s ease, stroke-width 0.3s ease;
+}
+
+.quantum-edge:hover {
+    stroke-opacity: 0.9;
+}
+
+/* 양자 중첩 상태 표시 - 절제된 펄스 */
+@keyframes quantum-pulse-subtle {
+    0%, 100% {
+        opacity: 0.6;
+        filter: drop-shadow(0 0 2px currentColor);
+    }
+    50% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+}
+
+.quantum-superposition {
+    animation: quantum-pulse-subtle 3s ease-in-out infinite;
+}
+
+/* 양자 붕괴 효과 - 부드러운 전환 */
+@keyframes quantum-collapse-subtle {
+    0% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.quantum-collapsed {
+    animation: quantum-collapse-subtle 0.4s ease-out;
+}
+
+/* 양자 경로 활성화 - 미묘한 흐름 */
+@keyframes quantum-flow-subtle {
+    0% {
+        stroke-dashoffset: 12;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+.quantum-path-active {
+    stroke-dasharray: 4 2;
+    animation: quantum-flow-subtle 1.5s linear infinite;
+}
+
+/* 양자 상태 뱃지 - 부드러운 전환 */
+.quantum-state-badge {
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.quantum-state-badge:hover {
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+/* 노드 라벨 - 가독성 향상 */
+.quantum-node text {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.2s ease;
+}
+
+/* SVG 컨테이너 부드러운 배경 */
+#maze-svg {
+    background: radial-gradient(ellipse at center,
+        rgba(139, 92, 246, 0.03) 0%,
+        transparent 70%);
+}
+

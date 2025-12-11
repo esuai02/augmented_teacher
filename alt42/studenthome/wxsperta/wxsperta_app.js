@@ -687,7 +687,7 @@ function openFullscreenModal(url, agent) {
         }
     }
     
-    // 모달 생성 (iframe + 채팅 UI)
+    // 모달 생성 (iframe + 채팅 UI - 분할 레이아웃)
     const modal = document.createElement('div');
     modal.id = 'fullscreenExploreModal';
     modal.className = 'fullscreen-modal';
@@ -700,12 +700,14 @@ function openFullscreenModal(url, agent) {
             ${connectedHtml}
             <div class="modal-actions">
                 <button id="startChatBtn" class="start-chat-btn">💬 대화하기</button>
-                <button id="backToContentBtn" class="back-to-content-btn" style="display:none;">📄 콘텐츠 보기</button>
+                <button id="closeChatBtn" class="back-to-content-btn" style="display:none;">✕ 채팅 닫기</button>
                 <button class="fullscreen-close-btn" onclick="closeFullscreenModal()">✕ 닫기</button>
             </div>
         </div>
         
-        <!-- iframe 콘텐츠 (기본 표시) -->
+        <!-- 분할 레이아웃 래퍼 -->
+        <div class="modal-body-wrapper">
+            <!-- iframe 콘텐츠 (좌측 2/3) -->
         <div id="iframeContainer" class="iframe-container">
             <div class="fullscreen-modal-loading">
                 <div class="spinner"></div>
@@ -714,7 +716,7 @@ function openFullscreenModal(url, agent) {
             <iframe class="fullscreen-modal-iframe" src="${url}"></iframe>
         </div>
         
-        <!-- 채팅 UI (숨김) -->
+            <!-- 채팅 UI (우측 1/3, 숨김 상태로 시작) -->
         <div id="chatContainer" class="chat-container" style="display:none;">
             <div class="chat-messages" id="chatMessages">
                 <div class="chat-loading">
@@ -726,6 +728,7 @@ function openFullscreenModal(url, agent) {
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="chat-input" placeholder="메시지를 입력하세요..." autocomplete="off">
                 <button id="chatSendBtn" class="chat-send-btn">전송</button>
+                </div>
             </div>
         </div>
     `;
@@ -761,7 +764,7 @@ function openFullscreenModal(url, agent) {
     
     // 대화하기 버튼 이벤트
     document.getElementById('startChatBtn').addEventListener('click', () => switchToChat(agent));
-    document.getElementById('backToContentBtn').addEventListener('click', switchToContent);
+    document.getElementById('closeChatBtn').addEventListener('click', switchToContent);
     
     // ESC 키로 닫기
     const escHandler = (e) => {
@@ -776,18 +779,18 @@ function openFullscreenModal(url, agent) {
     requestAnimationFrame(() => modal.classList.add('visible'));
 }
 
-// 채팅 화면으로 전환
+// 채팅 화면으로 전환 (분할 레이아웃)
 function switchToChat(agent) {
-    const iframeContainer = document.getElementById('iframeContainer');
+    const modal = document.getElementById('fullscreenExploreModal');
     const chatContainer = document.getElementById('chatContainer');
     const startChatBtn = document.getElementById('startChatBtn');
-    const backToContentBtn = document.getElementById('backToContentBtn');
+    const closeChatBtn = document.getElementById('closeChatBtn');
     
-    // 화면 전환
-    iframeContainer.style.display = 'none';
+    // 분할 레이아웃 적용 (iframe은 유지, 채팅을 우측에 표시)
+    modal.classList.add('split-view');
     chatContainer.style.display = 'flex';
     startChatBtn.style.display = 'none';
-    backToContentBtn.style.display = 'inline-flex';
+    closeChatBtn.style.display = 'inline-flex';
     
     // 채팅 초기화 (한 번만)
     if (!chatState.chatInitialized) {
@@ -803,18 +806,18 @@ function switchToChat(agent) {
     }, 100);
 }
 
-// 콘텐츠 화면으로 전환
+// 채팅 닫기 (분할 해제)
 function switchToContent() {
-    const iframeContainer = document.getElementById('iframeContainer');
+    const modal = document.getElementById('fullscreenExploreModal');
     const chatContainer = document.getElementById('chatContainer');
     const startChatBtn = document.getElementById('startChatBtn');
-    const backToContentBtn = document.getElementById('backToContentBtn');
+    const closeChatBtn = document.getElementById('closeChatBtn');
     
-    // 화면 전환
-    iframeContainer.style.display = 'flex';
+    // 분할 레이아웃 해제 (iframe만 전체 표시)
+    modal.classList.remove('split-view');
     chatContainer.style.display = 'none';
     startChatBtn.style.display = 'inline-flex';
-    backToContentBtn.style.display = 'none';
+    closeChatBtn.style.display = 'none';
 }
 
 // 채팅 이벤트 설정

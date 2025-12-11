@@ -1,0 +1,19 @@
+ㅡㅏ# 문제풀이 컨텐츠 화 시스템 (김영광 T)
+
+- 문제풀이
+- 정답체크 
+- google LearnLM으로 해설지 생성 https://aistudio.google.com/prompts/new_chat?model=gemini-2.5-pro-preview-05-06
+- openai api로 tts 생성 
+- 학생에게 메세지로 발송
+- 컨텐츠 저장 (재활용)
+
+
+# 당면과제
+- 상황분류 (내신 기출, 학교 프린트, mathking 문제, 시중교재)
+- 이렇게 쌓인 컨텐츠들을 어떻게 재활용 가능한 구조로 연결할 것인가 ? ------> 대표유형 기반의 문제은행과 매칭 시키기 (유사문제, 변형문제, 연관문제에서 연관문제로라도 연결)
+
+
+## 인터페이스 ##
+
+
+https://claude.ai/public/artifacts/b7108aac-530a-4175-b693-8ffadf4b5976 

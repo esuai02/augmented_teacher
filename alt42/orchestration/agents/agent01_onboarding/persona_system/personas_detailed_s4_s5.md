@@ -106,3 +106,4 @@
 > **다음 파일**: `personas_detailed_c_q_e.md`에서 C-Series, Q-Series, E-Series 계속
 
 
+

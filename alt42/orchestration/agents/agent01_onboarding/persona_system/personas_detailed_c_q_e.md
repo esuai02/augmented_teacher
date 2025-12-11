@@ -201,3 +201,4 @@
 > - `personas_detailed_c_q_e.md` - C, Q, E Series 세부 페르소나 (현재 파일)
 
 
+

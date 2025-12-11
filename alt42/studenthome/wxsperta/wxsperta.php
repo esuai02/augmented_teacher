@@ -119,34 +119,14 @@ $profile_json = json_encode($user_profile ?: new stdClass());
                 <p class="mood-response" id="moodResponse" style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--starlight);"></p>
             </div>
             
-            <!-- 뷰 스위칭 버튼 (우측 상단) -->
-            <div class="view-switcher" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; padding: 0.25rem; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
+            <!-- 뷰 스위칭 버튼 (좌측 상단) -->
+            <div class="view-switcher" style="position: absolute; top: 1rem; left: 1rem; display: flex; gap: 0.5rem; padding: 0.25rem; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(10px);">
                 <button id="gridViewBtn" class="view-btn active" onclick="switchView('grid')" title="카드 뷰">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/></svg>
                 </button>
                 <button id="networkViewBtn" class="view-btn" onclick="switchView('network')" title="네트워크 뷰">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                 </button>
-            </div>
-            
-            <!-- 범례 -->
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: var(--cat-voyage); color: var(--cat-voyage);"></div>
-                    <span>🗺️ 항해 지도</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: var(--cat-mission); color: var(--cat-mission);"></div>
-                    <span>🚀 미션 센터</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: var(--cat-flag); color: var(--cat-flag);"></div>
-                    <span>🎨 나의 깃발</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-dot" style="background: var(--cat-resource); color: var(--cat-resource);"></div>
-                    <span>🌟 자원 창고</span>
-                </div>
             </div>
             
             <!-- 미션 그리드 (Grid View) -->
