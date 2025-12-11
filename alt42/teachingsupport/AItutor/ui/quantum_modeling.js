@@ -1315,4 +1315,274 @@
         return date.toLocaleString('ko-KR');
     }
 
+    // ========================================
+    // 음성해설 맵 애니메이션 모드
+    // ========================================
+
+    const voiceMapState = {
+        isAnimating: false,
+        isPaused: false,
+        nodeSequence: [],
+        currentIndex: 0,
+        intervalId: null,
+        isLooping: false,
+        ttsScript: '',
+        analysisId: null
+    };
+
+    // TTS 대본 분석 API
+    const voiceMapAPI = {
+        baseUrl: '/moodle/local/augmented_teacher/alt42/teachingsupport/AItutor/api/',
+
+        async analyzeTtsScript(script, contentId, contentsType, nodes, interactionId) {
+            const response = await fetch(this.baseUrl + 'analyze_tts_script.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tts_script: script,
+                    content_id: contentId,
+                    contents_type: contentsType,
+                    nodes: nodes,
+                    interaction_id: interactionId
+                })
+            });
+            return await response.json();
+        }
+    };
+
+    // 음성해설 맵 모달 열기
+    window.openVoiceMapModal = function() {
+        const modal = document.getElementById('voice-map-modal');
+        const scriptText = document.getElementById('tts-script-text');
+        const loading = document.getElementById('voice-map-loading');
+        const error = document.getElementById('voice-map-error');
+        
+        if (!modal) return;
+        
+        // TTS 대본 표시
+        if (window.QUANTUM_DATA && window.QUANTUM_DATA.ttsScript) {
+            if (scriptText) {
+                scriptText.textContent = window.QUANTUM_DATA.ttsScript;
+            }
+        } else {
+            if (scriptText) {
+                scriptText.textContent = 'TTS 대본을 찾을 수 없습니다.';
+            }
+        }
+        
+        loading.classList.add('hidden');
+        error.classList.add('hidden');
+        modal.classList.remove('hidden');
+    };
+
+    // 음성해설 맵 모달 닫기
+    window.closeVoiceMapModal = function() {
+        const modal = document.getElementById('voice-map-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    };
+
+    // TTS 대본 분석 및 애니메이션 시작
+    window.startVoiceMapAnalysis = async function() {
+        const scriptText = document.getElementById('tts-script-text');
+        const loading = document.getElementById('voice-map-loading');
+        const error = document.getElementById('voice-map-error');
+        const analyzeBtn = document.getElementById('analyze-tts-btn');
+        
+        if (!window.QUANTUM_DATA || !window.QUANTUM_DATA.ttsScript) {
+            showVoiceMapError('TTS 대본을 찾을 수 없습니다.');
+            return;
+        }
+        
+        const ttsScript = window.QUANTUM_DATA.ttsScript;
+        const contentId = window.QUANTUM_DATA.contentId;
+        const contentsType = window.QUANTUM_DATA.contentsType;
+        const interactionId = window.QUANTUM_DATA.ttsInteractionId;
+        
+        // 노드 정보 준비
+        const nodes = Object.values(NODES).map(n => ({
+            id: n.id,
+            label: n.label,
+            desc: n.desc || '',
+            stage: n.stage,
+            type: n.type
+        }));
+        
+        loading.classList.remove('hidden');
+        error.classList.add('hidden');
+        analyzeBtn.disabled = true;
+        
+        try {
+            const result = await voiceMapAPI.analyzeTtsScript(
+                ttsScript, 
+                contentId, 
+                contentsType, 
+                nodes, 
+                interactionId
+            );
+            
+            if (result.success && result.nodeSequence) {
+                voiceMapState.nodeSequence = result.nodeSequence;
+                voiceMapState.ttsScript = ttsScript;
+                voiceMapState.analysisId = result.analysis_id;
+                voiceMapState.currentIndex = 0;
+                
+                closeVoiceMapModal();
+                startVoiceMapAnimation();
+            } else {
+                throw new Error(result.error || '노드 순서를 추출하지 못했습니다.');
+            }
+        } catch (error) {
+            showVoiceMapError(error.message || '분석 중 오류가 발생했습니다.');
+        } finally {
+            loading.classList.add('hidden');
+            analyzeBtn.disabled = false;
+        }
+    };
+
+    function showVoiceMapError(message) {
+        const error = document.getElementById('voice-map-error');
+        const errorMessage = document.getElementById('voice-map-error-message');
+        if (error && errorMessage) {
+            errorMessage.textContent = message;
+            error.classList.remove('hidden');
+        }
+    }
+
+    // 애니메이션 시작
+    function startVoiceMapAnimation() {
+        if (voiceMapState.isAnimating) {
+            // 이미 실행 중이면 일시정지 토글
+            toggleVoiceMapAnimation();
+            return;
+        }
+        
+        if (voiceMapState.nodeSequence.length === 0) {
+            alert('노드 순서가 없습니다. 먼저 TTS 대본을 분석해주세요.');
+            return;
+        }
+        
+        // 초기화
+        resetMaze();
+        voiceMapState.isAnimating = true;
+        voiceMapState.isPaused = false;
+        voiceMapState.currentIndex = 0;
+        
+        // 컨트롤 패널 표시
+        const controls = document.getElementById('voice-map-controls');
+        if (controls) {
+            controls.classList.remove('hidden');
+        }
+        
+        updateAnimationProgress();
+        
+        // 애니메이션 시작
+        animateNextNode();
+    }
+
+    // 다음 노드로 애니메이션
+    function animateNextNode() {
+        if (!voiceMapState.isAnimating || voiceMapState.isPaused) return;
+        
+        if (voiceMapState.currentIndex >= voiceMapState.nodeSequence.length) {
+            // 애니메이션 완료
+            if (voiceMapState.isLooping) {
+                // 반복재생: 처음부터 다시 시작
+                resetMaze();
+                voiceMapState.currentIndex = 0;
+                setTimeout(() => animateNextNode(), 1000);
+            } else {
+                stopVoiceMapAnimation();
+            }
+            return;
+        }
+        
+        const nodeId = voiceMapState.nodeSequence[voiceMapState.currentIndex];
+        
+        // 노드 클릭 (기존 함수 활용)
+        if (NODES[nodeId]) {
+            handleNodeClick(nodeId);
+        } else {
+            console.warn('[voiceMap] 노드를 찾을 수 없습니다:', nodeId);
+        }
+        
+        voiceMapState.currentIndex++;
+        updateAnimationProgress();
+        
+        // 1초 후 다음 노드
+        voiceMapState.intervalId = setTimeout(() => {
+            animateNextNode();
+        }, 1000);
+    }
+
+    // 애니메이션 일시정지/재개 토글
+    window.toggleVoiceMapAnimation = function() {
+        if (!voiceMapState.isAnimating) {
+            startVoiceMapAnimation();
+            return;
+        }
+        
+        voiceMapState.isPaused = !voiceMapState.isPaused;
+        
+        const playIcon = document.getElementById('animation-play-icon');
+        const status = document.getElementById('animation-status');
+        
+        if (voiceMapState.isPaused) {
+            if (playIcon) playIcon.textContent = '▶';
+            if (status) status.textContent = '재생';
+        } else {
+            if (playIcon) playIcon.textContent = '⏸';
+            if (status) status.textContent = '일시정지';
+            // 재개
+            animateNextNode();
+        }
+    };
+
+    // 애니메이션 중지
+    window.stopVoiceMapAnimation = function() {
+        voiceMapState.isAnimating = false;
+        voiceMapState.isPaused = false;
+        
+        if (voiceMapState.intervalId) {
+            clearTimeout(voiceMapState.intervalId);
+            voiceMapState.intervalId = null;
+        }
+        
+        const controls = document.getElementById('voice-map-controls');
+        if (controls) {
+            controls.classList.add('hidden');
+        }
+        
+        const playIcon = document.getElementById('animation-play-icon');
+        const status = document.getElementById('animation-status');
+        if (playIcon) playIcon.textContent = '▶';
+        if (status) status.textContent = '재생';
+        
+        updateAnimationProgress();
+    };
+
+    // 반복재생 토글
+    window.toggleVoiceMapLoop = function() {
+        voiceMapState.isLooping = !voiceMapState.isLooping;
+        const btn = document.getElementById('voice-map-loop-btn');
+        if (btn) {
+            btn.textContent = voiceMapState.isLooping ? '🔄 반복중' : '▶ 반복';
+            btn.classList.toggle('bg-emerald-500/30', voiceMapState.isLooping);
+        }
+    };
+
+    // 애니메이션 진행도 업데이트
+    function updateAnimationProgress() {
+        const progressEl = document.getElementById('animation-progress');
+        const totalEl = document.getElementById('animation-total');
+        
+        if (progressEl) {
+            progressEl.textContent = voiceMapState.currentIndex;
+        }
+        if (totalEl) {
+            totalEl.textContent = voiceMapState.nodeSequence.length;
+        }
+    }
+
 })();

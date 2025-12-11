@@ -225,6 +225,52 @@ if (!empty($userContentId)) {
     }
 }
 
+// ========================================
+// TTS 대본 조회 (ktm_teaching_interactions)
+// ========================================
+$ttsScript = null;
+$ttsInteractionId = null;
+if (!empty($contentId) && !empty($contentsType)) {
+    try {
+        $ttsInteraction = $DB->get_record_sql(
+            "SELECT id, narration_text FROM {ktm_teaching_interactions} 
+             WHERE contentsid = ? AND contentstype = ? 
+             AND narration_text IS NOT NULL AND narration_text != '' 
+             ORDER BY id DESC LIMIT 1",
+            [$contentId, $contentsType]
+        );
+        
+        if ($ttsInteraction && !empty($ttsInteraction->narration_text)) {
+            $ttsScript = $ttsInteraction->narration_text;
+            $ttsInteractionId = $ttsInteraction->id;
+            error_log("[quantum_modeling.php:$analysisId] TTS 대본 발견 - interaction_id: {$ttsInteractionId}");
+        }
+    } catch (Exception $e) {
+        error_log("[quantum_modeling.php:$analysisId] TTS 대본 조회 오류: " . $e->getMessage());
+    }
+}
+
+// contentstype 없이 contentsid로만 조회 시도
+if (!$ttsScript && !empty($contentId)) {
+    try {
+        $ttsInteraction = $DB->get_record_sql(
+            "SELECT id, narration_text FROM {ktm_teaching_interactions} 
+             WHERE contentsid = ? 
+             AND narration_text IS NOT NULL AND narration_text != '' 
+             ORDER BY id DESC LIMIT 1",
+            [$contentId]
+        );
+        
+        if ($ttsInteraction && !empty($ttsInteraction->narration_text)) {
+            $ttsScript = $ttsInteraction->narration_text;
+            $ttsInteractionId = $ttsInteraction->id;
+            error_log("[quantum_modeling.php:$analysisId] TTS 대본 발견 (contentsid만) - interaction_id: {$ttsInteractionId}");
+        }
+    } catch (Exception $e) {
+        error_log("[quantum_modeling.php:$analysisId] TTS 대본 조회 오류 (contentsid만): " . $e->getMessage());
+    }
+}
+
 // JSON으로 전달할 데이터
 $initialData = json_encode([
     'analysisId' => $analysisId,
@@ -244,7 +290,11 @@ $initialData = json_encode([
     'edges' => $dbEdges,
     'concepts' => $dbConcepts,
     'stageNames' => $stageNames,
-    'contentMeta' => $contentMeta
+    'contentMeta' => $contentMeta,
+    // TTS 대본 데이터
+    'ttsScript' => $ttsScript,
+    'ttsInteractionId' => $ttsInteractionId,
+    'hasTtsScript' => !empty($ttsScript)
 ], JSON_UNESCAPED_UNICODE);
 
 // 동적 타이틀/설명 생성
@@ -416,6 +466,14 @@ $pageDesc = !empty($contentMeta['answer']) ? "정답: {$contentMeta['answer']} |
         <div class="flex gap-4">
             <!-- 왼쪽: 개념 패널 + 노드 상세 -->
             <aside class="w-64 flex-shrink-0 space-y-3">
+                <!-- 음성해설 맵 버튼 -->
+                <div class="bg-slate-900/90 backdrop-blur rounded-xl border border-white/10 p-4">
+                    <button onclick="openVoiceMapModal()" class="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-blue-500/20 to-indigo-500/20 hover:from-blue-500/30 hover:to-indigo-500/30 text-sm font-medium transition border border-blue-500/30 flex items-center gap-2 justify-center">
+                        <span>🎤</span>
+                        <span>음성해설 맵</span>
+                    </button>
+                </div>
+                
                 <!-- 개념 붕괴 현황 -->
                 <div class="bg-slate-900/90 backdrop-blur rounded-xl border border-white/10 p-4">
                     <h3 class="text-base font-bold text-white mb-3">🧠 개념 붕괴 현황</h3>
@@ -686,6 +744,77 @@ $pageDesc = !empty($contentMeta['answer']) ? "정답: {$contentMeta['answer']} |
     <script>
         window.QUANTUM_DATA = <?php echo $initialData; ?>;
     </script>
+
+    <!-- 음성해설 맵 모달 -->
+    <div id="voice-map-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-2xl border border-white/10 shadow-2xl w-full max-w-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🎤</span>
+                    <h3 class="text-lg font-bold text-white">음성해설 맵</h3>
+                </div>
+                <button onclick="closeVoiceMapModal()" class="p-2 hover:bg-white/10 rounded-lg transition">
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="p-4">
+                <p class="text-slate-400 text-sm mb-4">
+                    TTS 음성해설 대본을 분석하여 인지맵 노드를 자동으로 클릭하는 애니메이션을 재생합니다.
+                </p>
+                
+                <div id="tts-script-display" class="mb-4">
+                    <label class="block text-sm font-medium text-white mb-2">TTS 대본</label>
+                    <div class="w-full h-48 bg-slate-900/50 border border-white/10 rounded-xl p-3 text-white text-sm overflow-y-auto">
+                        <span id="tts-script-text" class="whitespace-pre-wrap"></span>
+                    </div>
+                </div>
+                
+                <div id="voice-map-loading" class="hidden mt-4">
+                    <div class="flex items-center justify-center py-4">
+                        <div class="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                        <span class="ml-3 text-slate-400">대본 분석 중...</span>
+                    </div>
+                </div>
+                
+                <div id="voice-map-error" class="hidden mt-4 bg-rose-500/10 border border-rose-500/30 rounded-xl p-4">
+                    <p id="voice-map-error-message" class="text-rose-400 text-sm"></p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-2 p-4 border-t border-white/10">
+                <button onclick="closeVoiceMapModal()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium">
+                    취소
+                </button>
+                <button id="analyze-tts-btn" onclick="startVoiceMapAnalysis()" 
+                    class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-sm font-medium text-white">
+                    분석 및 시작
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 애니메이션 컨트롤 패널 (하단 고정) -->
+    <div id="voice-map-controls" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800/95 backdrop-blur border border-white/10 rounded-xl p-4 shadow-2xl hidden z-40">
+        <div class="flex items-center gap-4">
+            <button onclick="toggleVoiceMapAnimation()" class="px-4 py-2 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 text-sm font-medium flex items-center gap-2">
+                <span id="animation-play-icon">▶</span>
+                <span id="animation-status">재생</span>
+            </button>
+            <button id="voice-map-loop-btn" onclick="toggleVoiceMapLoop()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm font-medium">
+                ▶ 반복
+            </button>
+            <button onclick="stopVoiceMapAnimation()" 
+                class="px-4 py-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 text-sm font-medium">
+                중지
+            </button>
+            <span class="text-sm text-slate-400">
+                진행: <span id="animation-progress">0</span> / <span id="animation-total">0</span>
+            </span>
+        </div>
+    </div>
 
     <!-- 메인 스크립트 -->
     <script src="quantum_modeling.js"></script>
