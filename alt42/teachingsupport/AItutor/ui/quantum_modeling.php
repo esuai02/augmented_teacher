@@ -956,11 +956,58 @@ $studentName = $student ? ($student->lastname . $student->firstname) : '알 수 
             }, 500);
         }
 
+        // HybridStateTracker 인스턴스 (전역)
+        let tracker = null;
+
         // 초기화
         document.addEventListener('DOMContentLoaded', () => {
             updateUI(hybridState);
             startAutoLoop();
             addLog('⚛️ HybridStateStabilizer 연결됨 | User ID: <?php echo $userId; ?>', 'prediction');
+
+            // [quantum_modeling.php:L965] HybridStateTracker 초기화 및 시작
+            try {
+                tracker = new HybridStateTracker({
+                    userId: <?php echo $userId; ?>,
+                    debug: true,
+                    onStateChange: (newState) => {
+                        // 상태 변경 시 UI 업데이트
+                        // snake_case (서버) → camelCase (JS) 매핑
+                        hybridState = {
+                            ...hybridState,
+                            predicted_state: newState.predicted_state ?? newState.predictedState ?? hybridState.predicted_state,
+                            uncertainty: newState.uncertainty ?? hybridState.uncertainty,
+                            confidence: newState.confidence ?? hybridState.confidence,
+                            state_vector: newState.state_vector ?? newState.stateVector ?? hybridState.state_vector,
+                            dominant_state: newState.dominant_state ?? newState.dominantState ?? hybridState.dominant_state,
+                            needs_ping: newState.needs_ping ?? newState.needsPing ?? hybridState.needs_ping
+                        };
+                        updateUI(hybridState);
+                        const stateValue = newState.predicted_state ?? newState.predictedState ?? 0.5;
+                        addLog('🔄 상태 업데이트: ' + Math.round(stateValue * 100) + '%', 'prediction');
+                    },
+                    onPingFired: (pingData) => {
+                        // Active Ping 발사 시 로그
+                        addLog('🎯 Active Ping 발사 (Level ' + pingData.level + ')', 'ping');
+                    },
+                    onCorrectionMade: (correction) => {
+                        // Kalman 보정 시 로그
+                        addLog('📊 Kalman 보정: ' + correction.eventType, 'event');
+                    }
+                });
+                tracker.start();
+                addLog('✅ HybridStateTracker 시작됨', 'prediction');
+            } catch (error) {
+                console.error('[quantum_modeling.php] HybridStateTracker 초기화 실패:', error);
+                addLog('❌ Tracker 초기화 실패: ' + error.message, 'error');
+            }
+        });
+
+        // 페이지 언로드 시 tracker 중지
+        window.addEventListener('beforeunload', () => {
+            if (tracker) {
+                tracker.stop();
+            }
         });
     </script>
 </body>
