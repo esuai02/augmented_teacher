@@ -6,7 +6,7 @@
  * 문제를 분석하여 학습 경로 노드와 엣지를 생성합니다.
  *
  * @package AugmentedTeacher\TeachingSupport\API
- * @version 1.0.0
+ * @version 1.1.0
  * @since 2025-12-11
  *
  * URL: /moodle/local/augmented_teacher/alt42/teachingsupport/api/analyze_quantum_path.php
@@ -28,75 +28,95 @@
  * }
  */
 
-$currentFile = __FILE__;
-$currentLine = __LINE__;
-
-// [analyze_quantum_path.php:L32] Moodle 통합
-include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+// [analyze_quantum_path.php:L30] 에러 핸들링 최우선 설정
+error_reporting(0);
+ini_set('display_errors', 0);
 
 header('Content-Type: application/json; charset=UTF-8');
 
-try {
-    // [analyze_quantum_path.php:L40] 요청 데이터 파싱
-    $input = json_decode(file_get_contents('php://input'), true);
+// [analyze_quantum_path.php:L36] 기본 응답 구조 (최우선 정의 - 어떤 에러에서도 반환 가능)
+$defaultConcepts = [
+    'analyze' => ['id' => 'analyze', 'name' => '문제 분석', 'icon' => '🔍', 'color' => '#06b6d4'],
+    'formula' => ['id' => 'formula', 'name' => '공식 적용', 'icon' => '📐', 'color' => '#8b5cf6'],
+    'calculate' => ['id' => 'calculate', 'name' => '계산 수행', 'icon' => '🔢', 'color' => '#f59e0b'],
+    'verify' => ['id' => 'verify', 'name' => '검증 확인', 'icon' => '✓', 'color' => '#10b981'],
+    'complete' => ['id' => 'complete', 'name' => '문제 완료', 'icon' => '🎯', 'color' => '#ec4899']
+];
 
+$defaultNodes = [
+    'start' => ['id' => 'start', 'label' => '문제 인식', 'type' => 'start', 'stage' => 0, 'concepts' => [], 'x' => 350, 'y' => 40],
+    's1_c' => ['id' => 's1_c', 'label' => '조건 파악', 'type' => 'correct', 'stage' => 1, 'concepts' => ['analyze'], 'x' => 180, 'y' => 120],
+    's1_m' => ['id' => 's1_m', 'label' => '부분 이해', 'type' => 'partial', 'stage' => 1, 'concepts' => ['analyze'], 'x' => 350, 'y' => 120],
+    's1_x' => ['id' => 's1_x', 'label' => '이해 부족', 'type' => 'confused', 'stage' => 1, 'concepts' => [], 'x' => 520, 'y' => 120],
+    's2_c' => ['id' => 's2_c', 'label' => '전략 수립', 'type' => 'correct', 'stage' => 2, 'concepts' => ['formula'], 'x' => 140, 'y' => 220],
+    's2_p' => ['id' => 's2_p', 'label' => '시행착오', 'type' => 'partial', 'stage' => 2, 'concepts' => ['formula'], 'x' => 350, 'y' => 220],
+    's2_m' => ['id' => 's2_m', 'label' => '잘못된 접근', 'type' => 'wrong', 'stage' => 2, 'concepts' => [], 'x' => 520, 'y' => 220],
+    's3_c' => ['id' => 's3_c', 'label' => '정확한 풀이', 'type' => 'correct', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 140, 'y' => 320],
+    's3_p' => ['id' => 's3_p', 'label' => '부분 풀이', 'type' => 'partial', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 350, 'y' => 320],
+    's3_m' => ['id' => 's3_m', 'label' => '계산 오류', 'type' => 'wrong', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 520, 'y' => 320],
+    'success' => ['id' => 'success', 'label' => '💥 정답!', 'type' => 'success', 'stage' => 4, 'concepts' => ['verify', 'complete'], 'x' => 180, 'y' => 420],
+    'partial_s' => ['id' => 'partial_s', 'label' => '✨ 부분 정답', 'type' => 'success', 'stage' => 4, 'concepts' => ['verify'], 'x' => 350, 'y' => 420],
+    'fail' => ['id' => 'fail', 'label' => '❌ 오답', 'type' => 'fail', 'stage' => 4, 'concepts' => [], 'x' => 520, 'y' => 420]
+];
+
+$defaultEdges = [
+    ['start', 's1_c'], ['start', 's1_m'], ['start', 's1_x'],
+    ['s1_c', 's2_c'], ['s1_c', 's2_p'], ['s1_m', 's2_p'], ['s1_m', 's2_m'], ['s1_x', 's2_m'],
+    ['s2_c', 's3_c'], ['s2_p', 's3_p'], ['s2_p', 's3_m'], ['s2_m', 's3_m'],
+    ['s3_c', 'success'], ['s3_p', 'partial_s'], ['s3_p', 'fail'], ['s3_m', 'fail']
+];
+
+$currentFile = __FILE__;
+$currentLine = __LINE__;
+
+// [analyze_quantum_path.php:L70] Moodle 통합 (실패해도 기본 데이터 반환)
+$moodleLoaded = false;
+try {
+    if (file_exists("/home/moodle/public_html/moodle/config.php")) {
+        @include_once("/home/moodle/public_html/moodle/config.php");
+        global $DB, $USER;
+        $moodleLoaded = isset($DB);
+    }
+} catch (Exception $e) {
+    // Moodle 로드 실패 - 기본 데이터로 진행
+    error_log("[analyze_quantum_path.php:L80] Moodle load failed: " . $e->getMessage());
+}
+
+try {
+    // [analyze_quantum_path.php:L85] 요청 데이터 파싱 (GET도 지원)
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true);
+
+    // GET 요청도 처리
+    if (!$input && !empty($_GET)) {
+        $input = $_GET;
+    }
+
+    // 빈 입력도 허용 (기본 데이터 반환)
     if (!$input) {
-        throw new Exception("Invalid JSON input", 400);
+        $input = [];
     }
 
     $contentsId = $input['contentsId'] ?? '';
     $questionData = $input['questionData'] ?? [];
     $imageUrl = $input['imageUrl'] ?? '';
 
-    // [analyze_quantum_path.php:L51] 콘텐츠 ID에서 문제 ID 추출
+    // [analyze_quantum_path.php:L104] 콘텐츠 ID에서 문제 ID 추출
     $contentId = '';
     if (preg_match('/Q(\d+)/', $contentsId, $matches)) {
         $contentId = $matches[1];
     }
 
-    // [analyze_quantum_path.php:L57] 기본 응답 구조 (안정성을 위한 폴백)
-    $defaultConcepts = [
-        'analyze' => ['id' => 'analyze', 'name' => '문제 분석', 'icon' => '🔍', 'color' => '#06b6d4'],
-        'formula' => ['id' => 'formula', 'name' => '공식 적용', 'icon' => '📐', 'color' => '#8b5cf6'],
-        'calculate' => ['id' => 'calculate', 'name' => '계산 수행', 'icon' => '🔢', 'color' => '#f59e0b'],
-        'verify' => ['id' => 'verify', 'name' => '검증 확인', 'icon' => '✓', 'color' => '#10b981'],
-        'complete' => ['id' => 'complete', 'name' => '문제 완료', 'icon' => '🎯', 'color' => '#ec4899']
-    ];
-
-    $defaultNodes = [
-        'start' => ['id' => 'start', 'label' => '문제 인식', 'type' => 'start', 'stage' => 0, 'concepts' => [], 'x' => 350, 'y' => 40],
-        's1_c' => ['id' => 's1_c', 'label' => '조건 파악', 'type' => 'correct', 'stage' => 1, 'concepts' => ['analyze'], 'x' => 180, 'y' => 120],
-        's1_m' => ['id' => 's1_m', 'label' => '부분 이해', 'type' => 'partial', 'stage' => 1, 'concepts' => ['analyze'], 'x' => 350, 'y' => 120],
-        's1_x' => ['id' => 's1_x', 'label' => '이해 부족', 'type' => 'confused', 'stage' => 1, 'concepts' => [], 'x' => 520, 'y' => 120],
-        's2_c' => ['id' => 's2_c', 'label' => '전략 수립', 'type' => 'correct', 'stage' => 2, 'concepts' => ['formula'], 'x' => 140, 'y' => 220],
-        's2_p' => ['id' => 's2_p', 'label' => '시행착오', 'type' => 'partial', 'stage' => 2, 'concepts' => ['formula'], 'x' => 350, 'y' => 220],
-        's2_m' => ['id' => 's2_m', 'label' => '잘못된 접근', 'type' => 'wrong', 'stage' => 2, 'concepts' => [], 'x' => 520, 'y' => 220],
-        's3_c' => ['id' => 's3_c', 'label' => '정확한 풀이', 'type' => 'correct', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 140, 'y' => 320],
-        's3_p' => ['id' => 's3_p', 'label' => '부분 풀이', 'type' => 'partial', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 350, 'y' => 320],
-        's3_m' => ['id' => 's3_m', 'label' => '계산 오류', 'type' => 'wrong', 'stage' => 3, 'concepts' => ['calculate'], 'x' => 520, 'y' => 320],
-        'success' => ['id' => 'success', 'label' => '💥 정답!', 'type' => 'success', 'stage' => 4, 'concepts' => ['verify', 'complete'], 'x' => 180, 'y' => 420],
-        'partial_s' => ['id' => 'partial_s', 'label' => '✨ 부분 정답', 'type' => 'success', 'stage' => 4, 'concepts' => ['verify'], 'x' => 350, 'y' => 420],
-        'fail' => ['id' => 'fail', 'label' => '❌ 오답', 'type' => 'fail', 'stage' => 4, 'concepts' => [], 'x' => 520, 'y' => 420]
-    ];
-
-    $defaultEdges = [
-        ['start', 's1_c'], ['start', 's1_m'], ['start', 's1_x'],
-        ['s1_c', 's2_c'], ['s1_c', 's2_p'], ['s1_m', 's2_p'], ['s1_m', 's2_m'], ['s1_x', 's2_m'],
-        ['s2_c', 's3_c'], ['s2_p', 's3_p'], ['s2_p', 's3_m'], ['s2_m', 's3_m'],
-        ['s3_c', 'success'], ['s3_p', 'partial_s'], ['s3_p', 'fail'], ['s3_m', 'fail']
-    ];
-
-    // [analyze_quantum_path.php:L96] AI 분석 시도 (실패 시 기본값 사용)
+    // [analyze_quantum_path.php:L110] AI 분석 시도 (실패 시 기본값 사용)
     $concepts = $defaultConcepts;
     $nodes = $defaultNodes;
     $edges = $defaultEdges;
     $analysisMethod = 'default';
 
-    // DB에서 문제 데이터 조회 시도
-    if ($contentId) {
+    // DB에서 문제 데이터 조회 시도 (Moodle 로드된 경우만)
+    if ($contentId && $moodleLoaded && isset($DB)) {
         try {
-            // [analyze_quantum_path.php:L104] 문제 메타데이터 조회
+            // [analyze_quantum_path.php:L118] 문제 메타데이터 조회
             $questionMeta = $DB->get_record_sql(
                 "SELECT * FROM {mq_question_meta} WHERE content_id = ?",
                 [$contentId]
@@ -123,33 +143,35 @@ try {
         }
     }
 
-    // [analyze_quantum_path.php:L130] 기존 학습 경로 로그 조회 (있으면 활용)
-    try {
-        $existingPaths = $DB->get_records_sql(
-            "SELECT * FROM {at_quantum_paths} WHERE content_id = ? ORDER BY created_at DESC LIMIT 5",
-            [$contentId]
-        );
+    // [analyze_quantum_path.php:L145] 기존 학습 경로 로그 조회 (있으면 활용)
+    if ($moodleLoaded && isset($DB)) {
+        try {
+            $existingPaths = $DB->get_records_sql(
+                "SELECT * FROM {at_quantum_paths} WHERE content_id = ? ORDER BY created_at DESC LIMIT 5",
+                [$contentId]
+            );
 
-        if (!empty($existingPaths)) {
-            // 기존 경로가 있으면 사용자 생성 노드 병합
-            foreach ($existingPaths as $path) {
-                $pathData = json_decode($path->path_data, true);
-                if ($pathData && isset($pathData['userNodes'])) {
-                    foreach ($pathData['userNodes'] as $userNode) {
-                        if (!isset($nodes[$userNode['id']])) {
-                            $nodes[$userNode['id']] = $userNode;
+            if (!empty($existingPaths)) {
+                // 기존 경로가 있으면 사용자 생성 노드 병합
+                foreach ($existingPaths as $path) {
+                    $pathData = json_decode($path->path_data, true);
+                    if ($pathData && isset($pathData['userNodes'])) {
+                        foreach ($pathData['userNodes'] as $userNode) {
+                            if (!isset($nodes[$userNode['id']])) {
+                                $nodes[$userNode['id']] = $userNode;
+                            }
                         }
                     }
                 }
+                $analysisMethod = 'cached_paths';
             }
-            $analysisMethod = 'cached_paths';
+        } catch (Exception $pathError) {
+            // 경로 조회 오류 시 기본값 유지 (테이블 미존재 가능)
+            error_log("[analyze_quantum_path.php:L" . __LINE__ . "] Path 조회 오류: " . $pathError->getMessage());
         }
-    } catch (Exception $pathError) {
-        // 경로 조회 오류 시 기본값 유지 (테이블 미존재 가능)
-        error_log("[analyze_quantum_path.php:L" . __LINE__ . "] Path 조회 오류: " . $pathError->getMessage());
     }
 
-    // [analyze_quantum_path.php:L155] 성공 응답
+    // [analyze_quantum_path.php:L175] 성공 응답
     echo json_encode([
         'success' => true,
         'data' => [
