@@ -3330,6 +3330,82 @@ body {
     display: none;
 }
 
+/* ================================================================================
+   Realtime 음성 튜터 버튼
+   ================================================================================ */
+
+.realtime-tutor-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    position: relative;
+}
+
+.realtime-tutor-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.realtime-tutor-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.realtime-tutor-btn.active {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.realtime-tutor-btn.active:hover:not(:disabled) {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+.realtime-tutor-btn .btn-icon {
+    font-size: 1rem;
+}
+
+.realtime-tutor-btn .btn-text {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+}
+
+.realtime-tutor-btn .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.realtime-tutor-btn .spinner.hidden {
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 헤더 우측 컨트롤 영역 */
+.header-right-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 /* 사이드바 내 채팅 컨테이너 */
 .sidebar-chat-container {
     position: absolute;

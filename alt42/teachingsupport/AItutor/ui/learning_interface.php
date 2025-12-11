@@ -227,8 +227,8 @@ $currentItemPersona = null;
             </div>
             
             <!-- 중앙: 감정 표현 -->
-            <div class="header-center">
-                <div class="emotion-selector-center">
+        <div class="header-center">
+            <div class="emotion-selector-center">
                     <button id="emotionBtn" class="emotion-btn-center" onclick="toggleEmotionPicker()">
                         <span id="currentEmotionIcon" class="emotion-icon-large">😐</span>
                     </button>
@@ -264,8 +264,15 @@ $currentItemPersona = null;
                 <button class="guidance-close" onclick="hidePositiveGuidance()">×</button>
             </div>
             
-            <!-- 우측 상단: TTS 단계별 플레이어 -->
+            <!-- 우측 상단: TTS 단계별 플레이어 및 음성 튜터 -->
             <div class="header-right-controls">
+                <!-- Realtime 음성 튜터 버튼 -->
+                <button id="realtimeTutorBtn" class="realtime-tutor-btn" onclick="toggleRealtimeTutor()" title="실시간 음성 튜터">
+                    <span class="btn-icon">🎤</span>
+                    <span class="btn-text" id="realtimeTutorBtnText">음성 튜터</span>
+                    <span id="realtimeTutorSpinner" class="spinner hidden"></span>
+                </button>
+                
                 <div id="headerTtsPlayer" class="header-step-player hidden">
                     <!-- 현재 단계 표시 -->
                     <span id="ttsCurrentStep" class="tts-current-step">1/5</span>
@@ -801,6 +808,9 @@ $currentItemPersona = null;
     
     <!-- AI Tutor Integration Script -->
     <script src="tutor_integration.js"></script>
+    
+    <!-- Realtime Tutor Script -->
+    <script src="realtime_tutor.js"></script>
     
     <script>
     // AI 튜터 초기화

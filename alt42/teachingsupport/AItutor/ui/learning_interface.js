@@ -4230,3 +4230,126 @@ function playCurrentTtsSection() {
     playTtsSection(state.tts.currentSectionIndex);
 }
 
+// ========== Realtime 음성 튜터 ==========
+let realtimeTutorActive = false;
+
+/**
+ * Realtime 음성 튜터 토글
+ */
+async function toggleRealtimeTutor() {
+    const btn = document.getElementById('realtimeTutorBtn');
+    const btnText = document.getElementById('realtimeTutorBtnText');
+    const spinner = document.getElementById('realtimeTutorSpinner');
+    
+    if (!realtimeTutorActive) {
+        // 시작
+        try {
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = '연결 중...';
+            
+            // 현재 상태 가져오기
+            const currentStep = state.steps.find(s => s.status === 'current');
+            const currentStepId = currentStep ? currentStep.id : 1;
+            
+            // 이미지 URL 가져오기 (learning_interface.php에서 설정됨)
+            const questionImage = window.QUESTION_IMAGE || null;
+            const solutionImage = window.SOLUTION_IMAGE || null;
+            
+            await window.startRealtimeTutor({
+                studentId: window.STUDENT_ID,
+                contentId: window.CONTENT_ID,
+                unitName: window.ANALYSIS_DATA?.dialogue_analysis?.unit?.korean || '수학',
+                questionImage: questionImage,
+                solutionImage: solutionImage,
+                currentStep: currentStepId,
+                currentEmotion: state.emotion.type || 'neutral'
+            });
+            
+            realtimeTutorActive = true;
+            btn.classList.add('active');
+            btnText.textContent = '음성 튜터 종료';
+            
+            // 사이드바 채팅 자동 열기 (선택사항)
+            if (typeof toggleSidebarChat !== 'undefined' && !SidebarChatInterface.isActive) {
+                toggleSidebarChat();
+            }
+            
+            // 이벤트 리스너 설정
+            setupRealtimeTutorListeners();
+            
+        } catch (error) {
+            console.error('Realtime 튜터 시작 실패:', error);
+            alert('음성 튜터를 시작할 수 없습니다: ' + error.message);
+            btnText.textContent = '음성 튜터';
+        } finally {
+            btn.disabled = false;
+            spinner.classList.add('hidden');
+        }
+    } else {
+        // 종료
+        try {
+            window.stopRealtimeTutor();
+            realtimeTutorActive = false;
+            btn.classList.remove('active');
+            btnText.textContent = '음성 튜터';
+        } catch (error) {
+            console.error('Realtime 튜터 종료 실패:', error);
+        }
+    }
+}
+
+/**
+ * Realtime 튜터 이벤트 리스너 설정
+ */
+function setupRealtimeTutorListeners() {
+    // 연결 성공
+    document.addEventListener('realtime-tutor-connected', () => {
+        console.log('[learning_interface.js] Realtime 튜터 연결됨');
+        showFeedback('🎤 음성 튜터가 연결되었어요!');
+    });
+    
+    // 연결 끊김
+    document.addEventListener('realtime-tutor-dataChannelClose', () => {
+        console.log('[learning_interface.js] Realtime 튜터 연결 끊김');
+        if (realtimeTutorActive) {
+            showFeedback('⚠️ 연결이 끊어졌어요. 재연결을 시도합니다...');
+        }
+    });
+    
+    // 오류 발생
+    document.addEventListener('realtime-tutor-error', (e) => {
+        console.error('[learning_interface.js] Realtime 튜터 오류:', e.detail);
+        showFeedback('❌ 오류가 발생했어요: ' + (e.detail.error || '알 수 없는 오류'));
+    });
+    
+    // 세션 타임아웃
+    document.addEventListener('realtime-tutor-timeout', () => {
+        console.log('[learning_interface.js] Realtime 튜터 세션 타임아웃');
+        showFeedback('⏰ 세션 시간이 만료되었어요. 다시 시작해주세요.');
+        if (realtimeTutorActive) {
+            toggleRealtimeTutor(); // 자동 종료
+        }
+    });
+    
+    // 세션 종료
+    document.addEventListener('realtime-tutor-stopped', () => {
+        console.log('[learning_interface.js] Realtime 튜터 종료됨');
+        realtimeTutorActive = false;
+        const btn = document.getElementById('realtimeTutorBtn');
+        const btnText = document.getElementById('realtimeTutorBtnText');
+        if (btn) {
+            btn.classList.remove('active');
+        }
+        if (btnText) {
+            btnText.textContent = '음성 튜터';
+        }
+    });
+    
+    // 메시지 수신
+    document.addEventListener('realtime-tutor-message', (e) => {
+        console.log('[learning_interface.js] Realtime 튜터 메시지:', e.detail.text);
+        // 메시지는 이미 SidebarChatInterface에서 처리됨
+    });
+}
+
