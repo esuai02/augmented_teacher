@@ -81,8 +81,90 @@ const state = {
         overcomeLevel: 0,
         overcomeHistory: [],
         audioPlaying: false
+    },
+    
+    // FAQ 점층상호작용 상태
+    faq: {
+        data: null,             // faqtext JSON 데이터
+        currentStepIndex: 0,    // 현재 표시 중인 단계 인덱스
+        currentStepData: null,  // 현재 단계의 faqtext 데이터 객체
+        currentFaqIndex: 0,     // 현재 표시 중인 FAQ 인덱스 (0-5)
+        isDisplaying: false,    // FAQ 표시 중인지 여부
+        displayTimer: null,     // 표시 타이머
+        sessionGestureCount: 0, // 세션 내 X 제스처 총 횟수
+        completedOnce: false    // 6개 모두 완료 여부
     }
 };
+
+// ========== FAQ 격려 메시지 (7번째 제스처 이후) ==========
+const faqEncouragementMessages = [
+    // 자신감 북돋우기 (1-10)
+    "이제 스스로 해볼 시간이야! 💪",
+    "충분히 들었어, 이제 네 차례야!",
+    "자, 이제 직접 풀어보자! 🎯",
+    "반복은 여기까지! 실전이다~",
+    "이제 머릿속에 다 들어갔지? 고고! 🚀",
+    "듣기만 하면 안 돼~ 직접 해봐!",
+    "OK, 이제 네가 주인공이야! ⭐",
+    "충분해! 이제 손으로 풀어보자 ✏️",
+    "여기까지! 이제 실력 발휘 시간~",
+    "들은 거 써먹어봐! 화이팅! 🔥",
+    // 유머러스한 독려 (11-20)
+    "더 듣고 싶어? 안 돼~ 이제 풀어! 😎",
+    "귀로 배운 거 손으로 증명해봐!",
+    "이 정도면 박사급인데? 직접 해봐!",
+    "무한반복은 노래방에서만! 이제 풀자~",
+    "뇌가 꽉 찼어! 출력할 시간이야 🖨️",
+    "듣기 모드 OFF! 풀기 모드 ON! 🔛",
+    "이제 선생님은 쉴게~ 네 차례야!",
+    "반복의 신이 강림했다! 이제 실전! ⚡",
+    "더 들으면 귀에서 수학이 흘러나와~",
+    "충전 완료! 배터리 100%! 출발! 🔋",
+    // 도전 의식 자극 (21-30)
+    "네 실력 보여줄 때가 왔어! 🎪",
+    "준비됐지? 실전에서 빛나봐! ✨",
+    "이론은 끝! 액션 시작! 🎬",
+    "연습은 충분해, 이제 진검승부!",
+    "워밍업 완료! 본게임 돌입! 🏆",
+    "듣는 건 여기까지! 푸는 건 네 몫!",
+    "귀가 했으니 손이 할 차례야! ✋",
+    "설명 듣기 레벨 MAX! 이제 풀기 도전!",
+    "이해력 충전 완료! 실행력 발동! 💫",
+    "이제 증명해봐, 네가 알고 있다는 걸!",
+    // 가벼운 압박 (31-40)
+    "슬슬 직접 해보는 게 어때? 🤔",
+    "듣기만 하면 시험에서 울어~",
+    "손이 심심해 보여! 풀어줘! ✏️",
+    "머리로만 풀면 0점이야~ 써봐!",
+    "이해했으면 증명해! 실전 고고!",
+    "아는 것과 푸는 것은 달라~ 도전!",
+    "눈으로 보고 손으로 안 하면 휘발!",
+    "지금 안 풀면 내일 다 잊어버려~",
+    "반복 청취의 함정! 직접 풀어야 내 것!",
+    "듣기 연습 A+! 이제 풀기도 A+ 가자!",
+    // 응원과 격려 (41-50)
+    "할 수 있어! 한 번 해봐! 🌟",
+    "틀려도 괜찮아! 도전이 중요해!",
+    "첫 시도가 어려워도 해보는 거야!",
+    "실수해도 OK! 그게 진짜 공부야!",
+    "자신감 폭발! 넌 할 수 있어! 💥",
+    "걱정 마! 이미 다 알고 있잖아!",
+    "떨려도 일단 시작해봐! 🎵",
+    "완벽하지 않아도 돼! 일단 도전!",
+    "네 잠재력을 믿어! 풀어봐! 🔓",
+    "시작이 반이야! 펜을 들어! 🖊️",
+    // 재치있는 마무리 (51-60)
+    "AI도 지쳤어~ 이제 네가 해줘! 🤖",
+    "설명충 모드 종료! 실전 모드 시작!",
+    "이 정도면 충분히 씹고 뜯었어! 삼켜!",
+    "뇌세포들이 준비됐대! 출동시켜!",
+    "수학의 신이 너를 부르고 있어! 📢",
+    "지금이 골든타임! 바로 풀어!",
+    "머릿속 지식, 종이 위로 대피시켜! 📝",
+    "이해 완료! 이제 손맛을 보여줘!",
+    "더 들으면 뇌 용량 초과야! 풀자! 💾",
+    "마지막 경고! 이제 직접 풀 시간! ⏰"
+];
 
 // ========== 감정 데이터 ==========
 const emotions = {
@@ -1089,6 +1171,9 @@ function handleGestureAction(gestureType) {
     } else if (gestureType === 'question') {
         // 힌트 요청 (페르소나 정보 포함)
         requestHintWithPersona();
+    } else if (gestureType === 'x') {
+        // X 제스처: 현재 단계의 faqtext 점층 표시
+        showFaqProgressive();
     }
 }
 
@@ -1171,6 +1256,213 @@ function updateStepForSection(stepId) {
         
         const step = state.steps.find(s => s.id === stepId);
         console.log('[learning_interface.js:updateStepForSection] 단계 변경:', step?.label);
+    }
+}
+
+// ========== FAQ 점층상호작용 표시 ==========
+
+/**
+ * X 제스처 시 현재 단계의 faqtext를 점층적으로 표시
+ * - 세션 내 제스처 횟수를 카운트하여 순차 진행
+ * - 0~5번째: faqtext 순차 표시
+ * - 6번째(7번째 제스처) 이후: 격려 메시지 랜덤 표시
+ */
+async function showFaqProgressive() {
+    console.log('[learning_interface.js:showFaqProgressive] FAQ 점층 표시 - 세션 카운트:', state.faq.sessionGestureCount);
+    
+    // faqtext 데이터 로드 (없으면 서버에서 가져오기)
+    if (!state.faq.data) {
+        const loaded = await loadFaqData();
+        if (!loaded) {
+            showFeedback('❌ 점층상호작용 데이터가 없습니다. TTS를 먼저 생성해주세요.');
+            return;
+        }
+    }
+    
+    // 현재 TTS 섹션에 해당하는 단계 찾기
+    const currentSectionIndex = state.tts.currentSectionIndex || 0;
+    let faqStepData = state.faq.data.find(d => d.step_index === currentSectionIndex + 1);
+    
+    if (!faqStepData || !faqStepData.faqtext || faqStepData.faqtext.length === 0) {
+        // 해당 단계에 faqtext가 없으면 첫 번째 단계 사용
+        faqStepData = state.faq.data[0];
+        if (!faqStepData || !faqStepData.faqtext) {
+            showFeedback('❌ 이 단계의 점층상호작용 데이터가 없습니다.');
+            return;
+        }
+        state.faq.currentStepIndex = 0;
+    } else {
+        state.faq.currentStepIndex = currentSectionIndex;
+    }
+    
+    // 찾은 faqStepData를 state에 저장 (displayCurrentFaq에서 사용)
+    state.faq.currentStepData = faqStepData;
+    
+    const totalFaqs = faqStepData.faqtext.length; // 보통 6개
+    
+    // 현재 세션 카운트 기준으로 표시할 내용 결정
+    if (state.faq.sessionGestureCount < totalFaqs) {
+        // 0~5번째: faqtext 순차 표시
+        state.faq.currentFaqIndex = state.faq.sessionGestureCount;
+        state.faq.isDisplaying = true;
+        
+        showFaqBubble();
+        displayCurrentFaq();
+        
+        // 카운트 증가
+        state.faq.sessionGestureCount++;
+        
+        console.log(`[showFaqProgressive] FAQ ${state.faq.currentFaqIndex + 1}/${totalFaqs} 표시`);
+        
+        // 마지막(6번째) 표시 시 완료 플래그 설정
+        if (state.faq.sessionGestureCount >= totalFaqs) {
+            state.faq.completedOnce = true;
+        }
+    } else {
+        // 6번째 이후 (7번째 제스처부터): 격려 메시지 랜덤 표시
+        showEncouragementMessage();
+        
+        // 카운트 계속 증가 (통계용)
+        state.faq.sessionGestureCount++;
+    }
+}
+
+/**
+ * 서버에서 faqtext 데이터 로드
+ */
+async function loadFaqData() {
+    const interactionId = state.tts.interactionId;
+    if (!interactionId) {
+        console.log('[learning_interface.js:loadFaqData] interactionId 없음');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php?id=${interactionId}&format=full`);
+        const result = await response.json();
+        
+        if (result.success && result.faqtext) {
+            // faqtext가 문자열이면 JSON 파싱
+            let faqData = result.faqtext;
+            if (typeof faqData === 'string') {
+                faqData = JSON.parse(faqData);
+            }
+            state.faq.data = faqData;
+            console.log('[learning_interface.js:loadFaqData] FAQ 데이터 로드 완료:', faqData.length, '개 단계');
+            return true;
+        }
+        
+        console.log('[learning_interface.js:loadFaqData] FAQ 데이터 없음');
+        return false;
+    } catch (error) {
+        console.error('[learning_interface.js:loadFaqData] 로드 오류:', error);
+        return false;
+    }
+}
+
+/**
+ * FAQ 말풍선 표시 (내부 함수) - 비활성화됨, 피드백 배너만 사용
+ */
+function showFaqBubble() {
+    // 말풍선 비활성화 - 피드백 배너에서만 표시
+    // const bubble = document.getElementById('faqBubble');
+    // if (bubble) {
+    //     bubble.classList.remove('hidden');
+    // }
+}
+
+/**
+ * FAQ 말풍선 숨기기
+ */
+function hideFaqBubble() {
+    const bubble = document.getElementById('faqBubble');
+    if (bubble) {
+        bubble.style.animation = 'bubbleFadeIn 0.2s ease reverse';
+        setTimeout(() => {
+            bubble.classList.add('hidden');
+            state.faq.isDisplaying = false;
+        }, 200);
+    }
+}
+
+/**
+ * 격려 메시지 표시 (7번째 제스처 이후)
+ */
+function showEncouragementMessage() {
+    // 랜덤 메시지 선택
+    const randomIndex = Math.floor(Math.random() * faqEncouragementMessages.length);
+    const message = faqEncouragementMessages[randomIndex];
+    
+    // 🔥 피드백 배너에만 격려 메시지 표시 (아이콘 없이, 큰 글씨)
+    showFaqFeedback(message, 5, false);
+    
+    console.log(`[showEncouragementMessage] 격려 메시지: "${message}", 반복 ${state.faq.sessionGestureCount}회`);
+}
+
+/**
+ * 현재 FAQ 항목을 말풍선으로 표시
+ */
+function displayCurrentFaq() {
+    // state.faq.currentStepData를 직접 사용 (showFaqProgressive에서 저장됨)
+    const currentStepData = state.faq.currentStepData;
+    
+    if (!currentStepData || !currentStepData.faqtext) {
+        console.error('[displayCurrentFaq] faqtext 데이터 없음:', currentStepData);
+        showFeedback('❌ FAQ 데이터를 불러올 수 없습니다.');
+        return;
+    }
+    
+    const faqIndex = state.faq.currentFaqIndex;
+    const faqText = currentStepData.faqtext[faqIndex];
+    const totalFaqs = currentStepData.faqtext.length;
+    
+    if (!faqText) {
+        console.error('[displayCurrentFaq] faqText 없음 - index:', faqIndex, 'total:', totalFaqs);
+        return;
+    }
+    
+    console.log(`[displayCurrentFaq] 단계: ${currentStepData.step_label}, 문구 ${faqIndex + 1}/${totalFaqs}: "${faqText}"`);
+    
+    // 마지막(6번째)은 파란색 강조
+    const isLast = faqIndex === totalFaqs - 1;
+    
+    // 🔥 피드백 배너에만 faqtext 표시 (아이콘 없이, 크기 점층적)
+    showFaqFeedback(faqText, faqIndex + 1, isLast);
+    
+    // 기존 타이머 제거
+    if (state.faq.displayTimer) {
+        clearTimeout(state.faq.displayTimer);
+    }
+    
+    // 마지막 완료 시 피드백 (5초 후)
+    if (isLast) {
+        state.faq.displayTimer = setTimeout(() => {
+            showFeedback('✅ 점층 강조 완료! 다음 X 제스처로 격려 메시지를 볼 수 있어요');
+        }, 5000);
+    }
+    
+    console.log(`[learning_interface.js:displayCurrentFaq] FAQ ${faqIndex + 1}/${totalFaqs} 표시`);
+}
+
+/**
+ * FAQ 말풍선 표시 (호환성 유지)
+ */
+function showFaqOverlay() {
+    showFaqBubble();
+}
+
+/**
+ * FAQ 말풍선 닫기 (호환성 유지)
+ */
+function closeFaqOverlay() {
+    hideFaqBubble();
+    
+    // 세션 카운트는 유지 (리셋하지 않음)
+    state.faq.currentFaqIndex = 0;
+    
+    if (state.faq.displayTimer) {
+        clearTimeout(state.faq.displayTimer);
+        state.faq.displayTimer = null;
     }
 }
 
@@ -1277,11 +1569,12 @@ function renderGestureCanvas() {
 }
 
 function showGestureLabel(text) {
-    const label = document.getElementById('gestureLabel');
-    if (label) {
-        label.textContent = text;
-        label.classList.remove('hidden');
-    }
+    // 제스처 라벨 표시 비활성화 - 시선 분산 방지
+    // const label = document.getElementById('gestureLabel');
+    // if (label) {
+    //     label.textContent = text;
+    //     label.classList.remove('hidden');
+    // }
 }
 
 function hideGestureLabel() {
@@ -1309,14 +1602,58 @@ function showFeedback(message) {
         
         if (emotionEl) {
             emotionEl.textContent = emotions[state.emotion.type] || '😐';
+            emotionEl.style.display = ''; // 기본 표시
         }
         
         text.textContent = message;
+        text.style.fontSize = ''; // 기본 크기
         feedback.classList.remove('hidden');
         
         setTimeout(() => {
             feedback.classList.add('hidden');
         }, 3500);
+    }
+}
+
+/**
+ * FAQ 전용 피드백 표시 (아이콘 없이 텍스트만, 크기 점층적)
+ * @param {string} message - 표시할 메시지
+ * @param {number} level - 점층 레벨 (1-6), 클수록 글자가 커짐
+ * @param {boolean} isLast - 마지막(확정) 여부 (파란색 강조)
+ */
+function showFaqFeedback(message, level = 1, isLast = false) {
+    const feedback = document.getElementById('aiFeedback');
+    const text = document.getElementById('feedbackText');
+    const emotionEl = document.getElementById('feedbackEmotion');
+    
+    if (feedback && text) {
+        // 아이콘 숨기기
+        if (emotionEl) {
+            emotionEl.style.display = 'none';
+        }
+        
+        // 점층적 폰트 크기 (14px ~ 24px)
+        const baseFontSize = 14;
+        const maxFontSize = 24;
+        const fontSize = baseFontSize + (maxFontSize - baseFontSize) * ((level - 1) / 5);
+        
+        text.textContent = message;
+        text.style.fontSize = fontSize + 'px';
+        text.style.fontWeight = level >= 5 ? 'bold' : (level >= 3 ? '600' : '500');
+        text.style.color = isLast ? '#fbbf24' : ''; // 마지막은 노란색
+        
+        feedback.classList.remove('hidden');
+        
+        // 마지막은 5초, 나머지는 3초
+        const hideDelay = isLast ? 5000 : 3000;
+        setTimeout(() => {
+            feedback.classList.add('hidden');
+            // 스타일 리셋
+            text.style.fontSize = '';
+            text.style.fontWeight = '';
+            text.style.color = '';
+            if (emotionEl) emotionEl.style.display = '';
+        }, hideDelay);
     }
 }
 
@@ -1437,7 +1774,13 @@ function activateMemoryActivity() {
         completed: false
     };
     
-    showFeedback('🧠 V 제스처로 3번 반복연습하세요! ✓✓✓');
+    // faqtext의 현재 단계 확정형(6번째) 메시지가 있으면 사용, 없으면 기본 메시지
+    let feedbackMsg = '🧠 V 제스처로 3번 반복연습하세요! ✓✓✓';
+    if (state.faq.currentStepData && state.faq.currentStepData.faqtext && state.faq.currentStepData.faqtext.length >= 6) {
+        // 확정형(6번째) 메시지 사용
+        feedbackMsg = '🧠 ' + state.faq.currentStepData.faqtext[5];
+    }
+    showFeedback(feedbackMsg);
     showMemoryActivityUI();
     
     // 서버에 활동 시작 기록
@@ -2942,9 +3285,17 @@ handleStepClick = function(stepId) {
 function initTtsState() {
     const config = window.TTS_CONFIG || {};
     
-    // 기존 TTS가 있는 경우 상태 반영
+    console.log('[learning_interface.js:initTtsState] TTS_CONFIG:', {
+        contentId: config.contentId,
+        contentsType: config.contentsType,
+        existingTtsId: config.existingTtsId,
+        existingAudioUrl: config.existingAudioUrl,
+        hasTts: config.hasTts
+    });
+    
+    // 기존 TTS가 있는 경우 상태 반영 (contentsid+contentstype으로 찾은 audio_url 기반)
     if (config.hasTts && config.existingTtsId) {
-        console.log('[learning_interface.js:initTtsState] 기존 TTS 발견 - ID:', config.existingTtsId);
+        console.log('[learning_interface.js:initTtsState] 기존 TTS 발견 - ID:', config.existingTtsId, 'AudioUrl:', config.existingAudioUrl);
         
         state.tts.hasGenerated = true;
         state.tts.interactionId = config.existingTtsId;
@@ -2960,12 +3311,12 @@ function initTtsState() {
         
         console.log('[learning_interface.js:initTtsState] TTS 버튼 상태 업데이트됨');
         
-        // 🔥 새로고침 후에도 플레이어 자동 표시
+        // 🔥 새로고침 후에도 플레이어 자동 표시 (contentsid+contentstype 기반)
         setTimeout(() => {
             loadTtsSectionsAndShowPlayer(config.existingTtsId);
         }, 500);
     } else {
-        console.log('[learning_interface.js:initTtsState] 기존 TTS 없음');
+        console.log('[learning_interface.js:initTtsState] 기존 TTS 없음 - contentId:', config.contentId, ', contentsType:', config.contentsType);
     }
 }
 
@@ -2984,7 +3335,19 @@ async function loadTtsSectionsAndShowPlayer(interactionId) {
     
     try {
         const config = window.TTS_CONFIG || {};
-        const response = await fetch(`${config.sectionDataUrl}?contentsid=${interactionId}&format=section`);
+        // contentsid와 contentstype을 사용하여 조회 (우선순위: contentsid+contentstype > id)
+        let apiUrl = `${config.sectionDataUrl}?format=section`;
+        if (config.contentId && config.contentsType !== null && config.contentsType !== undefined) {
+            apiUrl += `&contentsid=${config.contentId}&contentstype=${config.contentsType}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid+contentstype으로 조회:', config.contentId, config.contentsType);
+        } else if (config.contentId) {
+            apiUrl += `&contentsid=${config.contentId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid로만 조회:', config.contentId);
+        } else {
+            apiUrl += `&id=${interactionId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] interactionId로 조회:', interactionId);
+        }
+        const response = await fetch(apiUrl);
         const result = await response.json();
         
         console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] API 응답:', result);
@@ -2992,10 +3355,23 @@ async function loadTtsSectionsAndShowPlayer(interactionId) {
         const data = result.data || result;
         const sections = data.sections || [];
         const textSections = data.text_sections || [];
+        const faqtext = data.faqtext || null;
         
         if (result.success && sections.length > 0) {
             state.tts.sections = sections;
             state.tts.textSections = textSections;
+            
+            // faqtext 데이터도 함께 로드
+            if (faqtext) {
+                try {
+                    const faqData = typeof faqtext === 'string' ? JSON.parse(faqtext) : faqtext;
+                    state.faq.data = faqData;
+                    console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] faqtext 로드 완료:', faqData.length, '개 단계');
+                } catch (e) {
+                    console.warn('[learning_interface.js:loadTtsSectionsAndShowPlayer] faqtext 파싱 실패:', e);
+                }
+            }
+            
             console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] 섹션 로드 완료:', sections.length);
             
             // 우측 상단 플레이어 표시
@@ -3022,6 +3398,15 @@ async function startAiAnalysis() {
     const iconEl = document.getElementById('aiAnalysisBtnIcon');
     const textEl = document.getElementById('aiAnalysisBtnText');
     const spinner = document.getElementById('aiAnalysisSpinner');
+    
+    // 🔮 양자 붕괴 학습 미로 새 창으로 열기
+    const config = window.TTS_CONFIG || {};
+    const contentsId = config.contentsId || new URLSearchParams(window.location.search).get('id');
+    if (contentsId) {
+        const quantumUrl = `/moodle/local/augmented_teacher/alt42/teachingsupport/AItutor/ui/quantum_modeling.php?id=${encodeURIComponent(contentsId)}`;
+        window.open(quantumUrl, 'quantum_maze', 'width=1200,height=800,resizable=yes,scrollbars=yes');
+        console.log('[learning_interface.js:startAiAnalysis] 양자 미로 열기:', quantumUrl);
+    }
     
     if (!btn || btn.classList.contains('completed')) {
         console.log('[learning_interface.js:startAiAnalysis] 이미 분석 완료됨');
@@ -3135,6 +3520,9 @@ function showTtsRegenerateConfirm() {
                 <button class="tts-regenerate-btn tts-regenerate-listen" onclick="openExistingTts()">
                     🎧 기존 TTS 듣기
                 </button>
+                <button class="tts-regenerate-btn tts-regenerate-faq" onclick="generateFaqtext()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white;">
+                    📚 점층상호작용 생성
+                </button>
                 <button class="tts-regenerate-btn tts-regenerate-no" onclick="closeTtsRegenerateModal()">
                     ❌ 취소
                 </button>
@@ -3199,6 +3587,174 @@ function openExistingTts() {
  */
 function closeTtsRegenerateModal() {
     const modal = document.getElementById('ttsRegenerateModal');
+    if (modal) modal.remove();
+}
+
+/**
+ * 점층상호작용 (faqtext) 생성
+ * narration_text에서 @로 구분된 각 단계별로 6가지 점층적 표현을 생성
+ */
+async function generateFaqtext() {
+    console.log('[learning_interface.js:generateFaqtext] ========== 점층상호작용 생성 시작 ==========');
+    
+    closeTtsRegenerateModal();
+    
+    const interactionId = state.tts.interactionId;
+    if (!interactionId) {
+        showFeedback('❌ TTS가 먼저 생성되어야 합니다.');
+        return;
+    }
+    
+    // 로딩 모달 표시
+    showFaqGeneratingModal();
+    
+    try {
+        const config = window.TTS_CONFIG || {};
+        
+        const requestBody = {
+            action: 'generate_faqtext',
+            interaction_id: interactionId,
+            content_id: config.contentId,
+            student_id: config.studentId
+        };
+        
+        console.log('[learning_interface.js:generateFaqtext] API 호출:', requestBody);
+        showFeedback('📚 점층상호작용 생성 중... AI가 6단계 반복 강조 멘트를 만들고 있어요');
+        
+        const response = await fetch('/moodle/local/augmented_teacher/alt42/teachingsupport/api/generate_faqtext.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+        
+        const result = await response.json();
+        console.log('[learning_interface.js:generateFaqtext] 결과:', result);
+        
+        closeFaqGeneratingModal();
+        
+        if (result.success) {
+            showFeedback('✅ 점층상호작용 생성 완료! ' + result.sections_count + '개 단계의 강조 멘트가 생성되었습니다.');
+            
+            // 결과 미리보기 모달 표시 (선택사항)
+            if (result.faqtext_preview) {
+                showFaqPreviewModal(result.faqtext_preview);
+            }
+        } else {
+            showFeedback('❌ 점층상호작용 생성 실패: ' + (result.error || '알 수 없는 오류'));
+        }
+    } catch (error) {
+        console.error('[learning_interface.js:generateFaqtext] 오류:', error);
+        closeFaqGeneratingModal();
+        showFeedback('❌ 점층상호작용 생성 중 오류 발생: ' + error.message);
+    }
+}
+
+/**
+ * FAQ 생성 중 로딩 모달 표시
+ */
+function showFaqGeneratingModal() {
+    const existing = document.getElementById('faqGeneratingModal');
+    if (existing) existing.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'faqGeneratingModal';
+    modal.className = 'tts-regenerate-modal-overlay';
+    modal.innerHTML = `
+        <div class="tts-regenerate-modal" style="text-align: center;">
+            <div class="tts-regenerate-icon" style="font-size: 48px; animation: pulse 1.5s infinite;">📚</div>
+            <h3>점층상호작용 생성 중...</h3>
+            <p style="color: #666;">각 단계별 6가지 반복 강조 멘트를 AI가 만들고 있어요</p>
+            <div class="faq-progress-dots" style="margin-top: 15px;">
+                <span style="animation: bounce 0.6s infinite 0s;">●</span>
+                <span style="animation: bounce 0.6s infinite 0.1s;">●</span>
+                <span style="animation: bounce 0.6s infinite 0.2s;">●</span>
+            </div>
+            <style>
+                @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                }
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); opacity: 0.4; }
+                    50% { transform: translateY(-5px); opacity: 1; }
+                }
+                .faq-progress-dots span {
+                    display: inline-block;
+                    margin: 0 3px;
+                    font-size: 14px;
+                    color: #9b59b6;
+                }
+            </style>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+/**
+ * FAQ 생성 중 로딩 모달 닫기
+ */
+function closeFaqGeneratingModal() {
+    const modal = document.getElementById('faqGeneratingModal');
+    if (modal) modal.remove();
+}
+
+/**
+ * FAQ 미리보기 모달 표시
+ */
+function showFaqPreviewModal(previewData) {
+    const existing = document.getElementById('faqPreviewModal');
+    if (existing) existing.remove();
+    
+    // 미리보기 데이터에서 첫 번째 단계만 표시
+    let previewHtml = '';
+    if (previewData && previewData.length > 0) {
+        const firstStep = previewData[0];
+        previewHtml = `
+            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 10px; text-align: left;">
+                <div style="font-weight: bold; color: #9b59b6; margin-bottom: 8px;">📖 ${firstStep.step_label || '1단계'}</div>
+                <div style="font-size: 12px; color: #666; margin-bottom: 8px;">원문: ${(firstStep.original || '').substring(0, 80)}...</div>
+                <div style="font-size: 11px;">
+                    ${firstStep.faqtext ? firstStep.faqtext.slice(0, 3).map((text, i) => 
+                        `<div style="margin: 4px 0; padding: 4px 8px; background: ${['#e8f5e9', '#fff3e0', '#e3f2fd'][i]}; border-radius: 4px;">
+                            ${['🔹', '🔸', '🔷'][i]} ${text.substring(0, 60)}...
+                        </div>`
+                    ).join('') : ''}
+                </div>
+            </div>
+        `;
+    }
+    
+    const modal = document.createElement('div');
+    modal.id = 'faqPreviewModal';
+    modal.className = 'tts-regenerate-modal-overlay';
+    modal.innerHTML = `
+        <div class="tts-regenerate-modal">
+            <div class="tts-regenerate-icon" style="font-size: 36px;">✅</div>
+            <h3>점층상호작용 생성 완료!</h3>
+            <p>각 단계별로 6가지 점층적 강조 표현이 생성되었습니다.</p>
+            ${previewHtml}
+            <div class="tts-regenerate-buttons" style="margin-top: 15px;">
+                <button class="tts-regenerate-btn tts-regenerate-yes" onclick="closeFaqPreviewModal()" style="background: #9b59b6;">
+                    확인
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 배경 클릭 시 닫기
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeFaqPreviewModal();
+    });
+}
+
+/**
+ * FAQ 미리보기 모달 닫기
+ */
+function closeFaqPreviewModal() {
+    const modal = document.getElementById('faqPreviewModal');
     if (modal) modal.remove();
 }
 
@@ -3319,13 +3875,24 @@ async function loadTtsSectionsAndShow(interactionId) {
     
     state.tts.interactionId = interactionId;
     state.tts.currentSectionIndex = 0;
-    state.tts.autoPlay = true;
+    state.tts.autoPlay = false;  // 자동 진행 비활성화 - 사용자가 직접 단계 이동
     state.tts.speed = 1.0;
     
     try {
         const config = window.TTS_CONFIG || {};
-        // format=section 파라미터 추가하여 StepPlayer 형식으로 데이터 요청
-        const response = await fetch(`${config.sectionDataUrl}?contentsid=${interactionId}&format=section`);
+        // contentsid와 contentstype을 사용하여 조회 (우선순위: contentsid+contentstype > id)
+        let apiUrl = `${config.sectionDataUrl}?format=section`;
+        if (config.contentId && config.contentsType !== null && config.contentsType !== undefined) {
+            apiUrl += `&contentsid=${config.contentId}&contentstype=${config.contentsType}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid+contentstype으로 조회:', config.contentId, config.contentsType);
+        } else if (config.contentId) {
+            apiUrl += `&contentsid=${config.contentId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid로만 조회:', config.contentId);
+        } else {
+            apiUrl += `&id=${interactionId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShow] interactionId로 조회:', interactionId);
+        }
+        const response = await fetch(apiUrl);
         const result = await response.json();
         
         console.log('[learning_interface.js:loadTtsSectionsAndShow] API 응답:', result);
@@ -3334,10 +3901,23 @@ async function loadTtsSectionsAndShow(interactionId) {
         const data = result.data || result;
         const sections = data.sections || [];
         const textSections = data.text_sections || [];
+        const faqtext = data.faqtext || null;
         
         if (result.success && sections.length > 0) {
             state.tts.sections = sections;
             state.tts.textSections = textSections;
+            
+            // faqtext 데이터도 함께 로드
+            if (faqtext) {
+                try {
+                    const faqData = typeof faqtext === 'string' ? JSON.parse(faqtext) : faqtext;
+                    state.faq.data = faqData;
+                    console.log('[learning_interface.js:loadTtsSectionsAndShow] faqtext 로드 완료:', faqData.length, '개 단계');
+                } catch (e) {
+                    console.warn('[learning_interface.js:loadTtsSectionsAndShow] faqtext 파싱 실패:', e);
+                }
+            }
+            
             console.log('[learning_interface.js:loadTtsSectionsAndShow] 섹션 로드 완료:', sections.length);
             
             // 우측 상단 TTS 플레이어 표시
@@ -3392,6 +3972,14 @@ function playTtsSection(index) {
     
     // 기존 재생 중지
     stopCurrentTts();
+    
+    // 🔥 섹션이 변경되면 FAQ 세션 카운트 리셋
+    if (state.tts.currentSectionIndex !== index) {
+        state.faq.sessionGestureCount = 0;
+        state.faq.completedOnce = false;
+        state.faq.currentStepData = null; // 현재 단계 데이터도 리셋
+        console.log('[playTtsSection] FAQ 세션 카운트 리셋 (새 섹션:', index, ')');
+    }
     
     state.tts.currentSectionIndex = index;
     state.tts.isPlaying = true;

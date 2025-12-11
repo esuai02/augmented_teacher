@@ -20,7 +20,8 @@ $studentId = $_GET['studentid'] ?? $USER->id;
 $forceRefresh = isset($_GET['refresh']) && $_GET['refresh'] === '1';
  
 $thisboard = $DB->get_record_sql("SELECT * FROM mdl_abessi_messages WHERE wboardid=? ORDER BY tlaststroke DESC LIMIT 1", [$analysisId]); 
-$contentId = $thisboard->contentsid ?? '15652';
+$contentId = $thisboard->contentsid;
+$contentsType = $thisboard->contentstype;
 
 // 문제/해설 이미지 추출
 $imgSrc1 = null; // 해설 이미지
@@ -88,29 +89,42 @@ if ($analysisId) {
     $analysisData = $dbManager->getAnalysisResult($analysisId);
 }
 
-// 기존 TTS 상호작용 확인 (wboardid 또는 contentsid로 조회)
+// 기존 TTS 상호작용 확인 (contentsid와 contentstype으로 조회)
 $existingTts = null;
 $existingTtsId = null;
+$existingAudioUrl = null;
 try {
-    // 먼저 wboardid로 조회
-    if ($whiteboardId) {
+    // contentsid와 contentstype으로 ktm_teaching_interactions에서 조회
+    if ($contentId && $contentsType !== null) {
         $existingTts = $DB->get_record_sql(
-            "SELECT * FROM {ktm_teaching_interactions} WHERE userid = ? AND wboardid = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
-            [$studentId, $whiteboardId]
+            "SELECT * FROM {ktm_teaching_interactions} WHERE contentsid = ? AND contentstype = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            [$contentId, $contentsType]
         );
+        error_log("[learning_interface.php] contentsid: {$contentId}, contentstype: {$contentsType} 로 조회");
     }
     
-    // wboardid로 못 찾으면 contentsid로 조회 (learning_interface_tts 타입)
+    // contentstype 없이 contentsid로만 조회 (fallback)
     if (!$existingTts && $contentId) {
         $existingTts = $DB->get_record_sql(
-            "SELECT * FROM {ktm_teaching_interactions} WHERE userid = ? AND problem_type = 'learning_interface_tts' AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
-            [$studentId]
+            "SELECT * FROM {ktm_teaching_interactions} WHERE contentsid = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            [$contentId]
         );
+        error_log("[learning_interface.php] contentsid: {$contentId} 로만 조회 (fallback)");
+    }
+    
+    // wboardid로도 조회 (추가 fallback)
+    if (!$existingTts && $whiteboardId) {
+        $existingTts = $DB->get_record_sql(
+            "SELECT * FROM {ktm_teaching_interactions} WHERE wboardid = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            [$whiteboardId]
+        );
+        error_log("[learning_interface.php] wboardid: {$whiteboardId} 로 조회 (fallback)");
     }
     
     if ($existingTts) {
         $existingTtsId = $existingTts->id;
-        error_log("[learning_interface.php] 기존 TTS 발견 - ID: {$existingTtsId}, wboardid: " . ($existingTts->wboardid ?? 'null'));
+        $existingAudioUrl = $existingTts->audio_url;
+        error_log("[learning_interface.php] 기존 TTS 발견 - ID: {$existingTtsId}, contentsid: " . ($existingTts->contentsid ?? 'null') . ", contentstype: " . ($existingTts->contentstype ?? 'null') . ", audio_url: " . ($existingAudioUrl ?? 'null'));
     }
 } catch (Exception $e) {
     error_log("[learning_interface.php] 기존 TTS 확인 오류: " . $e->getMessage());
@@ -218,6 +232,17 @@ $currentItemPersona = null;
                     <button id="emotionBtn" class="emotion-btn-center" onclick="toggleEmotionPicker()">
                         <span id="currentEmotionIcon" class="emotion-icon-large">😐</span>
                     </button>
+                    
+                    <!-- FAQ 점층 말풍선 -->
+                    <div id="faqBubble" class="faq-speech-bubble hidden">
+                        <div class="faq-bubble-content">
+                            <span id="faqBubbleLabel" class="faq-bubble-label">🔹 단축</span>
+                            <p id="faqBubbleText" class="faq-bubble-text"></p>
+                        </div>
+                        <div class="faq-bubble-progress">
+                            <span id="faqBubbleProgress">1/6</span>
+                        </div>
+                    </div>
                     
                     <div id="emotionPicker" class="emotion-picker-center hidden">
                         <p class="picker-hint-small">지금 기분은?</p>
@@ -744,6 +769,7 @@ $currentItemPersona = null;
         window.TTS_CONFIG = {
             studentId: <?php echo json_encode($studentId); ?>,
             contentId: <?php echo json_encode($contentId); ?>,
+            contentsType: <?php echo json_encode($contentsType); ?>,
             analysisId: <?php echo json_encode($analysisId); ?>,
             whiteboardId: <?php echo json_encode($whiteboardId); ?>,
             questionImage: <?php echo json_encode($imgSrc2); ?>,
@@ -751,7 +777,8 @@ $currentItemPersona = null;
             apiUrl: '/moodle/local/augmented_teacher/alt42/teachingsupport/api/',
             sectionDataUrl: '/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php',
             existingTtsId: <?php echo json_encode($existingTtsId); ?>,
-            hasTts: <?php echo json_encode($existingTtsId !== null); ?>
+            existingAudioUrl: <?php echo json_encode($existingAudioUrl); ?>,
+            hasTts: <?php echo json_encode($existingTtsId !== null && $existingAudioUrl !== null); ?>
         };
     </script>
     
