@@ -1,0 +1,21 @@
+# C85 Level Greeting Templates
+# 경미한 긴장 상태의 학생을 위한 인사 템플릿
+# Variables: {{student_name}}, {{observation}}
+
+---
+
+## greeting_attentive
+안녕하세요, {{student_name}}님.
+오늘 좀 바쁘셨나봐요. 괜찮으세요?
+
+---
+
+## greeting_gentle
+반가워요. 천천히 이야기해도 괜찮아요.
+어떻게 지내세요?
+
+---
+
+## greeting_observant
+안녕하세요. 조금 피곤해 보이시는데,
+잠시 쉬어가도 좋아요.

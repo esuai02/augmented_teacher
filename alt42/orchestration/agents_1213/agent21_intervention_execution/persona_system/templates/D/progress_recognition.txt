@@ -1,0 +1,23 @@
+[RECOGNITION]
+
+{{student_name}}님, 드디어 완료하셨네요!
+
+[ACHIEVEMENT]
+
+{{completion_summary}}
+시간이 좀 걸렸지만, 끝까지 해내셨어요.
+
+[PRAISE]
+
+포기하지 않고 끝까지 하신 게 정말 대단해요.
+이게 진짜 실력이에요.
+
+[REFLECTION]
+
+{{student_name}}님만의 페이스로 해도
+충분히 해낼 수 있다는 걸 보여주셨어요.
+
+[ENCOURAGEMENT]
+
+다음에도 이 경험을 기억해 주세요.
+느려도 괜찮아요. 계속 가면 되는 거예요.

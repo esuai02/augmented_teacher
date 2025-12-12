@@ -1,0 +1,153 @@
+# Persona Schema Definition
+# 페르소나 데이터 구조 정의
+
+version: "1.0.0"
+
+PersonaState:
+  type: object
+  required:
+    - persona_id
+    - affect
+    - focus
+    - load
+    - ts
+  properties:
+    persona_id:
+      type: string
+      description: "페르소나 식별자 (mdl_prsn_usermap 참조)"
+      pattern: "^P_[a-z_]+$"
+      example: "P_avoidant"
+
+    affect:
+      type: string
+      enum: ["low", "med", "high"]
+      description: "감정 상태 (낮음/보통/높음)"
+
+    focus:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+      description: "집중도 (0~1)"
+
+    load:
+      type: string
+      enum: ["low", "med", "high"]
+      description: "인지 부하 (낮음/보통/높음)"
+
+    ts:
+      type: string
+      format: date-time
+      description: "상태 갱신 시각 (ISO-8601)"
+
+    metadata:
+      type: object
+      description: "추가 메타데이터"
+      properties:
+        last_activity:
+          type: string
+        session_id:
+          type: string
+
+PersonaProfile:
+  type: object
+  required:
+    - persona_id
+    - user_id
+    - traits
+  properties:
+    persona_id:
+      type: string
+      description: "페르소나 식별자"
+
+    user_id:
+      type: string
+      description: "학생 ID"
+
+    traits:
+      type: array
+      items:
+        type: string
+      description: "성격 특성 목록"
+      example: ["회피", "완벽주의", "낮은자신감"]
+
+    similarity_vector:
+      type: array
+      items:
+        type: number
+      description: "임베딩 벡터 (유사도 계산용)"
+
+    directive_strength_modifier:
+      type: number
+      minimum: -1.0
+      maximum: 1.0
+      description: "지시성 강도 보정값"
+      default: 0.0
+
+    created_at:
+      type: string
+      format: date-time
+
+    updated_at:
+      type: string
+      format: date-time
+
+# DB 연동 매핑 (기존 테이블)
+DatabaseMapping:
+  mdl_prsn_activestate:
+    description: "활성 상태 테이블"
+    maps_to: "PersonaState"
+    fields:
+      - id
+      - userid
+      - affect
+      - focus
+      - cognitive_load
+      - timecreated
+      - timemodified
+
+  mdl_prsn_usermap:
+    description: "사용자-페르소나 매핑"
+    maps_to: "PersonaProfile"
+    fields:
+      - id
+      - userid
+      - persona_type
+      - traits
+      - similarity_score
+      - timecreated
+
+  mdl_prsn_contents:
+    description: "페르소나별 콘텐츠"
+    fields:
+      - id
+      - persona_id
+      - content_type
+      - content_data
+      - timecreated
+
+  mdl_prsn_reaction:
+    description: "사용자 반응 데이터"
+    fields:
+      - id
+      - userid
+      - action_type
+      - reaction
+      - timecreated
+
+  mdl_prsn_relation:
+    description: "페르소나 관계"
+    fields:
+      - id
+      - persona_a
+      - persona_b
+      - relation_type
+      - strength
+
+  mdl_prsn_selection:
+    description: "페르소나 선택 이력"
+    fields:
+      - id
+      - userid
+      - selected_persona
+      - reason
+      - timecreated

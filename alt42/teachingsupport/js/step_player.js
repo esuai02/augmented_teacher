@@ -215,25 +215,17 @@ var StepPlayer = (function() {
     // ========================================
     // 6. AJAX SECTION DATA FETCH
     // ========================================
-    function fetchSectionData(contentsid) {
-        // ktm_teaching_interactions 테이블에서 데이터 가져오기
-        var url = '/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php?contentsid=' + encodeURIComponent(contentsid) + '&format=section';
-        console.log('[step_player.js:fetchSectionData] Fetching from URL:', url);
+    function fetchSectionData(identifier) {
+        // Backend supports both `id`(interaction pk) and `contentsid`.
+        // Many callers pass interaction id, so try `id` first and fall back to `contentsid`.
+        var encoded = encodeURIComponent(identifier);
+        var urlById = '/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php?id=' + encoded + '&format=section';
+        var urlByContentsId = '/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php?contentsid=' + encoded + '&format=section';
 
+        console.log('[step_player.js:fetchSectionData] Fetching from URL (id):', urlById, 'fallback(contentsid):', urlByContentsId);
         announceToScreenReader('데이터를 불러오는 중...');
 
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-
-        xhr.onload = function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                    var response = JSON.parse(xhr.responseText);
-                    console.log('[step_player.js:fetchSectionData] Raw response:', response);
-                    
-                    var payload = resolveSectionPayload(response);
-                    console.log('[step_player.js:fetchSectionData] Resolved payload:', payload);
-
+        function processPayload(payload) {
                     if (payload && Array.isArray(payload.sections) && Array.isArray(payload.text_sections)) {
                         console.log('[step_player.js:fetchSectionData] Sections count:', payload.sections.length);
                         console.log('[step_player.js:fetchSectionData] First section:', payload.sections[0]);
@@ -244,20 +236,19 @@ var StepPlayer = (function() {
                             return normalized;
                         });
                         
-                        var hasInvalidSource = normalizedSections.some(function(src) {
-                            return !src;
-                        });
-
+                // StepPlayer is audio-first. If any section has no audio URL, we treat it as invalid.
+                // (Text-only playback is handled by the header player in learning_interface.js)
+                var hasInvalidSource = normalizedSections.some(function(src) { return !src; });
                         if (hasInvalidSource) {
                             console.error('[step_player.js:fetchSectionData] Invalid sources:', normalizedSections);
-                            handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Invalid audio source in payload', '오디오 데이터가 손상되었습니다.');
-                            return;
+                    handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Invalid audio source in payload', '오디오 URL이 비어있습니다. (오디오 생성이 완료되지 않았을 수 있어요)');
+                    return true;
                         }
 
                         if (normalizedSections.length !== payload.text_sections.length) {
                             console.error('[step_player.js:fetchSectionData] Length mismatch - sections:', normalizedSections.length, 'text_sections:', payload.text_sections.length);
                             handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Section/text length mismatch', '오디오 데이터와 텍스트 데이터가 일치하지 않습니다.');
-                            return;
+                    return true;
                         }
 
                         state.sections = normalizedSections;
@@ -268,27 +259,56 @@ var StepPlayer = (function() {
                         console.log('[step_player.js:fetchSectionData] Successfully loaded', state.totalSections, 'sections');
                         buildCircularNavigation();
                         loadSection(0);
-
                         announceToScreenReader('총 ' + state.totalSections + '개 섹션 로드 완료');
-                    } else {
-                        console.error('[step_player.js:fetchSectionData] Invalid payload structure:', payload);
-                        handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Invalid response structure', '잘못된 데이터 형식입니다.');
+                return true;
+            }
+            return false;
                     }
-                } catch (error) {
-                    console.error('[step_player.js:fetchSectionData] Parse error:', error, 'Response text:', xhr.responseText);
-                    handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] JSON parse error: ' + error.message, '데이터 파싱 오류가 발생했습니다.');
+
+        function request(url, onDone) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function() {
+                onDone(xhr);
+            };
+        xhr.onerror = function() {
+                onDone(xhr);
+        };
+        xhr.send();
+        }
+
+        request(urlById, function(xhr) {
+            if (xhr && xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    console.log('[step_player.js:fetchSectionData] Raw response (id):', response);
+                    var payload = resolveSectionPayload(response);
+                    console.log('[step_player.js:fetchSectionData] Resolved payload (id):', payload);
+                    if (processPayload(payload)) return;
+                } catch (e) {
+                    console.warn('[step_player.js:fetchSectionData] Parse/processing error (id):', e);
                 }
             } else {
-                console.error('[step_player.js:fetchSectionData] HTTP error:', xhr.status, xhr.responseText);
-                handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] HTTP error: ' + xhr.status, '데이터를 불러오지 못했습니다.');
+                console.warn('[step_player.js:fetchSectionData] HTTP/Network error (id):', xhr ? xhr.status : 'no-xhr');
             }
-        };
 
-        xhr.onerror = function() {
-            handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Network error', '네트워크 오류가 발생했습니다.');
-        };
+            // fallback by contentsid
+            request(urlByContentsId, function(xhr2) {
+                if (xhr2 && xhr2.status >= 200 && xhr2.status < 300) {
+                    try {
+                        var response2 = JSON.parse(xhr2.responseText);
+                        console.log('[step_player.js:fetchSectionData] Raw response (contentsid):', response2);
+                        var payload2 = resolveSectionPayload(response2);
+                        console.log('[step_player.js:fetchSectionData] Resolved payload (contentsid):', payload2);
+                        if (processPayload(payload2)) return;
+                    } catch (e2) {
+                        console.warn('[step_player.js:fetchSectionData] Parse/processing error (contentsid):', e2);
+                    }
+                }
 
-        xhr.send();
+                handleError('[step_player.js:fetchSectionData:' + getLineNumber() + '] Failed to load section data', '데이터를 불러오지 못했습니다.');
+            });
+        });
     }
 
     // ========================================
@@ -786,7 +806,7 @@ var StepPlayer = (function() {
     // ========================================
     function open(contentsid) {
         if (!contentsid) {
-            handleError('[step_player.js:open:' + getLineNumber() + '] No contentsid provided', '콘텐츠 ID가 제공되지 않았습니다.');
+            handleError('[step_player.js:open:' + getLineNumber() + '] No id provided', '상호작용/콘텐츠 ID가 제공되지 않았습니다.');
             return;
         }
 

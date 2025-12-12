@@ -94,6 +94,54 @@ body::before {
     justify-content: flex-start;
 }
 
+/* ==================== 통합 그리드(섹터 분리 제거) ==================== */
+.unified-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+
+@media (max-width: 768px) {
+    .unified-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+}
+
+/* 타입 배지(카드 유형 구분) */
+.mission-type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    line-height: 1;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--moon);
+    backdrop-filter: blur(6px);
+}
+
+.mission-type-badge .type-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    box-shadow: 0 0 8px rgba(255,255,255,0.15);
+}
+
+.mission-type-badge[data-category="future_design"] .type-dot { background: var(--cat-voyage); box-shadow: 0 0 10px rgba(124,77,255,0.35); }
+.mission-type-badge[data-category="execution"] .type-dot { background: var(--cat-mission); box-shadow: 0 0 10px rgba(255,109,0,0.35); }
+.mission-type-badge[data-category="branding"] .type-dot { background: var(--cat-flag); box-shadow: 0 0 10px rgba(245,0,87,0.35); }
+.mission-type-badge[data-category="knowledge_management"] .type-dot { background: var(--cat-resource); box-shadow: 0 0 10px rgba(0,230,118,0.35); }
+
+.mission-type-badge .type-text { opacity: 0.9; }
+
 /* ==================== 미션 카드 ==================== */
 .mission-card {
     width: 150px;
@@ -292,7 +340,7 @@ body::before {
     position: fixed;
     right: 0;
     top: 0;
-    width: 400px;
+    width: clamp(520px, 66vw, 1040px);
     height: 100vh;
     background: linear-gradient(180deg, var(--space-mid) 0%, var(--space-dark) 100%);
     box-shadow: -8px 0 32px rgba(0,0,0,0.4);
@@ -312,7 +360,7 @@ body::before {
 .chat-panel.open { transform: translateX(0); }
 
 .main-container { transition: all 0.3s ease; }
-.main-container.shifted { margin-right: 400px; }
+.main-container.shifted { margin-right: clamp(520px, 66vw, 1040px); }
 
 @media (max-width: 768px) {
     .main-container.shifted { margin-right: 0; }
@@ -444,6 +492,30 @@ body::before {
 .view-btn.active {
     background: rgba(79,195,247,0.2);
     color: var(--planet-blue);
+}
+
+/* ==================== 채팅 제안 버튼 (글로벌 멘토링) ==================== */
+.chat-suggestion-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem 0;
+}
+
+.chat-suggestion-btn {
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--moon);
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.chat-suggestion-btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
 }
 
 /* 뷰 컨테이너 */

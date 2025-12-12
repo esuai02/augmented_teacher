@@ -1,0 +1,150 @@
+# 수학 교재별 활동 완료 전략 데이터베이스
+# 현직 수학선생님 수준 도달을 위한 핵심 DB
+# 선생님 체크리스트 및 텍스트 입력을 통한 데이터 수집 가정
+
+version: "1.0"
+description: "수학 교재별 활동 완료 전략 (단계별, 시간 산정, 정답률 목표)"
+
+textbooks:
+  # 쎈 시리즈
+  - textbook_id: "senn"
+    textbook_name: "쎈"
+    publisher: "좋은책신사고"
+    type: "문제집"
+    difficulty_progression: ["A", "B", "C"]
+    
+    stages:
+      - stage: "A"
+        description: "기본형"
+        target_accuracy: 0.80  # 목표 정답률
+        avg_time_per_problem: 3  # 문제당 평균 시간(분)
+        completion_strategy: "A단계 완료 후 B단계 진행"
+        priority: 1  # 우선순위 (높을수록 먼저)
+        
+      - stage: "B"
+        description: "유형"
+        target_accuracy: 0.70
+        avg_time_per_problem: 4.5
+        completion_strategy: "A단계 완료 후 B단계 진행"
+        priority: 2
+        
+      - stage: "C"
+        description: "심화"
+        target_accuracy: 0.60
+        avg_time_per_problem: 6
+        completion_strategy: "B단계 완료 후 C단계 진행"
+        priority: 3
+    
+    completion_rule: "A → B → C 순서 필수"
+    time_calculation: "문제 수 × 문제당 평균 시간"
+    
+  # 개념원리 시리즈
+  - textbook_id: "concept_principle"
+    textbook_name: "개념원리"
+    publisher: "이룸이앤비"
+    type: "개념서"
+    focus: "개념 이해"
+    
+    stages:
+      - stage: "concept"
+        description: "개념 설명"
+        avg_time_per_page: 20  # 페이지당 평균 시간(분)
+        completion_strategy: "페이지 순서대로 진행"
+        priority: 1
+    
+    completion_rule: "개념 완료 후 문제집(쎈 등) 진행 권장"
+    time_calculation: "페이지 수 × 페이지당 평균 시간"
+    
+  # 라이트쎈 시리즈
+  - textbook_id: "light_senn"
+    textbook_name: "라이트쎈"
+    publisher: "좋은책신사고"
+    type: "문제집"
+    difficulty_progression: ["기본형", "유형"]
+    
+    stages:
+      - stage: "basic"
+        description: "기본형"
+        target_accuracy: 0.75
+        avg_time_per_problem: 2.5
+        completion_strategy: "기본형 완료 후 유형 진행"
+        priority: 1
+        
+      - stage: "type"
+        description: "유형"
+        target_accuracy: 0.65
+        avg_time_per_problem: 4
+        completion_strategy: "기본형 완료 후 유형 진행"
+        priority: 2
+    
+    completion_rule: "기본형 → 유형 순서"
+    time_calculation: "문제 수 × 문제당 평균 시간"
+    
+  # RPM 시리즈
+  - textbook_id: "rpm"
+    textbook_name: "RPM"
+    publisher: "좋은책신사고"
+    type: "문제집"
+    difficulty_progression: ["A", "B", "C"]
+    
+    stages:
+      - stage: "A"
+        description: "기본 문제"
+        target_accuracy: 0.80
+        avg_time_per_problem: 3
+        completion_strategy: "A단계 완료 후 B단계 진행"
+        priority: 1
+        
+      - stage: "B"
+        description: "유형 문제"
+        target_accuracy: 0.70
+        avg_time_per_problem: 4.5
+        completion_strategy: "A단계 완료 후 B단계 진행"
+        priority: 2
+        
+      - stage: "C"
+        description: "심화 문제"
+        target_accuracy: 0.60
+        avg_time_per_problem: 6
+        completion_strategy: "B단계 완료 후 C단계 진행"
+        priority: 3
+    
+    completion_rule: "A → B → C 순서"
+    time_calculation: "문제 수 × 문제당 평균 시간"
+
+# 교재별 조합 전략
+textbook_combinations:
+  - combination_id: "concept_senn"
+    description: "개념원리 + 쎈"
+    order: ["concept_principle", "senn"]
+    rationale: "개념 이해 후 문제 풀이로 실력 향상"
+    
+  - combination_id: "senn_only"
+    description: "쎈 단독"
+    order: ["senn"]
+    rationale: "문제 풀이 중심 학습"
+
+# 시간 제약별 교재 활동 조정 전략
+time_constraint_adjustments:
+  - constraint: "time_abundant"
+    strategy: "모든 단계 완료 (A → B → C)"
+    
+  - constraint: "time_moderate"
+    strategy: "A, B단계 완료, C단계 선택적"
+    
+  - constraint: "time_limited"
+    strategy: "A단계만 완료, B, C단계 연기"
+
+# 데이터 수집 방법 참고
+data_collection_methods:
+  teacher_checklist:
+    - "쎈: A단계 완료 후 B단계 진행"
+    - "개념원리: 개념 완료 후 쎈 진행"
+    - "라이트쎈: 기본형 완료 후 유형 진행"
+    
+  teacher_text_input:
+    - "쎈 A단계: 문제당 평균 3분, 목표 정답률 80%"
+    - "쎈 B단계: 문제당 평균 4.5분, 목표 정답률 70%"
+    - "쎈 C단계: 문제당 평균 6분, 목표 정답률 60%"
+    - "개념원리: 페이지당 평균 20분, 개념 이해 중심"
+

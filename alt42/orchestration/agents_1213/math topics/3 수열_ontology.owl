@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 수열 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 등차수열 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=48996&amp;page=1&amp;quizid=84649</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 수열의 정의와 표기법을 이해하고, 수열의 일반항과 항의 관계를 파악할 수 있다. 수열을 함수의 관점에서 이해하고 실생활 맥락에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등차수열_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등차수열(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=48997&amp;page=1&amp;quizid=84650</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 등차수열의 정의와 공차의 개념을 이해하고, 등차수열의 성질을 파악할 수 있다. 등차수열을 식으로 표현하고 일반항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등차수열의_일반항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등차수열의 일반항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=48998&amp;page=1&amp;quizid=84651</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 등차수열의 일반항 공식 a_n = a + (n-1)d를 이해하고 적용할 수 있다. 초항과 공차를 이용하여 임의의 항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등차중항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등차중항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=48999&amp;page=1&amp;quizid=84652</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 세 수가 등차수열을 이룰 때 가운데 수를 등차중항이라 하며, 등차중항의 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조화수열과_조화중항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조화수열과 조화중항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=49000&amp;page=1&amp;quizid=84653</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 각 항의 역수가 등차수열을 이루는 수열을 조화수열이라 하며, 조화중항의 개념과 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등차수열의_합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등차수열의 합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=49001&amp;page=1&amp;quizid=84654</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 등차수열의 합 공식 S_n = n(a + l)/2 또는 S_n = n{2a + (n-1)d}/2를 이해하고 적용할 수 있다. 등차수열의 합을 효율적으로 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_합과_일반항_사이의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 합과 일반항 사이의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=8&amp;cmid=49002&amp;page=1&amp;quizid=84655</ar:hasURL>
+    <ar:description xml:lang="ko">등차수열(수학1) — 수열의 합 S_n과 일반항 a_n 사이의 관계 a_n = S_n - S_(n-1) (n≥2)를 이해하고, 합으로부터 일반항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 등비수열 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49003&amp;page=1&amp;quizid=84656</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 등비수열의 정의와 공비의 개념을 이해하고, 등비수열의 성질을 파악할 수 있다. 등비수열을 식으로 표현하고 일반항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열의_일반항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열의 일반항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49004&amp;page=1&amp;quizid=84657</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 등비수열의 일반항 공식 a_n = ar^(n-1)을 이해하고 적용할 수 있다. 초항과 공비를 이용하여 임의의 항을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비중항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비중항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49005&amp;page=1&amp;quizid=84658</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 세 수가 등비수열을 이룰 때 가운데 수를 등비중항이라 하며, 등비중항의 성질을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열의_합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열의 합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49006&amp;page=1&amp;quizid=84659</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 등비수열의 합 공식 S_n = a(r^n - 1)/(r - 1) (r≠1)을 이해하고 적용할 수 있다. 등비수열의 합을 효율적으로 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열의_합의_활용_원리합계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열의 합의 활용-원리합계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49007&amp;page=1&amp;quizid=84660</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 등비수열의 합을 활용하여 원리합계 문제를 해결할 수 있다. 복리 계산과 관련된 실생활 문제에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열의_합의_활용_상환과_연금의_현가">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열의 합의 활용-상환과 연금의 현가</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=9&amp;cmid=49008&amp;page=1&amp;quizid=84661</ar:hasURL>
+    <ar:description xml:lang="ko">등비수열(수학1) — 등비수열의 합을 활용하여 상환과 연금의 현가 문제를 해결할 수 있다. 금융 수학의 기본 개념을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 수열의 합 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합의_기호_∑">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합의 기호 ∑</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49009&amp;page=1&amp;quizid=84662</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 합의 기호 ∑의 정의와 표기법을 이해하고, ∑를 이용하여 수열의 합을 간결하게 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#∑의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">∑의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49010&amp;page=1&amp;quizid=84663</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 합의 기호 ∑의 성질(선형성, 분배법칙 등)을 이해하고 활용하여 복잡한 합을 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#자연수의_거듭제곱의_합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">자연수의 거듭제곱의 합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49011&amp;page=1&amp;quizid=84664</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 자연수의 거듭제곱의 합 공식(1²+2²+...+n², 1³+2³+...+n³ 등)을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연속한_자연수들의_곱의_합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연속한 자연수들의 곱의 합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49012&amp;page=1&amp;quizid=84665</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 연속한 자연수들의 곱의 합을 계산하는 방법을 이해하고, 계차수열의 개념을 활용하여 합을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#분수_꼴로_주어진_수열의_합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">분수 꼴로 주어진 수열의 합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49013&amp;page=1&amp;quizid=84666</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 분수 꼴로 주어진 수열의 합을 계산하는 방법을 이해하고, 부분분수 분해 등의 기법을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#군수열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">군수열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49014&amp;page=1&amp;quizid=84667</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 군수열의 개념을 이해하고, 수열을 여러 개의 군으로 나누어 일반항과 합을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#멱급수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">멱급수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=10&amp;cmid=49015&amp;page=1&amp;quizid=84668</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 합(수학1) — 멱급수의 개념을 이해하고, 등비급수와 관련된 멱급수를 다룰 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 수학적 귀납법 (수학1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_귀납적_정의">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 귀납적 정의</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49016&amp;page=1&amp;quizid=84669</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — 수열을 귀납적으로 정의하는 방법을 이해하고, 초항과 점화식을 이용하여 수열을 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기본적인_관계식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기본적인 관계식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49017&amp;page=1&amp;quizid=84670</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — 수열의 항들 사이의 기본적인 관계식을 이해하고, 점화식을 일반항으로 변환하는 방법을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#a_n_1_a_n_f꼴로_정의된_수열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">a_n+₁=a_n+f꼴로 정의된 수열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49018&amp;page=1&amp;quizid=84671</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — a_(n+1) = a_n + f(n) 꼴로 정의된 수열의 일반항을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#a_n_1_a_nf꼴로_정의된_수열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">a_n+¹=a_nf꼴로 정의된 수열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49019&amp;page=1&amp;quizid=84672</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — a_(n+1) = a_n × f(n) 꼴로 정의된 수열의 일반항을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#여러_가지_수열의_귀납적_정의">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">여러 가지 수열의 귀납적 정의</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49020&amp;page=1&amp;quizid=84673</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — 다양한 형태의 귀납적 정의를 가진 수열의 일반항을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수학적_귀납법_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수학적 귀납법(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=61&amp;nch=11&amp;cmid=49021&amp;page=1&amp;quizid=84674</ar:hasURL>
+    <ar:description xml:lang="ko">수학적 귀납법(수학1) — 수학적 귀납법의 원리를 이해하고, 명제가 모든 자연수에 대해 성립함을 증명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 수열의 극한 (미분과 적분) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_수렴">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 수렴</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49045&amp;page=1&amp;quizid=84690</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 수열의 수렴의 정의를 이해하고, ε-N 논법을 통해 수열이 수렴함을 증명할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49046&amp;page=1&amp;quizid=84691</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 수열의 발산의 정의를 이해하고, 양의 무한대로 발산하거나 진동하는 수열을 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_극한에_대한_기본_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 극한에 대한 기본 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49047&amp;page=1&amp;quizid=84692</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 수열의 극한에 대한 기본 성질(합, 차, 곱, 몫의 극한)을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_극한값의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 극한값의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49048&amp;page=1&amp;quizid=84693</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 다양한 형태의 수열의 극한값을 계산하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수열의_극한의_대소_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수열의 극한의 대소 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49049&amp;page=1&amp;quizid=84694</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 수열의 극한의 대소 관계를 이해하고, 조임정리 등을 활용하여 극한값을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비수열의_수렴과_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비수열의 수렴과 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49050&amp;page=1&amp;quizid=84695</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 등비수열의 수렴과 발산 조건을 이해하고, 공비의 절댓값에 따라 극한값을 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#귀납적으로_정의된_수열의_극한">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">귀납적으로 정의된 수열의 극한</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=1&amp;cmid=49051&amp;page=1&amp;quizid=84696</ar:hasURL>
+    <ar:description xml:lang="ko">수열의 극한(미분과 적분) — 귀납적으로 정의된 수열의 극한을 구하는 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 6단계: 급수 (미분과 적분) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#급수_주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">급수(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49052&amp;page=1&amp;quizid=84697</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 급수의 정의를 이해하고, 수열의 합의 극한으로서 급수를 다룰 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#급수의_수렴과_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">급수의 수렴과 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49053&amp;page=1&amp;quizid=84698</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 급수의 수렴과 발산의 정의를 이해하고, 부분합의 극한을 통해 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#항의_부호가_교대로_바뀌는_급수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">항의 부호가 교대로 바뀌는 급수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49054&amp;page=1&amp;quizid=84699</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 교대급수의 개념을 이해하고, 라이프니츠 판정법 등을 활용하여 수렴성을 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#∑a_n의_수렴_발산과_lima_n사이의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">∑a_n의 수렴, 발산과 lima_n사이의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49055&amp;page=1&amp;quizid=84700</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 급수 ∑a_n의 수렴, 발산과 일반항의 극한 lim a_n 사이의 관계를 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#급수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">급수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49056&amp;page=1&amp;quizid=84701</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 급수의 기본 성질(합, 차, 상수배 등)을 이해하고 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비급수의_수렴과_발산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비급수의 수렴과 발산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49057&amp;page=1&amp;quizid=84702</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 등비급수의 수렴과 발산 조건을 이해하고, 공비의 절댓값에 따라 수렴성을 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비급수와_도형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비급수와 도형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49058&amp;page=1&amp;quizid=84703</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 등비급수를 활용하여 도형의 넓이, 길이 등의 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등비급수와_순환소수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등비급수와 순환소수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=63&amp;nch=2&amp;cmid=49059&amp;page=1&amp;quizid=84704</ar:hasURL>
+    <ar:description xml:lang="ko">급수(미분과 적분) — 등비급수를 활용하여 순환소수를 분수로 변환할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- precedes 관계: 동일 stage 내 순서 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등차수열_주제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등차수열_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등차수열의_일반항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등차수열의_일반항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등차중항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등차중항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#조화수열과_조화중항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조화수열과_조화중항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등차수열의_합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등차수열의_합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수열의_합과_일반항_사이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비수열의_일반항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열의_일반항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비중항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비중항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비수열의_합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열의_합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비수열의_합의_활용_원리합계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열의_합의_활용_원리합계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비수열의_합의_활용_상환과_연금의_현가"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_기호_∑">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#∑의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#∑의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#자연수의_거듭제곱의_합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#자연수의_거듭제곱의_합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연속한_자연수들의_곱의_합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연속한_자연수들의_곱의_합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#분수_꼴로_주어진_수열의_합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#분수_꼴로_주어진_수열의_합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#군수열"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#군수열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#멱급수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_귀납적_정의">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기본적인_관계식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기본적인_관계식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#a_n_1_a_n_f꼴로_정의된_수열"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a_n_1_a_n_f꼴로_정의된_수열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#a_n_1_a_nf꼴로_정의된_수열"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a_n_1_a_nf꼴로_정의된_수열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#여러_가지_수열의_귀납적_정의"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#여러_가지_수열의_귀납적_정의">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수학적_귀납법_주제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_수렴">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수열의_발산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수열의_극한에_대한_기본_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_극한에_대한_기본_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수열의_극한값의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_극한값의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수열의_극한의_대소_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_극한의_대소_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비수열의_수렴과_발산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열의_수렴과_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#귀납적으로_정의된_수열의_극한"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#급수_주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#급수의_수렴과_발산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#급수의_수렴과_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#항의_부호가_교대로_바뀌는_급수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#항의_부호가_교대로_바뀌는_급수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#∑a_n의_수렴_발산과_lima_n사이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#∑a_n의_수렴_발산과_lima_n사이의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#급수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#급수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비급수의_수렴과_발산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비급수의_수렴과_발산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비급수와_도형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비급수와_도형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등비급수와_순환소수"/>
+  </rdf:Description>
+
+  <!-- dependsOn 관계: 선행 학습 필요 -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등비수열_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#수열의_합과_일반항_사이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_기호_∑">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#등비수열의_합의_활용_상환과_연금의_현가"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_귀납적_정의">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#멱급수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수열의_수렴">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#수학적_귀납법_주제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#급수_주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#귀납적으로_정의된_수열의_극한"/>
+  </rdf:Description>
+
+</rdf:RDF>
+

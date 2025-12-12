@@ -1,0 +1,19 @@
+[ACKNOWLEDGMENT]
+
+{{student_name}}님, 말씀 잘 들었어요.
+{{original_intervention}}이(가) 맞지 않으실 수 있어요.
+
+[ALTERNATIVE_INTRO]
+
+그래서 다른 방법을 제안해 드릴게요.
+
+[OPTIONS]
+
+1. {{alternative_1}} - {{alt1_description}}
+2. {{alternative_2}} - {{alt2_description}}
+3. {{alternative_3}} - {{alt3_description}}
+
+[INVITATION]
+
+이 중에서 {{student_name}}님에게 맞는 게 있을까요?
+아니면 다른 아이디어가 있으시면 말씀해 주세요.

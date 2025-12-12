@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 경우의 수와 확률 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 경우의 수 (중등수학 2-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사건과_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사건과 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53356&amp;page=1&amp;quizid=86264</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 사건과 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사건 A 또는 사건 B가 일어나는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53357&amp;page=1&amp;quizid=86265</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 사건 A 또는 사건 B가 일어나는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 사건 A, B가 동시에 일어나는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53358&amp;page=1&amp;quizid=86266</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 두 사건 A, B가 동시에 일어나는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#최단_거리로_가는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">최단 거리로 가는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53359&amp;page=1&amp;quizid=86267</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 최단 거리로 가는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일렬로_세우는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일렬로 세우는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53360&amp;page=1&amp;quizid=86268</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 일렬로 세우는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이웃하여_세우는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이웃하여 세우는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53361&amp;page=1&amp;quizid=86269</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 이웃하여 세우는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정수의_개수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정수의 개수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53362&amp;page=1&amp;quizid=86270</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 정수의 개수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#대표를_뽑는_경우의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">대표를 뽑는 경우의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=9&amp;cmid=53363&amp;page=1&amp;quizid=86271</ar:hasURL>
+    <ar:description xml:lang="ko">경우의 수 (중등수학 2-2)(중등) — 대표를 뽑는 경우의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 확률 (중등수학 2-2) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#확률의_뜻">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">확률의 뜻</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53364&amp;page=1&amp;quizid=86272</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 확률의 뜻의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#확률의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">확률의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53365&amp;page=1&amp;quizid=86273</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 확률의 성질의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#어떤_사건이_일어나지_않을_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">어떤 사건이 일어나지 않을 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53366&amp;page=1&amp;quizid=86274</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 어떤 사건이 일어나지 않을 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#도형에서의_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">도형에서의 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53367&amp;page=1&amp;quizid=86275</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 도형에서의 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어날_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사건 A 또는 사건 B가 일어날 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53368&amp;page=1&amp;quizid=86276</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 사건 A 또는 사건 B가 일어날 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어날_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 사건 A, B가 동시에 일어날 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53369&amp;page=1&amp;quizid=86277</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 두 사건 A, B가 동시에 일어날 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연속하여_뽑을_때의_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연속하여 뽑을 때의 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=69&amp;nch=10&amp;cmid=53370&amp;page=1&amp;quizid=86278</ar:hasURL>
+    <ar:description xml:lang="ko">확률  (중등수학 2-2)(중등) — 연속하여 뽑을 때의 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 순열과 조합 (고등수학 하) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합의_법칙">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합의 법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=7&amp;cmid=48741&amp;page=1&amp;quizid=85077</ar:hasURL>
+    <ar:description xml:lang="ko">순열과 조합 (고등수학 하)(고등) — 합의 법칙의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱의_법칙">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱의 법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=7&amp;cmid=48742&amp;page=1&amp;quizid=85078</ar:hasURL>
+    <ar:description xml:lang="ko">순열과 조합 (고등수학 하)(고등) — 곱의 법칙의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#순열_확통">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">순열(확통)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=7&amp;cmid=48743&amp;page=1&amp;quizid=85079</ar:hasURL>
+    <ar:description xml:lang="ko">순열과 조합 (고등수학 하)(고등) — 순열(확통)의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#P의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">P의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=7&amp;cmid=48744&amp;page=1&amp;quizid=85080</ar:hasURL>
+    <ar:description xml:lang="ko">순열과 조합 (고등수학 하)(고등) — P의 계산의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조합_확통">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조합(확통)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=7&amp;cmid=48749&amp;page=1&amp;quizid=85085</ar:hasURL>
+    <ar:description xml:lang="ko">순열과 조합 (고등수학 하)(고등) — 조합(확통)의 개념을 이해하고 문제를 해결할 수 있다. 조합의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 순열 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합의_법칙_확통">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합의 법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=1&amp;cmid=48741&amp;page=1&amp;quizid=85077</ar:hasURL>
+    <ar:description xml:lang="ko">순열 (확률과 통계)(고등) — 합의 법칙의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱의_법칙_확통">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱의 법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=1&amp;cmid=48742&amp;page=1&amp;quizid=85078</ar:hasURL>
+    <ar:description xml:lang="ko">순열 (확률과 통계)(고등) — 곱의 법칙의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#순열_확통2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">순열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=1&amp;cmid=48743&amp;page=1&amp;quizid=85079</ar:hasURL>
+    <ar:description xml:lang="ko">순열 (확률과 통계)(고등) — 순열의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#P의_계산_확통">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">P의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=1&amp;cmid=48744&amp;page=1&amp;quizid=85080</ar:hasURL>
+    <ar:description xml:lang="ko">순열 (확률과 통계)(고등) — P의 계산의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 여러가지 순열 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원순열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원순열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=2&amp;cmid=48745&amp;page=1&amp;quizid=85081</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 순열  (확률과 통계)(고등) — 원순열의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다각형으로 배열하는 방법의 수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=2&amp;cmid=48746&amp;page=1&amp;quizid=85082</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 순열  (확률과 통계)(고등) — 다각형으로 배열하는 방법의 수의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#중복순열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">중복순열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=2&amp;cmid=48747&amp;page=1&amp;quizid=85083</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 순열  (확률과 통계)(고등) — 중복순열의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#같은_것이_있는_순열">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">같은 것이 있는 순열</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=2&amp;cmid=48748&amp;page=1&amp;quizid=85084</ar:hasURL>
+    <ar:description xml:lang="ko">여러가지 순열  (확률과 통계)(고등) — 같은 것이 있는 순열의 개념을 이해하고 문제를 해결할 수 있다. 순열의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 6단계: 조합 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조합_확통2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조합(확통)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=3&amp;cmid=48749&amp;page=1&amp;quizid=85085</ar:hasURL>
+    <ar:description xml:lang="ko">조합  (확률과 통계)(고등) — 조합(확통)의 개념을 이해하고 문제를 해결할 수 있다. 조합의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#중복조합">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">중복조합</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=3&amp;cmid=48750&amp;page=1&amp;quizid=85086</ar:hasURL>
+    <ar:description xml:lang="ko">조합  (확률과 통계)(고등) — 중복조합의 개념을 이해하고 문제를 해결할 수 있다. 조합의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">순열, 중복순열, 조합, 중복조합의 비교</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=3&amp;cmid=48751&amp;page=1&amp;quizid=85087</ar:hasURL>
+    <ar:description xml:lang="ko">조합  (확률과 통계)(고등) — 순열, 중복순열, 조합, 중복조합의 비교의 개념을 이해하고 문제를 해결할 수 있다. 조합의 개념과 계산 방법을 이해하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 7단계: 이항정리와 분할 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이항정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이항정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=4&amp;cmid=48752&amp;page=1&amp;quizid=85088</ar:hasURL>
+    <ar:description xml:lang="ko">이항정리와 분할  (확률과 통계)(고등) — 이항정리의 개념을 이해하고 문제를 해결할 수 있다. 이항정리의 개념을 이해하고 전개식을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#a_b_c_n의_전개식의_일반항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">(a+b+c)ⁿ의 전개식의 일반항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=4&amp;cmid=48753&amp;page=1&amp;quizid=85089</ar:hasURL>
+    <ar:description xml:lang="ko">이항정리와 분할  (확률과 통계)(고등) — (a+b+c)ⁿ의 전개식의 일반항의 개념을 이해하고 문제를 해결할 수 있다. 이항정리의 개념을 이해하고 전개식을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#파스칼의_삼각형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">파스칼의 삼각형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=4&amp;cmid=48754&amp;page=1&amp;quizid=85090</ar:hasURL>
+    <ar:description xml:lang="ko">이항정리와 분할  (확률과 통계)(고등) — 파스칼의 삼각형의 개념을 이해하고 문제를 해결할 수 있다. 이항정리의 개념을 이해하고 전개식을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#파스칼의_삼각형의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">파스칼의 삼각형의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=4&amp;cmid=48755&amp;page=1&amp;quizid=85091</ar:hasURL>
+    <ar:description xml:lang="ko">이항정리와 분할  (확률과 통계)(고등) — 파스칼의 삼각형의 성질의 개념을 이해하고 문제를 해결할 수 있다. 이항정리의 개념을 이해하고 전개식을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이항계수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이항계수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=4&amp;cmid=48756&amp;page=1&amp;quizid=85092</ar:hasURL>
+    <ar:description xml:lang="ko">이항정리와 분할  (확률과 통계)(고등) — 이항계수의 성질의 개념을 이해하고 문제를 해결할 수 있다. 이항정리의 개념을 이해하고 전개식을 활용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 8단계: 확률의 뜻과 활용 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#시행과_사건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">시행과 사건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48763&amp;page=1&amp;quizid=85099</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 시행과 사건의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합사건, 곱사건, 배반사건, 여사건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48764&amp;page=1&amp;quizid=85100</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 합사건, 곱사건, 배반사건, 여사건의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수학적_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수학적 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48765&amp;page=1&amp;quizid=85101</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 수학적 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#통계적_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">통계적 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48766&amp;page=1&amp;quizid=85102</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 통계적 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기하학적_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기하학적 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48767&amp;page=1&amp;quizid=85103</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 기하학적 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#확률의_기본_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">확률의 기본 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48768&amp;page=1&amp;quizid=85104</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 확률의 기본 성질의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#확률의_덧셈정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">확률의 덧셈정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48769&amp;page=1&amp;quizid=85105</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 확률의 덧셈정리의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#여사건의_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">여사건의 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=5&amp;cmid=48770&amp;page=1&amp;quizid=85106</ar:hasURL>
+    <ar:description xml:lang="ko">확률의 뜻과 활용  (확률과 통계)(고등) — 여사건의 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 9단계: 조건부확률 (확률과 통계) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조건부확률_개념">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조건부확률(개념)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48771&amp;page=1&amp;quizid=85107</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 조건부확률(개념) 의 개념을 이해하고 문제를 해결할 수 있다. 조건부확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#확률의_곱셈정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">확률의 곱셈정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48772&amp;page=1&amp;quizid=85108</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 확률의 곱셈정리 의 개념을 이해하고 문제를 해결할 수 있다. 조건부확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사건의_독립과_종속">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사건의 독립과 종속</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48773&amp;page=1&amp;quizid=85109</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 사건의 독립과 종속 의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#배반사건과_독립사건의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">배반사건과 독립사건의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48774&amp;page=1&amp;quizid=85110</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 배반사건과 독립사건의 관계 의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#독립이기_위한_필요충분조건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">독립이기 위한 필요충분조건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48775&amp;page=1&amp;quizid=85111</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 독립이기 위한 필요충분조건 의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_사건_A_B가_독립일_때_A와_B^c_A^c와_B_A^c와_B^c의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 사건 A，B가 독립일 때， A와 B^c，A^c와 B，A^c와 B^c의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48776&amp;page=1&amp;quizid=85112</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 두 사건 A，B가 독립일 때， A와 B^c，A^c와 B，A^c와 B^c의 관계 의 개념을 이해하고 문제를 해결할 수 있다. 경우의 수를 체계적으로 계산하고 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#독립시행의_확률">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">독립시행의 확률</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=64&amp;nch=6&amp;cmid=48777&amp;page=1&amp;quizid=85113</ar:hasURL>
+    <ar:description xml:lang="ko">조건부확률  (확률과 통계)(고등) — 독립시행의 확률의 개념을 이해하고 문제를 해결할 수 있다. 확률의 개념을 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- precedes 관계 (동일 단원 내 순서) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건과_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#최단_거리로_가는_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일렬로_세우는_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이웃하여_세우는_경우의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정수의_개수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정수의_개수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_뜻">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#확률의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#어떤_사건이_일어나지_않을_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#어떤_사건이_일어나지_않을_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#도형에서의_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#도형에서의_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어날_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어날_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어날_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어날_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연속하여_뽑을_때의_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_법칙">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱의_법칙">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#순열_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순열_확통">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#P의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#P의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#조합_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_법칙_확통">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱의_법칙_확통">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#순열_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순열_확통2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#P의_계산_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원순열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#중복순열"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#중복순열">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#같은_것이_있는_순열"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조합_확통2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#중복조합"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#중복조합">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이항정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#a_b_c_n의_전개식의_일반항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a_b_c_n의_전개식의_일반항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#파스칼의_삼각형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#파스칼의_삼각형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#파스칼의_삼각형의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#파스칼의_삼각형의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이항계수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#시행과_사건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수학적_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수학적_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#통계적_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#통계적_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기하학적_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기하학적_확률">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#확률의_기본_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_기본_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#확률의_덧셈정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_덧셈정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#여사건의_확률"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조건부확률_개념">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#확률의_곱셈정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_곱셈정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#사건의_독립과_종속"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건의_독립과_종속">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#배반사건과_독립사건의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#배반사건과_독립사건의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#독립이기_위한_필요충분조건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#독립이기_위한_필요충분조건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_독립일_때_A와_B^c_A^c와_B_A^c와_B^c의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_사건_A_B가_독립일_때_A와_B^c_A^c와_B_A^c와_B^c의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#독립시행의_확률"/>
+  </rdf:Description>
+
+      <!-- dependsOn 관계 (내용의 논리적 의존관계) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_뜻">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_법칙">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#연속하여_뽑을_때의_확률"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합의_법칙_확통">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원순열">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#P의_계산_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조합_확통2">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#같은_것이_있는_순열"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이항정리">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#시행과_사건">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이항계수의_성질"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조건부확률_개념">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#여사건의_확률"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_성질">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#어떤_사건이_일어나지_않을_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#도형에서의_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어날_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어날_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연속하여_뽑을_때의_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱의_법칙">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순열_확통">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#P의_계산">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조합_확통">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱의_법칙_확통">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순열_확통2">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#P의_계산_확통">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#중복순열">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#같은_것이_있는_순열">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#중복조합">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#대표를_뽑는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#a_b_c_n의_전개식의_일반항">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#파스칼의_삼각형">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#파스칼의_삼각형의_성질">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이항계수의_성질">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#순열_중복순열_조합_중복조합의_비교"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조합_확통2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일렬로_세우는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#이웃하여_세우는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수학적_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#통계적_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기하학적_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_기본_성질">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_덧셈정리">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#여사건의_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#확률의_곱셈정리">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사건의_독립과_종속">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#배반사건과_독립사건의_관계">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#독립이기_위한_필요충분조건">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_사건_A_B가_독립일_때_A와_B^c_A^c와_B_A^c와_B^c의_관계">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#두_사건_A_B가_동시에_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#최단_거리로_가는_경우의_수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#독립시행의_확률">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#시행과_사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합사건_곱사건_배반사건_여사건"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#사건_A_또는_사건_B가_일어나는_경우의_수"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#합의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#곱의_법칙_확통"/>
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다각형으로_배열하는_방법의_수"/>
+  </rdf:Description>
+
+</rdf:RDF>
+

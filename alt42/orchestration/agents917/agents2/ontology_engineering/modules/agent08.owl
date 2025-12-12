@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent08">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 08 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 08 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 08: Calmness 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingSpeedBalance">
+    <rdfs:label xml:lang="ko">ThinkingSpeedBalance</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 속도와 판단 균형을 온톨로지로 표현 (Agent 08 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingPattern">
+    <rdfs:label xml:lang="ko">ThinkingPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 패턴(직감형/불확신형/생략형)을 온톨로지로 표현 (Agent 08 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingHabitImprovement">
+    <rdfs:label xml:lang="ko">ThinkingHabitImprovement</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 습관 개선을 온톨로지로 표현 (Agent 08 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SolvingTime">
+    <rdfs:label xml:lang="ko">SolvingTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">풀이 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AnswerSelectionPattern">
+    <rdfs:label xml:lang="ko">AnswerSelectionPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">답 선택 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CorrectRate">
+    <rdfs:label xml:lang="ko">CorrectRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">정답률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CalmnessScore">
+    <rdfs:label xml:lang="ko">CalmnessScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">침착도 점수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingRoutine">
+    <rdfs:label xml:lang="ko">ThinkingRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 루틴 (검증→선택→점검)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PauseStrategy">
+    <rdfs:label xml:lang="ko">PauseStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">멈춤 전략 (5초 점검, 근거 확언)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingSpeed">
+    <rdfs:label xml:lang="ko">ThinkingSpeed</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 속도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConfidenceSignal">
+    <rdfs:label xml:lang="ko">ConfidenceSignal</rdfs:label>
+    <rdfs:comment xml:lang="ko">확신 신호</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OverAttemptRatio">
+    <rdfs:label xml:lang="ko">OverAttemptRatio</rdfs:label>
+    <rdfs:comment xml:lang="ko">무리한 시도 비율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingOmissionRate">
+    <rdfs:label xml:lang="ko">ThinkingOmissionRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">사고 생략률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#IntuitiveJudgment">
+    <rdfs:label xml:lang="ko">IntuitiveJudgment</rdfs:label>
+    <rdfs:comment xml:lang="ko">직감형 판단</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UncertaintyAvoidance">
+    <rdfs:label xml:lang="ko">UncertaintyAvoidance</rdfs:label>
+    <rdfs:comment xml:lang="ko">불확신형 회피</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OmissionThinking">
+    <rdfs:label xml:lang="ko">OmissionThinking</rdfs:label>
+    <rdfs:comment xml:lang="ko">생략형 사고</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackStrategy">
+    <rdfs:label xml:lang="ko">FeedbackStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">피드백 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfVerificationQuestions">
+    <rdfs:label xml:lang="ko">SelfVerificationQuestions</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기검증 질문</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EvidenceTraining">
+    <rdfs:label xml:lang="ko">EvidenceTraining</rdfs:label>
+    <rdfs:comment xml:lang="ko">근거 명시 훈련</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeManagementRoutine">
+    <rdfs:label xml:lang="ko">TimeManagementRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간 관리 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CalmnessTrend">
+    <rdfs:label xml:lang="ko">CalmnessTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">침착도 추이</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConfidenceTrend">
+    <rdfs:label xml:lang="ko">ConfidenceTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">확신도 추이</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CorrectRateTrend">
+    <rdfs:label xml:lang="ko">CorrectRateTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">정답률 추이</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionData">
+    <rdfs:label xml:lang="ko">EmotionData</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 데이터</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueData">
+    <rdfs:label xml:lang="ko">FatigueData</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 데이터</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConcentrationData">
+    <rdfs:label xml:lang="ko">ConcentrationData</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중도 데이터</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TrainingPlan">
+    <rdfs:label xml:lang="ko">TrainingPlan</rdfs:label>
+    <rdfs:comment xml:lang="ko">훈련 계획</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImprovementStages">
+    <rdfs:label xml:lang="ko">ImprovementStages</rdfs:label>
+    <rdfs:comment xml:lang="ko">개선 단계</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#HabitFormation">
+    <rdfs:label xml:lang="ko">HabitFormation</rdfs:label>
+    <rdfs:comment xml:lang="ko">습관 형성</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 08: Calmness 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingSpeedBalance">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SolvingTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AnswerSelectionPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CorrectRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CalmnessScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ThinkingRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PauseStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ThinkingSpeed"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueLevel"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingPattern">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConfidenceSignal"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OverAttemptRatio"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ThinkingOmissionRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#IntuitiveJudgment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UncertaintyAvoidance"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OmissionThinking"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfVerificationQuestions"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EvidenceTraining"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeManagementRoutine"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ThinkingHabitImprovement">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CalmnessTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConfidenceTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CorrectRateTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TrainingPlan"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImprovementStages"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HabitFormation"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

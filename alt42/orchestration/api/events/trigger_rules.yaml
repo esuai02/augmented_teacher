@@ -1,0 +1,37 @@
+# Trigger Rules (YAML)
+# - event_type: 수집된 이벤트 타입
+# - agent_id: 1~22
+# - priority: 1~10 (높을수록 우선)
+# - conditions: event payload에서 field를 읽어 비교
+#
+# Note: 본 파일은 trigger_engine.php의 간단 파서(또는 yaml_parse_file)로 로드됩니다.
+
+rules:
+  - id: "rule_problem_wrong_agent11"
+    event_type: "problem_wrong"
+    agent_id: 11
+    priority: 9
+    description: "문제 오답 시 문제노트(Agent 11) 즉시 실행"
+    conditions: []
+
+  - id: "rule_consecutive_wrong_3_agent05"
+    event_type: "problem_wrong"
+    agent_id: 5
+    priority: 9
+    description: "연속 오답 3회 이상 시 학습정서(Agent 05) 실행"
+    conditions:
+      - field: "data.consecutive_wrong_count"
+        operator: ">="
+        value: 3
+
+  - id: "rule_consecutive_wrong_5_agent13"
+    event_type: "problem_wrong"
+    agent_id: 13
+    priority: 10
+    description: "연속 오답 5회 이상 시 학습이탈(Agent 13) 실행"
+    conditions:
+      - field: "data.consecutive_wrong_count"
+        operator: ">="
+        value: 5
+
+

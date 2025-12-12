@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>온톨로지 문서 관리</title>
+    <link rel="stylesheet" href="docindex.css">
+    <style>
+        /* 기본 리셋 및 전체 페이지 스타일 */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 사이드바: 파일 트리 -->
+        <div class="sidebar">
+            <h2>📁 문서 목록</h2>
+            <input type="text" class="search-box" id="search-box" placeholder="문서 검색...">
+            <ul class="file-tree" id="file-tree">
+                <!-- JavaScript로 동적 생성 -->
+            </ul>
+        </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <!-- 에디터 패널 -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <h3 id="file-title">문서를 선택하세요</h3>
+                    <div class="editor-toolbar">
+                        <div class="view-tabs">
+                            <button class="tab-btn" id="edit-tab" onclick="switchView('edit')">✏️ 편집</button>
+                            <button class="tab-btn active" id="preview-tab" onclick="switchView('preview')">👁️ 미리보기</button>
+                        </div>
+                        <div id="relations-graph" class="relations-graph-inline">
+                            <span style="color: #999; font-size: 12px;">문서를 선택하면 관련 문서가 표시됩니다.</span>
+                        </div>
+                        <div class="toolbar-buttons">
+                            <button class="btn btn-primary" onclick="saveFile()">💾 저장</button>
+                            <button class="btn btn-secondary" onclick="copyFileContent()" title="폴더+파일명+내용 복사">📋 복사</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-message" id="status-message"></div>
+                <div class="editor-content">
+                    <textarea id="markdown-editor" style="display: none;" placeholder="문서를 선택하면 여기에 표시됩니다..."></textarea>
+                    <div id="markdown-preview" class="markdown-preview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="docindex.js"></script>
+    <script>
+        // API URL 설정
+        const API_URL = '{{API_URL}}';
+        const BASE_URL = '{{BASE_URL}}';
+    </script>
+</body>
+</html>
+

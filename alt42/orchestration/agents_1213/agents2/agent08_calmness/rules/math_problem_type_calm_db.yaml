@@ -1,0 +1,261 @@
+# 수학 문제 유형별 침착도 패턴 DB
+# File: agent08_calmness/rules/math_problem_type_calm_db.yaml
+# Purpose: 수학 문제 유형별 침착도 기준선 및 패턴 정의
+# 
+# 현직 수학선생님의 경험 기반 데이터
+# - 학생 설문: "이 유형의 문제를 풀 때 어떤 느낌이 들었나요?"
+# - 선생님 체크리스트: "이 유형에서 침착도가 떨어지는 패턴"
+# - 텍스트 입력: 선생님의 관찰 기록
+
+version: "1.0"
+description: "수학 문제 유형별 침착도 특성 및 관리 기준"
+
+problem_types:
+  # 계산형 문제 (계산 문제, 연산 문제)
+  calculation:
+    name: "계산형 문제"
+    description: "수치 계산이 주된 문제 유형"
+    characteristics:
+      - 빠른 풀이 가능
+      - 정확도가 핵심
+      - 반복 연습 효과 큼
+    calm_standards:
+      normal_range: [85, 100]
+      baseline: 90
+      decline_threshold: 80
+      intervention_threshold: 75
+    solving_patterns:
+      - 빠른 풀이 허용 (평균 대비 70% 이하 시간)
+      - 정답률 90% 이상 기대
+      - 침착도 85 이하 시 계산 실수 증가
+    calm_factors:
+      positive:
+        - 계산 연습량 충분
+        - 집중력 높음
+        - 피로도 낮음
+      negative:
+        - 계산 실수 패턴
+        - 집중력 저하
+        - 피로 누적
+    intervention_strategy:
+      low_calm:
+        - 쉬운 계산 문제로 워밍업
+        - 계산 연습 문제 제공
+        - 집중력 회복 활동
+      normal_calm:
+        - 표준 계산 문제 진행
+        - 정확도 향상 연습
+    teacher_notes: |
+      "계산 문제는 침착도가 높을 때 정확도가 크게 향상됩니다.
+       침착도가 85 이하로 떨어지면 계산 실수가 급격히 증가하므로
+       쉬운 계산 문제로 워밍업하는 것이 효과적입니다."
+
+  # 개념형 문제 (개념 이해 문제, 정의 문제)
+  conceptual:
+    name: "개념형 문제"
+    description: "수학 개념의 이해와 적용이 주된 문제 유형"
+    characteristics:
+      - 신중한 사고 필요
+      - 개념 연결 중요
+      - 이해도가 핵심
+    calm_standards:
+      normal_range: [80, 95]
+      baseline: 85
+      decline_threshold: 75
+      intervention_threshold: 70
+    solving_patterns:
+      - 신중한 풀이 필요 (평균 대비 100~130% 시간)
+      - 정답률 80% 이상 기대
+      - 침착도 80 이하 시 개념 혼동 증가
+    calm_factors:
+      positive:
+        - 개념 이해도 높음
+        - 사고 과정 명확
+        - 연결 사고 능력
+      negative:
+        - 개념 혼동
+        - 사고 단절
+        - 이해 부족
+    intervention_strategy:
+      low_calm:
+        - 기본 개념 복습
+        - 쉬운 개념 문제 제공
+        - 개념 연결 활동
+      normal_calm:
+        - 표준 개념 문제 진행
+        - 개념 확장 학습
+    teacher_notes: |
+      "개념 문제는 침착도가 낮아도 천천히 생각하면 풀 수 있습니다.
+       하지만 침착도가 75 이하로 떨어지면 개념 혼동이 자주 발생하므로
+       기본 개념을 다시 확인하는 것이 중요합니다."
+
+  # 응용형 문제 (실생활 응용, 통합 문제)
+  application:
+    name: "응용형 문제"
+    description: "실생활 상황에 수학을 적용하는 문제 유형"
+    characteristics:
+      - 높은 확신 필요
+      - 상황 이해 중요
+      - 통합 사고 필요
+    calm_standards:
+      normal_range: [90, 100]
+      baseline: 92
+      decline_threshold: 85
+      intervention_threshold: 80
+    solving_patterns:
+      - 신중한 풀이 필요 (평균 대비 120~150% 시간)
+      - 정답률 75% 이상 기대
+      - 침착도 90 이하 시 상황 파악 실패 증가
+    calm_factors:
+      positive:
+        - 높은 확신
+        - 상황 이해 능력
+        - 통합 사고 능력
+      negative:
+        - 상황 파악 실패
+        - 확신 부족
+        - 피로 누적
+    intervention_strategy:
+      low_calm:
+        - 쉬운 응용 문제로 단계적 접근
+        - 상황 이해 연습
+        - 기본 개념 재확인
+      normal_calm:
+        - 표준 응용 문제 진행
+        - 실생활 연결 학습
+    teacher_notes: |
+      "응용 문제는 침착도가 높을 때 해결 가능합니다.
+       침착도가 90 이하로 떨어지면 상황 파악이 어려워지므로
+       쉬운 응용 문제로 단계적으로 접근하는 것이 좋습니다."
+
+  # 증명형 문제 (증명 문제, 논리 문제)
+  proof:
+    name: "증명형 문제"
+    description: "수학적 증명과 논리적 추론이 주된 문제 유형"
+    characteristics:
+      - 매우 신중한 사고 필요
+      - 논리적 순서 중요
+      - 추론 능력 필요
+    calm_standards:
+      normal_range: [75, 95]
+      baseline: 85
+      decline_threshold: 70
+      intervention_threshold: 65
+    solving_patterns:
+      - 매우 신중한 풀이 필요 (평균 대비 150~200% 시간)
+      - 정답률 70% 이상 기대
+      - 침착도 75 이하 시 논리 오류 증가
+    calm_factors:
+      positive:
+        - 논리적 사고 능력
+        - 추론 능력
+        - 집중력 높음
+      negative:
+        - 논리 오류
+        - 사고 단절
+        - 집중력 저하
+    intervention_strategy:
+      low_calm:
+        - 기본 증명 패턴 복습
+        - 쉬운 증명 문제 제공
+        - 논리 흐름 연습
+      normal_calm:
+        - 표준 증명 문제 진행
+        - 논리적 사고 향상
+    teacher_notes: |
+      "증명 문제는 침착도가 낮아도 천천히 생각하면 접근 가능합니다.
+       하지만 침착도가 70 이하로 떨어지면 논리 오류가 자주 발생하므로
+       기본 증명 패턴을 다시 확인하는 것이 중요합니다."
+
+  # 유형 연습 문제 (유형별 연습, 패턴 문제)
+  pattern_practice:
+    name: "유형 연습 문제"
+    description: "특정 문제 유형의 반복 연습 문제"
+    characteristics:
+      - 패턴 인식 중요
+      - 반복 연습 효과
+      - 숙련도 향상
+    calm_standards:
+      normal_range: [85, 100]
+      baseline: 90
+      decline_threshold: 80
+      intervention_threshold: 75
+    solving_patterns:
+      - 점진적 속도 향상 가능
+      - 정답률 85% 이상 기대
+      - 침착도 85 이하 시 패턴 인식 실패 증가
+    calm_factors:
+      positive:
+        - 패턴 인식 능력
+        - 숙련도 높음
+        - 집중력 높음
+      negative:
+        - 패턴 인식 실패
+        - 피로 누적
+        - 집중력 저하
+    intervention_strategy:
+      low_calm:
+        - 기본 유형 문제로 복습
+        - 패턴 인식 연습
+        - 쉬운 유형 문제 제공
+      normal_calm:
+        - 표준 유형 문제 진행
+        - 난이도 점진적 상승
+    teacher_notes: |
+      "유형 연습 문제는 침착도가 높을 때 패턴 인식이 잘 됩니다.
+       침착도가 85 이하로 떨어지면 패턴을 놓치기 쉬우므로
+       기본 유형 문제로 다시 복습하는 것이 효과적입니다."
+
+# 문제 유형 판별 기준
+identification_rules:
+  calculation:
+    keywords: ["계산", "연산", "더하기", "빼기", "곱하기", "나누기", "분수", "소수"]
+    features:
+      - 수치 계산 위주
+      - 공식 적용 단순
+      - 정확도 중시
+  conceptual:
+    keywords: ["개념", "정의", "의미", "이해", "설명"]
+    features:
+      - 개념 이해 위주
+      - 정의 적용
+      - 설명 능력 중시
+  application:
+    keywords: ["실생활", "상황", "적용", "활용", "예시"]
+    features:
+      - 실생활 상황
+      - 상황 이해 필요
+      - 통합 사고 필요
+  proof:
+    keywords: ["증명", "논리", "이유", "설명하시오", "이유를 쓰시오"]
+    features:
+      - 논리적 추론
+      - 증명 과정 필요
+      - 사고 과정 중시
+  pattern_practice:
+    keywords: ["유형", "패턴", "연습", "반복"]
+    features:
+      - 특정 유형 반복
+      - 패턴 인식
+      - 숙련도 향상
+
+# 데이터 수집 방법
+data_collection:
+  student_survey:
+    question: "이 유형의 문제를 풀 때 어떤 느낌이 들었나요?"
+    options:
+      - "자신 있게 풀 수 있었어요"
+      - "약간 어려웠지만 풀 수 있었어요"
+      - "많이 어려웠어요"
+      - "풀기 전에 확신이 없었어요"
+  teacher_checklist:
+    items:
+      - "이 유형에서 침착도가 떨어지는 패턴이 있나요?"
+      - "이 유형에서 주로 발생하는 오류는 무엇인가요?"
+      - "이 유형에서 침착도 관리 전략은 무엇인가요?"
+  text_input:
+    format: |
+      유형: [문제 유형]
+      관찰 내용: [선생님이 관찰한 침착도 패턴]
+      개입 전략: [효과적이었던 개입 방법]
+

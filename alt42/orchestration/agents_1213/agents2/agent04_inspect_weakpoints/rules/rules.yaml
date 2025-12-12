@@ -1,0 +1,1803 @@
+# Auto-generated rules.yaml for agent04_inspect_weakpoints
+# Generated at: 2025-01-27
+# Source: agent04_inspect_weakpoints/questions.md → 8가지 학습활동별 페르소나 분석 및 맞춤 행동유도 룰
+
+version: "1.0"
+scenario: "inspect_weakpoints"
+description: "학습활동별 페르소나 분석 및 맞춤형 행동유도 - 8가지 핵심 활동 영역별 진단 및 개입 규칙"
+
+rules:
+  # ========== ① 개념이해 (Concept Understanding) ==========
+  
+  - rule_id: "CU_A1_weak_point_detection"
+    priority: 95
+    description: "개념이해 단계별 취약구간 탐지 - 이해/정리/적용 단계 중 멈춤 지점 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "concept_stage"
+        operator: "in"
+        value: ["understanding", "organizing", "applying"]
+      - field: "pause_frequency"
+        operator: ">="
+        value: 3
+      - field: "pause_stage"
+        operator: "!="
+        value: null
+    action:
+      - "analyze_weak_stage: true"
+      - "identify_pause_pattern: true"
+      - "create_instance: 'mk-a04:WeakpointDetectionContext'"
+      - "set_property: ('mk-a04:hasStudentId', '{student_id}')"
+      - "set_property: ('mk-a04:hasActivityType', '{activity_type}')"
+      - "set_property: ('mk-a04:hasActivityCategory', '개념이해')"
+      - "set_property: ('mk-a04:hasPauseFrequency', '{pause_frequency}')"
+      - "set_property: ('mk-a04:hasPauseStage', '{pause_stage}')"
+      - "create_instance: 'mk-a04:ActivityAnalysisContext'"
+      - "set_property: ('mk-a04:hasPauseFrequency', '{pause_frequency}')"
+      - "set_property: ('mk-a04:hasPauseStage', '{pause_stage}')"
+      - "reason_over: 'mk-a04:ActivityAnalysisContext'"
+      - "generate_reinforcement_plan: 'mk-a04:WeakpointAnalysisDecisionModel'"
+      - "generate_intervention: 'concept_weak_point_support'"
+      - "provide_feedback: '{{pause_stage}} 단계에서 멈추는 패턴이 보입니다. 이 구간을 집중적으로 보강해볼까요?'"
+      - "link_to_content: 'concept_reinforcement_{{pause_stage}}'"
+    confidence: 0.92
+    rationale: "개념이해 과정의 취약구간을 정확히 탐지하여 맞춤형 보강 제공 및 취약점 상세 분석을 위해 agent04_inspect_weakpoints로 전달"
+    
+  - rule_id: "CU_A2_tts_attention_pattern"
+    priority: 93
+    description: "TTS 듣기 중 시선집중도 및 필기패턴 변화 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "learning_method"
+        operator: "=="
+        value: "TTS"
+      - field: "gaze_attention_score"
+        operator: "<"
+        value: 0.6
+      - field: "note_taking_pattern_change"
+        operator: "=="
+        value: true
+    action:
+      - "analyze_attention_pattern: true"
+      - "detect_distraction_point: true"
+      - "create_instance: 'mk-a04:ActivityAnalysisContext'"
+      - "set_property: ('mk-a04:hasStudentId', '{student_id}')"
+      - "set_property: ('mk-a04:hasActivityType', '{activity_type}')"
+      - "set_property: ('mk-a04:hasGazeAttentionScore', '{gaze_attention_score}')"
+      - "set_property: ('mk-a04:hasNoteTakingPatternChange', '{note_taking_pattern_change}')"
+      - "set_property: ('mk-a04:hasCurrentMethod', '{learning_method}')"
+      - "reason_over: 'mk-a04:ActivityAnalysisContext'"
+      - "generate_reinforcement_plan: 'mk-a04:WeakpointAnalysisDecisionModel'"
+      - "suggest_alternative_method: true"
+      - "generate_intervention: 'attention_recovery'"
+      - "provide_feedback: '개념 설명을 들을 때 집중이 떨어지는 구간이 있네요. 다른 방법으로 접근해볼까요?'"
+    confidence: 0.90
+    rationale: "TTS 학습 중 주의집중 패턴 분석으로 학습 효율 개선"
+    
+  - rule_id: "CU_A3_concept_confusion_detection"
+    priority: 94
+    description: "개념쌍 혼동 탐지 - 정의 vs 예시, 공식 vs 조건 등"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "concept_confusion_detected"
+        operator: "=="
+        value: true
+      - field: "confusion_type"
+        operator: "in"
+        value: ["definition_vs_example", "formula_vs_condition", "similar_concepts"]
+    action:
+      - "identify_confused_concept_pair: true"
+      - "create_instance: 'mk-a04:ActivityAnalysisContext'"
+      - "set_property: ('mk-a04:hasStudentId', '{student_id}')"
+      - "set_property: ('mk-a04:hasActivityType', '{activity_type}')"
+      - "set_property: ('mk-a04:hasConceptConfusionDetected', '{concept_confusion_detected}')"
+      - "set_property: ('mk-a04:hasConfusionType', '{confusion_type}')"
+      - "reason_over: 'mk-a04:ActivityAnalysisContext'"
+      - "generate_reinforcement_plan: 'mk-a04:WeakpointAnalysisDecisionModel'"
+      - "generate_comparison_content: true"
+      - "provide_clarification: true"
+      - "generate_intervention: 'concept_clarification'"
+      - "provide_feedback: '{{confusion_type}}에서 혼동이 자주 발생하네요. 두 개념을 비교해보면서 차이를 명확히 해볼까요?'"
+      - "link_to_content: 'concept_comparison_{{confusion_type}}'"
+    confidence: 0.93
+    rationale: "개념쌍 혼동을 정확히 탐지하여 비교 학습 제공"
+    
+  - rule_id: "CU_B1_persona_method_match"
+    priority: 92
+    description: "학습스타일과 개념공부 방식의 적합성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "persona_type"
+        operator: "!="
+        value: null
+      - field: "current_method"
+        operator: "in"
+        value: ["TTS", "note_taking", "example_solving"]
+      - field: "method_persona_match_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "evaluate_method_persona_match: true"
+      - "create_instance: 'mk-a04:ActivityAnalysisContext'"
+      - "set_property: ('mk-a04:hasStudentId', '{student_id}')"
+      - "set_property: ('mk-a04:hasActivityType', '{activity_type}')"
+      - "set_property: ('mk-a04:hasMethodPersonaMatchScore', '{method_persona_match_score}')"
+      - "set_property: ('mk-a04:hasCurrentMethod', '{current_method}')"
+      - "set_property: ('mk-a04:hasPersonaType', '{persona_type}')"
+      - "reason_over: 'mk-a04:ActivityAnalysisContext'"
+      - "generate_reinforcement_plan: 'mk-a04:WeakpointAnalysisDecisionModel'"
+      - "suggest_optimal_method: true"
+      - "generate_intervention: 'method_optimization'"
+      - "provide_feedback: '현재 {{current_method}} 방식이 {{persona_type}} 페르소나와 잘 맞지 않을 수 있어요. {{suggested_method}} 방법을 시도해볼까요?'"
+    confidence: 0.91
+    rationale: "페르소나에 맞는 최적의 학습 방법 제시"
+    
+  - rule_id: "CU_B2_visual_response_analysis"
+    priority: 90
+    description: "시각 자료(그림, 표, 색상)에 대한 반응 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "visual_content_present"
+        operator: "=="
+        value: true
+      - field: "visual_response_score"
+        operator: "<"
+        value: 0.5
+    action:
+      - "analyze_visual_learning_preference: true"
+      - "adjust_content_visual_ratio: true"
+      - "generate_intervention: 'visual_learning_optimization'"
+      - "provide_feedback: '시각 자료에 대한 반응이 낮네요. 다른 형태의 자료로 접근해볼까요?'"
+    confidence: 0.88
+    rationale: "시각 학습 선호도 분석으로 콘텐츠 최적화"
+    
+  - rule_id: "CU_B3_text_vs_example_preference"
+    priority: 89
+    description: "글로 정리 vs 예제로 확인 선호도 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "text_organization_score"
+        operator: "!="
+        value: null
+      - field: "example_verification_score"
+        operator: "!="
+        value: null
+      - field: "example_verification_score"
+        operator: ">"
+        value: "text_organization_score"
+    action:
+      - "identify_learning_preference: 'example_based'"
+      - "prioritize_example_content: true"
+      - "generate_intervention: 'example_focused_learning'"
+      - "provide_feedback: '예제를 통해 확인하는 방식이 더 효과적이네요. 예제 중심으로 학습해볼까요?'"
+    confidence: 0.87
+    rationale: "학습 선호도에 맞는 콘텐츠 구성"
+    
+  - rule_id: "CU_C1_optimal_activity_combination"
+    priority: 91
+    description: "몰입도가 가장 높은 활동 조합(TTS, 필기, 예제풀이) 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "immersion_score_by_combination"
+        operator: "!="
+        value: null
+      - field: "best_combination"
+        operator: "!="
+        value: null
+    action:
+      - "identify_optimal_combination: true"
+      - "recommend_combination: '{{best_combination}}'"
+      - "generate_intervention: 'combination_optimization'"
+      - "provide_feedback: '{{best_combination}} 조합에서 몰입도가 가장 높았어요. 이 조합으로 학습해볼까요?'"
+    confidence: 0.90
+    rationale: "개인별 최적 활동 조합 제시로 몰입도 향상"
+    
+  - rule_id: "CU_C2_boredom_detection"
+    priority: 88
+    description: "개념공부 도중 지루함 또는 집중 이탈 시점 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "boredom_detected"
+        operator: "=="
+        value: true
+      - field: "attention_drop_time"
+        operator: "!="
+        value: null
+      - field: "emotion_state"
+        operator: "in"
+        value: ["지루함", "권태"]
+    action:
+      - "identify_boredom_timing: true"
+      - "create_instance: 'mk-a04:ActivityAnalysisContext'"
+      - "set_property: ('mk-a04:hasStudentId', '{student_id}')"
+      - "set_property: ('mk-a04:hasActivityType', '{activity_type}')"
+      - "set_property: ('mk-a04:hasBoredomDetected', '{boredom_detected}')"
+      - "set_property: ('mk-a04:hasAttentionDropTime', '{attention_drop_time}')"
+      - "set_property: ('mk-a04:hasEmotionState', '{emotion_state}')"
+      - "reason_over: 'mk-a04:ActivityAnalysisContext'"
+      - "generate_reinforcement_plan: 'mk-a04:WeakpointAnalysisDecisionModel'"
+      - "suggest_break_or_change: true"
+      - "generate_intervention: 'boredom_intervention'"
+      - "provide_feedback: '{{attention_drop_time}} 경과 후 집중이 떨어지는 패턴이 보입니다. 이 시점에 휴식이나 활동 전환을 해볼까요?'"
+    confidence: 0.89
+    rationale: "지루함 발생 시점 탐지로 적시 개입"
+    
+  - rule_id: "CU_C3_feedback_type_optimization"
+    priority: 90
+    description: "개념 이해 효율 향상을 위한 피드백 유형 최적화"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "feedback_types_tested"
+        operator: "in"
+        value: ["TTS_coaching", "summary_quiz", "real_life_example"]
+      - field: "feedback_effectiveness_score"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate_feedback_effectiveness: true"
+      - "select_optimal_feedback_type: true"
+      - "generate_intervention: 'feedback_optimization'"
+      - "provide_feedback: '{{optimal_feedback_type}} 형태의 피드백이 가장 효과적이었어요. 이 방식으로 계속 진행해볼까요?'"
+    confidence: 0.91
+    rationale: "개인별 최적 피드백 유형 제시"
+    
+  # ========== ② 유형학습 (Type Learning) ==========
+  
+  - rule_id: "TL_A1_routine_structure_analysis"
+    priority: 94
+    description: "유형학습 루틴 구조 분석 - 문제풀이 순서(기본→응용→심화) 조정"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "problem_sequence"
+        operator: "!="
+        value: null
+      - field: "sequence_efficiency_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_sequence_pattern: true"
+      - "suggest_optimal_sequence: true"
+      - "generate_intervention: 'sequence_optimization'"
+      - "provide_feedback: '문제 풀이 순서를 {{suggested_sequence}}로 조정하면 효율이 높아질 것 같아요.'"
+    confidence: 0.92
+    rationale: "개인별 최적 문제 풀이 순서 제시"
+    
+  - rule_id: "TL_A2_difficulty_focus_maintenance"
+    priority: 92
+    description: "난이도 변화에 따른 풀이속도 및 집중도 일정성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "difficulty_change"
+        operator: "=="
+        value: true
+      - field: "speed_consistency_score"
+        operator: "<"
+        value: 0.6
+      - field: "focus_consistency_score"
+        operator: "<"
+        value: 0.6
+    action:
+      - "analyze_difficulty_impact: true"
+      - "suggest_pace_adjustment: true"
+      - "generate_intervention: 'pace_stabilization'"
+      - "provide_feedback: '난이도가 바뀔 때 풀이 속도와 집중도가 불안정하네요. 페이스를 조절해볼까요?'"
+    confidence: 0.90
+    rationale: "난이도 변화에 따른 학습 안정성 유지"
+    
+  - rule_id: "TL_A3_focus_duration_by_stage"
+    priority: 91
+    description: "유형학습 세션 단계별 집중 지속시간 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "session_stage"
+        operator: "in"
+        value: ["start", "middle", "end"]
+      - field: "focus_duration_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "identify_optimal_focus_stage: true"
+      - "suggest_session_structure: true"
+      - "generate_intervention: 'session_structure_optimization'"
+      - "provide_feedback: '{{optimal_stage}} 단계에서 집중이 가장 오래 지속되네요. 이 구간을 활용한 세션 구조를 제안해볼까요?'"
+    confidence: 0.89
+    rationale: "세션 단계별 집중 패턴 분석으로 최적 세션 구조 제시"
+    
+  - rule_id: "TL_B1_approach_strategy_analysis"
+    priority: 93
+    description: "유형문제 접근전략 분석 - 공식회상형/유추형/비교형"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "approach_strategy"
+        operator: "in"
+        value: ["formula_recall", "analogy", "comparison"]
+      - field: "strategy_usage_frequency"
+        operator: "!="
+        value: null
+    action:
+      - "identify_dominant_strategy: true"
+      - "evaluate_strategy_effectiveness: true"
+      - "suggest_strategy_diversification: true"
+      - "generate_intervention: 'strategy_optimization'"
+      - "provide_feedback: '{{dominant_strategy}} 전략을 주로 사용하시네요. 다른 전략도 함께 활용하면 더 효과적일 수 있어요?'"
+    confidence: 0.91
+    rationale: "접근 전략 다양화로 문제 해결 능력 향상"
+    
+  - rule_id: "TL_B2_repeated_error_pattern"
+    priority: 95
+    description: "유형문제 반복 풀이 시 동일 오류 반복 경향 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "repeated_error_count"
+        operator: ">="
+        value: 3
+      - field: "error_type"
+        operator: "!="
+        value: null
+    action:
+      - "identify_error_pattern: true"
+      - "generate_error_analysis: true"
+      - "provide_targeted_feedback: true"
+      - "generate_intervention: 'error_pattern_break'"
+      - "provide_feedback: '같은 유형에서 {{error_type}} 오류가 반복되고 있네요. 원인을 함께 분석해볼까요?'"
+      - "link_to_content: 'error_correction_{{error_type}}'"
+    confidence: 0.94
+    rationale: "반복 오류 패턴 분석으로 근본 원인 해결"
+    
+  - rule_id: "TL_B3_giveup_boredom_timing"
+    priority: 89
+    description: "반복 시도 중 포기나 지루함 패턴 발생 시점 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "repetition_count"
+        operator: ">="
+        value: 3
+      - field: "giveup_or_boredom_detected"
+        operator: "=="
+        value: true
+      - field: "detection_timing"
+        operator: "!="
+        value: null
+    action:
+      - "identify_resistance_point: true"
+      - "suggest_break_or_variation: true"
+      - "generate_intervention: 'resistance_intervention'"
+      - "provide_feedback: '{{detection_timing}} 시점에 포기나 지루함이 나타나네요. 이 시점에 활동을 바꿔볼까요?'"
+    confidence: 0.88
+    rationale: "저항감 발생 시점 탐지로 적시 개입"
+    
+  - rule_id: "TL_C1_high_immersion_activity"
+    priority: 92
+    description: "유형학습 중 가장 높은 몰입감을 보인 활동 식별"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "sub_activity_type"
+        operator: "in"
+        value: ["representative_type", "descriptive_assessment", "supplementary_problem"]
+      - field: "immersion_score_by_activity"
+        operator: "!="
+        value: null
+    action:
+      - "identify_high_immersion_activity: true"
+      - "recommend_activity_priority: true"
+      - "generate_intervention: 'activity_prioritization'"
+      - "provide_feedback: '{{high_immersion_activity}} 활동에서 몰입감이 가장 높았어요. 이 활동을 중심으로 학습해볼까요?'"
+    confidence: 0.91
+    rationale: "높은 몰입 활동 우선 배치로 학습 효율 향상"
+    
+  - rule_id: "TL_C2_emotion_by_difficulty"
+    priority: 90
+    description: "난이도 상승 시 감정 반응 분석 - 불안/흥미/도전"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "difficulty_increase"
+        operator: "=="
+        value: true
+      - field: "emotion_response"
+        operator: "in"
+        value: ["불안", "흥미", "도전"]
+    action:
+      - "analyze_emotion_pattern: true"
+      - "adjust_difficulty_pacing: true"
+      - "generate_intervention: 'emotion_based_difficulty_adjustment'"
+      - "provide_feedback: '난이도가 올라갔을 때 {{emotion_response}} 감정이 나타나네요. 이 감정을 고려한 난이도 조절을 해볼까요?'"
+    confidence: 0.89
+    rationale: "감정 반응 기반 난이도 조절로 최적 학습 구간 유지"
+    
+  - rule_id: "TL_C3_feedback_effectiveness"
+    priority: 91
+    description: "유형학습 후 피드백 유형별 재도전 효과성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "feedback_types"
+        operator: "in"
+        value: ["TTS_coaching", "visualization_report", "teacher_comment"]
+      - field: "retry_effectiveness_score"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate_feedback_effectiveness: true"
+      - "select_optimal_feedback: true"
+      - "generate_intervention: 'feedback_optimization'"
+      - "provide_feedback: '{{optimal_feedback}} 피드백이 재도전에 가장 효과적이었어요. 이 방식으로 계속 진행해볼까요?'"
+    confidence: 0.90
+    rationale: "효과적인 피드백 유형 제시로 재도전 동기 강화"
+    
+  # ========== ③ 문제풀이 (Problem Solving) ==========
+  
+  - rule_id: "PS_A1_condition_separation"
+    priority: 94
+    description: "문제 읽기 시 핵심 조건과 불필요한 정보 구분 능력 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "problem_reading_stage"
+        operator: "=="
+        value: "interpretation"
+      - field: "key_condition_identification_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_information_filtering: true"
+      - "provide_condition_separation_training: true"
+      - "generate_intervention: 'condition_separation_skill'"
+      - "provide_feedback: '문제를 읽을 때 핵심 조건을 구분하는 연습이 필요해요. 함께 연습해볼까요?'"
+      - "link_to_content: 'condition_separation_training'"
+    confidence: 0.93
+    rationale: "핵심 정보 식별 능력 향상으로 문제 이해도 개선"
+    
+  - rule_id: "PS_A2_structural_problem_understanding"
+    priority: 92
+    description: "풀이 시작 전 문제 전체 구조적 파악 습관 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "problem_reading_stage"
+        operator: "=="
+        value: "interpretation"
+      - field: "structural_analysis_before_solving"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_structural_analysis: true"
+      - "provide_analysis_framework: true"
+      - "generate_intervention: 'structural_analysis_habit'"
+      - "provide_feedback: '풀이를 시작하기 전에 문제 전체를 구조적으로 파악하는 습관을 기르면 좋아요. 함께 연습해볼까요?'"
+    confidence: 0.91
+    rationale: "구조적 문제 이해 습관 형성으로 풀이 효율 향상"
+    
+  - rule_id: "PS_A3_strategy_switching"
+    priority: 91
+    description: "풀이 중 막힘 시 전략 전환(공식→그림, 역추론 등) 시도 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "solving_stage"
+        operator: "=="
+        value: "process"
+      - field: "stuck_detected"
+        operator: "=="
+        value: true
+      - field: "strategy_switch_attempted"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_strategy_switching: true"
+      - "suggest_alternative_strategies: true"
+      - "generate_intervention: 'strategy_flexibility'"
+      - "provide_feedback: '막혔을 때 다른 전략(공식→그림, 역추론 등)을 시도해보는 것이 좋아요. 함께 시도해볼까요?'"
+    confidence: 0.90
+    rationale: "전략 전환 능력 향상으로 문제 해결력 강화"
+    
+  - rule_id: "PS_B1_cognitive_load_detection"
+    priority: 95
+    description: "문제풀이 도중 시선 이탈, 멈춤, 표정 변화 등 인지부하 신호 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "gaze_detection"
+        operator: "=="
+        value: true
+      - field: "gaze_away_frequency"
+        operator: ">="
+        value: 3
+      - field: "pause_frequency"
+        operator: ">="
+        value: 2
+    action:
+      - "detect_cognitive_overload: true"
+      - "suggest_break_or_simplification: true"
+      - "generate_intervention: 'cognitive_load_management'"
+      - "provide_feedback: '풀이 도중 집중이 떨어지는 구간이 보입니다. 잠시 휴식하거나 문제를 단순화해볼까요?'"
+    confidence: 0.94
+    rationale: "인지부하 조정으로 학습 효율 유지"
+    
+  - rule_id: "PS_B2_emotion_during_solving"
+    priority: 93
+    description: "풀이 과정에서의 감정 상태 분석 - 긴장감/피로감/집중감"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "emotion_during_solving"
+        operator: "in"
+        value: ["긴장감", "피로감", "집중감"]
+      - field: "emotion_intensity"
+        operator: ">="
+        value: 0.7
+    action:
+      - "analyze_emotion_impact: true"
+      - "adjust_solving_pace: true"
+      - "generate_intervention: 'emotion_based_pace_adjustment'"
+      - "provide_feedback: '풀이 중 {{emotion_during_solving}}이 강하게 나타나네요. 이 감정을 고려한 페이스 조절을 해볼까요?'"
+    confidence: 0.92
+    rationale: "감정 상태 기반 풀이 페이스 조절"
+    
+  - rule_id: "PS_B3_efficiency_maintenance"
+    priority: 91
+    description: "풀이가 길어질수록 효율(시간 대비 정확도) 유지 여부 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "solving_duration"
+        operator: ">="
+        value: 600
+      - field: "efficiency_trend"
+        operator: "=="
+        value: "declining"
+    action:
+      - "analyze_efficiency_decline: true"
+      - "suggest_break_or_strategy_change: true"
+      - "generate_intervention: 'efficiency_maintenance'"
+      - "provide_feedback: '풀이 시간이 길어질수록 효율이 떨어지네요. 휴식이나 전략 변경을 고려해볼까요?'"
+    confidence: 0.90
+    rationale: "장시간 풀이 시 효율 유지를 위한 개입"
+    
+  - rule_id: "PS_C1_self_explanation_ability"
+    priority: 92
+    description: "문제 풀이 후 자신이 어디서 틀릴 수 있었는지 설명 능력 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "solving_stage"
+        operator: "=="
+        value: "review"
+      - field: "self_explanation_score"
+        operator: "<"
+        value: 0.6
+    action:
+      - "encourage_self_explanation: true"
+      - "provide_explanation_framework: true"
+      - "generate_intervention: 'metacognitive_review'"
+      - "provide_feedback: '문제를 푼 뒤 어디서 틀릴 수 있었는지 스스로 설명하는 연습이 중요해요. 함께 해볼까요?'"
+    confidence: 0.91
+    rationale: "메타인지적 검토 능력 향상"
+    
+  - rule_id: "PS_C2_review_routine_consistency"
+    priority: 90
+    description: "풀이 마친 후 답 검토 루틴 일정성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "solving_stage"
+        operator: "=="
+        value: "review"
+      - field: "review_routine_consistency"
+        operator: "<"
+        value: 0.7
+    action:
+      - "encourage_review_routine: true"
+      - "establish_review_checklist: true"
+      - "generate_intervention: 'review_routine_establishment'"
+      - "provide_feedback: '풀이를 마친 후 답을 검토하는 루틴을 일정하게 유지하면 좋아요. 검토 체크리스트를 만들어볼까요?'"
+    confidence: 0.89
+    rationale: "일관된 검토 루틴 형성으로 오류 감소"
+    
+  - rule_id: "PS_C3_confidence_accuracy_match"
+    priority: 91
+    description: "문제풀이 후 자기 확신도 판단과 실제 결과 일치도 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "self_confidence_level"
+        operator: "in"
+        value: ["확실", "애매", "모름"]
+      - field: "actual_result"
+        operator: "in"
+        value: ["correct", "incorrect"]
+      - field: "confidence_accuracy_match_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_confidence_accuracy_gap: true"
+      - "provide_calibration_training: true"
+      - "generate_intervention: 'confidence_calibration'"
+      - "provide_feedback: '자신의 확신도 판단이 실제 결과와 다르네요. 정확한 자기 평가 능력을 기르는 연습을 해볼까요?'"
+    confidence: 0.90
+    rationale: "자기 평가 정확도 향상으로 메타인지 능력 강화"
+    
+  # ========== ④ 오답노트 (Error Notes) ==========
+  
+  - rule_id: "EN_A1_error_cause_analysis"
+    priority: 95
+    description: "오답 원인 분류 분석 - 개념오류/계산실수/문제이해 착오"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "error_occurred"
+        operator: "=="
+        value: true
+      - field: "error_category"
+        operator: "in"
+        value: ["concept_error", "calculation_error", "understanding_error"]
+    action:
+      - "categorize_error_cause: true"
+      - "analyze_error_frequency: true"
+      - "generate_intervention: 'error_cause_analysis'"
+      - "provide_feedback: '오답의 원인이 {{most_frequent_category}}가 가장 빈번하네요. 이 부분을 집중적으로 보강해볼까요?'"
+      - "link_to_content: 'error_correction_{{most_frequent_category}}'"
+    confidence: 0.94
+    rationale: "오답 원인 정확한 분류로 맞춤형 보강 제공"
+    
+  - rule_id: "EN_A2_pre_error_behavior_pattern"
+    priority: 93
+    description: "오답 발생 직전 풀이 행동 패턴 분석 - 멈춤/서두름/시선전환"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "error_occurred"
+        operator: "=="
+        value: true
+      - field: "pre_error_behavior"
+        operator: "in"
+        value: ["pause", "rush", "gaze_shift"]
+    action:
+      - "identify_pre_error_pattern: true"
+      - "provide_behavior_modification: true"
+      - "generate_intervention: 'pre_error_behavior_analysis'"
+      - "provide_feedback: '오답 직전에 {{pre_error_behavior}} 행동이 자주 나타나네요. 이 패턴을 인식하고 조절하는 연습을 해볼까요?'"
+    confidence: 0.92
+    rationale: "오답 전 행동 패턴 인식으로 오류 예방"
+    
+  - rule_id: "EN_A3_post_error_reflection_habit"
+    priority: 91
+    description: "오답 후 사고흐름 되짚기 습관 vs 바로 다음 문제로 넘어가는 패턴 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "error_occurred"
+        operator: "=="
+        value: true
+      - field: "post_error_reflection"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_reflection_habit: true"
+      - "provide_reflection_framework: true"
+      - "generate_intervention: 'reflection_habit_formation'"
+      - "provide_feedback: '오답 후 자신의 사고흐름을 되짚는 습관이 중요해요. 함께 연습해볼까요?'"
+    confidence: 0.90
+    rationale: "오답 후 성찰 습관 형성으로 학습 효과 향상"
+    
+  - rule_id: "EN_B1_error_recognition_focus"
+    priority: 92
+    description: "오답 인식 후 '왜 틀렸는지' vs '어떻게 다시 풀지' 사고 우선순위 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "error_recognized"
+        operator: "=="
+        value: true
+      - field: "reflection_focus"
+        operator: "in"
+        value: ["why_wrong", "how_to_solve"]
+    action:
+      - "analyze_reflection_focus: true"
+      - "balance_reflection_approach: true"
+      - "generate_intervention: 'balanced_reflection'"
+      - "provide_feedback: '오답을 인식한 후 {{reflection_focus}}에 집중하시네요. 양쪽 모두 고려하는 것이 좋아요.'"
+    confidence: 0.91
+    rationale: "균형잡힌 성찰 접근으로 학습 효과 극대화"
+    
+  - rule_id: "EN_B2_retry_emotion_analysis"
+    priority: 90
+    description: "틀린 문제 재시도 시 감정 반응 분석 - 불안감/흥미/도전감"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "retry_attempted"
+        operator: "=="
+        value: true
+      - field: "retry_emotion"
+        operator: "in"
+        value: ["불안감", "흥미", "도전감"]
+    action:
+      - "analyze_retry_emotion: true"
+      - "support_positive_emotion: true"
+      - "generate_intervention: 'retry_emotion_support'"
+      - "provide_feedback: '틀린 문제를 다시 시도할 때 {{retry_emotion}}이 나타나네요. 긍정적인 감정을 유지하면서 도전해볼까요?'"
+    confidence: 0.89
+    rationale: "재도전 시 긍정적 감정 유지로 학습 동기 강화"
+    
+  - rule_id: "EN_B3_strategy_change_on_retry"
+    priority: 91
+    description: "같은 유형 재풀이 시 이전 실수 피하기 위한 전략 변화 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "same_type_retry"
+        operator: "=="
+        value: true
+      - field: "strategy_change_detected"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_strategy_change: true"
+      - "suggest_alternative_strategies: true"
+      - "generate_intervention: 'strategy_adaptation'"
+      - "provide_feedback: '같은 유형을 다시 풀 때 이전 실수를 피하기 위한 전략 변화가 필요해요. 다른 접근을 시도해볼까요?'"
+    confidence: 0.90
+    rationale: "전략 적응 능력 향상으로 오류 재발 방지"
+    
+  - rule_id: "EN_C1_feedback_reception_analysis"
+    priority: 93
+    description: "오답 피드백 수용 후 표정·시선·반응 속도 변화 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "feedback_provided"
+        operator: "=="
+        value: true
+      - field: "feedback_type"
+        operator: "in"
+        value: ["TTS_explanation", "teacher_comment"]
+      - field: "reception_indicators"
+        operator: "!="
+        value: null
+    action:
+      - "analyze_feedback_reception: true"
+      - "adjust_feedback_delivery: true"
+      - "generate_intervention: 'feedback_reception_optimization'"
+      - "provide_feedback: '피드백을 받은 후 반응을 보니 {{reception_quality}} 수준이네요. 피드백 전달 방식을 조정해볼까요?'"
+    confidence: 0.92
+    rationale: "피드백 수용도 분석으로 효과적인 피드백 제공"
+    
+  - rule_id: "EN_C2_feedback_to_action_transfer"
+    priority: 94
+    description: "피드백 수용 후 실제 행동(필기 수정, 풀이노트 재작성) 전이율 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "feedback_provided"
+        operator: "=="
+        value: true
+      - field: "action_taken"
+        operator: "in"
+        value: ["note_revision", "solution_rewrite"]
+      - field: "feedback_to_action_rate"
+        operator: "<"
+        value: 0.6
+    action:
+      - "analyze_transfer_rate: true"
+      - "encourage_action_taking: true"
+      - "provide_action_framework: true"
+      - "generate_intervention: 'action_transfer_enhancement'"
+      - "provide_feedback: '피드백을 받은 뒤 실제 행동으로 연결되는 비율이 낮네요. 구체적인 행동 계획을 세워볼까요?'"
+    confidence: 0.93
+    rationale: "피드백의 행동 전이 효과 극대화"
+    
+  - rule_id: "EN_C3_improved_pattern_maintenance"
+    priority: 92
+    description: "오답노트 활동 후 개선된 풀이 패턴의 다음 단원 유지 여부 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_notes"
+      - field: "improved_pattern_detected"
+        operator: "=="
+        value: true
+      - field: "next_unit_maintenance"
+        operator: "=="
+        value: false
+    action:
+      - "analyze_maintenance_failure: true"
+      - "provide_maintenance_strategy: true"
+      - "generate_intervention: 'pattern_maintenance_support'"
+      - "provide_feedback: '오답노트 활동 후 개선된 패턴이 다음 단원에서 유지되지 않네요. 패턴 유지 전략을 함께 세워볼까요?'"
+    confidence: 0.91
+    rationale: "개선된 학습 패턴의 지속성 확보"
+    
+  # ========== ⑤ 질의응답 (Q&A) ==========
+  
+  - rule_id: "QA_A1_question_timing_analysis"
+    priority: 94
+    description: "질문 발생 상황 분석 - 문제 막힘/개념 혼동/복습 중"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "question_occurred"
+        operator: "=="
+        value: true
+      - field: "question_context"
+        operator: "in"
+        value: ["problem_stuck", "concept_confusion", "review"]
+    action:
+      - "analyze_question_timing: true"
+      - "identify_optimal_timing: true"
+      - "generate_intervention: 'question_timing_optimization'"
+      - "provide_feedback: '{{question_context}} 상황에서 질문이 자주 발생하네요. 이 시점에 질문하는 것이 효과적이에요.'"
+    confidence: 0.93
+    rationale: "효과적인 질문 타이밍 식별 및 활용"
+    
+  - rule_id: "QA_A2_question_expression_timing"
+    priority: 92
+    description: "질문 발생 시 바로 표현 vs 일정 시간 후 시도 패턴 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "question_occurred"
+        operator: "=="
+        value: true
+      - field: "expression_timing"
+        operator: "in"
+        value: ["immediate", "delayed"]
+      - field: "delay_duration"
+        operator: "!="
+        value: null
+    action:
+      - "analyze_expression_pattern: true"
+      - "encourage_appropriate_timing: true"
+      - "generate_intervention: 'question_expression_timing'"
+      - "provide_feedback: '질문이 생겼을 때 {{expression_timing}}으로 표현하시네요. 적절한 타이밍에 질문하는 것이 중요해요.'"
+    confidence: 0.91
+    rationale: "효과적인 질문 표현 타이밍 제시"
+    
+  - rule_id: "QA_A3_question_frequency_by_session_stage"
+    priority: 91
+    description: "학습 세션 단계별 질문 발생 빈도 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "session_stage"
+        operator: "in"
+        value: ["start", "middle", "end"]
+      - field: "question_frequency_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "identify_high_question_stage: true"
+      - "suggest_question_strategy: true"
+      - "generate_intervention: 'session_stage_question_strategy'"
+      - "provide_feedback: '{{high_question_stage}} 단계에서 질문이 가장 많이 발생하네요. 이 시점을 활용한 질문 전략을 세워볼까요?'"
+    confidence: 0.90
+    rationale: "세션 단계별 질문 전략 수립"
+    
+  - rule_id: "QA_B1_question_type_analysis"
+    priority: 93
+    description: "질문 유형 분석 - 개념확인형(사실질문) vs 이유탐구형(이해질문)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "question_occurred"
+        operator: "=="
+        value: true
+      - field: "question_type"
+        operator: "in"
+        value: ["fact_check", "understanding_inquiry"]
+    action:
+      - "analyze_question_depth: true"
+      - "encourage_deeper_questions: true"
+      - "generate_intervention: 'question_depth_enhancement'"
+      - "provide_feedback: '질문이 주로 {{question_type}} 유형이네요. 더 깊이 있는 질문을 시도해볼까요?'"
+    confidence: 0.92
+    rationale: "질문의 인지 수준 향상"
+    
+  - rule_id: "QA_B2_comparison_application_questions"
+    priority: 90
+    description: "단순 의문 표현을 넘어서 비교나 응용을 포함하는 질문 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "question_occurred"
+        operator: "=="
+        value: true
+      - field: "question_complexity"
+        operator: "in"
+        value: ["simple", "comparison", "application"]
+      - field: "question_complexity"
+        operator: "=="
+        value: "simple"
+    action:
+      - "encourage_complex_questions: true"
+      - "provide_question_frameworks: true"
+      - "generate_intervention: 'question_complexity_enhancement'"
+      - "provide_feedback: '질문에 비교나 응용을 포함하면 더 깊이 있는 이해로 이어질 수 있어요. 함께 시도해볼까요?'"
+    confidence: 0.89
+    rationale: "고차원적 사고를 유도하는 질문 유도"
+    
+  - rule_id: "QA_B3_repeated_question_pattern"
+    priority: 91
+    description: "같은 개념에 대한 반복적 유사 질문 패턴 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "repeated_question_count"
+        operator: ">="
+        value: 3
+      - field: "question_topic"
+        operator: "!="
+        value: null
+    action:
+      - "identify_repetition_pattern: true"
+      - "analyze_underlying_gap: true"
+      - "provide_targeted_support: true"
+      - "generate_intervention: 'repeated_question_support'"
+      - "provide_feedback: '{{question_topic}}에 대해 반복적으로 질문하시네요. 근본적인 이해 부족일 수 있어요. 함께 보강해볼까요?'"
+      - "link_to_content: 'concept_reinforcement_{{question_topic}}'"
+    confidence: 0.90
+    rationale: "반복 질문 패턴 분석으로 근본 원인 해결"
+    
+  - rule_id: "QA_C1_feedback_satisfaction"
+    priority: 92
+    description: "AI/교사 답변 후 질문 해결 만족도 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "answer_provided"
+        operator: "=="
+        value: true
+      - field: "satisfaction_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_satisfaction_gap: true"
+      - "adjust_answer_approach: true"
+      - "generate_intervention: 'answer_satisfaction_improvement'"
+      - "provide_feedback: '답변에 대한 만족도가 낮네요. 어떤 부분이 부족했는지 알려주시면 더 나은 답변을 드릴게요.'"
+    confidence: 0.91
+    rationale: "답변 만족도 향상으로 질의응답 효과 극대화"
+    
+  - rule_id: "QA_C2_follow_up_question_ability"
+    priority: 91
+    description: "답변 후 추가 질문 이어가기 또는 요약 정리 시도 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "answer_provided"
+        operator: "=="
+        value: true
+      - field: "follow_up_action"
+        operator: "in"
+        value: ["additional_question", "summary", "none"]
+      - field: "follow_up_action"
+        operator: "=="
+        value: "none"
+    action:
+      - "encourage_follow_up: true"
+      - "provide_summary_framework: true"
+      - "generate_intervention: 'follow_up_encouragement'"
+      - "provide_feedback: '답변을 들은 후 추가 질문을 이어가거나 요약 정리를 시도하면 이해가 더 깊어져요. 함께 해볼까요?'"
+    confidence: 0.90
+    rationale: "질문 루프의 자율성 및 사고 확장 촉진"
+    
+  - rule_id: "QA_C3_insight_moment_detection"
+    priority: 93
+    description: "질문 피드백 후 사고 전환('아, 이래서 그랬구나!' 순간) 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qna"
+      - field: "answer_provided"
+        operator: "=="
+        value: true
+      - field: "insight_moment_detected"
+        operator: "=="
+        value: true
+      - field: "insight_indicators"
+        operator: "!="
+        value: null
+    action:
+      - "reinforce_insight: true"
+      - "capture_learning_moment: true"
+      - "generate_intervention: 'insight_reinforcement'"
+      - "provide_feedback: '이해의 순간이 왔네요! 이 통찰을 학습에 잘 활용해보세요.'"
+    confidence: 0.92
+    rationale: "사고 전환 순간 포착 및 강화로 학습 효과 극대화"
+    
+  # ========== ⑥ 복습활동 (Review Activity) ==========
+  
+  - rule_id: "RV_A1_review_timing_pattern"
+    priority: 94
+    description: "복습 타이밍 패턴 분석 - 학습 후 몇 시간/며칠 뒤 복습"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_timing"
+        operator: "!="
+        value: null
+      - field: "review_timing_category"
+        operator: "in"
+        value: ["immediate", "next_day", "week_later"]
+    action:
+      - "analyze_timing_pattern: true"
+      - "evaluate_timing_efficiency: true"
+      - "suggest_optimal_timing: true"
+      - "generate_intervention: 'review_timing_optimization'"
+      - "provide_feedback: '{{review_timing_category}}에 복습하는 패턴이 있네요. {{suggested_timing}} 타이밍이 더 효율적일 수 있어요.'"
+    confidence: 0.93
+    rationale: "개인별 최적 복습 타이밍 제시"
+    
+  - rule_id: "RV_A2_timing_efficiency_comparison"
+    priority: 92
+    description: "복습 시기별(즉시/다음날/일주일 후) 효율 차이 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_timing_comparison"
+        operator: "!="
+        value: null
+      - field: "efficiency_by_timing"
+        operator: "!="
+        value: null
+    action:
+      - "compare_timing_efficiency: true"
+      - "identify_optimal_timing: true"
+      - "generate_intervention: 'timing_efficiency_optimization'"
+      - "provide_feedback: '복습 시기별 효율을 비교해보니 {{optimal_timing}}이 가장 효과적이네요. 이 타이밍으로 복습해볼까요?'"
+    confidence: 0.91
+    rationale: "복습 타이밍별 효율 비교로 최적 시기 선택"
+    
+  - rule_id: "RV_A3_volume_fatigue_relationship"
+    priority: 90
+    description: "복습 분량 증가에 따른 집중도 및 감정 리듬 변화 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_volume"
+        operator: ">="
+        value: 0.7
+      - field: "focus_decline"
+        operator: "=="
+        value: true
+      - field: "emotion_rhythm_change"
+        operator: "=="
+        value: true
+    action:
+      - "analyze_volume_impact: true"
+      - "suggest_optimal_volume: true"
+      - "generate_intervention: 'review_volume_optimization'"
+      - "provide_feedback: '복습 분량이 많아질수록 집중도와 감정 리듬에 변화가 있네요. 적절한 분량으로 조절해볼까요?'"
+    confidence: 0.89
+    rationale: "복습 분량 최적화로 피로 방지 및 효율 향상"
+    
+  - rule_id: "RV_B1_review_method_preference"
+    priority: 93
+    description: "복습 방식 선호도 분석 - 개념 재확인/문제풀이/요약정리"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_method"
+        operator: "in"
+        value: ["concept_recheck", "problem_solving", "summary"]
+      - field: "method_preference_score"
+        operator: "!="
+        value: null
+    action:
+      - "identify_preferred_method: true"
+      - "suggest_method_combination: true"
+      - "generate_intervention: 'review_method_optimization'"
+      - "provide_feedback: '{{preferred_method}} 방식으로 복습하는 것을 선호하시네요. 다른 방법도 함께 활용하면 더 효과적일 수 있어요.'"
+    confidence: 0.92
+    rationale: "복습 방식 다양화로 학습 효과 향상"
+    
+  - rule_id: "RV_B2_connection_attempt_analysis"
+    priority: 91
+    description: "복습 중 새로운 연결(개념 간/단원 간/실생활 사례) 시도 경향 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "connection_attempt"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_connection_making: true"
+      - "provide_connection_frameworks: true"
+      - "generate_intervention: 'connection_encouragement'"
+      - "provide_feedback: '복습 중 개념 간, 단원 간, 실생활 사례와의 연결을 시도하면 이해가 더 깊어져요. 함께 해볼까요?'"
+    confidence: 0.90
+    rationale: "연결 학습 촉진으로 지식 구조화 능력 향상"
+    
+  - rule_id: "RV_B3_medium_preference_consistency"
+    priority: 89
+    description: "복습 시 매체 선호도 일정성 평가 - 노트/화이트보드/디지털 화면"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_medium"
+        operator: "in"
+        value: ["note", "whiteboard", "digital_screen"]
+      - field: "medium_preference_consistency"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_medium_preference: true"
+      - "suggest_consistent_medium: true"
+      - "generate_intervention: 'medium_consistency_encouragement'"
+      - "provide_feedback: '복습 매체가 자주 바뀌네요. 일정한 매체를 사용하면 루틴이 안정화될 수 있어요.'"
+    confidence: 0.88
+    rationale: "매체 일관성으로 복습 루틴 안정화"
+    
+  - rule_id: "RV_C1_initial_emotion_state"
+    priority: 92
+    description: "복습 시작 시 감정 상태 분석 - 안정/회피/의욕/피로"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_start_emotion"
+        operator: "in"
+        value: ["안정", "회피", "의욕", "피로"]
+    action:
+      - "analyze_initial_emotion: true"
+      - "provide_emotion_support: true"
+      - "generate_intervention: 'initial_emotion_management'"
+      - "provide_feedback: '복습을 시작할 때 {{review_start_emotion}} 상태이시네요. 이 감정을 고려한 복습 전략을 세워볼까요?'"
+    confidence: 0.91
+    rationale: "초기 감정 상태 기반 복습 전략 조정"
+    
+  - rule_id: "RV_C2_resistance_timing_detection"
+    priority: 93
+    description: "복습 도중 집중 이탈 또는 회피 행동 발생 시점 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "resistance_detected"
+        operator: "=="
+        value: true
+      - field: "resistance_timing"
+        operator: "!="
+        value: null
+    action:
+      - "identify_resistance_point: true"
+      - "suggest_intervention_point: true"
+      - "generate_intervention: 'resistance_intervention'"
+      - "provide_feedback: '{{resistance_timing}} 시점에 집중이 떨어지거나 회피 행동이 나타나네요. 이 시점에 개입 전략을 적용해볼까요?'"
+    confidence: 0.92
+    rationale: "저항감 발생 시점 탐지로 적시 개입"
+    
+  - rule_id: "RV_C3_satisfaction_expression"
+    priority: 90
+    description: "복습 마무리 후 만족감 또는 효능감 표현 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_completed"
+        operator: "=="
+        value: true
+      - field: "satisfaction_expression"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_satisfaction_recognition: true"
+      - "provide_reflection_framework: true"
+      - "generate_intervention: 'satisfaction_recognition'"
+      - "provide_feedback: '복습을 마친 후 스스로 만족감이나 효능감을 인식하는 것이 중요해요. 함께 되돌아볼까요?'"
+    confidence: 0.89
+    rationale: "성취 인식으로 복습 동기 강화"
+    
+  # ========== ⑦ 포모도르 수학일기 (Pomodoro Journal) ==========
+  
+  - rule_id: "PJ_A1_focus_duration_analysis"
+    priority: 94
+    description: "평균 집중 지속시간 분석 및 포모도르 단위 적합성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "average_focus_duration"
+        operator: "!="
+        value: null
+      - field: "pomodoro_unit_match_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_focus_pattern: true"
+      - "suggest_optimal_pomodoro_duration: true"
+      - "generate_intervention: 'pomodoro_duration_optimization'"
+      - "provide_feedback: '평균 집중 지속시간이 {{average_focus_duration}}분이네요. 포모도르 단위를 {{suggested_duration}}분으로 조정해볼까요?'"
+    confidence: 0.93
+    rationale: "개인별 최적 포모도르 세션 길이 제시"
+    
+  - rule_id: "PJ_A2_focus_stability_by_stage"
+    priority: 92
+    description: "세션 단계별(초반/중반/후반) 집중력 안정성 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "session_stage"
+        operator: "in"
+        value: ["early", "middle", "late"]
+      - field: "focus_stability_by_stage"
+        operator: "!="
+        value: null
+    action:
+      - "identify_stable_stage: true"
+      - "suggest_session_structure: true"
+      - "generate_intervention: 'session_structure_optimization'"
+      - "provide_feedback: '{{stable_stage}} 구간에서 집중력이 가장 안정적으로 유지되네요. 이 구간을 활용한 세션 구조를 제안해볼까요?'"
+    confidence: 0.91
+    rationale: "세션 단계별 집중 패턴 분석으로 최적 세션 구조 제시"
+    
+  - rule_id: "PJ_A3_rest_recovery_pattern"
+    priority: 91
+    description: "세션 사이 휴식 시간(짧은/긴)에서 회복 패턴 일정성 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "rest_duration_type"
+        operator: "in"
+        value: ["short", "long"]
+      - field: "recovery_pattern_consistency"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze_recovery_pattern: true"
+      - "suggest_optimal_rest_duration: true"
+      - "generate_intervention: 'rest_duration_optimization'"
+      - "provide_feedback: '{{rest_duration_type}} 휴식에서 회복 패턴이 불안정하네요. {{suggested_rest_duration}} 휴식 시간을 시도해볼까요?'"
+    confidence: 0.90
+    rationale: "최적 휴식 시간 제시로 집중력 회복 극대화"
+    
+  - rule_id: "PJ_B1_metacognitive_reflection_level"
+    priority: 93
+    description: "일기에서 '무엇을 배웠는가' vs '어떻게 배웠는가' 언급 비율 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "journal_content_analyzed"
+        operator: "=="
+        value: true
+      - field: "what_learned_ratio"
+        operator: ">"
+        value: "how_learned_ratio"
+    action:
+      - "encourage_metacognitive_reflection: true"
+      - "provide_reflection_framework: true"
+      - "generate_intervention: 'metacognitive_enhancement'"
+      - "provide_feedback: '일기에서 '무엇을 배웠는가'보다 '어떻게 배웠는가'를 더 많이 언급하면 학습 효과가 높아져요. 함께 연습해볼까요?'"
+    confidence: 0.92
+    rationale: "메타인지적 성찰 수준 향상"
+    
+  - rule_id: "PJ_B2_emotion_mention_ratio"
+    priority: 91
+    description: "일기 내용에 학습의 어려움이나 감정 변화 언급 비율 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "journal_content_analyzed"
+        operator: "=="
+        value: true
+      - field: "emotion_mention_ratio"
+        operator: "<"
+        value: 0.3
+    action:
+      - "encourage_emotion_expression: true"
+      - "provide_emotion_framework: true"
+      - "generate_intervention: 'emotion_expression_encouragement'"
+      - "provide_feedback: '일기에 감정 변화를 더 많이 기록하면 자기 이해가 깊어져요. 함께 시도해볼까요?'"
+    confidence: 0.90
+    rationale: "감정 표현 촉진으로 자기 이해 강화"
+    
+  - rule_id: "PJ_B3_self_recognition_pattern"
+    priority: 92
+    description: "포모도르 일기에서 실수 인식 및 개선 다짐 패턴 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "journal_content_analyzed"
+        operator: "=="
+        value: true
+      - field: "mistake_recognition_pattern"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_mistake_recognition: true"
+      - "provide_recognition_framework: true"
+      - "generate_intervention: 'self_recognition_enhancement'"
+      - "provide_feedback: '일기에서 자신의 실수를 인식하고 개선 다짐을 남기는 패턴이 중요해요. 함께 연습해볼까요?'"
+    confidence: 0.91
+    rationale: "자기 인식 및 개선 의지 강화"
+    
+  - rule_id: "PJ_C1_emotion_balance_expression"
+    priority: 93
+    description: "일기에서 긍정·부정 감정 균형 있게 표현하는 방식 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "journal_content_analyzed"
+        operator: "=="
+        value: true
+      - field: "emotion_balance_score"
+        operator: "<"
+        value: 0.6
+    action:
+      - "analyze_emotion_balance: true"
+      - "encourage_balanced_expression: true"
+      - "generate_intervention: 'emotion_balance_enhancement'"
+      - "provide_feedback: '일기에서 긍정과 부정 감정을 균형 있게 표현하면 더 건강한 학습 태도가 형성돼요. 함께 연습해볼까요?'"
+    confidence: 0.92
+    rationale: "균형잡힌 감정 표현으로 건강한 학습 태도 형성"
+    
+  - rule_id: "PJ_C2_emotion_to_behavior_impact"
+    priority: 94
+    description: "감정 표현 후 학습 태도 변화 분석 - 다음 세션 몰입/자발적 재도전"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "emotion_expressed"
+        operator: "=="
+        value: true
+      - field: "subsequent_behavior_change"
+        operator: "in"
+        value: ["increased_immersion", "voluntary_retry", "none"]
+      - field: "subsequent_behavior_change"
+        operator: "=="
+        value: "none"
+    action:
+      - "analyze_emotion_behavior_link: true"
+      - "encourage_behavior_change: true"
+      - "generate_intervention: 'emotion_behavior_link_enhancement'"
+      - "provide_feedback: '감정을 표현한 후 학습 태도 변화가 나타나지 않네요. 감정을 학습 행동으로 연결하는 연습을 해볼까요?'"
+    confidence: 0.93
+    rationale: "감정 인식이 행동 변화로 이어지도록 촉진"
+    
+  - rule_id: "PJ_C3_routine_formation_indicators"
+    priority: 95
+    description: "포모도르 일기 기록이 학습 루틴 강화로 이어지는 징후 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+      - field: "journal_consistency_days"
+        operator: ">="
+        value: 7
+      - field: "routine_mention_frequency"
+        operator: ">="
+        value: 3
+      - field: "repeat_willingness"
+        operator: "=="
+        value: true
+    action:
+      - "reinforce_routine_formation: true"
+      - "celebrate_routine_establishment: true"
+      - "generate_intervention: 'routine_reinforcement'"
+      - "provide_feedback: '포모도르 일기가 학습 루틴 강화로 이어지고 있네요! 이 루틴을 계속 유지해보세요.'"
+    confidence: 0.94
+    rationale: "루틴 형성 징후 포착 및 강화"
+    
+  # ========== ⑧ 귀가검사 (Return Check) ==========
+  
+  - rule_id: "RC_A1_achievement_clarity"
+    priority: 95
+    description: "귀가검사에서 오늘 학습의 핵심 성취를 명확히 말할 수 있는지 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "preparation"
+      - field: "achievement_clarity_score"
+        operator: "<"
+        value: 0.7
+    action:
+      - "encourage_achievement_reflection: true"
+      - "provide_reflection_framework: true"
+      - "generate_intervention: 'achievement_clarity_enhancement'"
+      - "provide_feedback: '오늘 학습의 핵심 성취를 명확히 정리하는 것이 중요해요. 함께 되돌아볼까요?'"
+    confidence: 0.94
+    rationale: "성취 명확화로 학습 효과 인식 강화"
+    
+  - rule_id: "RC_A2_meaningful_moment_identification"
+    priority: 93
+    description: "하루 동안 가장 의미 있었다고 느낀 학습 순간 구체적 설명 능력 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "preparation"
+      - field: "meaningful_moment_identified"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_moment_identification: true"
+      - "provide_identification_framework: true"
+      - "generate_intervention: 'meaningful_moment_recognition'"
+      - "provide_feedback: '하루 중 가장 의미 있었던 학습 순간을 찾아보는 것이 중요해요. 함께 되돌아볼까요?'"
+    confidence: 0.92
+    rationale: "의미 있는 학습 순간 인식으로 동기 강화"
+    
+  - rule_id: "RC_A3_satisfaction_fatigue_balance"
+    priority: 91
+    description: "귀가검사 시 만족감과 피로감의 균형 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "preparation"
+      - field: "satisfaction_fatigue_balance_score"
+        operator: "<"
+        value: 0.6
+    action:
+      - "analyze_balance: true"
+      - "suggest_balance_improvement: true"
+      - "generate_intervention: 'balance_optimization'"
+      - "provide_feedback: '만족감과 피로감의 균형이 맞지 않네요. 학습 계획을 조정해볼까요?'"
+    confidence: 0.90
+    rationale: "균형잡힌 학습 경험으로 지속 가능한 학습 루틴 형성"
+    
+  - rule_id: "RC_B1_feedback_type_response"
+    priority: 94
+    description: "교사 피드백 유형별 반응 강도 분석 - 칭찬/교정/조언"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "participation"
+      - field: "feedback_type"
+        operator: "in"
+        value: ["praise", "correction", "advice"]
+      - field: "response_intensity"
+        operator: "!="
+        value: null
+    action:
+      - "identify_effective_feedback_type: true"
+      - "adjust_feedback_strategy: true"
+      - "generate_intervention: 'feedback_type_optimization'"
+      - "provide_feedback: '{{effective_feedback_type}} 피드백에 가장 강하게 반응하시네요. 이 유형의 피드백을 더 활용해볼까요?'"
+    confidence: 0.93
+    rationale: "효과적인 피드백 유형 식별 및 활용"
+    
+  - rule_id: "RC_B2_immediate_action_taking"
+    priority: 95
+    description: "피드백 수용 후 즉시 수정 행동 수행 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "participation"
+      - field: "feedback_provided"
+        operator: "=="
+        value: true
+      - field: "immediate_action_taken"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_immediate_action: true"
+      - "provide_action_framework: true"
+      - "generate_intervention: 'action_taking_encouragement'"
+      - "provide_feedback: '피드백을 받은 후 즉시 수정 행동(노트 보완, 개념 재정리)을 수행하면 효과가 높아져요. 함께 해볼까요?'"
+    confidence: 0.94
+    rationale: "피드백의 즉각적 행동 전이 촉진"
+    
+  - rule_id: "RC_B3_feedback_reception_type"
+    priority: 93
+    description: "피드백에 대한 반응 유형 분석 - 방어적(핑계/회피) vs 성장형(수용/재시도)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "participation"
+      - field: "feedback_provided"
+        operator: "=="
+        value: true
+      - field: "reception_type"
+        operator: "in"
+        value: ["defensive", "growth_oriented"]
+      - field: "reception_type"
+        operator: "=="
+        value: "defensive"
+    action:
+      - "encourage_growth_mindset: true"
+      - "provide_mindset_framework: true"
+      - "generate_intervention: 'growth_mindset_enhancement'"
+      - "provide_feedback: '피드백에 대해 방어적 반응보다 성장형 반응(수용, 재시도)이 학습에 더 도움이 돼요. 함께 연습해볼까요?'"
+    confidence: 0.92
+    rationale: "성장 마인드셋 형성으로 피드백 효과 극대화"
+    
+  - rule_id: "RC_C1_improvement_point_reflection"
+    priority: 94
+    description: "귀가검사에서 도출된 개선 포인트의 다음 학습일정 반영 여부 평가"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "follow_up"
+      - field: "improvement_point_identified"
+        operator: "=="
+        value: true
+      - field: "next_schedule_reflection"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_schedule_reflection: true"
+      - "provide_reflection_framework: true"
+      - "generate_intervention: 'schedule_reflection_enhancement'"
+      - "provide_feedback: '귀가검사에서 도출된 개선 포인트를 다음 학습 일정에 반영하면 효과가 높아져요. 함께 계획해볼까요?'"
+    confidence: 0.93
+    rationale: "개선 포인트의 학습 일정 반영으로 지속적 개선"
+    
+  - rule_id: "RC_C2_self_check_behavior"
+    priority: 92
+    description: "귀가검사 이후 스스로 개선 루틴 점검 행동 여부 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "follow_up"
+      - field: "self_check_behavior"
+        operator: "=="
+        value: false
+    action:
+      - "encourage_self_check: true"
+      - "provide_check_framework: true"
+      - "generate_intervention: 'self_check_encouragement'"
+      - "provide_feedback: '귀가검사 이후에도 스스로 개선 루틴을 점검하는 행동이 중요해요. 함께 연습해볼까요?'"
+    confidence: 0.91
+    rationale: "자기 점검 습관 형성으로 자율적 학습 능력 강화"
+    
+  - rule_id: "RC_C3_routine_maintenance_trend"
+    priority: 95
+    description: "반복 피드백 후 루틴 유지 기간 증가 패턴 분석"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "return_check"
+      - field: "return_check_stage"
+        operator: "=="
+        value: "follow_up"
+      - field: "feedback_repeat_count"
+        operator: ">="
+        value: 3
+      - field: "routine_maintenance_trend"
+        operator: "=="
+        value: "increasing"
+    action:
+      - "celebrate_improvement: true"
+      - "reinforce_routine: true"
+      - "generate_intervention: 'routine_maintenance_reinforcement'"
+      - "provide_feedback: '반복 피드백 후 루틴 유지 기간이 점점 길어지고 있네요! 훌륭해요. 이 루틴을 계속 유지해보세요.'"
+    confidence: 0.94
+    rationale: "루틴 유지 개선 패턴 포착 및 강화"
+    
+  # ========== 복합 상황 대응 룰 ==========
+  
+  - rule_id: "CR1_concept_weakness_with_error_pattern"
+    priority: 96
+    description: "개념이해 취약구간과 오답 패턴 복합 상황 대응"
+    conditions:
+      - field: "concept_weak_stage_detected"
+        operator: "=="
+        value: true
+      - field: "error_pattern_detected"
+        operator: "=="
+        value: true
+      - field: "error_category"
+        operator: "=="
+        value: "concept_error"
+    action:
+      - "integrate_concept_error_analysis: true"
+      - "provide_comprehensive_support: true"
+      - "generate_intervention: 'concept_error_comprehensive'"
+      - "provide_feedback: '개념이해 취약구간과 오답 패턴이 연결되어 있네요. 개념 보강과 오답 분석을 함께 진행해볼까요?'"
+      - "link_to_content: 'concept_error_comprehensive_support'"
+    confidence: 0.95
+    rationale: "개념 취약점과 오답 패턴의 연관성 분석으로 종합적 해결"
+    
+  - rule_id: "CR2_type_learning_boredom_with_progress_delay"
+    priority: 94
+    description: "유형학습 지루함과 진행 지연 복합 상황 대응"
+    conditions:
+      - field: "type_learning_boredom_detected"
+        operator: "=="
+        value: true
+      - field: "progress_delay_detected"
+        operator: "=="
+        value: true
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+    action:
+      - "analyze_boredom_progress_link: true"
+      - "suggest_activity_variation: true"
+      - "adjust_learning_pace: true"
+      - "generate_intervention: 'boredom_progress_comprehensive'"
+      - "provide_feedback: '유형학습에서 지루함과 진행 지연이 함께 나타나네요. 활동을 다양화하고 학습 속도를 조절해볼까요?'"
+    confidence: 0.93
+    rationale: "지루함과 진행 지연의 연관성 분석으로 종합적 해결"
+    
+  - rule_id: "CR3_problem_solving_cognitive_load_with_review_resistance"
+    priority: 93
+    description: "문제풀이 인지부하와 복습 저항감 복합 상황 대응"
+    conditions:
+      - field: "cognitive_overload_detected"
+        operator: "=="
+        value: true
+      - field: "review_resistance_detected"
+        operator: "=="
+        value: true
+    action:
+      - "analyze_load_resistance_link: true"
+      - "suggest_break_strategy: true"
+      - "provide_light_review_alternative: true"
+      - "generate_intervention: 'load_resistance_comprehensive'"
+      - "provide_feedback: '문제풀이 인지부하와 복습 저항감이 함께 나타나네요. 휴식 전략과 가벼운 복습 대안을 제시해볼까요?'"
+    confidence: 0.92
+    rationale: "인지부하와 복습 저항의 연관성 분석으로 종합적 해결"
+    
+  - rule_id: "CR4_pomodoro_emotion_imbalance_with_routine_instability"
+    priority: 92
+    description: "포모도르 감정 불균형과 루틴 불안정 복합 상황 대응"
+    conditions:
+      - field: "emotion_balance_score"
+        operator: "<"
+        value: 0.6
+      - field: "routine_stability_score"
+        operator: "<"
+        value: 0.7
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro_journal"
+    action:
+      - "analyze_emotion_routine_link: true"
+      - "suggest_routine_stabilization: true"
+      - "provide_emotion_balance_support: true"
+      - "generate_intervention: 'emotion_routine_comprehensive'"
+      - "provide_feedback: '포모도르 일기에서 감정 불균형과 루틴 불안정이 함께 나타나네요. 루틴 안정화와 감정 균형을 함께 개선해볼까요?'"
+    confidence: 0.91
+    rationale: "감정과 루틴의 연관성 분석으로 종합적 해결"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "analyze_activity_context: true"
+    - "provide_general_guidance: true"
+    - "display_message: '학습 활동을 분석하고 맞춤형 가이드를 제공 중입니다.'"
+  confidence: 0.5
+  rationale: "기본 학습 활동 분석 및 가이드 제공 루틴 적용"
+
+# ========== 데이터 기반 질문 연계 정보 ==========
+# 
+# 이 rules.yaml 파일은 questions.html의 8가지 활동 영역별 질문과 data_based_questions.js의 데이터 기반 질문과 연계됩니다.
+#
+# ① 개념이해: "이 학생의 개념이해 과정에서 가장 취약한 구간은 어디인가요?"
+#   - 연계 룰: CU_A1~CU_C3 (9개 룰)
+#   - 데이터 소스: concept_stage, pause_frequency, gaze_attention_score, concept_confusion_detected, persona_type, immersion_score_by_combination
+#   - 온톨로지: ConceptWeakpoint, ConceptLearningStyle, ConceptImmersionPattern
+#
+# ② 유형학습: "이 학생이 지금 어떤 유형학습 루틴(순서, 방법, 간격)을 적용하면 효율이 높을까요?"
+#   - 연계 룰: TL_A1~TL_C3 (9개 룰)
+#   - 데이터 소스: problem_sequence, difficulty_change, approach_strategy, repeated_error_count, immersion_score_by_activity
+#   - 온톨로지: TypeLearningRoutine, TypeLearningStrategy, TypeLearningEmotionLoop
+#
+# ③ 문제풀이: "이 학생의 풀이 과정에서 가장 많이 나타나는 사고 패턴은 무엇인가요?"
+#   - 연계 룰: PS_A1~PS_C3 (9개 룰)
+#   - 데이터 소스: key_condition_identification_score, structural_analysis_before_solving, gaze_detection, emotion_during_solving, self_explanation_score
+#   - 온톨로지: ProblemSolvingStrategy, CognitiveLoadPattern, MetacognitiveReview
+#
+# ④ 오답노트: "이 학생의 오답 패턴은 어떤 사고 습관과 연결되어 있나요?"
+#   - 연계 룰: EN_A1~EN_C3 (9개 룰)
+#   - 데이터 소스: error_category, pre_error_behavior, post_error_reflection, retry_emotion, feedback_to_action_rate
+#   - 온톨로지: ErrorPattern, ErrorRecoveryResilience, FeedbackTransfer
+#
+# ⑤ 질의응답: "이 학생은 어떤 시점에서 질문을 가장 효과적으로 활용하나요?"
+#   - 연계 룰: QA_A1~QA_C3 (9개 룰)
+#   - 데이터 소스: question_context, expression_timing, question_type, question_complexity, insight_moment_detected
+#   - 온톨로지: QuestionTimingPattern, QuestionDepth, QuestionFeedbackLoop
+#
+# ⑥ 복습활동: "이 학생에게 가장 효율적인 복습 타이밍과 분량은 어느 정도인가요?"
+#   - 연계 룰: RV_A1~RV_C3 (9개 룰)
+#   - 데이터 소스: review_timing, efficiency_by_timing, review_method, review_start_emotion, resistance_timing
+#   - 온톨로지: ReviewTimingOptimization, ReviewMethodStructure, ReviewEmotionRoutine
+#
+# ⑦ 포모도르 수학일기: "이 학생의 집중 리듬에 맞는 포모도르 세션 구성은 어떻게 해야 할까요?"
+#   - 연계 룰: PJ_A1~PJ_C3 (9개 룰)
+#   - 데이터 소스: average_focus_duration, focus_stability_by_stage, what_learned_ratio, emotion_balance_score, routine_mention_frequency
+#   - 온톨로지: PomodoroFocusRhythm, MetacognitiveReflection, EmotionRoutineFormation
+#
+# ⑧ 귀가검사: "귀가검사 단계에서 학생의 하루 학습을 어떻게 정리·해석해주는 게 효과적일까요?"
+#   - 연계 룰: RC_A1~RC_C3 (9개 룰)
+#   - 데이터 소스: achievement_clarity_score, meaningful_moment_identified, feedback_type, immediate_action_taken, routine_maintenance_trend
+#   - 온톨로지: ReturnCheckAchievement, FeedbackAcceptanceTransfer, RoutineLoopConnection
+#
+# 자세한 데이터 기반 질문 정의는 data_based_questions.js의 agent04 섹션을 참조하세요.

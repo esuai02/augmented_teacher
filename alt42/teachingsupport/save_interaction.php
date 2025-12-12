@@ -61,6 +61,73 @@ if (json_last_error() !== JSON_ERROR_NONE && !empty($rawInput)) {
 
 $action = $input['action'] ?? '';
 
+/**
+ * 큰(특히 핸드폰) 이미지 업로드 시 화이트보드에서 "너무 크게/잘림"을 완화하기 위해 서버에서 리사이즈.
+ * - GD가 없거나 디코딩 실패 시 원본 유지 (non-breaking)
+ * - maxDim(긴 변 기준) 이상이면 축소
+ *
+ * @param string $imageData 바이너리 이미지 데이터
+ * @param string $mimeType 예: image/png, image/jpeg
+ * @param int $maxDim 긴 변 최대 픽셀
+ * @return string 리사이즈된(또는 원본) 바이너리 데이터
+ */
+function ktm_resize_image_binary_if_needed($imageData, $mimeType, $maxDim = 1600) {
+    if (empty($imageData) || !is_string($imageData)) return $imageData;
+    if (!function_exists('imagecreatefromstring')) return $imageData;
+    // GIF 등은 그대로 둠 (애니메이션/호환)
+    if (strpos($mimeType, 'gif') !== false) return $imageData;
+
+    $src = @imagecreatefromstring($imageData);
+    if (!$src) return $imageData;
+
+    $w = imagesx($src);
+    $h = imagesy($src);
+    if (!$w || !$h) {
+        imagedestroy($src);
+        return $imageData;
+    }
+
+    $maxSide = max($w, $h);
+    if ($maxSide <= $maxDim) {
+        imagedestroy($src);
+        return $imageData;
+    }
+
+    $scale = $maxDim / $maxSide;
+    $nw = max(1, (int)round($w * $scale));
+    $nh = max(1, (int)round($h * $scale));
+
+    $dst = imagecreatetruecolor($nw, $nh);
+    if (!$dst) {
+        imagedestroy($src);
+        return $imageData;
+    }
+
+    // PNG 투명도 유지
+    if (strpos($mimeType, 'png') !== false) {
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+        $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+        imagefilledrectangle($dst, 0, 0, $nw, $nh, $transparent);
+    }
+
+    imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
+
+    ob_start();
+    if (strpos($mimeType, 'png') !== false) {
+        imagepng($dst, null, 6);
+    } else {
+        // jpeg 기본
+        imagejpeg($dst, null, 85);
+    }
+    $out = ob_get_clean();
+
+    imagedestroy($src);
+    imagedestroy($dst);
+
+    return (!empty($out) ? $out : $imageData);
+}
+
 try {
     $time = time();
     
@@ -226,6 +293,9 @@ try {
 
                     // MIME 타입에서 확장자 추출
                     $mimeType = str_replace('data:', '', $type);
+                    
+                    // 큰 이미지 리사이즈 (화이트보드 표시 안정화) - MIME 타입 확정 후
+                    $imageData = ktm_resize_image_binary_if_needed($imageData, $mimeType, 1600);
                     $extension = 'jpg';
                     if (strpos($mimeType, 'png') !== false) {
                         $extension = 'png';
@@ -263,9 +333,10 @@ try {
                         number_format($writeResult)
                     ));
 
-                    // DB에는 상대 경로만 저장
-                    $interaction->problem_image = 'images/' . $uniqueFilename;
-                    error_log(sprintf('[save_interaction.php] DB 저장용 상대 경로: %s', $interaction->problem_image));
+                    // DB에는 절대 URL로 저장 (whiteboard/board_capture.php 등 다른 경로에서 직접 참조해도 깨지지 않도록)
+                    // 예: https://mathking.kr/moodle/local/augmented_teacher/alt42/teachingsupport/images/xxx.png
+                    $interaction->problem_image = $CFG->wwwroot . '/local/augmented_teacher/alt42/teachingsupport/images/' . $uniqueFilename;
+                    error_log(sprintf('[save_interaction.php] DB 저장용 절대 URL: %s', $interaction->problem_image));
 
                 } catch (Exception $imgError) {
                     error_log(sprintf(
@@ -429,6 +500,87 @@ try {
             ob_end_flush();
             exit;
             break;
+
+        case 'update_problem_image':
+            // 문제 이미지 업데이트 (Base64 data URL → 파일 저장 → DB에는 절대 URL 저장)
+            $interaction_id = (int)($input['interactionId'] ?? 0);
+            $problemImage = $input['problemImage'] ?? '';
+
+            if (!$interaction_id || empty($problemImage)) {
+                ob_clean();
+                echo json_encode(['success' => false, 'error' => '필수 파라미터가 없습니다.', 'file' => basename(__FILE__), 'line' => __LINE__]);
+                exit;
+            }
+
+            try {
+                $interaction = $DB->get_record('ktm_teaching_interactions', ['id' => $interaction_id]);
+                if (!$interaction) {
+                    throw new Exception('상호작용 레코드를 찾을 수 없습니다. ID: ' . $interaction_id);
+                }
+
+                // data URL만 허용 (안전/일관성)
+                if (strpos($problemImage, 'data:') !== 0) {
+                    // URL 그대로 저장 (호환)
+                    $finalUrl = $problemImage;
+                } else {
+                    // base64 데이터 파싱
+                    list($type, $data) = explode(';', $problemImage);
+                    list(, $data) = explode(',', $data);
+                    $imageData = base64_decode($data);
+                    if ($imageData === false) {
+                        throw new Exception('base64 디코딩 실패');
+                    }
+
+                    // MIME 타입에서 확장자 추출
+                    $mimeType = str_replace('data:', '', $type);
+                    
+                    // 큰 이미지 리사이즈 (화이트보드 표시 안정화)
+                    $imageData = ktm_resize_image_binary_if_needed($imageData, $mimeType, 1600);
+
+                    $extension = 'jpg';
+                    if (strpos($mimeType, 'png') !== false) {
+                        $extension = 'png';
+                    } elseif (strpos($mimeType, 'gif') !== false) {
+                        $extension = 'gif';
+                    }
+
+                    $uniqueFilename = 'problem_edited_' . time() . '_' . uniqid() . '.' . $extension;
+                    $uploadDir = __DIR__ . '/images/';
+                    if (!file_exists($uploadDir)) {
+                        if (!mkdir($uploadDir, 0755, true)) {
+                            throw new Exception('이미지 디렉토리 생성 실패: ' . $uploadDir);
+                        }
+                    }
+
+                    $imagePath = $uploadDir . $uniqueFilename;
+                    $writeResult = file_put_contents($imagePath, $imageData);
+                    if ($writeResult === false) {
+                        throw new Exception('이미지 파일 저장 실패: ' . $imagePath);
+                    }
+
+                    $finalUrl = $CFG->wwwroot . '/local/augmented_teacher/alt42/teachingsupport/images/' . $uniqueFilename;
+                }
+
+                // Moodle update_record가 스키마 필드를 무시할 수 있어 직접 SQL 사용
+                $sql = "UPDATE {$CFG->prefix}ktm_teaching_interactions
+                        SET problem_image = :problem_image, timemodified = :timemodified
+                        WHERE id = :id";
+                $params = [
+                    'problem_image' => $finalUrl,
+                    'timemodified' => $time,
+                    'id' => $interaction_id
+                ];
+                $DB->execute($sql, $params);
+
+                ob_clean();
+                echo json_encode(['success' => true, 'imageUrl' => $finalUrl, 'interactionId' => $interaction_id]);
+                exit;
+            } catch (Exception $e) {
+                error_log(sprintf('[save_interaction.php] update_problem_image 오류: %s', $e->getMessage()));
+                ob_clean();
+                echo json_encode(['success' => false, 'error' => $e->getMessage(), 'file' => basename(__FILE__), 'line' => __LINE__]);
+                exit;
+            }
             
         case 'update_solution':
             // 해설 업데이트

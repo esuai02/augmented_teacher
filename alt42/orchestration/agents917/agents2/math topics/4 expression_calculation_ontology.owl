@@ -1,0 +1,1388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 식의 계산 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#문자를_사용한_식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">문자를 사용한 식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53169&amp;page=1&amp;quizid=86096</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 문자를 사용한 식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_기호와_나눗셈_기호의_생략">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 기호와 나눗셈 기호의 생략</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53170&amp;page=1&amp;quizid=86097</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 곱셈 기호와 나눗셈 기호의 생략  [학습활동] 연산 규칙을 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#식의_값">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">식의 값</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53171&amp;page=1&amp;quizid=86098</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 식의 값  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53172&amp;page=1&amp;quizid=86099</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 다항식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53173&amp;page=1&amp;quizid=86100</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 일차식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식의_수의_곱셈_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식의 수의 곱셈, 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53174&amp;page=1&amp;quizid=86101</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 단항식의 수의 곱셈, 나눗셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차식과_수의_곱셈_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차식과 수의 곱셈, 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53175&amp;page=1&amp;quizid=86102</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 일차식과 수의 곱셈, 나눗셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#동류항의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">동류항의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53176&amp;page=1&amp;quizid=86103</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 동류항의 계산  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차식의_덧셈_뺄셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차식의 덧셈, 뺄셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=5&amp;cmid=53177&amp;page=1&amp;quizid=86104</ar:hasURL>
+    <ar:description xml:lang="ko">문자와 식 (중등수학 1-1) — [핵심개념] 일차식의 덧셈, 뺄셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53178&amp;page=1&amp;quizid=86105</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 등식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#방정식과_항등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">방정식과 항등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53179&amp;page=1&amp;quizid=86106</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 방정식과 항등식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53180&amp;page=1&amp;quizid=86107</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 등식의 성질  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식의 성질을 이용한 방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53181&amp;page=1&amp;quizid=86108</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 등식의 성질을 이용한 방정식의 풀이  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이항">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이항</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53182&amp;page=1&amp;quizid=86109</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 이항  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53183&amp;page=1&amp;quizid=86110</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 일차방정식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53184&amp;page=1&amp;quizid=86111</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 일차방정식의 풀이  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_일차방정식의_풀이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 일차방정식의 풀이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=6&amp;cmid=53185&amp;page=1&amp;quizid=86112</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 풀이 (중등수학 1-1) — [핵심개념] 복잡한 일차방정식의 풀이  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식의_활용주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식의 활용(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53186&amp;page=1&amp;quizid=86113</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용 (중등수학1-1) — [핵심개념] 일차방정식의 활용(주제)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">거리, 속력, 시간에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53187&amp;page=1&amp;quizid=86114</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용 (중등수학1-1) — [핵심개념] 거리, 속력, 시간에 대한 문제  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#소금물의_농도에_대한_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">소금물의 농도에 대한 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53188&amp;page=1&amp;quizid=86115</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용 (중등수학1-1) — [핵심개념] 소금물의 농도에 대한 문제  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#규칙을_찾는_문제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">규칙을 찾는 문제</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=7&amp;cmid=53189&amp;page=1&amp;quizid=86116</ar:hasURL>
+    <ar:description xml:lang="ko">일차방정식의 활용 (중등수학1-1) — [핵심개념] 규칙을 찾는 문제  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙1">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(1)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53290&amp;page=1&amp;quizid=86207</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 지수법칙(1)  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(2)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53291&amp;page=1&amp;quizid=86208</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 지수법칙(2)  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙3">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙(3)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53292&amp;page=1&amp;quizid=86209</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 지수법칙(3)  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#자릿수_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">자릿수 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53293&amp;page=1&amp;quizid=86210</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 자릿수 구하기  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식의_곱셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식의 곱셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53294&amp;page=1&amp;quizid=86211</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 단항식의 곱셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식의_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식의 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=2&amp;cmid=53295&amp;page=1&amp;quizid=86212</ar:hasURL>
+    <ar:description xml:lang="ko">단항식의 계산 (중등수학2-1) — [핵심개념] 단항식의 나눗셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 덧셈과 뺄셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=3&amp;cmid=53296&amp;page=1&amp;quizid=86213</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 계산 (중등수학2-1) — [핵심개념] 다항식의 덧셈과 뺄셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차식의_덧셈과_뺄셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차식의 덧셈과 뺄셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=3&amp;cmid=53297&amp;page=1&amp;quizid=86214</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 계산 (중등수학2-1) — [핵심개념] 이차식의 덧셈과 뺄셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식과_다항식의_곱셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식과 다항식의 곱셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=3&amp;cmid=53298&amp;page=1&amp;quizid=86215</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 계산 (중등수학2-1) — [핵심개념] 단항식과 다항식의 곱셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식과_단항식의_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식과 단항식의 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=3&amp;cmid=53299&amp;page=1&amp;quizid=86216</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 계산 (중등수학2-1) — [핵심개념] 다항식과 단항식의 나눗셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#단항식과_다항식의_곱셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">단항식과 다항식의 곱셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53298&amp;page=1&amp;quizid=86215</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 단항식과 다항식의 곱셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식과_단항식의_나눗셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식과 단항식의 나눗셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53299&amp;page=1&amp;quizid=86216</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 다항식과 단항식의 나눗셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식과_다항식의_곱셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식과 다항식의 곱셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53300&amp;page=1&amp;quizid=86217</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 다항식과 다항식의 곱셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식_ab2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식 （a±b）^2</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53301&amp;page=1&amp;quizid=86218</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈 공식 （a±b）^2  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈공식_abab">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈공식 (a+b)(a-b)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53302&amp;page=1&amp;quizid=86219</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈공식 (a+b)(a-b)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식_xaxb">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식 (x+a)(x+b)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53303&amp;page=1&amp;quizid=86220</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈 공식 (x+a)(x+b)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식_axbcxd">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식 (ax+b)(cx+d)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53304&amp;page=1&amp;quizid=86221</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈 공식 (ax+b)(cx+d)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#치환을_이용한_식의_전개">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">치환을 이용한 식의 전개</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53305&amp;page=1&amp;quizid=86222</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 치환을 이용한 식의 전개  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식을_이용한_수의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식을 이용한 수의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53306&amp;page=1&amp;quizid=86223</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈 공식을 이용한 수의 계산  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#식의_대입">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">식의 대입</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53307&amp;page=1&amp;quizid=86224</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 식의 대입  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식의_변형을_이용한_식의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식의 변형을 이용한 식의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53309&amp;page=1&amp;quizid=86226</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 곱셈 공식의 변형을 이용한 식의 계산  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#등식의_변형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">등식의 변형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=1&amp;cmid=53308&amp;page=1&amp;quizid=86225</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 곱셈 (중등수학 3-1) — [핵심개념] 등식의 변형  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해의_뜻">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해의 뜻</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53453&amp;page=1&amp;quizid=86348</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해의 뜻  [학습활동] 인수분해 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통인수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통인수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53454&amp;page=1&amp;quizid=86349</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 공통인수  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식_a²2abb²">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식; a²±2ab+b²</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53455&amp;page=1&amp;quizid=86350</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 공식; a²±2ab+b²  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식_a²b²">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식; a²b²</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53456&amp;page=1&amp;quizid=86351</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 공식; a²b²  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식_x²abxab">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식; x²+(a+b)x+ab</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53457&amp;page=1&amp;quizid=86352</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 공식; x²+(a+b)x+ab  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식_acx²adbcxbd">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식; acx²+(ad+bc)x+bd</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53458&amp;page=1&amp;quizid=86353</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 공식; acx²+(ad+bc)x+bd  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해1">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 식의 인수분해(1)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53459&amp;page=1&amp;quizid=86354</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 복잡한 식의 인수분해(1)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 식의 인수분해(2)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53460&amp;page=1&amp;quizid=86355</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 복잡한 식의 인수분해(2)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해3">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복잡한 식의 인수분해(3)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53461&amp;page=1&amp;quizid=86356</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 복잡한 식의 인수분해(3)  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_방법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 방법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53462&amp;page=1&amp;quizid=86357</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 방법  [학습활동] 인수분해 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식의_활용">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식의 활용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=6&amp;cmid=53463&amp;page=1&amp;quizid=86358</ar:hasURL>
+    <ar:description xml:lang="ko">인수분해 (중등수학 3-1) — [핵심개념] 인수분해 공식의 활용  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식에_대한_용어">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식에 대한 용어</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48458&amp;page=1&amp;studentid=2&amp;quizid=84431</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식에 대한 용어  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_정리방법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 정리방법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48459&amp;page=1&amp;studentid=2&amp;quizid=84432</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식의 정리방법  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 덧셈과 뺄셈</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48460&amp;page=1&amp;studentid=2&amp;quizid=84433</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식의 덧셈과 뺄셈  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_덧셈에_대한_연산법칙">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 덧셈에 대한 연산법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48461&amp;page=1&amp;studentid=2&amp;quizid=84434</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식의 덧셈에 대한 연산법칙  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#지수법칙">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">지수법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48462&amp;page=1&amp;studentid=2&amp;quizid=84435</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 지수법칙  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#식의_전개">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">식의 전개</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48463&amp;page=1&amp;studentid=2&amp;quizid=84436</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 식의 전개  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_곱셈에_대한_연산법칙">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 곱셈에 대한 연산법칙</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48464&amp;page=1&amp;studentid=2&amp;quizid=84437</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식의 곱셈에 대한 연산법칙  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48465&amp;page=1&amp;studentid=2&amp;quizid=84438</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 곱셈 공식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#곱셈_공식의_변형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">곱셈 공식의 변형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48466&amp;page=1&amp;studentid=2&amp;quizid=84439</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 곱셈 공식의 변형  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식단항식의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">(다항식)÷(단항식)의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48467&amp;page=1&amp;studentid=2&amp;quizid=84440</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] (다항식)÷(단항식)의 계산  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식다항식의_계산">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">(다항식)÷(다항식)의 계산</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48468&amp;page=1&amp;studentid=2&amp;quizid=84441</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] (다항식)÷(다항식)의 계산  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항식의_나눗셈에_대한_등식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항식의 나눗셈에 대한 등식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48469&amp;page=1&amp;studentid=2&amp;quizid=84442</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 다항식의 나눗셈에 대한 등식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조립제법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조립제법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48470&amp;page=1&amp;studentid=2&amp;quizid=84443</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 조립제법  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#조립제법의_확장">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">조립제법의 확장</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=1&amp;cmid=48471&amp;page=1&amp;studentid=2&amp;quizid=84444</ar:hasURL>
+    <ar:description xml:lang="ko">다항식의 연산 (고등수학 상) — [핵심개념] 조립제법의 확장  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#항등식과_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">항등식과 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48472&amp;page=1&amp;quizid=84445</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 항등식과 방정식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#항등식의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">항등식의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48473&amp;page=1&amp;quizid=84446</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 항등식의 성질  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미정계수법">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미정계수법</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48474&amp;page=1&amp;quizid=84447</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 미정계수법  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#나머지정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">나머지정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48475&amp;page=1&amp;quizid=84448</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 나머지정리  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수정리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수정리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48476&amp;page=1&amp;quizid=84558</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 인수정리  [학습활동] 계산 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해주제">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해(주제)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48477&amp;page=1&amp;quizid=84449</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 인수분해(주제)  [학습활동] 인수분해 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_공식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 공식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48478&amp;page=1&amp;quizid=84450</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 인수분해 공식  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통부분이_있는_식의_인수분해">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통부분이 있는 식의 인수분해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48479&amp;page=1&amp;quizid=84451</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 공통부분이 있는 식의 인수분해  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#복이차식의_인수분해">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">복이차식의 인수분해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48480&amp;page=1&amp;quizid=84452</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 복이차식의 인수분해  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#여러_개의_문자를_포함하고_있는_식의_인수분해">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">여러 개의 문자를 포함하고 있는 식의 인수분해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48481&amp;page=1&amp;quizid=84453</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 여러 개의 문자를 포함하고 있는 식의 인수분해  [학습활동] 식의 구조를 이해하고 계산한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수정리를_이용한_인수분해">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수정리를 이용한 인수분해</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48482&amp;page=1&amp;quizid=84454</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 인수정리를 이용한 인수분해  [학습활동] 인수분해 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#인수분해_방법의_흐름도">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">인수분해 방법의 흐름도</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=2&amp;cmid=48483&amp;page=1&amp;quizid=84455</ar:hasURL>
+    <ar:description xml:lang="ko">나머지정리와 인수분해 (고등수학 상) — [핵심개념] 인수분해 방법의 흐름도  [학습활동] 인수분해 방법을 이해하고 적용한다.  [적용예시] 수학적 문제 해결에 활용한다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- precedes 관계 (동일 stage 내 순서) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#문자를_사용한_식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_기호와_나눗셈_기호의_생략"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_기호와_나눗셈_기호의_생략">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#식의_값"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#식의_값">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식의_수의_곱셈_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식의_수의_곱셈_나눗셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차식과_수의_곱셈_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차식과_수의_곱셈_나눗셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#동류항의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#동류항의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차식의_덧셈_뺄셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#방정식과_항등식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#방정식과_항등식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등식의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식의_성질을_이용한_방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이항"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이항">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_풀이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_활용주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#거리_속력_시간에_대한_문제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#거리_속력_시간에_대한_문제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#소금물의_농도에_대한_문제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#소금물의_농도에_대한_문제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#규칙을_찾는_문제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙1">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙3"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙3">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#자릿수_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#자릿수_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식의_곱셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식의_곱셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차식의_덧셈과_뺄셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차식의_덧셈과_뺄셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#단항식과_다항식의_곱셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식과_다항식의_곱셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식과_단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식과_다항식의_곱셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식과_단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식과_단항식의_나눗셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식과_다항식의_곱셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식과_다항식의_곱셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식_ab2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식_ab2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈공식_abab"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈공식_abab">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식_xaxb"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식_xaxb">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식_axbcxd"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식_axbcxd">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#치환을_이용한_식의_전개"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#치환을_이용한_식의_전개">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식을_이용한_수의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식을_이용한_수의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#식의_대입"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#식의_대입">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식의_변형을_이용한_식의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식의_변형을_이용한_식의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#등식의_변형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해의_뜻">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통인수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공통인수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식_a²2abb²"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_공식_a²2abb²">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식_a²b²"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_공식_a²b²">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식_x²abxab"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_공식_x²abxab">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식_acx²adbcxbd"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_공식_acx²adbcxbd">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_식의_인수분해1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해1">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_식의_인수분해2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복잡한_식의_인수분해3"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복잡한_식의_인수분해3">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_방법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_방법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식의_활용"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식에_대한_용어">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식의_정리방법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_정리방법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식의_덧셈에_대한_연산법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_덧셈에_대한_연산법칙">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#지수법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#식의_전개"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#식의_전개">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식의_곱셈에_대한_연산법칙"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_곱셈에_대한_연산법칙">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#곱셈_공식의_변형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#곱셈_공식의_변형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식단항식의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식단항식의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식다항식의_계산"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식다항식의_계산">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항식의_나눗셈에_대한_등식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_나눗셈에_대한_등식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#조립제법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#조립제법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#조립제법의_확장"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#항등식과_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#항등식의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#항등식의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미정계수법"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미정계수법">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#나머지정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#나머지정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수정리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수정리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해주제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해주제">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_공식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해_공식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통부분이_있는_식의_인수분해"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공통부분이_있는_식의_인수분해">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#복이차식의_인수분해"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#복이차식의_인수분해">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#여러_개의_문자를_포함하고_있는_식의_인수분해"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#여러_개의_문자를_포함하고_있는_식의_인수분해">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수정리를_이용한_인수분해"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수정리를_이용한_인수분해">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#인수분해_방법의_흐름도"/>
+  </rdf:Description>
+
+  <!-- dependsOn 관계 (단계 간 선행 학습 필요) -->
+  <rdf:Description rdf:about="http://example.org/adaptive-review#등식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#일차식의_덧셈_뺄셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식의_활용주제">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#복잡한_일차방정식의_풀이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#지수법칙1">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#규칙을_찾는_문제"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식의_덧셈과_뺄셈">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#단항식과_다항식의_곱셈">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#다항식과_단항식의_나눗셈"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#인수분해의_뜻">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#등식의_변형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항식에_대한_용어">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#인수분해_공식의_활용"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#항등식과_방정식">
+    <ar:dependsOn rdf:resource="http://example.org/adaptive-review#조립제법의_확장"/>
+  </rdf:Description>
+
+</rdf:RDF>

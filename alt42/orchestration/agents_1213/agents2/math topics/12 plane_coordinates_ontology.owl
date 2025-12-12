@@ -1,0 +1,1116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 평면좌표 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 평면좌표 (고등수학 상) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수직선_위의_두_점_사이의_거리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수직선 위의 두 점 사이의 거리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48909&amp;page=1&amp;quizid=84524</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 수직선 위의 두 점 사이의 거리 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#좌표평면_위의_두_점_사이의_거리_평면좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">좌표평면 위의 두 점 사이의 거리_평면좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48910&amp;page=1&amp;quizid=84525</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 좌표평면 위의 두 점 사이의 거리_평면좌표 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#차원">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">차원</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48911&amp;page=1&amp;quizid=84526</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 차원 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각형의_외심_평면좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각형의 외심_평면좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48912&amp;page=1&amp;quizid=84527</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 삼각형의 외심_평면좌표 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#선분의_내분점과_외분점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">선분의 내분점과 외분점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48913&amp;page=1&amp;quizid=84528</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 선분의 내분점과 외분점 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수직선_위의_선분의_내분점과_외분점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수직선 위의 선분의 내분점과 외분점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48914&amp;page=1&amp;quizid=84529</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 수직선 위의 선분의 내분점과 외분점 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#좌표평면_위의_선분의_내분점과_외분점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">좌표평면 위의 선분의 내분점과 외분점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48915&amp;page=1&amp;quizid=84530</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 좌표평면 위의 선분의 내분점과 외분점 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#삼각형의_무게중심_평면좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">삼각형의 무게중심_평면좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48916&amp;page=1&amp;quizid=84531</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 삼각형의 무게중심_평면좌표 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#자취의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">자취의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=10&amp;cmid=48917&amp;page=1&amp;quizid=84532</ar:hasURL>
+    <ar:description xml:lang="ko">평면좌표(고등) — 자취의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 직선의 방정식 (고등수학 상) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선의_방정식_평면좌표_개념">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선의 방정식_평면좌표_개념</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48918&amp;page=1&amp;quizid=84533</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 직선의 방정식_평면좌표_개념 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#한_점과_기울기가_주어진_직선의_방정식_평면좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">한 점과 기울기가 주어진 직선의 방정식_평면좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48919&amp;page=1&amp;quizid=84534</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 한 점과 기울기가 주어진 직선의 방정식_평면좌표 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_점을_지나는_직선의_방정식_평면좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 점을 지나는 직선의 방정식_평면좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48920&amp;page=1&amp;quizid=84535</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 두 점을 지나는 직선의 방정식_평면좌표 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#x절편과_y절편이_주어진_직선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">x절편과 y절편이 주어진 직선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48921&amp;page=1&amp;quizid=84536</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — x절편과 y절편이 주어진 직선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선의_방정식의_일반형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선의 방정식의 일반형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48922&amp;page=1&amp;quizid=84537</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 직선의 방정식의 일반형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#표준형으로_표현된_두_직선의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">표준형으로 표현된 두 직선의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48923&amp;page=1&amp;quizid=84538</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 표준형으로 표현된 두 직선의 위치 관계 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_직선이_수직일_조건">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 직선이 수직일 조건</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48924&amp;page=1&amp;quizid=84539</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 두 직선이 수직일 조건 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일반형으로_표현된_두_직선의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일반형으로 표현된 두 직선의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48925&amp;page=1&amp;quizid=84540</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 일반형으로 표현된 두 직선의 위치 관계 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정점을_지나는_직선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정점을 지나는 직선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48926&amp;page=1&amp;quizid=84541</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 정점을 지나는 직선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_직선의_교점을_지나는_직선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 직선의 교점을 지나는 직선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48927&amp;page=1&amp;quizid=84542</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 두 직선의 교점을 지나는 직선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#점과_직선_사이의_거리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">점과 직선 사이의 거리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48928&amp;page=1&amp;quizid=84543</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 점과 직선 사이의 거리 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평행한_두_직선_사이의_거리">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평행한 두 직선 사이의 거리</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48929&amp;page=1&amp;quizid=84544</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 평행한 두 직선 사이의 거리 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#좌표평면_위의_삼각형의_넓이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">좌표평면 위의 삼각형의 넓이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=11&amp;cmid=48930&amp;page=1&amp;quizid=84545</ar:hasURL>
+    <ar:description xml:lang="ko">직선의 방정식(고등) — 좌표평면 위의 삼각형의 넓이 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 원의방정식 (고등수학 상) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원의_방정식의_표준형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원의 방정식의 표준형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48931&amp;page=1&amp;quizid=84546</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원의 방정식의 표준형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원의_방정식의_일반형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원의 방정식의 일반형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48932&amp;page=1&amp;quizid=84547</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원의 방정식의 일반형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#여러_가지_원의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">여러 가지 원의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48933&amp;page=1&amp;quizid=84548</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 여러 가지 원의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_원의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 원의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48934&amp;page=1&amp;quizid=84549</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 두 원의 위치 관계 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원과_직선의_위치_관계_판별식_이용">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원과 직선의 위치 관계 - 판별식 이용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48937&amp;page=1&amp;quizid=84552</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원과 직선의 위치 관계 - 판별식 이용 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원과_직선의_위치_관계_원의_중심과_직선_사이의_거리_이용">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원과 직선의 위치 관계 - 원의 중심과 직선 사이의 거리 이용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48938&amp;page=1&amp;quizid=84553</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원과 직선의 위치 관계 - 원의 중심과 직선 사이의 거리 이용 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통현의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통현의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48935&amp;page=1&amp;quizid=84550</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 공통현의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_원의_교점을_지나는_원의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 원의 교점을 지나는 원의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48936&amp;page=1&amp;quizid=84551</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 두 원의 교점을 지나는 원의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기울기가_주어진_원의_접선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기울기가 주어진 원의 접선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48939&amp;page=1&amp;quizid=84554</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 기울기가 주어진 원의 접선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원_위의_점에서의_접선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원 위의 점에서의 접선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48940&amp;page=1&amp;quizid=84555</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원 위의 점에서의 접선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원_밖의_점에서_원에_그은_접선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원 밖의 점에서 원에 그은 접선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48941&amp;page=1&amp;quizid=84556</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원 밖의 점에서 원에 그은 접선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#원의_접선의_길이_원의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">원의 접선의 길이_원의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48942&amp;page=1&amp;quizid=84557</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 원의 접선의 길이_원의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통접선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통접선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48943&amp;page=1&amp;quizid=86010</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 공통접선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#공통접선의_길이">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">공통접선의 길이</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=12&amp;cmid=48944&amp;page=1&amp;quizid=86009</ar:hasURL>
+    <ar:description xml:lang="ko">원의방정식(고등) — 공통접선의 길이 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 도형의 이동 (고등수학 상) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#점의_평행이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">점의 평행이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48945&amp;page=1&amp;quizid=86008</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 점의 평행이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#도형의_평행이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">도형의 평행이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48946&amp;page=1&amp;quizid=86007</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 도형의 평행이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#점의_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">점의 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48947&amp;page=1&amp;quizid=86006</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 점의 대칭이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#도형의_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">도형의 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48948&amp;page=1&amp;quizid=86005</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 도형의 대칭이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#점에_대한_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">점에 대한 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48949&amp;page=1&amp;quizid=86004</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 점에 대한 대칭이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선에_대한_대칭이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선에 대한 대칭이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48950&amp;page=1&amp;quizid=86020</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 직선에 대한 대칭이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#선분의_길이의_합의_최솟값">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">선분의 길이의 합의 최솟값</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=59&amp;nch=13&amp;cmid=48951&amp;page=1&amp;quizid=86003</ar:hasURL>
+    <ar:description xml:lang="ko">도형의 이동(고등) — 선분의 길이의 합의 최솟값 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 이차곡선 (기하와 벡터) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#포물선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">포물선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48812&amp;page=1&amp;quizid=84948</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 포물선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#포물선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">포물선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48813&amp;page=1&amp;quizid=84949</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 포물선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#포물선의_평행이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">포물선의 평행이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48814&amp;page=1&amp;quizid=84950</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 포물선의 평행이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#포물선의_방정식의_일반형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">포물선의 방정식의 일반형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48815&amp;page=1&amp;quizid=84951</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 포물선의 방정식의 일반형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48816&amp;page=1&amp;quizid=84952</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 타원 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48817&amp;page=1&amp;quizid=84953</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 타원의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원의_장축_단축_초점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원의 장축, 단축, 초점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48818&amp;page=1&amp;quizid=84954</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 타원의 장축, 단축, 초점 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원의_평행이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원의 평행이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48819&amp;page=1&amp;quizid=84955</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 타원의 평행이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원의_방정식의_일반형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원의 방정식의 일반형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48820&amp;page=1&amp;quizid=84956</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 타원의 방정식의 일반형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48821&amp;page=1&amp;quizid=84957</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48822&amp;page=1&amp;quizid=84958</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선의 방정식 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_주축_초점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 주축, 초점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48823&amp;page=1&amp;quizid=84959</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선의 주축, 초점 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_점근선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 점근선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48824&amp;page=1&amp;quizid=84960</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선의 점근선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_평행이동">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 평행이동</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48825&amp;page=1&amp;quizid=84961</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선의 평행이동 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_방정식의_일반형">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 방정식의 일반형</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48826&amp;page=1&amp;quizid=84962</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 쌍곡선의 방정식의 일반형 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차곡선_이차곡선">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차곡선_이차곡선</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=1&amp;cmid=48827&amp;page=1&amp;quizid=84963</ar:hasURL>
+    <ar:description xml:lang="ko">이차곡선(고등) — 이차곡선_이차곡선 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 6단계: 평면곡선의 접선 (기하와 벡터) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#포물선의_접선의_방정식_접점의_좌표가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">포물선의 접선의 방정식-접점의 좌표가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=2&amp;cmid=48830&amp;page=1&amp;quizid=84966</ar:hasURL>
+    <ar:description xml:lang="ko">평면곡선의 접선(고등) — 포물선의 접선의 방정식-접점의 좌표가 주어질 때 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#타원의_접선의_방정식_접점의_좌표가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">타원의 접선의 방정식-접점의 좌표가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=2&amp;cmid=48831&amp;page=1&amp;quizid=84967</ar:hasURL>
+    <ar:description xml:lang="ko">평면곡선의 접선(고등) — 타원의 접선의 방정식-접점의 좌표가 주어질 때 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#쌍곡선의_접선의_방정식_접점의_좌표가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">쌍곡선의 접선의 방정식-접점의 좌표가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=2&amp;cmid=48832&amp;page=1&amp;quizid=84968</ar:hasURL>
+    <ar:description xml:lang="ko">평면곡선의 접선(고등) — 쌍곡선의 접선의 방정식-접점의 좌표가 주어질 때 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평면_곡선의_접선의_방정식_기울기가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평면 곡선의 접선의 방정식 - 기울기가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=2&amp;cmid=48833&amp;page=1&amp;quizid=84969</ar:hasURL>
+    <ar:description xml:lang="ko">평면곡선의 접선(고등) — 평면 곡선의 접선의 방정식 - 기울기가 주어질 때 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#평면_곡선의_접선의_방정식_평면_곡선_밖의_한_점의_좌표가_주어질_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">평면 곡선의 접선의 방정식 - 평면 곡선 밖의 한 점의 좌표가 주어질 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=65&amp;nch=2&amp;cmid=48834&amp;page=1&amp;quizid=84970</ar:hasURL>
+    <ar:description xml:lang="ko">평면곡선의 접선(고등) — 평면 곡선의 접선의 방정식 - 평면 곡선 밖의 한 점의 좌표가 주어질 때 개념을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#좌표평면_위의_두_점_사이의_거리_평면좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#차원"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#차원">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각형의_외심_평면좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각형의_외심_평면좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#선분의_내분점과_외분점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#선분의_내분점과_외분점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수직선_위의_선분의_내분점과_외분점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수직선_위의_선분의_내분점과_외분점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#좌표평면_위의_선분의_내분점과_외분점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#좌표평면_위의_선분의_내분점과_외분점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#삼각형의_무게중심_평면좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#삼각형의_무게중심_평면좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#자취의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#자취의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선의_방정식_평면좌표_개념"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선의_방정식_평면좌표_개념">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#한_점과_기울기가_주어진_직선의_방정식_평면좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#한_점과_기울기가_주어진_직선의_방정식_평면좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_점을_지나는_직선의_방정식_평면좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_점을_지나는_직선의_방정식_평면좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#x절편과_y절편이_주어진_직선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#x절편과_y절편이_주어진_직선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선의_방정식의_일반형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선의_방정식의_일반형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#표준형으로_표현된_두_직선의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#표준형으로_표현된_두_직선의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_직선이_수직일_조건"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_직선이_수직일_조건">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일반형으로_표현된_두_직선의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일반형으로_표현된_두_직선의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정점을_지나는_직선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정점을_지나는_직선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_직선의_교점을_지나는_직선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_직선의_교점을_지나는_직선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#점과_직선_사이의_거리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#점과_직선_사이의_거리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평행한_두_직선_사이의_거리"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평행한_두_직선_사이의_거리">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#좌표평면_위의_삼각형의_넓이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#좌표평면_위의_삼각형의_넓이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원의_방정식의_표준형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원의_방정식의_표준형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원의_방정식의_일반형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원의_방정식의_일반형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#여러_가지_원의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#여러_가지_원의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_원의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_원의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원과_직선의_위치_관계_판별식_이용"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원과_직선의_위치_관계_판별식_이용">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원과_직선의_위치_관계_원의_중심과_직선_사이의_거리_이용"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원과_직선의_위치_관계_원의_중심과_직선_사이의_거리_이용">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통현의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공통현의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_원의_교점을_지나는_원의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_원의_교점을_지나는_원의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기울기가_주어진_원의_접선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기울기가_주어진_원의_접선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원_위의_점에서의_접선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원_위의_점에서의_접선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원_밖의_점에서_원에_그은_접선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원_밖의_점에서_원에_그은_접선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#원의_접선의_길이_원의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#원의_접선의_길이_원의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통접선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공통접선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#공통접선의_길이"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#공통접선의_길이">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#점의_평행이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#점의_평행이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#도형의_평행이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#도형의_평행이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#점의_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#점의_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#도형의_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#도형의_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#점에_대한_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#점에_대한_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선에_대한_대칭이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선에_대한_대칭이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#선분의_길이의_합의_최솟값"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#선분의_길이의_합의_최솟값">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#포물선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#포물선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#포물선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#포물선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#포물선의_평행이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#포물선의_평행이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#포물선의_방정식의_일반형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#포물선의_방정식의_일반형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원의_장축_단축_초점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원의_장축_단축_초점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원의_평행이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원의_평행이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원의_방정식의_일반형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원의_방정식의_일반형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_주축_초점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_주축_초점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_점근선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_점근선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_평행이동"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_평행이동">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_방정식의_일반형"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_방정식의_일반형">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차곡선_이차곡선"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차곡선_이차곡선">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#포물선의_접선의_방정식_접점의_좌표가_주어질_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#포물선의_접선의_방정식_접점의_좌표가_주어질_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#타원의_접선의_방정식_접점의_좌표가_주어질_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#타원의_접선의_방정식_접점의_좌표가_주어질_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#쌍곡선의_접선의_방정식_접점의_좌표가_주어질_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#쌍곡선의_접선의_방정식_접점의_좌표가_주어질_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평면_곡선의_접선의_방정식_기울기가_주어질_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#평면_곡선의_접선의_방정식_기울기가_주어질_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#평면_곡선의_접선의_방정식_평면_곡선_밖의_한_점의_좌표가_주어질_때"/>
+  </rdf:Description>
+</rdf:RDF>
+

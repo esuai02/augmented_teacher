@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent06">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 06 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 06 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 06: Teacher Feedback 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TeacherFeedback">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherIntention"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherPersona"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecentInteractions"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherMemo"/>
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionContent"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TeacherIntention">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#CoreIntention"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherMemo"/>
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackContent"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TeacherPersona">
+    <at:hasPart rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherPersonaTone"/>
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionStyle"/>
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackTone"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TeacherPersonaTone">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PersonaTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherFeedbackStyle"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionTonePreference"/>
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackAcceptanceRate"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RecentInteractions">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherMemo"/>
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#CoreIntention"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RiskSignals">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressChange"/>
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#AlternativeScripts"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackTemplates">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Template"/>
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#AlternativeScripts"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionScenario">
+    <at:hasPart rdf:resource="http://mathking.kr/ontology/alphatutor#OpeningStrategy"/>
+    <at:hasPart rdf:resource="http://mathking.kr/ontology/alphatutor#CoachingStrategy"/>
+    <at:hasPart rdf:resource="http://mathking.kr/ontology/alphatutor#ClosingStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressChange"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UpcomingContext"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#CoachingStrategy">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CoreMessage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ToneSwitchRules"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ClosingStrategy">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TaskAssignment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReminderCard"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ParentCommunication"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InformationCollection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MissingInfo"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MissingInfoPriority"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CollectionMessageTemplate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InfoCollectionStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutoUpdateRules"/>
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#InfoCompleteness"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InfoCompleteness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BeforeAfterComparison"/>
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#InfoCompletenessReport"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

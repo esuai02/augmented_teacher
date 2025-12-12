@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent18">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 18 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 18 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 18: Signature Routine 관련 추가 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineStability">
+    <rdfs:label xml:lang="ko">RoutineStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 안정성 (반복 안정성 포함)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConcentrationRoutine">
+    <rdfs:label xml:lang="ko">ConcentrationRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StartRoutine">
+    <rdfs:label xml:lang="ko">StartRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">시작 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImmersionPsychologicalTrigger">
+    <rdfs:label xml:lang="ko">ImmersionPsychologicalTrigger</rdfs:label>
+    <rdfs:comment xml:lang="ko">몰입 심리 트리거 (감정·환경·행동요소)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionTrigger">
+    <rdfs:label xml:lang="ko">EmotionTrigger</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 트리거</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EnvironmentTrigger">
+    <rdfs:label xml:lang="ko">EnvironmentTrigger</rdfs:label>
+    <rdfs:comment xml:lang="ko">환경 트리거</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#BehaviorTrigger">
+    <rdfs:label xml:lang="ko">BehaviorTrigger</rdfs:label>
+    <rdfs:comment xml:lang="ko">행동 트리거</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NaturalImmersionCondition">
+    <rdfs:label xml:lang="ko">NaturalImmersionCondition</rdfs:label>
+    <rdfs:comment xml:lang="ko">자연스러운 몰입 조건</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEmotionCurve">
+    <rdfs:label xml:lang="ko">LearningEmotionCurve</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 중 감정곡선</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImmersionDuration">
+    <rdfs:label xml:lang="ko">ImmersionDuration</rdfs:label>
+    <rdfs:comment xml:lang="ko">몰입 지속시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ReinforcementFeedbackResponse">
+    <rdfs:label xml:lang="ko">ReinforcementFeedbackResponse</rdfs:label>
+    <rdfs:comment xml:lang="ko">강화 피드백 반응 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RewardLoopDesign">
+    <rdfs:label xml:lang="ko">RewardLoopDesign</rdfs:label>
+    <rdfs:comment xml:lang="ko">보상 루프 설계</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryFeedbackStrategy">
+    <rdfs:label xml:lang="ko">RecoveryFeedbackStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 피드백 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalReinforcement">
+    <rdfs:label xml:lang="ko">EmotionalReinforcement</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정적 강화 요소</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InteractionMethodForRoutine">
+    <rdfs:label xml:lang="ko">InteractionMethodForRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴을 위한 상호작용 방식</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineRepetitionStability">
+    <rdfs:label xml:lang="ko">RoutineRepetitionStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 반복 안정성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionAmplitude">
+    <rdfs:label xml:lang="ko">EmotionAmplitude</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 진폭</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CognitiveLoadPattern">
+    <rdfs:label xml:lang="ko">CognitiveLoadPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">인지 부하 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalCorrectionPoint">
+    <rdfs:label xml:lang="ko">EmotionalCorrectionPoint</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서적 보정 포인트</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CognitiveCorrectionPoint">
+    <rdfs:label xml:lang="ko">CognitiveCorrectionPoint</rdfs:label>
+    <rdfs:comment xml:lang="ko">인지적 보정 포인트</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermImmersionGrowth">
+    <rdfs:label xml:lang="ko">LongTermImmersionGrowth</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 몰입 성장</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SignatureRoutineDraft">
+    <rdfs:label xml:lang="ko">SignatureRoutineDraft</rdfs:label>
+    <rdfs:comment xml:lang="ko">시그너처 루틴 초안</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 18: Signature Routine 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SignatureRoutineDiscovery">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OnboardingInfo"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LatestPreferenceInfo"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionPsychologicalTrigger"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionTrigger"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EnvironmentTrigger"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BehaviorTrigger"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StartRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SignatureRoutineDraft"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NaturalImmersionCondition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionBreakPoint"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceReinforcement">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEmotionCurve"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReinforcementFeedbackResponse"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RewardLoopDesign"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryFeedbackStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalReinforcement"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionMethodForRoutine"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RoutineEvolutionPath">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineRepetitionStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionAmplitude"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CognitiveLoadPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalCorrectionPoint"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CognitiveCorrectionPoint"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermImmersionGrowth"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineEvolutionStage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SignatureRoutineLevel"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

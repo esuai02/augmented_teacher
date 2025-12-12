@@ -1,0 +1,1298 @@
+# Persona-based Response Rules for Agent 01 - Onboarding
+# Version: 1.0
+# Purpose: 페르소나 기반 현장감 있는 답변 생성을 위한 룰셋
+# Reference: ontology.jsonld, questions.md, personas.md
+
+version: "1.0"
+scenario: "persona_based_response"
+description: "학생 페르소나 식별 및 맞춤형 현장감 있는 답변 생성"
+
+# ============================================================
+# SECTION 1: 페르소나 식별 룰
+# ============================================================
+
+persona_identification_rules:
+
+  # === 발화 패턴 기반 식별 ===
+  
+  - rule_id: "PI_001_defensive_minimal"
+    priority: 95
+    description: "방어적 최소 응답자(S0_P2) 식별"
+    conditions:
+      - OR:
+        - field: "user_response_length"
+          operator: "<="
+          value: 5
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["몰라요", "그냥요", "딱히", "평범해요", "잘 모르겠어요"]
+        - field: "response_pattern"
+          operator: "=="
+          value: "evasive"
+    action:
+      - "identify_persona: 'S0_P2'"
+      - "set_tone: 'Gentle'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.85
+    rationale: "짧고 회피적인 답변은 방어적 성향의 강한 신호"
+
+  - rule_id: "PI_002_anxious_perfectionist"
+    priority: 93
+    description: "불안한 완벽주의자(S0_P4) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["맞나요?", "이게 맞아요?", "정확히", "다시", "고쳐도"]
+        - field: "response_time"
+          operator: ">="
+          value: "long"
+        - field: "edit_count"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'S0_P4'"
+      - "set_tone: 'Gentle'"
+      - "set_pace: 'slow'"
+      - "add_reassurance: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.88
+    rationale: "확인 질문과 수정 시도는 완벽주의적 불안의 지표"
+
+  - rule_id: "PI_003_overconfident"
+    priority: 90
+    description: "과대 포장형 자신감(S0_P3) 식별"
+    conditions:
+      - OR:
+        - field: "self_reported_confidence"
+          operator: ">="
+          value: 8
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["원래 잘해요", "운이 안 좋았어요", "다 알아요", "쉬워요"]
+        - AND:
+          - field: "self_reported_level"
+            operator: ">="
+            value: "상위권"
+          - field: "actual_test_score"
+            operator: "<"
+            value: 70
+    action:
+      - "identify_persona: 'S0_P3'"
+      - "set_tone: 'Professional'"
+      - "schedule_diagnostic: true"
+      - "avoid_direct_confrontation: true"
+    confidence: 0.82
+    rationale: "자기 보고와 실제 성취 간 괴리는 과대평가 신호"
+
+  - rule_id: "PI_004_disengaged_passive"
+    priority: 88
+    description: "무관심한 수동적 참여자(S0_P5) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["아무거나", "빨리", "상관없어요", "몰라", "넘어가도"]
+        - field: "selection_pattern"
+          operator: "=="
+          value: "always_first"
+        - field: "engagement_level"
+          operator: "<="
+          value: "low"
+    action:
+      - "identify_persona: 'S0_P5'"
+      - "set_tone: 'Encouraging'"
+      - "simplify_questions: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+      - "highlight_personal_benefits: true"
+    confidence: 0.84
+    rationale: "무관심한 응답 패턴은 동기 부족의 신호"
+
+  - rule_id: "PI_005_curious_explorer"
+    priority: 87
+    description: "호기심 많은 탐색자(S0_P6) 식별"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["왜", "어떻게", "더 알려주세요", "궁금해요", "재미있네요"]
+        - field: "question_count"
+          operator: ">="
+          value: 3
+        - field: "provides_extra_info"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S0_P6'"
+      - "set_tone: 'Professional'"
+      - "set_information_depth: 'comprehensive'"
+      - "provide_detailed_explanations: true"
+    confidence: 0.86
+    rationale: "추가 질문과 자발적 정보 제공은 높은 참여도 신호"
+
+  - rule_id: "PI_006_honest_analyst"
+    priority: 85
+    description: "솔직한 자기 분석가(S0_P1) 식별"
+    conditions:
+      - AND:
+        - field: "response_detail_level"
+          operator: ">="
+          value: "detailed"
+        - field: "acknowledges_weakness"
+          operator: "=="
+          value: true
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["솔직히", "제가 약한 부분", "실수가 많아서", "못하는 게"]
+    action:
+      - "identify_persona: 'S0_P1'"
+      - "set_tone: 'Professional'"
+      - "set_information_depth: 'detailed'"
+      - "acknowledge_honesty: true"
+    confidence: 0.90
+    rationale: "상세하고 솔직한 자기 분석은 협력적 학생의 지표"
+
+  # === S1: 신규 학생 등록 직후 식별 ===
+
+  - rule_id: "PI_S1_001_hopeful_starter"
+    priority: 88
+    description: "기대에 찬 새출발형(S1_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이번에는 정말", "열심히 해볼게요", "기대돼요", "잘하고 싶어요", "어떻게 하면 잘할 수 있어요"]
+        - field: "engagement_level"
+          operator: ">="
+          value: "high"
+        - field: "response_enthusiasm"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S1_P1'"
+      - "set_tone: 'Encouraging'"
+      - "set_pace: 'normal'"
+      - "provide_concrete_plan: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.87
+    rationale: "새 시작에 대한 기대와 의지 표현은 S1_P1의 핵심 신호"
+
+  - rule_id: "PI_S1_002_trauma_fearful"
+    priority: 92
+    description: "과거 트라우마형 긴장자(S1_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["예전에도", "별로였어요", "진짜 못해요", "잘 될까요", "또 실패", "무서워요"]
+        - field: "voice_volume"
+          operator: "=="
+          value: "low"
+        - field: "eye_contact"
+          operator: "=="
+          value: "avoiding"
+    action:
+      - "identify_persona: 'S1_P2'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "emphasize_different_approach: true"
+    confidence: 0.90
+    rationale: "과거 실패 언급과 불안 표현은 트라우마 기반 두려움의 명확한 신호"
+
+  - rule_id: "PI_S1_003_parent_pushed"
+    priority: 86
+    description: "부모 눈치형 의무 참여자(S1_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["엄마가", "부모님이", "시켜서", "하래서", "꼭 해야", "부모님이 정했어요"]
+        - field: "response_type"
+          operator: "=="
+          value: "minimal_yes_no"
+        - field: "self_motivation"
+          operator: "=="
+          value: "external"
+    action:
+      - "identify_persona: 'S1_P3'"
+      - "set_tone: 'Collaborative'"
+      - "emphasize_personal_benefit: true"
+      - "provide_autonomy: true"
+      - "prioritize_intervention: 'AutonomySupport'"
+    confidence: 0.88
+    rationale: "외재적 동기 언급과 피동적 참여는 의무 참여의 명확한 지표"
+
+  - rule_id: "PI_S1_004_testing_boundary"
+    priority: 84
+    description: "테스트 경계형(S1_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["선생님도 이거", "풀 수 있어요?", "왜 이렇게", "다른 데는", "이렇게 안 했는데"]
+        - field: "challenging_questions"
+          operator: ">="
+          value: 2
+        - field: "attitude"
+          operator: "=="
+          value: "testing"
+    action:
+      - "identify_persona: 'S1_P4'"
+      - "set_tone: 'Professional'"
+      - "demonstrate_expertise: true"
+      - "respect_critical_thinking: true"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.82
+    rationale: "도전적 질문과 검증 시도는 신뢰 구축 전 테스트 행동의 신호"
+
+  - rule_id: "PI_S1_005_goal_oriented"
+    priority: 87
+    description: "목표 명확형 실용주의자(S1_P5) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["3개월", "90점", "점수", "성적이 오르", "시간 대비", "효과", "목표"]
+        - field: "mentions_specific_goal"
+          operator: "=="
+          value: true
+        - field: "asks_about_measurement"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S1_P5'"
+      - "set_tone: 'Professional'"
+      - "provide_roadmap: true"
+      - "set_measurable_goals: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.89
+    rationale: "구체적 목표와 효율성에 대한 관심은 실용주의적 접근의 명확한 신호"
+
+  - rule_id: "PI_S1_006_relationship_oriented"
+    priority: 83
+    description: "사교적 관계 지향형(S1_P6) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["선생님은 왜", "기억해 주실", "잘 맞을 것 같", "어떤 분이세요", "선생님도"]
+        - field: "asks_personal_questions"
+          operator: "=="
+          value: true
+        - field: "shares_personal_info"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S1_P6'"
+      - "set_tone: 'Warm'"
+      - "build_rapport: true"
+      - "remember_personal_details: true"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.85
+    rationale: "관계 형성 시도와 개인적 질문은 관계 지향성의 핵심 신호"
+
+  # === S2: 수업 전 학습 설계 단계 식별 ===
+
+  - rule_id: "PI_S2_001_plan_follower"
+    priority: 86
+    description: "계획 수용형 따르는 학습자(S2_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["네, 그렇게", "선생님이 정해주세요", "알려주신 대로", "시키는 대로", "네네"]
+        - field: "accepts_plan_without_questions"
+          operator: "=="
+          value: true
+        - field: "response_pattern"
+          operator: "=="
+          value: "agreeable"
+    action:
+      - "identify_persona: 'S2_P1'"
+      - "set_tone: 'Professional'"
+      - "provide_clear_instructions: true"
+      - "use_checklists: true"
+      - "gradually_increase_autonomy: true"
+    confidence: 0.84
+    rationale: "무조건적 동의와 지시 요청은 계획 수용형의 명확한 신호"
+
+  - rule_id: "PI_S2_002_negotiator"
+    priority: 88
+    description: "자기주도형 협상가(S2_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["제가 조절해도", "이렇게 하면 어떨까요", "왜 이 순서", "의견", "조정", "바꿔도"]
+        - field: "suggests_alternatives"
+          operator: "=="
+          value: true
+        - field: "asks_reasoning"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S2_P2'"
+      - "set_tone: 'Collaborative'"
+      - "involve_in_planning: true"
+      - "provide_choices: true"
+      - "prioritize_intervention: 'AutonomySupport'"
+    confidence: 0.87
+    rationale: "대안 제안과 협의 요청은 자기주도성의 핵심 지표"
+
+  - rule_id: "PI_S2_003_minimalist"
+    priority: 85
+    description: "과부하 회피형 최소주의자(S2_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["너무 많아요", "줄일 수 없나요", "꼭 다 해야", "이거 다 해야", "부담", "많아"]
+        - field: "requests_reduction"
+          operator: "=="
+          value: true
+        - field: "overwhelm_signs"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S2_P3'"
+      - "set_tone: 'Gentle'"
+      - "provide_minimal_version: true"
+      - "clarify_priorities: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.86
+    rationale: "분량 축소 요청과 부담 표현은 과부하 회피의 명확한 신호"
+
+  - rule_id: "PI_S2_004_perfectionist_overplanner"
+    priority: 87
+    description: "완벽주의 과다 계획형(S2_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이것만 하면", "더 해야", "심화 문제도", "추가해주세요", "하루에 3시간", "더 해야죠"]
+        - field: "requests_additional_work"
+          operator: "=="
+          value: true
+        - field: "sets_excessive_goals"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S2_P4'"
+      - "set_tone: 'Gentle'"
+      - "explain_sustainable_pace: true"
+      - "warn_burnout_risk: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.85
+    rationale: "추가 학습 요청과 과도한 목표는 완벽주의적 과다 계획의 신호"
+
+  - rule_id: "PI_S2_005_exam_strategist"
+    priority: 86
+    description: "시험 중심 전략가(S2_P5) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["시험에 나와요", "점수 올리는", "기출문제", "시험 범위", "출제", "내신"]
+        - field: "exam_focused_questions"
+          operator: ">="
+          value: 2
+        - field: "disinterest_non_exam"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S2_P5'"
+      - "set_tone: 'Professional'"
+      - "connect_exam_to_fundamentals: true"
+      - "provide_test_strategy: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.88
+    rationale: "시험 관련 질문과 점수 집중은 시험 중심 전략가의 핵심 신호"
+
+  - rule_id: "PI_S2_006_flexible_adapter"
+    priority: 82
+    description: "유연한 적응형(S2_P6) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["상황 봐서", "그때그때", "유연하게", "고정된 건 별로", "바뀔 수도"]
+        - field: "accepts_plan_changes"
+          operator: "=="
+          value: true
+        - field: "preference_flexibility"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S2_P6'"
+      - "set_tone: 'Collaborative'"
+      - "provide_flexible_framework: true"
+      - "allow_daily_adjustments: true"
+      - "prioritize_intervention: 'AutonomySupport'"
+    confidence: 0.80
+    rationale: "유연성 선호 표현과 적응적 태도는 S2_P6의 특징적 신호"
+
+  # === S3: 개념/심화 진도 판단 식별 ===
+
+  - rule_id: "PI_S3_001_progress_anxious"
+    priority: 89
+    description: "진도 불안형 조급자(S3_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["다른 애들은", "어디까지 했어요", "너무 느린", "빨리 진도", "뒤처질", "늦은"]
+        - field: "comparison_with_others"
+          operator: "=="
+          value: true
+        - field: "rush_requests"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'S3_P1'"
+      - "set_tone: 'Gentle'"
+      - "explain_individual_pace: true"
+      - "emphasize_foundation_value: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.88
+    rationale: "타인 비교와 진도 조급함은 진도 불안의 명확한 신호"
+
+  - rule_id: "PI_S3_002_basics_skipper"
+    priority: 87
+    description: "기초 회피형 점프러(S3_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["이건 알아요", "넘어가도", "심화 문제 풀래요", "개념 설명은 됐고", "쉬운 건 지루"]
+        - field: "skip_requests"
+          operator: ">="
+          value: 2
+        - field: "rushes_basic_problems"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S3_P2'"
+      - "set_tone: 'Professional'"
+      - "disguise_basics_as_challenge: true"
+      - "show_foundation_impact: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.86
+    rationale: "기초 스킵 요청과 심화 선호는 기초 회피의 핵심 신호"
+
+  - rule_id: "PI_S3_003_humble_underestimator"
+    priority: 85
+    description: "겸손한 과소평가형(S3_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["아직 준비 안", "저 아직 그거 못해요", "좀 더 연습", "어려운 건 아직", "무리"]
+        - field: "avoids_challenges"
+          operator: "=="
+          value: true
+        - field: "underestimates_ability"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S3_P3'"
+      - "set_tone: 'Encouraging'"
+      - "provide_small_challenges: true"
+      - "show_objective_ability_data: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.84
+    rationale: "준비 안 됨 표현과 도전 회피는 과소평가의 명확한 신호"
+
+  - rule_id: "PI_S3_004_gap_accepter"
+    priority: 83
+    description: "갭 인정 수용형(S3_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["그렇군요, 그럼", "뭘 보완해야", "개념부터 다시", "어떻게 메울", "알겠어요"]
+        - field: "accepts_feedback_calmly"
+          operator: "=="
+          value: true
+        - field: "asks_for_improvement_plan"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S3_P4'"
+      - "set_tone: 'Professional'"
+      - "provide_concrete_plan: true"
+      - "set_milestones: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.86
+    rationale: "피드백 수용과 개선 방법 질문은 현실적 수용의 핵심 신호"
+
+  - rule_id: "PI_S3_005_defensive_rationalizer"
+    priority: 88
+    description: "방어적 합리화형(S3_P5) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["그날 컨디션", "시험 유형이 이상", "원래는 잘하는데", "운이 안 좋", "문제가 이상"]
+        - field: "makes_excuses"
+          operator: "=="
+          value: true
+        - field: "blames_external_factors"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'S3_P5'"
+      - "set_tone: 'Gentle'"
+      - "acknowledge_strengths_first: true"
+      - "present_facts_without_blame: true"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.87
+    rationale: "외부 요인 탓과 핑계는 방어적 합리화의 명확한 신호"
+
+  - rule_id: "PI_S3_006_analytical_seeker"
+    priority: 84
+    description: "분석적 이해 추구형(S3_P6) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["왜 이 부분이 약한", "어디서 틀리는 경향", "구체적으로 설명", "패턴", "원인이"]
+        - field: "requests_detailed_analysis"
+          operator: "=="
+          value: true
+        - field: "asks_why_questions"
+          operator: ">="
+          value: 2
+    action:
+      - "identify_persona: 'S3_P6'"
+      - "set_tone: 'Professional'"
+      - "provide_detailed_analysis: true"
+      - "show_error_patterns: true"
+      - "prioritize_intervention: 'InformationProvision'"
+    confidence: 0.85
+    rationale: "상세 분석 요청과 원인 질문은 분석적 성향의 핵심 신호"
+
+  # === C: 복합 상황 식별 ===
+
+  - rule_id: "PI_C_001_overwhelmed"
+    priority: 94
+    description: "다중 어려움 압도형(C_P1) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["다 모르겠어요", "너무 많아요", "그냥 안 할래요", "다 안 돼요", "포기"]
+        - field: "shows_overwhelm"
+          operator: "=="
+          value: true
+        - field: "response_coherence"
+          operator: "=="
+          value: "low"
+    action:
+      - "identify_persona: 'C_P1'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "focus_on_one_thing: true"
+      - "remove_pressure: true"
+    confidence: 0.92
+    rationale: "압도된 표현과 포기 조짐은 다중 어려움의 위기 신호"
+
+  - rule_id: "PI_C_002_resistant"
+    priority: 90
+    description: "저항적 복합 문제 보유자(C_P2) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["저 괜찮아요", "도움 필요 없어요", "왜 자꾸 문제라고", "알아서 할게요", "상관 마세요"]
+        - field: "rejects_help"
+          operator: "=="
+          value: true
+        - field: "defensive_attitude"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'C_P2'"
+      - "set_tone: 'Professional'"
+      - "respect_pride: true"
+      - "frame_as_opportunity: true"
+      - "prioritize_intervention: 'TrustBuilding'"
+    confidence: 0.88
+    rationale: "도움 거부와 방어적 태도는 저항적 성향의 명확한 신호"
+
+  - rule_id: "PI_C_003_active_solver"
+    priority: 86
+    description: "적극적 해결 추구형(C_P3) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["어떻게 하면 나아질", "도와주세요", "같이 계획", "해결", "방법"]
+        - field: "actively_seeks_help"
+          operator: "=="
+          value: true
+        - field: "solution_oriented"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'C_P3'"
+      - "set_tone: 'Collaborative'"
+      - "provide_action_plan: true"
+      - "set_incremental_goals: true"
+      - "prioritize_intervention: 'PlanDesign'"
+    confidence: 0.87
+    rationale: "적극적 도움 요청과 해결 의지는 C_P3의 핵심 신호"
+
+  - rule_id: "PI_C_004_external_blamer"
+    priority: 89
+    description: "외부 귀인형 책임 회피자(C_P4) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["선생님이 잘 못", "학교가 문제", "시간이 없어서", "환경이", "다른 사람"]
+        - field: "blames_others"
+          operator: "=="
+          value: true
+        - field: "refuses_responsibility"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'C_P4'"
+      - "set_tone: 'Gentle'"
+      - "avoid_blame: true"
+      - "find_controllable_factors: true"
+      - "prioritize_intervention: 'MotivationBoost'"
+    confidence: 0.86
+    rationale: "외부 탓과 책임 회피는 외부 귀인 성향의 명확한 신호"
+
+  - rule_id: "PI_C_005_learned_helpless"
+    priority: 96
+    description: "무기력 학습 포기자(C_P5) 식별 - 높은 우선순위"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["해봤자 안 돼요", "저 원래 못해요", "소용없어요", "안 해요", "포기"]
+        - field: "shows_learned_helplessness"
+          operator: "=="
+          value: true
+        - field: "gives_up_before_trying"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'C_P5'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "provide_guaranteed_success: true"
+      - "celebrate_tiny_wins: true"
+    confidence: 0.94
+    rationale: "학습된 무기력 표현은 장기적 정서 지원이 필요한 위기 신호"
+
+  - rule_id: "PI_C_006_situational_low"
+    priority: 84
+    description: "상황적 일시 저조형(C_P6) 식별"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "C"
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["요즘 좀 힘들어요", "곧 나아질", "지금은 좀", "일시적", "요즘만"]
+        - field: "temporary_difficulty"
+          operator: "=="
+          value: true
+        - field: "mentions_external_stressor"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'C_P6'"
+      - "set_tone: 'Warm'"
+      - "acknowledge_situation: true"
+      - "reduce_burden: true"
+      - "prioritize_intervention: 'EmotionalSupport'"
+    confidence: 0.82
+    rationale: "일시적 어려움 언급과 회복 기대는 상황적 저조의 신호"
+
+  # === 정서적 위기 식별 (최우선) ===
+
+  - rule_id: "PI_CRISIS_001_math_anxiety"
+    priority: 100
+    description: "수학 불안형 공포자(E_P1) 식별 - 즉시 개입 필요"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["무서워요", "공포", "머리가 하얘", "못해요", "절대", "포기"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "anxiety"
+        - field: "avoidance_behavior"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'E_P1'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "pause_assessment: true"
+      - "provide_immediate_reassurance: true"
+    confidence: 0.95
+    rationale: "수학 불안은 즉각적인 정서적 개입이 필요한 위기 상황"
+
+  - rule_id: "PI_CRISIS_002_giving_up"
+    priority: 100
+    description: "좌절 직전 위기형(E_P3) 식별 - 최우선 개입"
+    conditions:
+      - OR:
+        - field: "user_message"
+          operator: "contains_any"
+          value: ["포기할 거예요", "마지막", "제발", "안 돼요", "소용없어요"]
+        - field: "emotional_state"
+          operator: "=="
+          value: "desperate"
+        - field: "shows_tears"
+          operator: "=="
+          value: true
+    action:
+      - "identify_persona: 'E_P3'"
+      - "set_tone: 'Warm'"
+      - "set_pace: 'very_slow'"
+      - "prioritize_intervention: 'EmotionalSupport'"
+      - "remove_all_pressure: true"
+      - "express_unconditional_support: true"
+    confidence: 0.98
+    rationale: "포기 직전 상태는 학습 전 정서 안정이 절대적으로 필요"
+
+# ============================================================
+# SECTION 2: 상황별 응답 생성 룰
+# ============================================================
+
+response_generation_rules:
+
+  # === S0: 수학 특화 정보 수집 상황 ===
+
+  - rule_id: "RG_S0_001_learning_style_inquiry"
+    priority: 90
+    description: "수학 학습 스타일 질문 시 페르소나별 응답 생성"
+    conditions:
+      - field: "question_type"
+        operator: "=="
+        value: "math_learning_style"
+      - field: "situation"
+        operator: "=="
+        value: "S0"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_opening_by_emotional_priority"
+      - "generate_response: 'learning_style_inquiry'"
+    response_templates:
+      S0_P1:
+        opening: "수학 문제를 풀 때 어떤 방식이 편하신지 알려주시면,"
+        body: "그에 맞춰서 학습 계획을 세울 수 있어요. 계산 위주인지, 개념 이해가 중요한지, 다양한 문제를 풀어보는 게 좋은지 생각해보세요."
+        closing: "솔직하게 답해주셔서 감사해요. 이 정보가 정말 도움이 돼요."
+      S0_P2:
+        opening: "괜찮아요, 천천히 생각해보세요."
+        body: "정답이 있는 건 아니에요. 그냥 평소 문제 풀 때 어떤 느낌인지만 알려주시면 돼요."
+        closing: "답하기 어려우면 나중에 다시 여쭤볼게요."
+      S0_P4:
+        opening: "편하게 생각나는 대로 말씀해주세요."
+        body: "정확히 맞춰야 하는 게 아니에요. 대략적으로 어떤 스타일인 것 같은지만요."
+        closing: "언제든 바꿀 수 있으니까 부담 없이요."
+      S0_P5:
+        opening: "짧게 답해주셔도 돼요."
+        body: "계산 위주, 개념 위주, 문제풀이 위주 중에 뭐가 더 맞는 것 같아요?"
+        closing: "이거 알면 더 효율적으로 공부할 수 있거든요."
+
+  # === S1: 신규 학생 등록 상황 ===
+
+  - rule_id: "RG_S1_001_first_class_preparation"
+    priority: 92
+    description: "첫 수업 준비 안내 시 페르소나별 응답"
+    conditions:
+      - field: "question_type"
+        operator: "=="
+        value: "first_class_prep"
+      - field: "situation"
+        operator: "=="
+        value: "S1"
+    action:
+      - "select_response_template_by_persona"
+      - "customize_by_emotional_state"
+    response_templates:
+      S1_P1:
+        opening: "기대해주셔서 감사해요! 첫 수업 준비해볼게요."
+        body: "현재 진도({concept_progress})를 확인하고, {study_style} 스타일에 맞춰서 시작할 거예요."
+        closing: "함께 좋은 출발 해봐요!"
+      S1_P2:
+        opening: "이전과는 다른 방식으로 접근해볼 거예요."
+        body: "천천히, 기초부터 확실하게요. 압박 없이 편안하게 시작해요."
+        closing: "잘 될 거예요. 저도 함께할 테니까요."
+      S1_P3:
+        opening: "학생이 원하는 방식으로 해볼까요?"
+        body: "어떻게 공부하면 좋을지 같이 정해봐요. 학생 의견이 중요해요."
+        closing: "학생이 선택하는 거예요. 저는 도와주는 역할이에요."
+
+# ============================================================
+# SECTION 3: 포괄형 질문 응답 룰 (questions.md 대응)
+# ============================================================
+
+comprehensive_question_rules:
+
+  # === 포괄형 질문 1: 첫 수업 전략 ===
+
+  - rule_id: "CQ_001_first_class_strategy"
+    priority: 95
+    description: "포괄형 질문 1: 첫 수업에서 무엇을 어떻게 시작해야 할지"
+    conditions:
+      - field: "question_type"
+        operator: "=="
+        value: "comprehensive_1"
+      - OR:
+        - field: "user_message"
+          operator: "contains"
+          value: "첫 수업"
+        - field: "user_message"
+          operator: "contains"
+          value: "어떻게 시작"
+    action:
+      - "load_student_context"
+      - "identify_dominant_persona"
+      - "generate_comprehensive_response"
+    response_structure:
+      intro_by_persona:
+        high_anxiety: "먼저 학생이 편안하게 느낄 수 있도록 분위기를 만들어주세요."
+        high_confidence: "학생의 열의를 활용하여 적극적으로 시작하면 좋겠어요."
+        low_motivation: "학생이 흥미를 느낄 수 있는 요소부터 시작해보세요."
+        balanced: "학생의 현재 상태를 확인하면서 자연스럽게 시작하면 됩니다."
+      body_components:
+        - section: "도입 루틴"
+          persona_variation:
+            E_P1: "5분 정도 가벼운 대화로 시작. 수학 얘기는 나중에."
+            E_P3: "무조건적 지지 표현부터. '함께 하면 할 수 있어요.'"
+            S0_P2: "간단한 자기소개, 압박 없는 분위기 조성"
+            S1_P1: "바로 학습 목표 공유하며 시작해도 OK"
+        - section: "설명 전략"
+          persona_variation:
+            S0_P1: "상세한 분석 데이터와 함께 설명"
+            S0_P3: "강점 인정 후 보완점 부드럽게 제시"
+            S0_P4: "정답/오답 없음 강조, 과정 중심 피드백"
+            S0_P6: "질문 환영, 추가 정보 제공"
+        - section: "자료 유형"
+          persona_variation:
+            high_anxiety: "매우 쉬운 문제부터, 성공 경험 우선"
+            high_confidence: "도전적 문제 포함 가능"
+            low_motivation: "흥미 유발 자료, 게임화 요소"
+      closing_by_persona:
+        high_emotional: "학생의 페이스에 맞춰 유연하게 조정하세요."
+        analytical: "진단 결과를 바탕으로 계획을 조정해나가면 됩니다."
+
+  # === 포괄형 질문 2: 커리큘럼 최적화 ===
+
+  - rule_id: "CQ_002_curriculum_optimization"
+    priority: 95
+    description: "포괄형 질문 2: 커리큘럼과 루틴 최적화 방향"
+    conditions:
+      - field: "question_type"
+        operator: "=="
+        value: "comprehensive_2"
+      - OR:
+        - field: "user_message"
+          operator: "contains"
+          value: "커리큘럼"
+        - field: "user_message"
+          operator: "contains"
+          value: "루틴"
+        - field: "user_message"
+          operator: "contains"
+          value: "최적화"
+    action:
+      - "load_student_goals"
+      - "identify_dominant_persona"
+      - "generate_curriculum_response"
+    response_structure:
+      intro_by_persona:
+        S2_P1: "제시된 계획을 그대로 따라가도 좋지만,"
+        S2_P2: "학생과 함께 조율해가며 결정하면 좋겠어요."
+        S2_P3: "핵심만 추린 미니멀 버전으로 시작해볼까요?"
+        S2_P4: "욕심을 줄이고 지속 가능한 루틴을 권해요."
+      body_components:
+        - section: "진도 우선순위"
+          considerations:
+            - "장기 목표와 현재 수준 간 격차"
+            - "학원-학교 진도 정렬 상태"
+            - "페르소나별 학습 속도 선호"
+        - section: "학습 흐름"
+          persona_consideration: true
+          options:
+            conceptFirst: "개념 이해 → 기본 문제 → 심화"
+            problemFirst: "문제 풀이 → 개념 보충 → 심화"
+            balanced: "개념과 문제 병행"
+        - section: "문제 유형 비중"
+          persona_based_ratio:
+            high_anxiety: "기초 70% : 기본 25% : 심화 5%"
+            balanced: "기초 30% : 기본 50% : 심화 20%"
+            high_confidence: "기초 10% : 기본 40% : 심화 50%"
+
+  # === 포괄형 질문 3: 중장기 성장 전략 ===
+
+  - rule_id: "CQ_003_long_term_growth"
+    priority: 95
+    description: "포괄형 질문 3: 중장기 성장을 위해 신경 써야 할 부분"
+    conditions:
+      - field: "question_type"
+        operator: "=="
+        value: "comprehensive_3"
+      - OR:
+        - field: "user_message"
+          operator: "contains"
+          value: "중장기"
+        - field: "user_message"
+          operator: "contains"
+          value: "성장"
+        - field: "user_message"
+          operator: "contains"
+          value: "신경 써야"
+    action:
+      - "load_student_profile_complete"
+      - "identify_risk_factors_by_persona"
+      - "generate_growth_strategy"
+    response_structure:
+      intro_by_persona:
+        E_P1: "먼저 수학에 대한 불안을 줄여나가는 것이 가장 중요해요."
+        E_P3: "작은 성공 경험을 쌓아 자신감을 회복하는 게 우선이에요."
+        S5_P5: "목표와 현실 사이 격차를 인식하고 단계적으로 접근해야 해요."
+        S5_P6: "성장 마인드셋을 유지하면서 도전해나가면 돼요."
+      body_components:
+        - section: "리스크 예측"
+          persona_risk_factors:
+            E_P1: ["학습 회피 → 누적 결손", "불안 악화 → 포기"]
+            E_P3: ["마지막 기회 실패 시 완전 포기", "과도한 압박 → 번아웃"]
+            S0_P3: ["과대평가로 인한 준비 부족", "실제 실력과 괴리"]
+            S0_P5: ["낮은 동기 → 학습량 부족", "외재적 동기 의존"]
+        - section: "트래킹 우선요소"
+          persona_tracking:
+            high_anxiety: ["정서 상태 변화", "수학 자신감 점수", "회피 행동 빈도"]
+            low_motivation: ["참여도", "자발적 질문 수", "학습 시간"]
+            overconfident: ["실제 테스트 점수", "오답 패턴", "자기 평가 정확도"]
+        - section: "개입 시점"
+          triggers:
+            immediate: "정서적 위기 신호 감지 시"
+            weekly: "학습 패턴 변화 모니터링"
+            monthly: "목표 진척도 점검"
+
+# ============================================================
+# SECTION 4: 상황별 맞춤 질문 응답 룰 (questions.md S0-S5)
+# ============================================================
+
+situation_specific_rules:
+
+  # === S0: 수학 특화 정보 수집 ===
+
+  - rule_id: "SS_S0_001_style_collection"
+    priority: 90
+    description: "S0 수학 학습 스타일 수집 - 페르소나별 대응"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S0"
+      - field: "collecting"
+        operator: "=="
+        value: "math_learning_style"
+    response_by_persona:
+      S0_P1:
+        approach: "직접 질문"
+        message: "수학 문제를 풀 때 가장 편한 방식이 뭐예요? 계산, 개념, 응용 중에서요."
+      S0_P2:
+        approach: "선택지 제시 + 예시"
+        message: "세 가지 중에 골라봐요. A) 계산 정확하게 하기 B) 개념 이해하기 C) 여러 문제 풀어보기. 정답은 없어요."
+      S0_P4:
+        approach: "안심시키기 + 유연성 강조"
+        message: "대충 어떤 것 같은지만요. 나중에 바꿔도 되니까 부담 없이 생각나는 대로요."
+      S0_P5:
+        approach: "간결 + 이점 설명"
+        message: "계산/개념/응용 중 뭐가 편해요? 이거 알면 더 효율적으로 공부할 수 있어요."
+
+  # === S2: 수업 전 학습 설계 ===
+
+  - rule_id: "SS_S2_001_routine_design"
+    priority: 90
+    description: "S2 루틴 설계 - 페르소나별 접근"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S2"
+      - field: "task"
+        operator: "=="
+        value: "routine_design"
+    response_by_persona:
+      S2_P1:
+        approach: "명확한 계획 제시"
+        message: "이 루틴으로 진행할게요: [루틴 상세]. 알려주신 대로 하시면 됩니다."
+      S2_P2:
+        approach: "협의 중심"
+        message: "이런 루틴을 생각하고 있는데요, 학생 의견은 어때요? 조정할 부분이 있으면 말해주세요."
+      S2_P3:
+        approach: "핵심만 추려서"
+        message: "핵심만 정리했어요: [핵심 3가지]. 이것만 해도 돼요. 여유 되면 더 하고요."
+      S2_P4:
+        approach: "현실적 분량 강조"
+        message: "이 정도면 충분해요. 더 하고 싶은 마음은 알겠지만, 지속 가능한 게 더 중요해요."
+
+  # === S3: 진도 판단 ===
+
+  - rule_id: "SS_S3_001_progress_analysis"
+    priority: 90
+    description: "S3 진도 분석 - 페르소나별 피드백"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S3"
+      - field: "task"
+        operator: "=="
+        value: "progress_feedback"
+    response_by_persona:
+      S3_P4:
+        approach: "객관적 데이터 + 계획"
+        message: "개념({concept_progress})과 심화({advanced_progress}) 격차가 있어요. 구체적으로 [보완 계획]으로 메울 수 있어요."
+      S3_P5:
+        approach: "강점 먼저 + 부드러운 제안"
+        message: "심화까지 나간 건 대단해요. 다만 개념이 조금 더 탄탄하면 심화가 더 쉬워질 거예요."
+      S3_P1:
+        approach: "현실적 안심"
+        message: "지금 진도 괜찮아요. 남들과 비교할 필요 없어요. 본인 페이스가 중요해요."
+
+  # === S4: 학부모 상담 ===
+
+  - rule_id: "SS_S4_001_parent_consultation"
+    priority: 90
+    description: "S4 학부모 상담 전략 - 학생 페르소나 고려"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S4"
+    response_by_persona:
+      S4_P1:
+        strategy: "투명한 삼자 공유"
+        message: "학생이 정보 공유를 긍정적으로 생각해요. 학생-부모-선생님 함께 소통하면 좋겠어요."
+      S4_P2:
+        strategy: "학생 동의 기반 선별 공유"
+        message: "학생이 프라이버시를 중요시해요. 공유 범위를 학생과 먼저 협의하고, 동의한 내용만 전달하는 게 좋겠어요."
+      S4_P3:
+        strategy: "사전 내용 공유 + 긍정 프레이밍"
+        message: "학생이 부모님 반응을 걱정해요. 상담 전 학생에게 내용을 미리 알려주고, 긍정적인 부분을 부각하면서 전달해주세요."
+      S4_P4:
+        strategy: "중재자 역할"
+        message: "학생과 부모님 사이에 갈등이 있어요. 중립적 입장에서 양측 의견을 조율해주세요."
+
+  # === S5: 장기 목표 ===
+
+  - rule_id: "SS_S5_001_goal_assessment"
+    priority: 90
+    description: "S5 장기 목표 현실성 평가 - 페르소나별 전달"
+    conditions:
+      - field: "situation"
+        operator: "=="
+        value: "S5"
+      - field: "goal_type"
+        operator: "=="
+        value: "competition_prep"
+    response_by_persona:
+      S5_P1:
+        approach: "꿈 존중 + 현실적 단계"
+        message: "경시대회 목표, 좋은 꿈이에요! 현재 상태에서 단계적으로 접근하면 가능해요. [로드맵]"
+      S5_P2:
+        approach: "구체적 조건 제시"
+        message: "경시 준비가 현실적이려면 주 [X]시간, [Y]단원 선행이 필요해요. 현재 상태와 비교해볼게요."
+      S5_P5:
+        approach: "격차 인정 + 단계 분해"
+        message: "목표와 현재 사이에 거리가 있어요. 하지만 작은 단계로 나누면 하나씩 해나갈 수 있어요."
+      S5_P4:
+        approach: "본인 동기 탐색"
+        message: "경시대회가 정말 하고 싶은 목표인가요? 본인이 원하는 방향을 같이 찾아봐요."
+
+# ============================================================
+# SECTION 5: 톤 및 페이스 조절 룰
+# ============================================================
+
+tone_pace_rules:
+
+  - rule_id: "TP_001_high_emotional_priority"
+    priority: 100
+    description: "정서적 우선순위 높은 학생 - 톤/페이스 조절"
+    conditions:
+      - field: "emotional_priority"
+        operator: ">="
+        value: 80
+    action:
+      - "set_tone: 'Warm'"
+      - "set_pace: 'slow'"
+      - "reduce_information_density"
+      - "add_emotional_checkpoints"
+      - "prioritize_reassurance_phrases"
+    message_modifications:
+      opening: "먼저, [학생이름] 학생이 어떻게 느끼는지가 가장 중요해요."
+      transitions: "천천히 하나씩 봐볼까요?"
+      closing: "오늘은 여기까지 해도 충분해요. 어떻게 느꼈어요?"
+
+  - rule_id: "TP_002_information_seeking"
+    priority: 80
+    description: "정보 추구형 학생 - 상세한 데이터 제공"
+    conditions:
+      - field: "emotional_priority"
+        operator: "<="
+        value: 40
+      - field: "information_depth"
+        operator: "=="
+        value: "detailed"
+    action:
+      - "set_tone: 'Professional'"
+      - "set_pace: 'normal'"
+      - "increase_information_density"
+      - "include_data_visualizations"
+    message_modifications:
+      opening: "분석 결과를 공유할게요."
+      transitions: "다음으로, 구체적인 데이터를 보면..."
+      closing: "추가로 궁금한 부분이 있으면 질문해주세요."
+
+  - rule_id: "TP_003_autonomy_preference"
+    priority: 85
+    description: "자율성 선호 학생 - 선택권 부여"
+    conditions:
+      - field: "persona_trait"
+        operator: "contains"
+        value: "autonomy"
+    action:
+      - "set_tone: 'Collaborative'"
+      - "provide_options"
+      - "ask_for_preference"
+    message_modifications:
+      opening: "몇 가지 방법이 있는데, 어떤 게 좋을지 같이 정해봐요."
+      transitions: "학생 생각은 어때요?"
+      closing: "이렇게 진행할까요? 조정이 필요하면 말해주세요."
+
+# ============================================================
+# SECTION 6: 페르소나 전환 감지 룰
+# ============================================================
+
+persona_transition_rules:
+
+  - rule_id: "PT_001_anxiety_escalation"
+    priority: 100
+    description: "불안 상승 감지 - 페르소나 전환"
+    conditions:
+      - field: "response_pattern_change"
+        operator: "=="
+        value: "shorter_responses"
+      - field: "emotional_language_increase"
+        operator: "=="
+        value: true
+    action:
+      - "reassess_persona"
+      - "shift_to_emotional_support_mode"
+      - "reduce_pace"
+      - "log_transition: 'anxiety_escalation'"
+
+  - rule_id: "PT_002_engagement_increase"
+    priority: 85
+    description: "참여도 상승 감지 - 긍정적 전환"
+    conditions:
+      - field: "question_frequency_increase"
+        operator: "=="
+        value: true
+      - field: "response_length_increase"
+        operator: "=="
+        value: true
+    action:
+      - "reassess_persona"
+      - "gradually_increase_challenge"
+      - "acknowledge_progress"
+      - "log_transition: 'engagement_increase'"
+
+# ============================================================
+# DEFAULT FALLBACK
+# ============================================================
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "use_balanced_tone"
+    - "maintain_supportive_environment"
+    - "continue_persona_observation"
+  message: "학생의 상황을 파악하면서 맞춤형으로 진행할게요."
+  confidence: 0.5
+
+

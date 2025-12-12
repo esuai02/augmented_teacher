@@ -27,6 +27,22 @@ $contentsType = $thisboard->contentstype;
 $imgSrc1 = null; // 해설 이미지
 $imgSrc2 = null; // 문제 이미지
 
+/**
+ * 이미지 src를 OpenAI/서버 처리에 유리하게 절대경로로 정규화
+ */
+function ktm_abs_img_url($src) {
+    global $CFG;
+    if (!$src) return $src;
+    $u = trim($src);
+    // 일부 컨텐츠 경로에 역슬래시가 섞여 들어오는 케이스가 있어 URL 경로로 정규화
+    $u = str_replace('\\', '/', $u);
+    if ($u === '') return $u;
+    if (strpos($u, '//') === 0) return 'https:' . $u;
+    if (preg_match('/^https?:\/\//i', $u)) return $u;
+    if (strpos($u, '/') === 0) return rtrim($CFG->wwwroot, '/') . $u;
+    return rtrim($CFG->wwwroot, '/') . '/' . ltrim($u, '/');
+}
+
 $qtext0 = $DB->get_record_sql("SELECT questiontext,generalfeedback FROM mdl_question WHERE id=? ORDER BY id DESC LIMIT 1", [$contentId]);
 if ($qtext0) {
     // 해설 이미지 추출
@@ -35,9 +51,11 @@ if ($qtext0) {
     $imageTags1 = $htmlDom1->getElementsByTagName('img');
     foreach($imageTags1 as $imageTag1) {
         $imgSrc1 = $imageTag1->getAttribute('src'); 
+        $imgSrc1 = str_replace('\\', '/', $imgSrc1);
         $imgSrc1 = str_replace(' ', '%20', $imgSrc1); 
         if(strpos($imgSrc1, 'MATRIX/MATH') !== false && strpos($imgSrc1, 'hintimages') === false) break;
     }
+    $imgSrc1 = ktm_abs_img_url($imgSrc1);
     
     // 문제 이미지 추출
     $htmlDom2 = new DOMDocument;
@@ -45,9 +63,11 @@ if ($qtext0) {
     $imageTags2 = $htmlDom2->getElementsByTagName('img');
     foreach($imageTags2 as $imageTag2) {
         $imgSrc2 = $imageTag2->getAttribute('src'); 
+        $imgSrc2 = str_replace('\\', '/', $imgSrc2);
         $imgSrc2 = str_replace(' ', '%20', $imgSrc2); 
         if(strpos($imgSrc2, 'hintimages') === false && (strpos($imgSrc2, '.png') !== false || strpos($imgSrc2, '.jpg') !== false)) break;
     }
+    $imgSrc2 = ktm_abs_img_url($imgSrc2);
 }
 
 // ========== 문항 분석 및 페르소나 생성 (OpenAI Vision) ==========
@@ -97,7 +117,10 @@ try {
     // contentsid와 contentstype으로 ktm_teaching_interactions에서 조회
     if ($contentId && $contentsType !== null) {
         $existingTts = $DB->get_record_sql(
-            "SELECT * FROM {ktm_teaching_interactions} WHERE contentsid = ? AND contentstype = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            "SELECT * FROM {ktm_teaching_interactions} 
+             WHERE contentsid = ? AND contentstype = ? 
+             AND ( (audio_url IS NOT NULL AND audio_url != '') OR (narration_text IS NOT NULL AND narration_text != '') )
+             ORDER BY id DESC LIMIT 1",
             [$contentId, $contentsType]
         );
         error_log("[learning_interface.php] contentsid: {$contentId}, contentstype: {$contentsType} 로 조회");
@@ -106,7 +129,10 @@ try {
     // contentstype 없이 contentsid로만 조회 (fallback)
     if (!$existingTts && $contentId) {
         $existingTts = $DB->get_record_sql(
-            "SELECT * FROM {ktm_teaching_interactions} WHERE contentsid = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            "SELECT * FROM {ktm_teaching_interactions} 
+             WHERE contentsid = ? 
+             AND ( (audio_url IS NOT NULL AND audio_url != '') OR (narration_text IS NOT NULL AND narration_text != '') )
+             ORDER BY id DESC LIMIT 1",
             [$contentId]
         );
         error_log("[learning_interface.php] contentsid: {$contentId} 로만 조회 (fallback)");
@@ -115,7 +141,10 @@ try {
     // wboardid로도 조회 (추가 fallback)
     if (!$existingTts && $whiteboardId) {
         $existingTts = $DB->get_record_sql(
-            "SELECT * FROM {ktm_teaching_interactions} WHERE wboardid = ? AND audio_url IS NOT NULL AND audio_url != '' ORDER BY id DESC LIMIT 1",
+            "SELECT * FROM {ktm_teaching_interactions} 
+             WHERE wboardid = ? 
+             AND ( (audio_url IS NOT NULL AND audio_url != '') OR (narration_text IS NOT NULL AND narration_text != '') )
+             ORDER BY id DESC LIMIT 1",
             [$whiteboardId]
         );
         error_log("[learning_interface.php] wboardid: {$whiteboardId} 로 조회 (fallback)");
@@ -272,6 +301,19 @@ $currentItemPersona = null;
                     <span class="btn-text" id="realtimeTutorBtnText">음성 튜터</span>
                     <span id="realtimeTutorSpinner" class="spinner hidden"></span>
                 </button>
+                
+                <!-- 발표하기 버튼 (학생 단독 발표) -->
+                <button id="presentationBtn" class="presentation-btn" onclick="PresentationRecorder.toggle()" title="발표하기 (학생이 혼자 설명)">
+                    <span class="btn-icon">📣</span>
+                    <span class="btn-text" id="presentationBtnText">발표하기</span>
+                </button>
+
+                <!-- 발표 컨트롤 (발표 중 표시) -->
+                <div id="presentationControls" class="presentation-controls hidden">
+                    <span id="presentationTimer" class="presentation-timer">00:00</span>
+                    <button id="presentationPauseBtn" class="presentation-control-btn" onclick="PresentationRecorder.pauseOrResume()" title="일시정지/재개">⏸</button>
+                    <button id="presentationFinishBtn" class="presentation-control-btn finish" onclick="PresentationRecorder.finish()" title="발표 종료">✓</button>
+                </div>
                 
                 <div id="headerTtsPlayer" class="header-step-player hidden">
                     <!-- 현재 단계 표시 -->
@@ -680,6 +722,22 @@ $currentItemPersona = null;
         </div>
         
     </div>
+
+    <!-- 발표 결과: 취약 페르소나 선택 모달 -->
+    <div id="presentationPersonaOverlay" class="presentation-persona-overlay hidden" onclick="PresentationRecorder.closePersonaModal()"></div>
+    <div id="presentationPersonaModal" class="presentation-persona-modal hidden">
+        <div class="presentation-persona-header">
+            <h3>📣 발표 분석 결과</h3>
+            <button class="presentation-persona-close" onclick="PresentationRecorder.closePersonaModal()">×</button>
+        </div>
+        <div class="presentation-persona-body">
+            <p id="presentationPersonaSummary" class="presentation-persona-summary">분석 중...</p>
+            <div id="presentationPersonaList" class="presentation-persona-list"></div>
+        </div>
+        <div class="presentation-persona-footer">
+            <button class="presentation-persona-next" onclick="PresentationRecorder.goToQuantum()">인지맵으로 이동</button>
+        </div>
+    </div>
     
     <!-- 분석 데이터 및 페르소나 전달 -->
     <script>
@@ -785,9 +843,11 @@ $currentItemPersona = null;
             sectionDataUrl: '/moodle/local/augmented_teacher/alt42/teachingsupport/get_interaction_data.php',
             existingTtsId: <?php echo json_encode($existingTtsId); ?>,
             existingAudioUrl: <?php echo json_encode($existingAudioUrl); ?>,
-            hasTts: <?php echo json_encode($existingTtsId !== null && $existingAudioUrl !== null); ?>
+            // audio_url이 없어도(narration_text만 있어도) 단계별 UI를 띄울 수 있으므로 id 기반으로 판단
+            hasTts: <?php echo json_encode($existingTtsId !== null); ?>
         };
     </script>
+    <script src="/moodle/local/augmented_teacher/alt42/teachingsupport/AItutor/ui/activity_tracker.js?v=1"></script>
     
     <!-- Step-by-Step TTS Player Styles -->
     <link rel="stylesheet" href="/moodle/local/augmented_teacher/alt42/teachingsupport/css/step_player_modal.css">
@@ -811,6 +871,9 @@ $currentItemPersona = null;
     
     <!-- Realtime Tutor Script -->
     <script src="realtime_tutor.js"></script>
+
+    <!-- Presentation Recorder Script -->
+    <script src="presentation_recorder.js"></script>
     
     <script>
     // AI 튜터 초기화

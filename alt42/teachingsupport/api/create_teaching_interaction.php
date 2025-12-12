@@ -271,6 +271,9 @@ try {
     // 5단계: TTS 생성 (teachingagent.php 방식 - 직접 구현)
     // =================================================================
     
+    $narrationOk = false;
+    $audioOk = false;
+    
     if ($generateAudio) {
         error_log("[create_teaching_interaction.php:Line" . __LINE__ . "] TTS 생성 시작 (직접 구현 방식)");
         
@@ -285,6 +288,7 @@ try {
         
         if ($narrationResult['success']) {
             $narrationText = $narrationResult['narration'];
+            $narrationOk = !empty(trim($narrationText));
             
             // 나레이션 텍스트 저장
             $DB->execute("UPDATE {ktm_teaching_interactions} SET narration_text = ? WHERE id = ?",
@@ -316,6 +320,7 @@ try {
                 }
                 
                 if (!empty($audioUrls)) {
+                    $audioOk = true;
                     // audio_url에 JSON 배열로 저장
                     $audioUrlJson = json_encode($audioUrls, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                     $DB->execute("UPDATE {ktm_teaching_interactions} SET audio_url = ?, status = 'completed' WHERE id = ?",
@@ -330,6 +335,7 @@ try {
                 // @ 구분자가 없으면 단일 TTS 생성
                 $ttsResult = generateTtsSectionAudio($narrationText, $interactionId, 1, __DIR__ . '/../audio/');
                 if ($ttsResult['success']) {
+                    $audioOk = true;
                     $audioUrlJson = json_encode([$ttsResult['url']], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                     $DB->execute("UPDATE {ktm_teaching_interactions} SET audio_url = ?, status = 'completed' WHERE id = ?",
                         [$audioUrlJson, $interactionId]);
@@ -351,14 +357,31 @@ try {
         $updateStatus->timemodified = time();
         $DB->update_record('ktm_teaching_interactions', $updateStatus);
     }
-    
-    ob_end_clean();
-    echo json_encode([
+
+    // =================================================================
+    // 6단계: 응답 (실패/부분성공 케이스 정리)
+    // =================================================================
+    $response = [
         'success' => true,
         'interaction_id' => $interactionId,
         'is_new' => $isNew,
         'message' => 'TTS 생성 완료'
-    ]);
+    ];
+    
+    // generate_audio=true인데 나레이션 생성이 실패/비어있으면 프론트에서 "완료"로 오인하지 않도록 실패 처리
+    if ($generateAudio && !$narrationOk) {
+        $response['success'] = false;
+        $response['error'] = $narrationResult['error'] ?? '나레이션 생성에 실패했습니다.';
+        $response['message'] = '나레이션 생성 실패';
+    } else if ($generateAudio && $narrationOk && !$audioOk) {
+        // 나레이션은 생성됐지만 오디오가 없을 수 있음(키/네트워크/쿼터 등)
+        // 이 경우 프론트는 텍스트 기반(speechSynthesis)으로라도 단계별 설명을 제공할 수 있으므로 success는 유지하되 경고를 전달
+        $response['message'] = '나레이션 생성 완료 (오디오 생성 실패/지연)';
+        $response['warning'] = '오디오 파일 생성에 실패했거나 아직 준비되지 않았습니다. 텍스트 기반 안내로 진행합니다.';
+    }
+    
+    ob_end_clean();
+    echo json_encode($response);
     
 } catch (Exception $e) {
     error_log("[create_teaching_interaction.php:Line" . __LINE__ . "] Exception: " . $e->getMessage());
@@ -369,6 +392,125 @@ try {
         'file' => basename(__FILE__),
         'line' => __LINE__
     ]);
+}
+
+/**
+ * Build absolute URL using Moodle $CFG->wwwroot when needed.
+ *
+ * @param string|null $url
+ * @return string|null
+ */
+function ktm_normalize_to_absolute_url($url) {
+    global $CFG;
+    if (empty($url) || !is_string($url)) return null;
+    $u = trim($url);
+    // URL에 역슬래시가 섞여 들어오는 케이스가 있어 정규화
+    $u = str_replace('\\', '/', $u);
+    // 중복 슬래시 정리(프로토콜은 제외)
+    $u = preg_replace('#(?<!:)//+#', '/', $u);
+    if ($u === '') return null;
+    if (strpos($u, '//') === 0) {
+        // protocol-relative
+        return 'https:' . $u;
+    }
+    if (preg_match('/^https?:\/\//i', $u)) {
+        return $u;
+    }
+    if (strpos($u, '/') === 0) {
+        // root-relative (e.g. /moodle/pluginfile.php/...)
+        $base = isset($CFG->wwwroot) ? rtrim($CFG->wwwroot, '/') : '';
+        return $base ? ($base . $u) : $u;
+    }
+    // relative path
+    $base = isset($CFG->wwwroot) ? rtrim($CFG->wwwroot, '/') : '';
+    return $base ? ($base . '/' . ltrim($u, '/')) : $u;
+}
+
+/**
+ * Fetch an image URL (including Moodle-authenticated pluginfile) and return as data URL.
+ * This avoids OpenAI failing to fetch private URLs (common cause of HTTP 400).
+ *
+ * @param string $url
+ * @return array {success: bool, data_url?: string, mime?: string, error?: string}
+ */
+function ktm_fetch_image_as_data_url($url) {
+    $absoluteUrl = ktm_normalize_to_absolute_url($url);
+    if (!$absoluteUrl) {
+        return ['success' => false, 'error' => '이미지 URL이 비어있습니다.'];
+    }
+
+    // Build cookie header from current request to access protected pluginfile resources.
+    $cookiePairs = [];
+    foreach ($_COOKIE as $k => $v) {
+        if ($k === '' || $v === null) continue;
+        $cookiePairs[] = $k . '=' . $v;
+    }
+    $cookieHeader = implode('; ', $cookiePairs);
+
+    $ch = curl_init($absoluteUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+    $headers = [
+        'Accept: image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+        'User-Agent: augmented_teacher/tts_image_fetch'
+    ];
+    if (!empty($cookieHeader)) {
+        $headers[] = 'Cookie: ' . $cookieHeader;
+    }
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $raw = curl_exec($ch);
+    $curlErr = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+    $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+    curl_close($ch);
+
+    if ($raw === false) {
+        return ['success' => false, 'error' => '이미지 다운로드 실패(curl): ' . $curlErr];
+    }
+    if ($httpCode < 200 || $httpCode >= 300) {
+        // Often 302/403 if cookie is missing, or 404 if url is bad.
+        return ['success' => false, 'error' => '이미지 다운로드 실패(HTTP ' . $httpCode . '): ' . $absoluteUrl];
+    }
+
+    $body = substr($raw, (int)$headerSize);
+    if (empty($body)) {
+        return ['success' => false, 'error' => '이미지 데이터가 비어있습니다: ' . $absoluteUrl];
+    }
+
+    // Determine mime type
+    $mime = null;
+    if (is_string($contentType) && $contentType) {
+        $mime = explode(';', $contentType)[0];
+        $mime = trim($mime);
+    }
+    if (!$mime || stripos($mime, 'image/') !== 0) {
+        // Fallback using finfo
+        if (function_exists('finfo_open')) {
+            $f = finfo_open(FILEINFO_MIME_TYPE);
+            if ($f) {
+                $detected = finfo_buffer($f, $body);
+                finfo_close($f);
+                if ($detected && stripos($detected, 'image/') === 0) {
+                    $mime = $detected;
+                }
+            }
+        }
+    }
+    if (!$mime || stripos($mime, 'image/') !== 0) {
+        $mime = 'image/png';
+    }
+
+    $dataUrl = 'data:' . $mime . ';base64,' . base64_encode($body);
+    return ['success' => true, 'data_url' => $dataUrl, 'mime' => $mime];
 }
 
 /**
@@ -403,31 +545,42 @@ function generateNarrationText($solutionText, $problemImage = null, $solutionIma
         ['role' => 'system', 'content' => $systemPrompt]
     ];
     
-    // 이미지가 있으면 vision 형식 사용
-    if ($solutionImage || $problemImage) {
-        $userContent = [['type' => 'text', 'text' => $userPrompt]];
-        
-        if ($solutionImage) {
-            $userContent[] = ['type' => 'image_url', 'image_url' => ['url' => $solutionImage]];
-        }
-        if ($problemImage) {
-            $userContent[] = ['type' => 'image_url', 'image_url' => ['url' => $problemImage]];
-        }
-        
-        $messages[] = ['role' => 'user', 'content' => $userContent];
-    } else {
-        $messages[] = ['role' => 'user', 'content' => $userPrompt];
+    // ✅ 요구사항: 문제/해설 이미지가 반드시 전달되어야 함
+    if (empty($problemImage) || empty($solutionImage)) {
+        $missing = [];
+        if (empty($problemImage)) $missing[] = '문제 이미지(question_image)';
+        if (empty($solutionImage)) $missing[] = '해설 이미지(solution_image)';
+        return ['success' => false, 'error' => '필수 이미지 누락: ' . implode(', ', $missing)];
     }
+
+    // ✅ OpenAI가 인증이 필요한 URL을 직접 못 읽는 경우가 많아서,
+    // 서버에서 이미지를 가져와 data URL(base64)로 전송한다.
+    $solutionFetch = ktm_fetch_image_as_data_url($solutionImage);
+    if (!$solutionFetch['success']) {
+        return ['success' => false, 'error' => '해설 이미지 처리 실패: ' . ($solutionFetch['error'] ?? 'Unknown')];
+    }
+    $problemFetch = ktm_fetch_image_as_data_url($problemImage);
+    if (!$problemFetch['success']) {
+        return ['success' => false, 'error' => '문제 이미지 처리 실패: ' . ($problemFetch['error'] ?? 'Unknown')];
+    }
+
+    $userContent = [
+        ['type' => 'text', 'text' => $userPrompt],
+        ['type' => 'image_url', 'image_url' => ['url' => $solutionFetch['data_url']]],
+        ['type' => 'image_url', 'image_url' => ['url' => $problemFetch['data_url']]]
+    ];
+    $messages[] = ['role' => 'user', 'content' => $userContent];
     
     $ch = curl_init('https://api.openai.com/v1/chat/completions');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+    $payload = [
         'model' => 'gpt-4o',
         'messages' => $messages,
         'max_tokens' => 4000,
         'temperature' => 0.7
-    ]));
+    ];
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'Authorization: Bearer ' . OPENAI_API_KEY
@@ -436,10 +589,16 @@ function generateNarrationText($solutionText, $problemImage = null, $solutionIma
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
     
     if ($httpCode !== 200) {
-        return ['success' => false, 'error' => 'OpenAI API 호출 실패: HTTP ' . $httpCode];
+        // 응답 바디까지 포함해서 원인 파악 가능하게 함(너무 길면 잘라서)
+        $snippet = is_string($response) ? substr($response, 0, 800) : '';
+        return [
+            'success' => false,
+            'error' => 'OpenAI API 호출 실패: HTTP ' . $httpCode . ($curlError ? (' - ' . $curlError) : '') . ($snippet ? (' / resp: ' . $snippet) : '')
+        ];
     }
     
     $result = json_decode($response, true);

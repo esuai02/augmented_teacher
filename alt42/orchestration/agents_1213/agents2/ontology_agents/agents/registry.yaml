@@ -1,0 +1,450 @@
+# Mathking Agent Registry v2.0
+# Orchestration 에이전트 (agent_01 ~ agent_22) 메타데이터 및 상태 관리
+
+version: "2.0.0"
+updated: "2025-10-30"
+
+# 22개 Orchestration 에이전트 등록
+# Orchestration ID → Mathking 구현체 매핑
+
+agents:
+  # Phase 1: Daily Information Collection (Agent 01-06)
+
+  agent_01:
+    orchestration_id: "agent01"
+    orchestration_name: "온보딩"
+    mathking_impl: "agent_self_directed"
+    category: "core"
+    description: "학습 시작 및 초기 설정 지원"
+    status: "active"
+    heartbeat_min: 60
+    priority: 2
+    contexts: ["onboarding", "self_directed"]
+    tasks:
+      - profile_initialization
+      - environment_setup
+
+  agent_02:
+    orchestration_id: "agent02"
+    orchestration_name: "시험일정"
+    mathking_impl: "agent_exam_prep"
+    category: "core"
+    description: "시험 일정 관리 및 대비 계획 수립"
+    status: "active"
+    heartbeat_min: 60
+    priority: 2
+    contexts: ["exam_prep"]
+    tasks:
+      - exam_registration
+      - exam_progress_check
+
+  agent_03:
+    orchestration_id: "agent03"
+    orchestration_name: "목표분석"
+    mathking_impl: "agent_goal_setting"
+    category: "core"
+    description: "학습 목표 설정, 추적 및 분석"
+    status: "active"
+    heartbeat_min: 1440  # 1일
+    priority: 3
+    contexts: ["goal_setting", "self_directed"]
+    tasks:
+      - goal_setting
+      - goal_tracking
+
+  agent_04:
+    orchestration_id: "agent04"
+    orchestration_name: "문제활동"
+    mathking_impl: "agent_curriculum"
+    category: "core"
+    description: "문제 풀이 활동 관리 및 최적화"
+    status: "active"
+    heartbeat_min: 30
+    priority: 1
+    contexts: ["curriculum"]
+    tasks:
+      - problem_recommendation
+      - problem_activity_analysis
+
+  agent_05:
+    orchestration_id: "agent05"
+    orchestration_name: "학습정서"
+    mathking_impl: "agent_emotion"
+    category: "support"
+    description: "학습 과정의 감정 상태 모니터링 및 관리"
+    status: "active"
+    heartbeat_min: 20
+    priority: 1
+    contexts: ["emotion", "adaptive"]
+    tasks:
+      - emotion_detection
+      - emotion_regulation
+
+  agent_06:
+    orchestration_id: "agent06"
+    orchestration_name: "교사피드백"
+    mathking_impl: "agent_feedback"
+    category: "support"
+    description: "교사 피드백 수집, 분석 및 학습 조정"
+    status: "active"
+    heartbeat_min: 30
+    priority: 2
+    contexts: ["feedback", "exam_prep"]
+    tasks:
+      - feedback_collection
+
+  # Phase 2: Real-time Interaction (Agent 07-13)
+
+  agent_07:
+    orchestration_id: "agent07"
+    orchestration_name: "상호작용타겟팅"
+    mathking_impl: "agent_adaptive"
+    category: "core"
+    description: "맞춤형 학습 상호작용 설계 및 실행"
+    status: "active"
+    heartbeat_min: 30
+    priority: 1
+    contexts: ["adaptive"]
+    tasks:
+      - interaction_opportunity_identification
+
+  agent_08:
+    orchestration_id: "agent08"
+    orchestration_name: "평정심"
+    mathking_impl: "agent_emotion"
+    category: "support"
+    description: "학습 중 감정 안정화 및 스트레스 관리"
+    status: "active"
+    heartbeat_min: 20
+    priority: 1
+    contexts: ["emotion", "stress"]
+    tasks:
+      - stress_detection
+
+  agent_09:
+    orchestration_id: "agent09"
+    orchestration_name: "학습관리"
+    mathking_impl: "agent_time_management"
+    category: "support"
+    description: "전반적인 학습 시간, 진도 및 효율성 관리"
+    status: "active"
+    heartbeat_min: 60
+    priority: 2
+    contexts: ["time_management", "curriculum"]
+    tasks:
+      - session_planning
+      - efficiency_analysis
+
+  agent_10:
+    orchestration_id: "agent10"
+    orchestration_name: "개념노트"
+    mathking_impl: "agent_metacognition"
+    category: "support"
+    description: "개념 정리 및 노트 관리"
+    status: "active"
+    heartbeat_min: 60
+    priority: 2
+    contexts: ["metacognition", "self_reflection"]
+    tasks:
+      - concept_note_creation
+
+  agent_11:
+    orchestration_id: "agent11"
+    orchestration_name: "문제노트"
+    mathking_impl: "agent_metacognition"
+    category: "support"
+    description: "오답 노트 및 문제 분석"
+    status: "active"
+    heartbeat_min: 60
+    priority: 2
+    contexts: ["metacognition", "self_reflection"]
+    tasks:
+      - error_note_analysis
+
+  agent_12:
+    orchestration_id: "agent12"
+    orchestration_name: "휴식루틴"
+    mathking_impl: "agent_habit"
+    category: "support"
+    description: "휴식 패턴 관리"
+    status: "active"
+    heartbeat_min: 1440  # 1일
+    priority: 3
+    contexts: ["habit", "self_directed"]
+    tasks:
+      - rest_routine_management
+
+  agent_13:
+    orchestration_id: "agent13"
+    orchestration_name: "학습이탈"
+    mathking_impl: "agent_motivation"
+    category: "support"
+    description: "학습 이탈 방지 및 동기 부여"
+    status: "active"
+    heartbeat_min: 30
+    priority: 2
+    contexts: ["motivation", "micro_mission"]
+    tasks:
+      - dropout_prevention
+
+  # Phase 3: Diagnosis & Preparation (Agent 14-19)
+
+  agent_14:
+    orchestration_id: "agent14"
+    orchestration_name: "현재위치"
+    mathking_impl: "agent_self_reflection"
+    category: "core"
+    description: "학습 현황 분석"
+    status: "active"
+    heartbeat_min: 45
+    priority: 3
+    contexts: ["self_reflection"]
+    tasks:
+      - current_position_analysis
+
+  agent_15:
+    orchestration_id: "agent15"
+    orchestration_name: "문제재정의"
+    mathking_impl: "agent_cognitive"
+    category: "support"
+    description: "문제 이해 수준 진단"
+    status: "active"
+    heartbeat_min: 30
+    priority: 1
+    contexts: ["cognitive", "adaptive"]
+    tasks:
+      - problem_redefinition
+
+  agent_16:
+    orchestration_id: "agent16"
+    orchestration_name: "상호작용준비"
+    mathking_impl: "agent_inquiry"
+    category: "core"
+    description: "질문 준비 및 탐구 유도"
+    status: "active"
+    heartbeat_min: 45
+    priority: 2
+    contexts: ["inquiry"]
+    tasks:
+      - interaction_preparation
+
+  agent_17:
+    orchestration_id: "agent17"
+    orchestration_name: "남은활동"
+    mathking_impl: "agent_micro_mission"
+    category: "core"
+    description: "남은 학습량 관리"
+    status: "active"
+    heartbeat_min: 15
+    priority: 2
+    contexts: ["micro_mission"]
+    tasks:
+      - remaining_activity_tracking
+
+  agent_18:
+    orchestration_id: "agent18"
+    orchestration_name: "시그니처루틴"
+    mathking_impl: "agent_habit"
+    category: "support"
+    description: "학습 루틴 형성"
+    status: "active"
+    heartbeat_min: 1440  # 1일
+    priority: 3
+    contexts: ["habit", "self_directed"]
+    tasks:
+      - signature_routine_formation
+
+  agent_19:
+    orchestration_id: "agent19"
+    orchestration_name: "상호작용내용"
+    mathking_impl: "agent_social"
+    category: "support"
+    description: "학습 상호작용 촉진"
+    status: "active"
+    heartbeat_min: 120
+    priority: 3
+    contexts: ["social", "apprenticeship"]
+    tasks:
+      - interaction_content_design
+
+  # Phase 4: Intervention & Improvement (Agent 20-22)
+
+  agent_20:
+    orchestration_id: "agent20"
+    orchestration_name: "개입준비"
+    mathking_impl: "agent_apprenticeship"
+    category: "core"
+    description: "교사 개입 준비"
+    status: "active"
+    heartbeat_min: 90
+    priority: 3
+    contexts: ["apprenticeship"]
+    tasks:
+      - intervention_preparation
+
+  agent_21:
+    orchestration_id: "agent21"
+    orchestration_name: "개입실행"
+    mathking_impl: "agent_apprenticeship"
+    category: "core"
+    description: "실제 개입 실행"
+    status: "active"
+    heartbeat_min: 90
+    priority: 3
+    contexts: ["apprenticeship"]
+    tasks:
+      - intervention_execution
+
+  agent_22:
+    orchestration_id: "agent22"
+    orchestration_name: "모듈개선"
+    mathking_impl: "agent_improvement"
+    category: "support"
+    description: "시스템 성능 모니터링 및 개선 제안"
+    status: "active"
+    heartbeat_min: 1440  # 1일
+    priority: 3
+    contexts: ["system_improvement"]
+    tasks:
+      - system_monitoring
+
+# Phase별 그룹핑
+phases:
+  phase_1_daily_info:
+    name: "Phase 1: Daily Information Collection"
+    agents: [agent_01, agent_02, agent_03, agent_04, agent_05, agent_06]
+    description: "일일 학습 정보 수집 및 기본 상태 파악"
+
+  phase_2_realtime:
+    name: "Phase 2: Real-time Interaction"
+    agents: [agent_07, agent_08, agent_09, agent_10, agent_11, agent_12, agent_13]
+    description: "실시간 학습 상호작용 및 적응적 지원"
+
+  phase_3_diagnosis:
+    name: "Phase 3: Diagnosis & Preparation"
+    agents: [agent_14, agent_15, agent_16, agent_17, agent_18, agent_19]
+    description: "학습 진단 및 개입 준비"
+
+  phase_4_intervention:
+    name: "Phase 4: Intervention & Improvement"
+    agents: [agent_20, agent_21, agent_22]
+    description: "교육적 개입 실행 및 시스템 개선"
+
+# Mathking 구현체별 그룹핑 (중복 매핑 포함)
+mathking_implementations:
+  agent_self_directed:
+    orchestration_agents: [agent_01]
+
+  agent_exam_prep:
+    orchestration_agents: [agent_02]
+
+  agent_goal_setting:
+    orchestration_agents: [agent_03]
+
+  agent_curriculum:
+    orchestration_agents: [agent_04]
+
+  agent_emotion:
+    orchestration_agents: [agent_05, agent_08]
+    note: "학습정서 + 평정심 (2개 Orchestration 단계)"
+
+  agent_feedback:
+    orchestration_agents: [agent_06]
+
+  agent_adaptive:
+    orchestration_agents: [agent_07]
+
+  agent_time_management:
+    orchestration_agents: [agent_09]
+
+  agent_metacognition:
+    orchestration_agents: [agent_10, agent_11]
+    note: "개념노트 + 문제노트 (2개 Orchestration 단계)"
+
+  agent_habit:
+    orchestration_agents: [agent_12, agent_18]
+    note: "휴식루틴 + 시그니처루틴 (2개 Orchestration 단계)"
+
+  agent_motivation:
+    orchestration_agents: [agent_13]
+
+  agent_self_reflection:
+    orchestration_agents: [agent_14]
+
+  agent_cognitive:
+    orchestration_agents: [agent_15]
+
+  agent_inquiry:
+    orchestration_agents: [agent_16]
+
+  agent_micro_mission:
+    orchestration_agents: [agent_17]
+
+  agent_social:
+    orchestration_agents: [agent_19]
+
+  agent_apprenticeship:
+    orchestration_agents: [agent_20, agent_21]
+    note: "개입준비 + 개입실행 (2개 Orchestration 단계)"
+
+  agent_improvement:
+    orchestration_agents: [agent_22]
+
+# 카테고리별 그룹핑
+categories:
+  core:
+    description: "핵심 학습 관리 에이전트"
+    count: 9
+    agents:
+      - agent_01  # 온보딩
+      - agent_02  # 시험일정
+      - agent_03  # 목표분석
+      - agent_04  # 문제활동
+      - agent_07  # 상호작용타겟팅
+      - agent_14  # 현재위치
+      - agent_16  # 상호작용준비
+      - agent_17  # 남은활동
+      - agent_20  # 개입준비
+      - agent_21  # 개입실행
+
+  support:
+    description: "보조 및 지원 에이전트"
+    count: 13
+    agents:
+      - agent_05  # 학습정서
+      - agent_06  # 교사피드백
+      - agent_08  # 평정심
+      - agent_09  # 학습관리
+      - agent_10  # 개념노트
+      - agent_11  # 문제노트
+      - agent_12  # 휴식루틴
+      - agent_13  # 학습이탈
+      - agent_15  # 문제재정의
+      - agent_18  # 시그니처루틴
+      - agent_19  # 상호작용내용
+      - agent_22  # 모듈개선
+
+# 글로벌 상태
+global_state:
+  system_version: "2.0.0"
+  orchestration_version: "1.0.0"
+  ontology_version: "1.0.0"
+  last_updated: "2025-10-30T22:15:00Z"
+  total_orchestration_agents: 22
+  unique_mathking_implementations: 18
+  active_agents: 22
+  total_tasks: 44  # 22개 에이전트 x 평균 2개 Task
+
+# 시스템 제약
+constraints:
+  max_concurrent_agents: 5
+  max_tokens_per_decision: 1024
+  idempotency_window_min: 5
+  min_confidence_threshold: 0.6
+
+# 아카이브된 레거시 에이전트 (참고용)
+archived_agents:
+  - agent_creativity: "창의성 지원 (Orchestration 매핑 없음)"
+  - agent_learning_style: "학습 스타일 분석 (Orchestration 매핑 없음)"
+  - agent_personality: "성격 유형 분석 (Orchestration 매핑 없음)"
+  - agent_time_reflection: "시간 성찰 (Orchestration 매핑 없음)"

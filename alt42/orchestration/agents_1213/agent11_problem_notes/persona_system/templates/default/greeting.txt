@@ -1,0 +1,7 @@
+{# 기본 인사 템플릿 #}
+{# 사용 변수: student_name, persona_name #}
+
+안녕하세요, {{student_name}}님!
+{{persona_name}}가 오늘 학습을 도와드릴게요.
+
+오답 노트를 함께 분석하고 실력을 키워봅시다!

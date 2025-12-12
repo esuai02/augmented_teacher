@@ -1,0 +1,149 @@
+# Task Schema Definition
+# 태스크 데이터 구조 정의
+
+version: "1.0.0"
+
+Task:
+  type: object
+  required:
+    - id
+    - goal
+    - triggers
+  properties:
+    id:
+      type: string
+      description: "태스크 고유 ID"
+      pattern: "^task_[a-z_]+$"
+      example: "task_lagging"
+
+    goal:
+      type: string
+      description: "태스크 목표 설명"
+      minLength: 10
+      maxLength: 200
+
+    kpi:
+      type: array
+      items:
+        type: string
+      description: "추적할 KPI 목록"
+      example: ["progress_rate", "time_on_task"]
+
+    triggers:
+      type: array
+      items:
+        type: string
+      description: "트리거 조건 DSL 표현식"
+      example: ["cond.progress.below_avg15"]
+
+    preconditions:
+      type: array
+      items:
+        type: string
+      description: "사전 조건"
+
+    postconditions:
+      type: array
+      items:
+        type: string
+      description: "사후 조건"
+
+    context_tags:
+      type: array
+      items:
+        type: string
+      description: "컨텍스트 태그"
+      example: ["curriculum", "progress"]
+
+    templates:
+      type: array
+      items:
+        $ref: "#/TemplateRef"
+      description: "사용할 템플릿 목록"
+
+    rules:
+      type: array
+      items:
+        type: string
+      description: "참조 규칙 ID"
+
+    persona_relevance:
+      type: object
+      additionalProperties:
+        type: number
+        minimum: 0.0
+        maximum: 1.0
+      description: "페르소나별 연관도"
+      example:
+        P_avoidant: 1.0
+        P_struggling: 0.95
+
+    expected_outcomes:
+      type: array
+      items:
+        type: string
+      description: "예상 효과"
+
+    metadata:
+      type: object
+      properties:
+        created:
+          type: string
+          format: date
+        author:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+
+TemplateRef:
+  type: object
+  required:
+    - id
+    - type
+    - priority
+  properties:
+    id:
+      type: string
+      description: "템플릿 ID"
+
+    type:
+      type: string
+      enum: ["report", "directive"]
+      description: "템플릿 타입"
+
+    priority:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+      description: "우선순위"
+
+    params:
+      type: object
+      description: "템플릿 파라미터"
+
+Trigger:
+  type: object
+  required:
+    - id
+    - condition
+  properties:
+    id:
+      type: string
+      description: "트리거 ID"
+
+    condition:
+      type: string
+      description: "조건 DSL 표현식"
+
+    priority:
+      type: number
+      minimum: 0.0
+      maximum: 1.0
+      description: "우선순위"
+
+    cooldown_min:
+      type: integer
+      minimum: 0
+      description: "재실행 대기 시간 (분)"

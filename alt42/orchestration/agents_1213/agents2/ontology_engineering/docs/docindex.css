@@ -1,0 +1,456 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    width: 100vw; /* 전체 화면 폭 */
+    height: 100vh; /* 전체 화면 높이 */
+    gap: 20px; /* 여유있는 간격 */
+    padding: 20px; /* 여유있는 패딩 */
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.sidebar {
+    width: 450px; /* 300px * 1.5 */
+    min-width: 400px; /* 최소 폭 보장 */
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    padding: 20px; /* 여유있는 패딩 */
+    flex-shrink: 0; /* 사이드바 크기 고정 */
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0; /* 관계 패널 제거로 gap 불필요 */
+    min-width: 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+.editor-panel {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 관계 패널 제거됨 - 인라인으로 이동 */
+
+.file-tree {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.file-tree li {
+    padding: 8px 0; /* 여유있는 패딩 */
+}
+
+.sidebar h2 {
+    margin: 0 0 20px 0; /* 여유있는 여백 */
+    padding: 0;
+    font-size: 1.3em;
+}
+
+.file-tree a {
+    color: #0066cc;
+    text-decoration: none;
+    display: block;
+    padding: 10px 15px; /* 여유있는 패딩 */
+    border-radius: 4px;
+    transition: background 0.2s;
+    white-space: nowrap; /* 줄바꿈 방지 */
+    overflow: hidden; /* 넘치는 부분 숨김 */
+    text-overflow: ellipsis; /* 말줄임표 표시 */
+    max-width: 100%; /* 부모 너비 제한 */
+}
+
+.file-tree a:hover {
+    background: #f0f0f0;
+}
+
+.file-tree a.active {
+    background: #e3f2fd;
+    color: #1976d2;
+    font-weight: bold;
+}
+
+.file-tree .folder-container {
+    margin: 0;
+    padding: 0;
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    color: #666;
+    border-radius: 4px;
+    transition: background 0.2s;
+    margin-bottom: 5px;
+}
+
+.folder-header:hover {
+    background: #f0f0f0;
+}
+
+.folder-icon {
+    margin-right: 8px;
+    font-size: 1.1em;
+    transition: transform 0.2s;
+}
+
+.folder-header.collapsed .folder-icon {
+    transform: rotate(0deg);
+}
+
+.folder-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.folder-files {
+    list-style: none;
+    margin: 0 0 10px 20px; /* 들여쓰기 */
+    padding: 0;
+    /* display는 JavaScript에서 제어 (기본 접힌 상태) */
+}
+
+.folder-files li {
+    padding: 5px 0;
+}
+
+.file-tree li {
+    overflow: hidden; /* 넘치는 부분 숨김 */
+    max-width: 100%; /* 부모 너비 제한 */
+}
+
+.editor-header {
+    padding: 20px; /* 여유있는 패딩 */
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0; /* 헤더 크기 고정 */
+}
+
+.editor-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.editor-toolbar {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.view-tabs {
+    display: flex;
+    gap: 5px;
+}
+
+.tab-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    border-bottom: none;
+}
+
+.tab-btn:hover {
+    background: #f5f5f5;
+}
+
+.tab-btn.active {
+    background: #1976d2;
+    color: white;
+    border-color: #1976d2;
+}
+
+.toolbar-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: auto; /* 우측 정렬 */
+}
+
+.relations-graph-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+    min-width: 200px;
+    max-width: none;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+
+.btn-secondary {
+    background: #757575;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #616161;
+}
+
+.editor-content {
+    flex: 1;
+    padding: 20px; /* 여유있는 패딩 */
+    overflow-y: auto;
+    min-height: 0; /* flex 아이템이 축소될 수 있도록 */
+}
+
+#markdown-editor {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px; /* 여유있는 패딩 */
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.markdown-preview {
+    width: 100%;
+    height: 100%;
+    padding: 30px; /* 여유있는 패딩 */
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    line-height: 1.6;
+    box-sizing: border-box;
+}
+
+.markdown-preview h1 {
+    font-size: 2em;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.markdown-preview h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.markdown-preview h3 {
+    font-size: 1.25em;
+    margin-top: 25px;
+    margin-bottom: 12px;
+}
+
+.markdown-preview h4 {
+    font-size: 1.1em;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.markdown-preview p {
+    margin-bottom: 15px;
+}
+
+.markdown-preview code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    color: #d63384;
+}
+
+.markdown-preview pre {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    overflow-x: auto;
+    margin-bottom: 15px;
+}
+
+.markdown-preview pre code {
+    background: none;
+    padding: 0;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.markdown-preview ul, .markdown-preview ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.markdown-preview li {
+    margin-bottom: 8px;
+}
+
+.markdown-preview blockquote {
+    border-left: 4px solid #1976d2;
+    padding-left: 15px;
+    margin-left: 0;
+    color: #666;
+    font-style: italic;
+}
+
+.markdown-preview table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.markdown-preview table th,
+.markdown-preview table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.markdown-preview table th {
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+.markdown-preview a {
+    color: #1976d2;
+    text-decoration: none;
+}
+
+.markdown-preview a:hover {
+    text-decoration: underline;
+}
+
+.markdown-preview hr {
+    border: none;
+    border-top: 2px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+.markdown-preview strong {
+    font-weight: bold;
+}
+
+.markdown-preview em {
+    font-style: italic;
+}
+
+/* relations-graph는 인라인으로 통합됨 */
+
+.relation-node {
+    display: inline-block;
+}
+
+.relation-link {
+    color: #1976d2;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: background 0.2s;
+    display: inline-block;
+}
+
+.relation-link:hover {
+    background: #e3f2fd;
+    text-decoration: underline;
+}
+
+.status-message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    display: none;
+}
+
+.status-message.success {
+    background: #c8e6c9;
+    color: #2e7d32;
+    display: block;
+}
+
+.status-message.error {
+    background: #ffcdd2;
+    color: #c62828;
+    display: block;
+}
+
+.search-box {
+    width: 100%;
+    padding: 12px; /* 여유있는 패딩 */
+    margin-bottom: 20px; /* 여유있는 여백 */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.breadcrumb {
+    padding: 10px 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #0066cc;
+    text-decoration: none;
+}
+

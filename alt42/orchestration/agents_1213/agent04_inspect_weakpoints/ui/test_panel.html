@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent04 Activity Panel Test</title>
+    <link rel="stylesheet" href="activity_panel.css">
+</head>
+<body>
+    <div style="padding: 40px;">
+        <h1>🧪 Agent04 Activity Panel 테스트</h1>
+
+        <div style="margin: 30px 0;">
+            <h2>활동 카테고리 선택</h2>
+            <div id="category-buttons" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px;">
+            </div>
+        </div>
+
+        <div id="result-area" class="agent04-result-area" style="margin-top: 30px;">
+            <p>활동을 선택하면 여기에 결과가 표시됩니다.</p>
+        </div>
+    </div>
+
+    <script>
+        // Mock currentUserId
+        window.currentUserId = 2;
+    </script>
+    <script src="activity_categories.js"></script>
+    <script src="activity_panel.js"></script>
+    <script>
+        // Render category buttons
+        const categories = Agent04ActivityCategories.getAllCategories();
+        const container = document.getElementById('category-buttons');
+
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.textContent = `${cat.icon} ${cat.name}`;
+            btn.style.padding = '15px';
+            btn.style.border = '2px solid #e2e8f0';
+            btn.style.borderRadius = '8px';
+            btn.style.background = '#f8fafc';
+            btn.style.cursor = 'pointer';
+            btn.onclick = () => Agent04ActivityPanel.selectCategory(cat.key);
+            container.appendChild(btn);
+        });
+    </script>
+</body>
+</html>

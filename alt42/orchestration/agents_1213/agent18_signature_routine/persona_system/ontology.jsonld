@@ -1,0 +1,276 @@
+{
+  "@context": {
+    "@vocab": "https://mathking.kr/ontology/agent18/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "schema": "http://schema.org/",
+    "alt42": "https://mathking.kr/ontology/alt42/",
+    "persona": "https://mathking.kr/ontology/agent18/persona/",
+    "routine": "https://mathking.kr/ontology/agent18/routine/",
+    "pattern": "https://mathking.kr/ontology/agent18/pattern/",
+    "context": "https://mathking.kr/ontology/agent18/context/"
+  },
+  "@graph": [
+    {
+      "@id": "alt42:Agent18",
+      "@type": "alt42:MissionAgent",
+      "rdfs:label": "Agent18 - Signature Routine",
+      "rdfs:comment": "학습자의 최적 학습 루틴(시그너처 루틴)을 발견하고 최적화하는 에이전트",
+      "alt42:agentNumber": 18,
+      "alt42:missionFocus": "signature_routine_discovery",
+      "alt42:version": "1.0"
+    },
+
+    {
+      "@id": "persona:PersonaCategory",
+      "@type": "rdfs:Class",
+      "rdfs:label": "페르소나 카테고리",
+      "rdfs:comment": "시그너처 루틴 관련 페르소나 분류 체계"
+    },
+
+    {
+      "@id": "persona:RhythmCategory",
+      "@type": "persona:PersonaCategory",
+      "rdfs:label": "리듬 기반 페르소나 (R)",
+      "rdfs:comment": "학습 시간대, 세션 길이, 휴식 패턴에 따른 분류",
+      "persona:categoryCode": "R",
+      "persona:hasPersonas": [
+        {"@id": "persona:R1_MORNING_FOCUSER"},
+        {"@id": "persona:R2_NIGHT_OWL"},
+        {"@id": "persona:R3_AFTERNOON_PEAK"},
+        {"@id": "persona:R4_DISTRIBUTED"},
+        {"@id": "persona:R5_MARATHON"}
+      ]
+    },
+
+    {
+      "@id": "persona:AchievementCategory",
+      "@type": "persona:PersonaCategory",
+      "rdfs:label": "성취 기반 페르소나 (A)",
+      "rdfs:comment": "목표 달성 방식과 동기부여 패턴에 따른 분류",
+      "persona:categoryCode": "A",
+      "persona:hasPersonas": [
+        {"@id": "persona:A1_GOAL_ACHIEVER"},
+        {"@id": "persona:A2_SMALL_WINS"},
+        {"@id": "persona:A3_COMPETITIVE"},
+        {"@id": "persona:A4_PERSONAL_BEST"}
+      ]
+    },
+
+    {
+      "@id": "persona:ExplorerCategory",
+      "@type": "persona:PersonaCategory",
+      "rdfs:label": "탐험 기반 페르소나 (E)",
+      "rdfs:comment": "새로운 학습 방식 시도와 호기심 패턴에 따른 분류",
+      "persona:categoryCode": "E",
+      "persona:hasPersonas": [
+        {"@id": "persona:E1_CURIOUS"},
+        {"@id": "persona:E2_VARIETY"},
+        {"@id": "persona:E3_EXPERIMENTER"}
+      ]
+    },
+
+    {
+      "@id": "persona:ChallengeCategory",
+      "@type": "persona:PersonaCategory",
+      "rdfs:label": "도전 기반 페르소나 (C)",
+      "rdfs:comment": "난이도 선호와 도전 성향에 따른 분류",
+      "persona:categoryCode": "C",
+      "persona:hasPersonas": [
+        {"@id": "persona:C1_DIFFICULTY"},
+        {"@id": "persona:C2_COMFORT"},
+        {"@id": "persona:C3_GRADUAL"}
+      ]
+    },
+
+    {
+      "@id": "persona:MeaningCategory",
+      "@type": "persona:PersonaCategory",
+      "rdfs:label": "의미 기반 페르소나 (M)",
+      "rdfs:comment": "학습의 목적과 가치 인식 패턴에 따른 분류",
+      "persona:categoryCode": "M",
+      "persona:hasPersonas": [
+        {"@id": "persona:M1_PURPOSE"},
+        {"@id": "persona:M2_FUTURE"},
+        {"@id": "persona:M3_PRESENT"}
+      ]
+    },
+
+    {
+      "@id": "persona:R1_MORNING_FOCUSER",
+      "@type": "persona:RhythmPersona",
+      "rdfs:label": "아침형 집중러",
+      "persona:alias": ["새벽 독수리", "아침 전사"],
+      "persona:optimalTimeRange": "06:00-10:00",
+      "persona:psychologicalTraits": ["일찍 시작하면 뿌듯함", "오전 에너지 최고조", "규칙적 생활 선호"],
+      "persona:behavioralIndicators": {
+        "morning_performance_ratio": {"min": 1.2},
+        "morning_session_count": {"min": 5}
+      },
+      "persona:responseStrategy": {
+        "emphasis": "오전 학습 스케줄 강화",
+        "tone": "격려적, 계획적"
+      }
+    },
+
+    {
+      "@id": "persona:R2_NIGHT_OWL",
+      "@type": "persona:RhythmPersona",
+      "rdfs:label": "저녁형 야행러",
+      "persona:alias": ["올빼미", "야간 전사"],
+      "persona:optimalTimeRange": "20:00-02:00",
+      "persona:psychologicalTraits": ["밤에 창의적", "조용한 밤 선호", "아침 에너지 낮음"],
+      "persona:behavioralIndicators": {
+        "night_performance_ratio": {"min": 1.2},
+        "night_session_count": {"min": 5}
+      }
+    },
+
+    {
+      "@id": "persona:R4_DISTRIBUTED",
+      "@type": "persona:RhythmPersona",
+      "rdfs:label": "분산형 학습러",
+      "persona:alias": ["쪼개기 마스터", "짧은 집중러"],
+      "persona:behavioralIndicators": {
+        "avg_session_length": {"max": 30},
+        "daily_session_count": {"min": 3}
+      },
+      "persona:recommendedTechnique": "pomodoro"
+    },
+
+    {
+      "@id": "persona:R5_MARATHON",
+      "@type": "persona:RhythmPersona",
+      "rdfs:label": "몰입형 마라토너",
+      "persona:alias": ["마라톤 러너", "장시간 집중러"],
+      "persona:behavioralIndicators": {
+        "avg_session_length": {"min": 90},
+        "continuous_focus_rate": {"min": 0.8}
+      },
+      "persona:recommendedTechnique": "deep_focus"
+    },
+
+    {
+      "@id": "persona:A1_GOAL_ACHIEVER",
+      "@type": "persona:AchievementPersona",
+      "rdfs:label": "목표 달성형",
+      "persona:alias": ["목표 사냥꾼", "체크리스트 마스터"],
+      "persona:motivationPattern": "goal_completion",
+      "persona:behavioralIndicators": {
+        "goal_setting_frequency": {"min": 0.7},
+        "goal_completion_rate": {"min": 0.6}
+      }
+    },
+
+    {
+      "@id": "persona:A3_COMPETITIVE",
+      "@type": "persona:AchievementPersona",
+      "rdfs:label": "경쟁형 성취러",
+      "persona:alias": ["승부사", "1등 추구러"],
+      "persona:motivationPattern": "peer_comparison",
+      "persona:behavioralIndicators": {
+        "ranking_interest": {"min": 0.7}
+      }
+    },
+
+    {
+      "@id": "routine:SignatureRoutine",
+      "@type": "rdfs:Class",
+      "rdfs:label": "시그너처 루틴",
+      "rdfs:comment": "학습자의 최적화된 개인 학습 루틴"
+    },
+
+    {
+      "@id": "routine:RoutineComponent",
+      "@type": "rdfs:Class",
+      "rdfs:label": "루틴 구성요소",
+      "routine:components": [
+        {"@id": "routine:TimeSlot", "rdfs:label": "시간대"},
+        {"@id": "routine:Duration", "rdfs:label": "학습 시간"},
+        {"@id": "routine:Subject", "rdfs:label": "과목"},
+        {"@id": "routine:BreakPattern", "rdfs:label": "휴식 패턴"},
+        {"@id": "routine:Environment", "rdfs:label": "학습 환경"}
+      ]
+    },
+
+    {
+      "@id": "pattern:LearningPattern",
+      "@type": "rdfs:Class",
+      "rdfs:label": "학습 패턴",
+      "rdfs:comment": "데이터에서 발견된 학습 행동 패턴"
+    },
+
+    {
+      "@id": "pattern:TimePattern",
+      "@type": "pattern:LearningPattern",
+      "rdfs:label": "시간 패턴",
+      "pattern:indicators": [
+        "best_performance_time",
+        "avg_session_length",
+        "break_frequency",
+        "weekly_pattern"
+      ]
+    },
+
+    {
+      "@id": "pattern:PerformancePattern",
+      "@type": "pattern:LearningPattern",
+      "rdfs:label": "성과 패턴",
+      "pattern:indicators": [
+        "accuracy_rate",
+        "completion_rate",
+        "improvement_trend"
+      ]
+    },
+
+    {
+      "@id": "context:ContextCategory",
+      "@type": "rdfs:Class",
+      "rdfs:label": "컨텍스트 카테고리"
+    },
+
+    {
+      "@id": "context:SR",
+      "@type": "context:ContextCategory",
+      "rdfs:label": "시그너처 루틴 컨텍스트",
+      "context:situations": ["SR01", "SR02", "SR03", "SR04", "SR05"]
+    },
+
+    {
+      "@id": "context:TP",
+      "@type": "context:ContextCategory",
+      "rdfs:label": "시간 패턴 컨텍스트",
+      "context:situations": ["TP01", "TP02", "TP03", "TP04", "TP05"]
+    },
+
+    {
+      "@id": "context:FO",
+      "@type": "context:ContextCategory",
+      "rdfs:label": "피드백 및 최적화 컨텍스트",
+      "context:situations": ["FO01", "FO02", "FO03", "FO04", "FO05"]
+    },
+
+    {
+      "@id": "alt42:DataRelation",
+      "@type": "rdfs:Class",
+      "rdfs:label": "데이터 관계",
+      "rdfs:comment": "에이전트 간 데이터 연결"
+    },
+
+    {
+      "@id": "alt42:Agent18DataSources",
+      "@type": "alt42:DataRelation",
+      "rdfs:label": "Agent18 데이터 소스",
+      "alt42:receivesFrom": [
+        {"@id": "alt42:Agent01", "alt42:dataType": "student_profile"},
+        {"@id": "alt42:Agent05", "alt42:dataType": "learning_history"},
+        {"@id": "alt42:Agent16", "alt42:dataType": "session_data"}
+      ],
+      "alt42:providesTo": [
+        {"@id": "alt42:Agent17", "alt42:dataType": "routine_recommendation"},
+        {"@id": "alt42:Agent19", "alt42:dataType": "optimal_schedule"}
+      ]
+    }
+  ]
+}

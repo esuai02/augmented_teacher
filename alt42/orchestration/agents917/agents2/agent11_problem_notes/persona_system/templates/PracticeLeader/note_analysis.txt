@@ -1,0 +1,45 @@
+{# PracticeLeader 문제 분석 템플릿 - 실전 지향, 연습 유도 톤 #}
+{# 사용 변수: error_type, student_answer, correct_answer, problem_id, similar_problems #}
+
+## 🏋️ 실전 연습 가이드
+
+**문제 {{problem_id}}번** - 연습으로 완벽하게 만들자!
+
+---
+
+### ⚡ 빠른 점검
+| 항목 | 내용 |
+|------|------|
+| 내 답 | {{student_answer}} |
+| 정답 | {{correct_answer}} |
+| 오류 유형 | {{error_type_label}} |
+
+### 🎯 핵심 포인트
+이 문제에서 기억해야 할 핵심:
+{{key_points}}
+
+### 🔄 반복 연습이 필요한 이유
+{{practice_rationale}}
+
+### 📝 유사 문제 연습
+같은 유형의 문제를 더 풀어서 실력을 굳혀봅시다!
+
+{{#each similar_problems}}
+**연습 {{@index}}**: {{this.description}}
+- 난이도: {{this.difficulty}}
+- 예상 소요 시간: {{this.time}}분
+{{/each}}
+
+### 🏆 목표 설정
+- [ ] 유사 문제 {{practice_target}}개 풀기
+- [ ] 정답률 {{accuracy_target}}% 이상 달성
+- [ ] {{time_target}}분 안에 풀기
+
+### 💡 실전 팁
+{{practical_tips}}
+
+---
+
+**연습이 실력이다!** 반복할수록 강해집니다! 🔥
+
+*연습 리더가 이끌어 드립니다*

@@ -18,6 +18,8 @@ require_login();
 // URL 파라미터 (learning_interface.php와 동일)
 $analysisId = $_GET['id'] ?? null;
 $studentId = $_GET['studentid'] ?? $USER->id;
+$presentationId = isset($_GET['presentation_id']) ? (int)$_GET['presentation_id'] : null;
+$autoPlayVoiceMap = isset($_GET['autoplay_voice_map']) && $_GET['autoplay_voice_map'] === '1';
 
 // 문제 정보 가져오기
 $questionData = null;
@@ -28,12 +30,42 @@ $contentId = null;
 $contentsType = null;
 
 // mdl_abessi_messages에서 contentsid, contentstype 가져오기 (learning_interface.php와 동일)
+$thisboard = null;
+try {
+    if (!empty($analysisId)) {
 $thisboard = $DB->get_record_sql(
     "SELECT * FROM mdl_abessi_messages WHERE wboardid = ? ORDER BY tlaststroke DESC LIMIT 1", 
     [$analysisId]
 );
+    }
+} catch (Exception $e) {
+    error_log("[quantum_modeling.php:$analysisId] mdl_abessi_messages 조회 오류: " . $e->getMessage());
+}
+
 $contentId = $thisboard->contentsid ?? null;
 $contentsType = $thisboard->contentstype ?? null;
+
+if (empty($thisboard)) {
+    error_log("[quantum_modeling.php:$analysisId] 경고: 해당 wboardid로 메시지를 찾지 못했습니다. contentId/contentsType이 비어 있을 수 있습니다.");
+}
+
+// ========================================
+// 발표 텍스트 조회 (발표하기 기능) - ktm_teaching_interactions 미사용
+// ========================================
+$presentationText = null;
+if (!empty($presentationId)) {
+    try {
+        $pres = $DB->get_record('at_student_presentations', ['id' => $presentationId], '*', IGNORE_MISSING);
+        if ($pres && (int)$pres->userid === (int)$studentId && !empty($pres->presentation_text)) {
+            $presentationText = $pres->presentation_text;
+            error_log("[quantum_modeling.php:$analysisId] presentation_text 로드 - presentation_id: {$presentationId}");
+        } elseif ($pres) {
+            error_log("[quantum_modeling.php:$analysisId] presentation_text 없음 또는 권한 불일치 - presentation_id: {$presentationId}");
+        }
+    } catch (Exception $e) {
+        error_log("[quantum_modeling.php:$analysisId] 발표 텍스트 조회 오류: " . $e->getMessage());
+    }
+}
 
 // 문제/해설 이미지 추출 (learning_interface.php와 동일)
 if ($contentId) {
@@ -107,9 +139,124 @@ $contentMeta = [
     'answer' => ''
 ];
 
-// ★★★ 수정: 항상 기본 인지맵 데이터를 먼저 불러온 후, 사용자별 데이터 병합 ★★★
-$baseContentId = 'default_equilateral';  // 기본 인지맵 데이터 (seed SQL에 저장된 ID)
-$userContentId = $contentId;  // 사용자별 추가 데이터 (URL에서 받은 ID)
+// ========================================
+// 인지맵 선택/복제 전략
+// - 기존 코드: 항상 기본 템플릿(default_equilateral)을 보여주어 "하드코딩"처럼 보임
+// - 개선: 현재 문항(contentId)에 해당하는 인지맵이 DB에 있으면 그걸 사용
+//         없으면 템플릿을 contentId로 1회 복제하여 문항별 인지맵을 생성(성장/세션 저장과 매칭)
+// ========================================
+
+/**
+ * 템플릿 인지맵을 특정 contentId로 복제한다(문항별 인지맵 기본 골격 생성).
+ * - 이미 존재하면 아무 것도 하지 않음
+ * - DB 스키마: schema_quantum_modeling.sql 기준
+ */
+function ktm_clone_quantum_map($fromContentId, $toContentId, $questionImageUrl = null, $solutionImageUrl = null) {
+    global $DB;
+
+    if (empty($fromContentId) || empty($toContentId)) return false;
+    if ($fromContentId === $toContentId) return true;
+
+    // 이미 컨텐츠가 있으면 복제하지 않음
+    if ($DB->record_exists('at_quantum_contents', ['content_id' => $toContentId])) {
+        return true;
+    }
+
+    $tpl = $DB->get_record('at_quantum_contents', ['content_id' => $fromContentId], '*', IGNORE_MISSING);
+    if (!$tpl) {
+        error_log("[quantum_modeling.php] 템플릿 인지맵이 없습니다: {$fromContentId}");
+        return false;
+    }
+
+    // 1) contents 메타 복제
+    $newContent = new stdClass();
+    $newContent->content_id = (string)$toContentId;
+    $newContent->contents_type = $tpl->contents_type ?? 'math_problem';
+    $newContent->title = !empty($tpl->title) ? ($tpl->title . " (문항 {$toContentId})") : ("문항 {$toContentId} 인지맵");
+    $newContent->answer = $tpl->answer ?? '';
+    $newContent->question_image_url = $questionImageUrl ?: ($tpl->question_image_url ?? null);
+    $newContent->solution_image_url = $solutionImageUrl ?: ($tpl->solution_image_url ?? null);
+    $newContent->stage_names = $tpl->stage_names ?? null;
+    $newContent->is_active = 1;
+    $DB->insert_record('at_quantum_contents', $newContent);
+
+    // 2) concepts 복제
+    $concepts = $DB->get_records('at_quantum_concepts', ['content_id' => $fromContentId], 'order_index ASC');
+    foreach ($concepts as $c) {
+        if ($DB->record_exists('at_quantum_concepts', ['concept_id' => $c->concept_id, 'content_id' => $toContentId])) continue;
+        $nc = new stdClass();
+        $nc->concept_id = $c->concept_id;
+        $nc->content_id = (string)$toContentId;
+        $nc->name = $c->name;
+        $nc->icon = $c->icon;
+        $nc->color = $c->color;
+        $nc->order_index = (int)($c->order_index ?? 0);
+        $nc->is_active = 1;
+        $DB->insert_record('at_quantum_concepts', $nc);
+    }
+
+    // 3) nodes 복제
+    $nodes = $DB->get_records('at_quantum_nodes', ['content_id' => $fromContentId], 'stage ASC, order_index ASC');
+    foreach ($nodes as $n) {
+        if ($DB->record_exists('at_quantum_nodes', ['node_id' => $n->node_id, 'content_id' => $toContentId])) continue;
+        $nn = new stdClass();
+        $nn->node_id = $n->node_id;
+        $nn->content_id = (string)$toContentId;
+        $nn->label = $n->label;
+        $nn->type = $n->type;
+        $nn->stage = (int)$n->stage;
+        $nn->x = (int)$n->x;
+        $nn->y = (int)$n->y;
+        $nn->description = $n->description;
+        $nn->order_index = (int)($n->order_index ?? 0);
+        $nn->is_active = 1;
+        $DB->insert_record('at_quantum_nodes', $nn);
+    }
+
+    // 4) node_concepts 복제
+    $nodeConcepts = $DB->get_records('at_quantum_node_concepts', ['content_id' => $fromContentId], 'order_index ASC');
+    foreach ($nodeConcepts as $nc) {
+        if ($DB->record_exists('at_quantum_node_concepts', ['node_id' => $nc->node_id, 'concept_id' => $nc->concept_id, 'content_id' => $toContentId])) continue;
+        $nnc = new stdClass();
+        $nnc->node_id = $nc->node_id;
+        $nnc->concept_id = $nc->concept_id;
+        $nnc->content_id = (string)$toContentId;
+        $nnc->order_index = (int)($nc->order_index ?? 0);
+        $DB->insert_record('at_quantum_node_concepts', $nnc);
+    }
+
+    // 5) edges 복제
+    $edges = $DB->get_records('at_quantum_edges', ['content_id' => $fromContentId], '');
+    foreach ($edges as $e) {
+        if ($DB->record_exists('at_quantum_edges', ['source_node_id' => $e->source_node_id, 'target_node_id' => $e->target_node_id, 'content_id' => $toContentId])) continue;
+        $ne = new stdClass();
+        $ne->source_node_id = $e->source_node_id;
+        $ne->target_node_id = $e->target_node_id;
+        $ne->content_id = (string)$toContentId;
+        $ne->is_active = 1;
+        $DB->insert_record('at_quantum_edges', $ne);
+    }
+
+    error_log("[quantum_modeling.php] 템플릿 인지맵 복제 완료: {$fromContentId} -> {$toContentId}");
+    return true;
+}
+
+$templateContentId = 'default_equilateral';  // seed_quantum_data.sql의 템플릿
+$userContentId = !empty($contentId) ? (string)$contentId : null;  // 문항 ID를 content_id로 사용
+$baseContentId = $templateContentId;
+
+// 문항별 인지맵이 있으면 그걸 우선 사용, 없으면 템플릿을 문항별로 복제해서 사용
+if (!empty($userContentId)) {
+    if ($DB->record_exists('at_quantum_contents', ['content_id' => $userContentId, 'is_active' => 1])) {
+        $baseContentId = $userContentId;
+    } else {
+        // 최초 진입 시 템플릿을 문항ID로 복제 (문항별 성장/세션 저장이 "샘플"과 섞이지 않도록)
+        ktm_clone_quantum_map($templateContentId, $userContentId, $questionImageUrl, $solutionImageUrl);
+        if ($DB->record_exists('at_quantum_contents', ['content_id' => $userContentId, 'is_active' => 1])) {
+            $baseContentId = $userContentId;
+        }
+    }
+}
 
 try {
     // 1. 기본 인지맵에서 컨텐츠 메타데이터 조회 (제목, 정답, 단계 이름)
@@ -178,7 +325,8 @@ try {
 }
 
 // 사용자별 추가 노드/엣지 병합 (AI가 추가한 것들)
-if (!empty($userContentId)) {
+// - baseContentId가 이미 userContentId인 경우(문항별 복제/문항별 인지맵)에는 중복 병합하지 않음
+if (!empty($userContentId) && $userContentId !== $baseContentId) {
     try {
         // 사용자 contentId로 추가된 노드 병합
         $additionalNodes = $DB->get_records('at_quantum_nodes', ['content_id' => $userContentId, 'is_active' => 1]);
@@ -271,6 +419,12 @@ if (!$ttsScript && !empty($contentId)) {
     }
 }
 
+// 발표 텍스트가 있으면, 음성해설 맵 입력으로 우선 적용
+if (!empty($presentationText)) {
+    $ttsScript = $presentationText;
+    $ttsInteractionId = null;
+}
+
 // JSON으로 전달할 데이터
 $initialData = json_encode([
     'analysisId' => $analysisId,
@@ -294,7 +448,11 @@ $initialData = json_encode([
     // TTS 대본 데이터
     'ttsScript' => $ttsScript,
     'ttsInteractionId' => $ttsInteractionId,
-    'hasTtsScript' => !empty($ttsScript)
+    'hasTtsScript' => !empty($ttsScript),
+    // 발표 데이터 (발표하기 기능)
+    'presentationId' => $presentationId,
+    'hasPresentationText' => !empty($presentationText),
+    'autoplayVoiceMap' => $autoPlayVoiceMap ? true : false
 ], JSON_UNESCAPED_UNICODE);
 
 // 동적 타이틀/설명 생성

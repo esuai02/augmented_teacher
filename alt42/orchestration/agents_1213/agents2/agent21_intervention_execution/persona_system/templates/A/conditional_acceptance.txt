@@ -1,0 +1,19 @@
+[ACKNOWLEDGMENT]
+
+{{student_name}}님, 조건부로 수락해 주셔서 감사해요.
+{{condition_summary}}에 대한 우려를 이해합니다.
+
+[CLARIFICATION]
+
+말씀하신 부분을 정리하면:
+- {{concern_point_1}}
+- {{concern_point_2}}
+
+[ADAPTATION]
+
+{{student_name}}님의 상황에 맞게 조정해 드릴게요.
+{{adapted_plan}}
+
+[CONFIRMATION]
+
+이렇게 진행하면 괜찮으실까요?

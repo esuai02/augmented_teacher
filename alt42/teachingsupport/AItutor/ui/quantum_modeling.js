@@ -943,6 +943,38 @@
         initDragEvents();
         
         console.log('[quantum_modeling.js] 초기화 완료 - 총 노드:', Object.keys(NODES).length, ', 총 엣지:', EDGES.length, ', 총 개념:', Object.keys(CONCEPTS).length);
+
+        // 발표하기 연동: 발표 텍스트가 있으면 음성해설 맵을 자동 재생
+        try {
+            const qd = window.QUANTUM_DATA || {};
+            const shouldAuto = qd.autoplayVoiceMap === true || qd.autoplayVoiceMap === 1 || qd.autoplayVoiceMap === '1';
+            const hasScript = qd.ttsScript && String(qd.ttsScript).trim().length > 0;
+            const hasPresentation = !!qd.presentationId;
+            const hasPresentationText = qd.hasPresentationText === true || qd.hasPresentationText === 1 || qd.hasPresentationText === '1';
+
+            // 발표 흐름으로 넘어온 경우에는 발표 텍스트가 있어야만 자동재생
+            if (shouldAuto && hasScript && (!hasPresentation || hasPresentationText)) {
+                console.log('[quantum_modeling.js] autoplayVoiceMap 활성 - 음성해설 맵 자동 분석/재생 시작');
+                // startVoiceMapAnalysis는 파일 하단에서 window로 노출됨
+                setTimeout(() => {
+                    if (typeof window.startVoiceMapAnalysis === 'function') {
+                        // 자동재생은 에러/진행상태가 보이도록 모달을 먼저 연다 (성공 시 자동으로 닫힘)
+                        if (typeof window.openVoiceMapModal === 'function') {
+                            window.openVoiceMapModal();
+                        }
+                        window.startVoiceMapAnalysis();
+                    } else if (typeof window.openVoiceMapModal === 'function') {
+                        // fallback: 모달 열고 버튼 실행
+                        window.openVoiceMapModal();
+                        setTimeout(() => window.startVoiceMapAnalysis && window.startVoiceMapAnalysis(), 50);
+                    }
+                }, 250);
+            } else if (shouldAuto && hasPresentation && !hasPresentationText) {
+                console.warn('[quantum_modeling.js] autoplayVoiceMap 요청은 있었지만 presentation_text가 없어 자동재생을 건너뜁니다.');
+            }
+        } catch (e) {
+            console.warn('[quantum_modeling.js] autoplayVoiceMap 처리 오류:', e);
+        }
     }
 
     // DOM 로드 후 초기화
@@ -1396,7 +1428,12 @@
         }
         
         const ttsScript = window.QUANTUM_DATA.ttsScript;
-        const contentId = window.QUANTUM_DATA.contentId;
+        // analyze_tts_script.php는 content_id가 필수이므로, contentId가 비어 있으면 안전한 fallback을 사용
+        let contentId = window.QUANTUM_DATA.contentId;
+        if (!contentId) {
+            contentId = window.QUANTUM_DATA.analysisId || window.QUANTUM_DATA.mapContentId || 'unknown_content';
+            console.warn('[voiceMap] contentId가 없어 fallback contentId 사용:', contentId);
+        }
         const contentsType = window.QUANTUM_DATA.contentsType;
         const interactionId = window.QUANTUM_DATA.ttsInteractionId;
         
@@ -1409,9 +1446,9 @@
             type: n.type
         }));
         
-        loading.classList.remove('hidden');
-        error.classList.add('hidden');
-        analyzeBtn.disabled = true;
+        if (loading) loading.classList.remove('hidden');
+        if (error) error.classList.add('hidden');
+        if (analyzeBtn) analyzeBtn.disabled = true;
         
         try {
             const result = await voiceMapAPI.analyzeTtsScript(
@@ -1436,8 +1473,8 @@
         } catch (error) {
             showVoiceMapError(error.message || '분석 중 오류가 발생했습니다.');
         } finally {
-            loading.classList.add('hidden');
-            analyzeBtn.disabled = false;
+            if (loading) loading.classList.add('hidden');
+            if (analyzeBtn) analyzeBtn.disabled = false;
         }
     };
 

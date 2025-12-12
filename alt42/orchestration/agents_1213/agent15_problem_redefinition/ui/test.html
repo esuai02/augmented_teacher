@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent 15 테스트 페이지</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .test-section h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .code {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Agent 15 테스트 페이지</h1>
+
+    <!-- 파일 존재 확인 -->
+    <div class="test-section">
+        <h2>1. 파일 존재 확인</h2>
+        <div id="file-check-status">테스트 중...</div>
+        <button onclick="checkFiles()">파일 확인</button>
+    </div>
+
+    <!-- JavaScript 로드 확인 -->
+    <div class="test-section">
+        <h2>2. JavaScript 로드 확인</h2>
+        <div id="js-check-status">테스트 중...</div>
+        <button onclick="checkJavaScriptFunctions()">함수 확인</button>
+    </div>
+
+    <!-- 컴포넌트 통합 테스트 -->
+    <div class="test-section">
+        <h2>3. 컴포넌트 통합 테스트</h2>
+        <div id="component-status">컴포넌트를 불러오려면 PHP 서버가 필요합니다.</div>
+        <p class="code">
+            접속: <a class="link" href="index.php" target="_blank">https://mathking.kr/moodle/local/augmented_teacher/alt42/orchestration/agents/agent15_problem_redefinition/ui/index.php</a>
+        </p>
+    </div>
+
+    <!-- API 엔드포인트 확인 -->
+    <div class="test-section">
+        <h2>4. API 엔드포인트 확인</h2>
+        <div id="api-check-status">테스트 중...</div>
+        <button onclick="checkAPIEndpoints()">API 확인</button>
+        <div id="api-details" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- 사용자 ID 확인 -->
+    <div class="test-section">
+        <h2>5. 사용자 ID 설정</h2>
+        <div id="userid-status" class="status info">
+            <strong>currentUserId:</strong> <span id="current-userid">로드 중...</span>
+        </div>
+        <button onclick="setTestUserId()">테스트 유저 ID 설정 (userid=2)</button>
+    </div>
+
+    <!-- 로컬 스토리지 테스트 -->
+    <div class="test-section">
+        <h2>6. 로컬 스토리지 테스트</h2>
+        <div id="storage-status">테스트 중...</div>
+        <button onclick="testLocalStorage()">스토리지 테스트</button>
+        <button onclick="clearLocalStorage()">스토리지 초기화</button>
+    </div>
+
+    <script>
+        // 사용자 ID 설정
+        window.currentUserId = 2;
+
+        // 페이지 로드 시 자동 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserIdDisplay();
+            checkJavaScriptFunctions();
+        });
+
+        // 사용자 ID 표시 업데이트
+        function updateUserIdDisplay() {
+            document.getElementById('current-userid').textContent = window.currentUserId || '설정 안됨';
+        }
+
+        // 테스트 유저 ID 설정
+        function setTestUserId() {
+            window.currentUserId = 2;
+            updateUserIdDisplay();
+            showStatus('userid-status', '✅ 테스트 유저 ID가 설정되었습니다: 2', 'success');
+        }
+
+        // 파일 존재 확인
+        async function checkFiles() {
+            const files = [
+                'problem_redefinition_panel.php',
+                'problem_redefinition_functions.js',
+                'index.php',
+                'README.md'
+            ];
+
+            const statusDiv = document.getElementById('file-check-status');
+            statusDiv.innerHTML = '';
+
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    const status = response.ok ? '✅' : '❌';
+                    const className = response.ok ? 'success' : 'error';
+                    statusDiv.innerHTML += `<div class="status ${className}">${status} ${file} (${response.status})</div>`;
+                } catch (error) {
+                    statusDiv.innerHTML += `<div class="status error">❌ ${file} (접근 불가)</div>`;
+                }
+            }
+        }
+
+        // JavaScript 함수 확인
+        function checkJavaScriptFunctions() {
+            const functions = [
+                'agent15FetchProblemRedefinition',
+                'agent15SaveProblemRedefinition',
+                'agent15LoadSavedRedefinition',
+                'initializeAgent15ProblemRedefinition'
+            ];
+
+            const statusDiv = document.getElementById('js-check-status');
+            statusDiv.innerHTML = '';
+
+            functions.forEach(funcName => {
+                const exists = typeof window[funcName] === 'function';
+                const status = exists ? '✅' : '❌';
+                const className = exists ? 'success' : 'error';
+                statusDiv.innerHTML += `<div class="status ${className}">${status} ${funcName}()</div>`;
+            });
+        }
+
+        // API 엔드포인트 확인
+        async function checkAPIEndpoints() {
+            const apis = [
+                '/moodle/local/augmented_teacher/alt42/orchestration/api/collect_workflow_data.php',
+                '/moodle/local/augmented_teacher/alt42/orchestration/api/problem_redefinition_api.php'
+            ];
+
+            const statusDiv = document.getElementById('api-check-status');
+            const detailsDiv = document.getElementById('api-details');
+            statusDiv.innerHTML = '<div class="status info">API 엔드포인트 확인 중...</div>';
+            detailsDiv.innerHTML = '';
+
+            for (const api of apis) {
+                try {
+                    const response = await fetch(api, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: window.currentUserId || 2 })
+                    });
+
+                    const status = response.ok ? '✅' : '⚠️';
+                    const className = response.ok ? 'success' : 'info';
+                    detailsDiv.innerHTML += `<div class="status ${className}">${status} ${api.split('/').pop()} (${response.status})</div>`;
+                } catch (error) {
+                    detailsDiv.innerHTML += `<div class="status error">❌ ${api.split('/').pop()} (${error.message})</div>`;
+                }
+            }
+
+            statusDiv.innerHTML = '<div class="status success">✅ API 엔드포인트 확인 완료</div>';
+        }
+
+        // 로컬 스토리지 테스트
+        function testLocalStorage() {
+            const userId = window.currentUserId || 2;
+            const testKey = `agent15_redefinition_${userId}`;
+            const testData = {
+                userId: userId,
+                content: '테스트 문제 재정의 내용',
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                localStorage.setItem(testKey, JSON.stringify(testData));
+                const retrieved = JSON.parse(localStorage.getItem(testKey));
+
+                if (retrieved && retrieved.content === testData.content) {
+                    showStatus('storage-status', '✅ 로컬 스토리지 저장/불러오기 성공', 'success');
+                } else {
+                    showStatus('storage-status', '❌ 로컬 스토리지 데이터 불일치', 'error');
+                }
+            } catch (error) {
+                showStatus('storage-status', `❌ 로컬 스토리지 오류: ${error.message}`, 'error');
+            }
+        }
+
+        // 로컬 스토리지 초기화
+        function clearLocalStorage() {
+            const userId = window.currentUserId || 2;
+            const testKey = `agent15_redefinition_${userId}`;
+
+            try {
+                localStorage.removeItem(testKey);
+                showStatus('storage-status', '✅ 로컬 스토리지가 초기화되었습니다', 'success');
+            } catch (error) {
+                showStatus('storage-status', `❌ 초기화 오류: ${error.message}`, 'error');
+            }
+        }
+
+        // 상태 메시지 표시
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        // JavaScript 파일 동적 로드 시도
+        const script = document.createElement('script');
+        script.src = 'problem_redefinition_functions.js?v=' + Date.now();
+        script.onload = function() {
+            console.log('✅ problem_redefinition_functions.js 로드 성공');
+            checkJavaScriptFunctions();
+        };
+        script.onerror = function() {
+            console.log('❌ problem_redefinition_functions.js 로드 실패');
+            showStatus('js-check-status', '❌ JavaScript 파일을 로드할 수 없습니다', 'error');
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

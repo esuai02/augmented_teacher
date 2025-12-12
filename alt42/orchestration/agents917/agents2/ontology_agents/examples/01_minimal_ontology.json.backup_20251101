@@ -1,0 +1,28 @@
+{
+  "@context": {
+    "@vocab": "http://mathking.kr/ontology#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "Student",
+      "@type": "rdfs:Class",
+      "rdfs:label": "학생",
+      "rdfs:comment": "학습하는 사람"
+    },
+    {
+      "@id": "Emotion",
+      "@type": "rdfs:Class",
+      "rdfs:label": "감정",
+      "rdfs:comment": "학습 중 느끼는 감정 상태"
+    },
+    {
+      "@id": "hasEmotion",
+      "@type": "rdf:Property",
+      "rdfs:label": "감정을 가진다",
+      "rdfs:domain": "Student",
+      "rdfs:range": "Emotion"
+    }
+  ]
+}

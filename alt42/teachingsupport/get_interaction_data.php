@@ -42,6 +42,16 @@ try {
     if (!$interaction && $contentsid) {
         // contentstype이 함께 제공된 경우
         if ($contentstype !== null && $contentstype !== '') {
+            if ($format === 'section') {
+                // section 포맷에서는 audio_url이 아직 없더라도(narration_text만 있어도) 최신 레코드를 가져올 수 있어야 함
+                $interaction = $DB->get_record_sql(
+                    "SELECT * FROM {ktm_teaching_interactions} 
+                     WHERE contentsid = ? AND contentstype = ? 
+                     AND ( (audio_url IS NOT NULL AND audio_url != '') OR (narration_text IS NOT NULL AND narration_text != '') )
+                     ORDER BY id DESC LIMIT 1",
+                    [$contentsid, $contentstype]
+                );
+            } else {
             $interaction = $DB->get_record_sql(
                 "SELECT * FROM {ktm_teaching_interactions} 
                  WHERE contentsid = ? AND contentstype = ? 
@@ -49,6 +59,7 @@ try {
                  ORDER BY id DESC LIMIT 1",
                 [$contentsid, $contentstype]
             );
+            }
             if ($interaction) {
                 error_log("[get_interaction_data.php] contentsid=$contentsid, contentstype=$contentstype 로 조회 성공 (id={$interaction->id})");
             }
@@ -56,6 +67,15 @@ try {
         
         // contentstype 없이 contentsid로만 조회
         if (!$interaction) {
+            if ($format === 'section') {
+                $interaction = $DB->get_record_sql(
+                    "SELECT * FROM {ktm_teaching_interactions} 
+                     WHERE contentsid = ? 
+                     AND ( (audio_url IS NOT NULL AND audio_url != '') OR (narration_text IS NOT NULL AND narration_text != '') )
+                     ORDER BY id DESC LIMIT 1",
+                    [$contentsid]
+                );
+            } else {
             $interaction = $DB->get_record_sql(
                 "SELECT * FROM {ktm_teaching_interactions} 
                  WHERE contentsid = ? 
@@ -63,6 +83,7 @@ try {
                  ORDER BY id DESC LIMIT 1",
                 [$contentsid]
             );
+            }
             if ($interaction) {
                 error_log("[get_interaction_data.php] contentsid=$contentsid 로만 조회 성공 (id={$interaction->id})");
             }

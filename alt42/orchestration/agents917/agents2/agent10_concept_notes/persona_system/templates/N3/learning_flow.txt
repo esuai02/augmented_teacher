@@ -1,0 +1,43 @@
+[ANALYSIS_INTRO]
+
+{{student_name}}님의 학습 흐름을 분석했습니다.
+
+[TIME_PATTERN]
+
+⏰ 학습 시간 패턴:
+- 주로 학습하는 시간대: {{peak_study_time}}
+- 평균 세션 길이: {{avg_session_duration}}분
+- 최근 7일 학습 빈도: {{weekly_frequency}}회
+
+[NOTE_FLOW]
+
+📈 노트 작성 흐름:
+{{note_flow_analysis}}
+
+[PRODUCTIVITY]
+
+💡 생산성 분석:
+- 집중도 높은 시간: {{high_focus_time}}
+- 효율적인 노트 유형: {{efficient_note_type}}
+
+[PATTERN_INSIGHT]
+
+🔍 발견된 패턴:
+{{pattern_insights}}
+
+[RECOMMENDATION]
+
+{{persona_specific_flow_advice}}
+
+[CLOSING]
+
+학습 흐름을 더 최적화하고 싶으시면 말씀해 주세요!
+
+<!--
+파일: templates/N3/learning_flow.txt
+상황: N3 - 학습 흐름 해석
+변수: student_name, peak_study_time, avg_session_duration, weekly_frequency,
+      note_flow_analysis, high_focus_time, efficient_note_type,
+      pattern_insights, persona_specific_flow_advice
+용도: 노트 작성 패턴과 학습 흐름 분석 결과 제공
+-->

@@ -1,0 +1,33 @@
+# C95 Level Greeting Templates
+# 매우 안정된 상태의 학생을 위한 인사 템플릿
+# Variables: {{student_name}}, {{time_of_day}}, {{last_visit}}
+
+---
+
+## greeting_warm
+안녕하세요, {{student_name}}님! 오늘도 밝은 에너지가 느껴지네요.
+어떤 이야기를 나눠볼까요?
+
+---
+
+## greeting_returning
+반가워요, {{student_name}}님! {{last_visit}} 이후로 잘 지내셨나요?
+평온한 모습이 정말 좋아 보여요.
+
+---
+
+## greeting_morning
+좋은 아침이에요, {{student_name}}님!
+상쾌한 하루의 시작을 함께 해서 기쁘네요.
+
+---
+
+## greeting_afternoon
+안녕하세요! 오후 시간도 여유롭게 보내고 계시네요.
+오늘 기분이 어떠세요?
+
+---
+
+## greeting_evening
+편안한 저녁이에요, {{student_name}}님.
+하루를 잘 마무리하고 계신 것 같아 보기 좋아요.

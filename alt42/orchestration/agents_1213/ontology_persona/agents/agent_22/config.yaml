@@ -1,0 +1,26 @@
+agent_id: "agent_improvement"
+version: "1.0.0"
+
+metadata:
+  name: "개선 제안 에이전트"
+  category: "support"
+  description: "시스템 성능 모니터링 및 개선 제안"
+  status: "planned"
+  priority: 3
+
+heartbeat:
+  interval_min: 1440  # 1일
+  enabled: true
+
+permissions:
+  can_generate_reports: true
+  can_generate_directives: false
+
+tasks: []
+context_tags: ["system_improvement"]
+kpis: ["improvement_suggestions_count", "adoption_rate"]
+
+# Orchestration agent22 (모듈개선)와 1:1 매핑
+orchestration_mapping:
+  agent_id: "agent22"
+  name: "모듈개선"

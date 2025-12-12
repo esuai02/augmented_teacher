@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent22">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 22 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 22 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 22: Module Improvement 관련 추가 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ModuleImprovement">
+    <rdfs:label xml:lang="ko">ModuleImprovement</rdfs:label>
+    <rdfs:comment xml:lang="ko">모듈 개선 (Agent 22 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VulnerabilityAnalysis">
+    <rdfs:label xml:lang="ko">VulnerabilityAnalysis</rdfs:label>
+    <rdfs:comment xml:lang="ko">취약점 분석</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfUpgradeIdea">
+    <rdfs:label xml:lang="ko">SelfUpgradeIdea</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기 업그레이드 아이디어</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThreeFileSystemDocument">
+    <rdfs:label xml:lang="ko">ThreeFileSystemDocument</rdfs:label>
+    <rdfs:comment xml:lang="ko">3파일 시스템 문서 (rules.yaml, metadata.md, dataindex.html)</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 22: Module Improvement 관련 추가 클래스 (데이터 기반 질문 세트용) -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SystemInefficiencyInstability">
+    <rdfs:label xml:lang="ko">SystemInefficiencyInstability</rdfs:label>
+    <rdfs:comment xml:lang="ko">시스템 비효율 및 불안정성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RuleNetworkOptimization">
+    <rdfs:label xml:lang="ko">RuleNetworkOptimization</rdfs:label>
+    <rdfs:comment xml:lang="ko">룰 네트워크 최적화</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AutoEvolutionStructure">
+    <rdfs:label xml:lang="ko">AutoEvolutionStructure</rdfs:label>
+    <rdfs:comment xml:lang="ko">자동 진화 구조</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AgentExecutionLog">
+    <rdfs:label xml:lang="ko">AgentExecutionLog</rdfs:label>
+    <rdfs:comment xml:lang="ko">에이전트 실행 로그</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RuleActivationFrequency">
+    <rdfs:label xml:lang="ko">RuleActivationFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">룰 작동 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FailurePattern">
+    <rdfs:label xml:lang="ko">FailurePattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">실패 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RuleConditionDuplication">
+    <rdfs:label xml:lang="ko">RuleConditionDuplication</rdfs:label>
+    <rdfs:comment xml:lang="ko">룰 조건 중복</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RuleConflictPossibility">
+    <rdfs:label xml:lang="ko">RuleConflictPossibility</rdfs:label>
+    <rdfs:comment xml:lang="ko">룰 충돌 가능성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EdgeCaseMissing">
+    <rdfs:label xml:lang="ko">EdgeCaseMissing</rdfs:label>
+    <rdfs:comment xml:lang="ko">엣지케이스 누락</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DataCollection">
+    <rdfs:label xml:lang="ko">DataCollection</rdfs:label>
+    <rdfs:comment xml:lang="ko">데이터 수집</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AIReview">
+    <rdfs:label xml:lang="ko">AIReview</rdfs:label>
+    <rdfs:comment xml:lang="ko">AI 검토</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Verification">
+    <rdfs:label xml:lang="ko">Verification</rdfs:label>
+    <rdfs:comment xml:lang="ko">검증</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PriorityCheckModules">
+    <rdfs:label xml:lang="ko">PriorityCheckModules</rdfs:label>
+    <rdfs:comment xml:lang="ko">우선 점검 모듈</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ResponseProcedures">
+    <rdfs:label xml:lang="ko">ResponseProcedures</rdfs:label>
+    <rdfs:comment xml:lang="ko">대응 절차</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AllAgentExecutionData">
+    <rdfs:label xml:lang="ko">AllAgentExecutionData</rdfs:label>
+    <rdfs:comment xml:lang="ko">전체 에이전트 실행 데이터</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImprovementPriorityMap">
+    <rdfs:label xml:lang="ko">ImprovementPriorityMap</rdfs:label>
+    <rdfs:comment xml:lang="ko">개선 우선순위 맵</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RuleStructureComparison">
+    <rdfs:label xml:lang="ko">RuleStructureComparison</rdfs:label>
+    <rdfs:comment xml:lang="ko">룰 구조 비교</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AnalysisPatternComparison">
+    <rdfs:label xml:lang="ko">AnalysisPatternComparison</rdfs:label>
+    <rdfs:comment xml:lang="ko">분석 패턴 비교</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalImprovementDirection">
+    <rdfs:label xml:lang="ko">OptimalImprovementDirection</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 개선 방향</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ContinuousPerformanceImprovement">
+    <rdfs:label xml:lang="ko">ContinuousPerformanceImprovement</rdfs:label>
+    <rdfs:comment xml:lang="ko">지속적 성능 향상</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ErrorSelfRecovery">
+    <rdfs:label xml:lang="ko">ErrorSelfRecovery</rdfs:label>
+    <rdfs:comment xml:lang="ko">오류 자가복구</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AutomatedVerificationPipeline">
+    <rdfs:label xml:lang="ko">AutomatedVerificationPipeline</rdfs:label>
+    <rdfs:comment xml:lang="ko">자동화 검증 파이프라인</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UpgradeLoop">
+    <rdfs:label xml:lang="ko">UpgradeLoop</rdfs:label>
+    <rdfs:comment xml:lang="ko">업그레이드 루프</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VerificationSystem">
+    <rdfs:label xml:lang="ko">VerificationSystem</rdfs:label>
+    <rdfs:comment xml:lang="ko">검증 체계</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermStability">
+    <rdfs:label xml:lang="ko">LongTermStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 안정성</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 22: Module Improvement 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ModuleImprovement">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#VulnerabilityAnalysis"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfUpgradeIdea"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ThreeFileSystemDocument"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionEffectiveness"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SystemInefficiencyInstability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RuleNetworkOptimization"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutoEvolutionStructure"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SystemInefficiencyInstability">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AgentExecutionLog"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RuleActivationFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ResourceUsage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FailurePattern"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RuleNetworkOptimization">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RuleConditionDuplication"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RuleConflictPossibility"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EdgeCaseMissing"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImpactEffortMatrix"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImprovementPriorityMap"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AutoEvolutionStructure">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DataCollection"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#VulnerabilityAnalysis"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ThreeFileSystemDocument"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AIReview"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Verification"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Deployment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ContinuousPerformanceImprovement"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorSelfRecovery"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutomatedVerificationPipeline"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UpgradeLoop"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#VerificationSystem"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermStability"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

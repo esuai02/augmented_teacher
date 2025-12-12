@@ -1,0 +1,997 @@
+# Rules for Agent04 - Concept Understanding (개념이해)
+# Generated at: 2025-12-03
+# Purpose: 개념 학습 시 발생하는 인지관성(Cognitive Inertia) 패턴 탐지 및 개선 전략
+# Source: 1_concept_understanding.php 페르소나 기반
+
+version: "2.0"
+scenario: "concept_understanding"
+description: "개념 학습 시 발생하는 인지관성 패턴을 탐지하고 개인화된 개선 전략을 제시하는 규칙 세트"
+
+metadata:
+  sub_items:
+    - concept_study_method_efficacy  # 개념공부법 효능감 인식
+    - concept_reading                 # 개념정독
+    - concept_understanding           # 개념이해
+    - concept_check                   # 개념체크
+    - example_quiz                    # 예제퀴즈
+    - representative_type             # 대표유형
+    - topic_test                      # 주제별테스트
+    - unit_test                       # 단원별테스트
+    - listen_explanation              # 설명듣기
+  categories:
+    - cognitive_overload   # 인지 과부하
+    - surface_learning     # 표면적 학습
+    - misconception        # 개념 오해
+    - passive_learning     # 수동적 학습
+    - attention_deficit    # 주의력 결핍
+    - avoidance            # 회피 성향
+    - overconfidence       # 과신
+
+rules:
+  # ========== S1: 개념공부법 효능감 인식 (concept_study_method_efficacy) ==========
+
+  - rule_id: "S1_R1_helpless_learner"
+    priority: 99
+    description: "무기력 학습자형 - 학습된 무기력으로 개념 공부의 효과를 믿지 못하는 패턴"
+    persona_id: 1
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_study_method_efficacy"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "helpless_learner"
+      - OR:
+        - field: "learning_efficacy_belief"
+          operator: "<="
+          value: 3
+        - field: "repeated_failure_without_strategy_change"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'small_success_experience'"
+      - "action: '작은 성공 경험 만들기 → 개념 하나를 5분 학습 후 바로 관련 예제 1개 풀기 → 정답 시 성공 일기에 기록'"
+      - "check: '이번 주 성공 일기에 3개 이상 기록했는지 확인. 작은 성취감을 느꼈는지 피드백'"
+      - "teacher_dialog: '선생님, 이번 주 성공 일기에 작은 성취 3개를 기록했어요. 제가 개념 공부에 효과가 있다는 걸 느끼기 시작했는지 피드백 부탁드려요!'"
+      - "audio_feedback: 'persona_01_helpless_learner.wav'"
+    confidence: 0.92
+    rationale: "S1: 무기력감은 작은 성공 경험의 누적으로 회복. 성공 일기 작성으로 효능감 구축"
+
+  - rule_id: "S1_R2_perfectionist_procrastinator"
+    priority: 98
+    description: "완벽주의 지연형 - 완벽하게 이해해야 한다는 압박으로 시작을 미루는 패턴"
+    persona_id: 2
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_study_method_efficacy"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "perfectionist_procrastinator"
+      - OR:
+        - field: "start_delay_minutes"
+          operator: ">="
+          value: 10
+        - field: "perfectionism_anxiety_detected"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: '70_percent_mindset'"
+      - "action: '70% 이해 OK 마인드 설정 → 일단 시작하고 첫 10분만 집중 → 모르는 부분 표시 후 나중에 복습'"
+      - "check: '시작 지연 시간이 5분 이내로 줄었는지 확인. 표시한 부분을 복습했는지 점검'"
+      - "teacher_dialog: '선생님, 오늘은 일단 시작 전략을 써서 10분 안에 개념 학습을 시작했어요. 모르는 부분을 표시해뒀는데 같이 봐주실 수 있나요?'"
+      - "audio_feedback: 'persona_02_perfectionist.wav'"
+    confidence: 0.91
+    rationale: "S1: 완벽주의는 시작의 장벽. 70% 마인드셋으로 진입 장벽 낮춤"
+
+  - rule_id: "S1_R3_comparison_inferiority"
+    priority: 97
+    description: "비교 열등감형 - 다른 학생과 비교하며 자신의 능력을 과소평가하는 패턴"
+    persona_id: 3
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_study_method_efficacy"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "comparison_inferiority"
+      - OR:
+        - field: "peer_comparison_frequency"
+          operator: ">="
+          value: 3
+        - field: "self_deprecation_detected"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'personal_growth_focus'"
+      - "action: '나만의 성장 그래프 작성 → 어제의 나와 오늘의 나 비교 → 개념 이해 개수 누적 기록'"
+      - "check: '성장 그래프에서 향상된 부분이 있는지 확인. 자기 비교에 집중했는지 점검'"
+      - "teacher_dialog: '선생님, 성장 그래프를 보니 지난주보다 이해한 개념이 3개 늘었어요. 저만의 속도로 성장하고 있는 건지 확인해주세요!'"
+      - "audio_feedback: 'persona_03_comparison.wav'"
+    confidence: 0.89
+    rationale: "S1: 타인 비교 대신 자기 성장에 집중하도록 유도"
+
+  # ========== S2: 개념정독 (concept_reading) ==========
+
+  - rule_id: "S2_R1_speed_skimmer"
+    priority: 96
+    description: "속독 건너뛰기형 - 개념을 빠르게 훑어보며 핵심 내용을 놓치는 패턴"
+    persona_id: 4
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_reading"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "speed_skimmer"
+      - OR:
+        - field: "reading_speed"
+          operator: ">="
+          value: "fast"
+        - field: "key_concept_retention"
+          operator: "<="
+          value: 40
+    action:
+      - "intervention_type: 'finger_following'"
+      - "action: '손가락 따라가기 기법 → 한 문장씩 소리 내어 읽기 → 핵심 단어에 형광펜 표시'"
+      - "check: '형광펜 표시한 핵심 단어를 설명할 수 있는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 개념을 손가락으로 짚어가며 읽었어요. 제가 표시한 핵심 단어를 제대로 골랐는지 확인해주세요!'"
+      - "audio_feedback: 'persona_04_speed_skimmer.wav'"
+    confidence: 0.93
+    rationale: "S2: 속독은 핵심 누락의 원인. 손가락 따라가기로 읽기 속도 조절"
+
+  - rule_id: "S2_R2_term_ignorer"
+    priority: 95
+    description: "단어 무시형 - 모르는 수학 용어를 그냥 넘어가며 이해의 구멍을 만드는 패턴"
+    persona_id: 5
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_reading"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "term_ignorer"
+      - OR:
+        - field: "unknown_terms_skipped"
+          operator: ">="
+          value: 2
+        - field: "vocabulary_gap_detected"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'unknown_term_notebook'"
+      - "action: '모르는 단어 노트 작성 → 읽다가 막히면 바로 노트에 기록 → 학습 후 용어 사전에서 찾아보기'"
+      - "check: '모르는 단어를 몇 개나 찾았는지, 의미를 이해했는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 개념 읽으면서 모르는 단어 5개를 찾았어요. 제가 찾은 뜻이 맞는지 확인 부탁드려요!'"
+      - "audio_feedback: 'persona_05_term_ignorer.wav'"
+    confidence: 0.94
+    rationale: "S2: 용어 이해 부족은 개념 오해의 시작. 모르는 단어 노트로 체계적 보완"
+
+  - rule_id: "S2_R3_single_read"
+    priority: 94
+    description: "반복 없는 일회독형 - 한 번 읽고 끝내며 기억 정착이 안 되는 패턴"
+    persona_id: 6
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_reading"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "single_read"
+      - OR:
+        - field: "reading_repetition"
+          operator: "<="
+          value: 1
+        - field: "content_retention_24h"
+          operator: "<="
+          value: 30
+    action:
+      - "intervention_type: 'triple_reading'"
+      - "action: '3회독 시스템 → 1독: 전체 훑기, 2독: 밑줄 긋기, 3독: 요약하기'"
+      - "check: '3회독을 완료했는지, 요약 내용이 핵심을 담고 있는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 개념을 3번 읽었어요. 제 요약이 핵심을 잘 담았는지 봐주세요!'"
+      - "audio_feedback: 'persona_06_single_read.wav'"
+    confidence: 0.90
+    rationale: "S2: 일회독은 기억 정착 불충분. 3회독으로 단계별 심화"
+
+  # ========== S3: 개념이해 (concept_understanding) ==========
+
+  - rule_id: "S3_R1_memorization_dependent"
+    priority: 93
+    description: "암기 의존형 - 개념의 원리를 이해하지 않고 공식만 외우려는 패턴"
+    persona_id: 7
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "memorization_dependent"
+      - OR:
+        - field: "formula_memorization_only"
+          operator: "=="
+          value: true
+        - field: "derivation_understanding"
+          operator: "<="
+          value: 30
+    action:
+      - "intervention_type: 'why_questioning'"
+      - "action: '왜? 질문하기 → 공식을 보면 왜 이렇게 되지? 자문 → 유도 과정 직접 써보기'"
+      - "check: '공식의 유도 과정을 설명할 수 있는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 공식의 유도 과정을 직접 써봤어요. 제가 이해한 과정이 맞는지 설명해드릴게요!'"
+      - "audio_feedback: 'persona_07_memorization.wav'"
+    confidence: 0.92
+    rationale: "S3: 암기만으로는 응용 불가. 왜? 질문으로 원리 이해 유도"
+
+  - rule_id: "S3_R2_connection_disconnected"
+    priority: 92
+    description: "연결 단절형 - 개념들 사이의 연결고리를 파악하지 못하는 패턴"
+    persona_id: 8
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "connection_disconnected"
+      - OR:
+        - field: "concept_linkage_score"
+          operator: "<="
+          value: 40
+        - field: "isolated_concept_learning"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'concept_mindmap'"
+      - "action: '개념 마인드맵 그리기 → 중심 개념에서 관련 개념을 화살표로 연결 → 연결 이유 한 줄 메모'"
+      - "check: '마인드맵에서 개념 간 연결 이유를 설명할 수 있는지 확인'"
+      - "teacher_dialog: '선생님, 개념 마인드맵을 그려봤어요. 제가 연결한 개념들이 논리적인지 봐주세요!'"
+      - "audio_feedback: 'persona_08_connection.wav'"
+    confidence: 0.91
+    rationale: "S3: 파편화된 지식은 응용 불가. 마인드맵으로 연결고리 시각화"
+
+  - rule_id: "S3_R3_no_example"
+    priority: 91
+    description: "예시 부재형 - 추상적인 개념을 구체적인 예시로 변환하지 못하는 패턴"
+    persona_id: 9
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "no_example"
+      - OR:
+        - field: "self_generated_examples"
+          operator: "=="
+          value: 0
+        - field: "abstract_to_concrete_ability"
+          operator: "<="
+          value: 30
+    action:
+      - "intervention_type: 'create_own_example'"
+      - "action: '내 예시 만들기 → 개념을 읽고 실생활 예시 1개 떠올리기 → 노트에 기록'"
+      - "check: '만든 예시가 개념을 정확히 설명하는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 배운 개념으로 실생활 예시를 만들어봤어요. 적절한 예시인지 확인해주세요!'"
+      - "audio_feedback: 'persona_09_no_example.wav'"
+    confidence: 0.88
+    rationale: "S3: 추상 개념은 구체 예시로 이해도 강화"
+
+  - rule_id: "S3_R4_condition_ignorer"
+    priority: 90
+    description: "조건 무시형 - 개념이 적용되는 조건과 범위를 무시하고 무분별하게 적용하는 패턴"
+    persona_id: 10
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "condition_ignorer"
+      - OR:
+        - field: "condition_awareness"
+          operator: "<="
+          value: 40
+        - field: "wrong_application_by_condition"
+          operator: ">="
+          value: 2
+    action:
+      - "intervention_type: 'condition_checklist'"
+      - "action: '조건 체크리스트 만들기 → 개념마다 언제 쓸 수 있나? 조건 3가지 정리 → 문제 풀기 전 조건 확인'"
+      - "check: '조건 체크를 했는지, 조건 외 상황에서 실수가 줄었는지 확인'"
+      - "teacher_dialog: '선생님, 개념별 조건 체크리스트를 만들었어요. 제가 정리한 조건들이 맞는지 확인 부탁드려요!'"
+      - "audio_feedback: 'persona_10_condition.wav'"
+    confidence: 0.93
+    rationale: "S3: 조건 무시는 오답의 주요 원인. 체크리스트로 조건 인식 강화"
+
+  # ========== S4: 개념체크 (concept_check) ==========
+
+  - rule_id: "S4_R1_skip_check"
+    priority: 89
+    description: "확인 건너뛰기형 - 개념 학습 후 이해 확인 없이 바로 문제 풀이로 넘어가는 패턴"
+    persona_id: 11
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_check"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "skip_check"
+      - OR:
+        - field: "self_check_frequency"
+          operator: "=="
+          value: 0
+        - field: "concept_to_problem_jump"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: '5min_self_test'"
+      - "action: '5분 자가 테스트 → 개념 학습 직후 책 덮고 핵심 3가지 적기 → 다시 펴서 비교'"
+      - "check: '자가 테스트에서 핵심 3가지 중 몇 개를 맞췄는지 확인'"
+      - "teacher_dialog: '선생님, 5분 자가 테스트로 핵심 3가지를 적어봤어요. 제가 놓친 부분이 있는지 확인해주세요!'"
+      - "audio_feedback: 'persona_11_skip_check.wav'"
+    confidence: 0.91
+    rationale: "S4: 확인 없이 문제 풀이는 비효율. 5분 자가 테스트로 이해도 점검"
+
+  - rule_id: "S4_R2_false_positive"
+    priority: 88
+    description: "거짓 긍정형 - 모호하게 이해했는데 안다고 착각하는 패턴"
+    persona_id: 12
+    category: "overconfidence"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_check"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "false_positive"
+      - OR:
+        - field: "confidence_vs_performance_gap"
+          operator: ">="
+          value: 30
+        - field: "explanation_failure_rate"
+          operator: ">="
+          value: 50
+    action:
+      - "intervention_type: 'explain_test'"
+      - "action: '설명하기 테스트 → 개념을 친구에게 설명하듯 혼자 말하기 → 막히는 부분 표시'"
+      - "check: '설명 중 막힌 부분이 어디인지, 그 부분을 보충 학습했는지 확인'"
+      - "teacher_dialog: '선생님, 혼자 설명하기 테스트를 해봤는데 중간에 막혔어요. 막힌 부분을 알려드릴게요!'"
+      - "audio_feedback: 'persona_12_false_positive.wav'"
+    confidence: 0.92
+    rationale: "S4: 안다는 착각은 위험. 설명하기 테스트로 실제 이해도 점검"
+
+  - rule_id: "S4_R3_surface_check"
+    priority: 87
+    description: "표면적 확인형 - 단순 암기 확인만 하고 응용력은 확인하지 않는 패턴"
+    persona_id: 13
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "concept_check"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "surface_check"
+      - OR:
+        - field: "check_type"
+          operator: "=="
+          value: "memorization_only"
+        - field: "application_check_frequency"
+          operator: "=="
+          value: 0
+    action:
+      - "intervention_type: 'variant_question'"
+      - "action: '변형 질문 만들기 → 개념을 다른 각도에서 묻는 질문 2개 작성 → 스스로 답하기'"
+      - "check: '변형 질문에 정확히 답했는지 확인'"
+      - "teacher_dialog: '선생님, 변형 질문 2개를 만들고 답해봤어요. 제 질문과 답이 적절한지 봐주세요!'"
+      - "audio_feedback: 'persona_13_surface_check.wav'"
+    confidence: 0.89
+    rationale: "S4: 암기 확인만으로는 응용력 측정 불가. 변형 질문으로 응용력 점검"
+
+  # ========== S5: 예제퀴즈 (example_quiz) ==========
+
+  - rule_id: "S5_R1_example_skipper"
+    priority: 86
+    description: "예제 스킵형 - 예제 풀이를 건너뛰고 바로 연습문제로 가는 패턴"
+    persona_id: 14
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "example_quiz"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "example_skipper"
+      - OR:
+        - field: "example_completion_rate"
+          operator: "<="
+          value: 30
+        - field: "direct_to_practice"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'mandatory_example'"
+      - "action: '예제 필수 풀기 규칙 → 모든 예제를 먼저 풀고 연습문제로 이동 → 예제 완료 체크'"
+      - "check: '예제를 전부 풀었는지, 풀이 과정이 이해됐는지 확인'"
+      - "teacher_dialog: '선생님, 오늘은 예제를 건너뛰지 않고 전부 풀었어요. 제 풀이가 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_14_example_skipper.wav'"
+    confidence: 0.91
+    rationale: "S5: 예제는 개념 적용의 첫 단계. 스킵하면 기초 부족"
+
+  - rule_id: "S5_R2_answer_only"
+    priority: 85
+    description: "답만 보기형 - 예제의 답만 보고 풀이 과정을 이해하지 않는 패턴"
+    persona_id: 15
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "example_quiz"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "answer_only"
+      - OR:
+        - field: "solution_process_understanding"
+          operator: "<="
+          value: 30
+        - field: "answer_check_only"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'solution_tracing'"
+      - "action: '풀이 따라쓰기 → 해설을 보며 한 줄씩 따라 쓰기 → 왜 이 단계가 필요한지 메모'"
+      - "check: '각 단계의 이유를 설명할 수 있는지 확인'"
+      - "teacher_dialog: '선생님, 예제 풀이를 따라 쓰면서 각 단계의 이유를 적어봤어요. 제가 이해한 게 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_15_answer_only.wav'"
+    confidence: 0.90
+    rationale: "S5: 답만 확인은 학습 효과 미미. 풀이 따라쓰기로 과정 이해"
+
+  - rule_id: "S5_R3_type_fixed"
+    priority: 84
+    description: "유형 고정형 - 한 유형의 예제만 반복해서 다른 유형에 적용을 못 하는 패턴"
+    persona_id: 16
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "example_quiz"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "type_fixed"
+      - OR:
+        - field: "type_variety"
+          operator: "<="
+          value: 2
+        - field: "cross_type_application_failure"
+          operator: ">="
+          value: 3
+    action:
+      - "intervention_type: 'type_comparison'"
+      - "action: '유형 비교표 만들기 → 비슷한 예제들의 공통점과 차이점 정리 → 각각 다르게 풀어보기'"
+      - "check: '유형 비교표를 완성했는지, 차이를 인식했는지 확인'"
+      - "teacher_dialog: '선생님, 유형 비교표를 만들어봤어요. 제가 찾은 공통점과 차이점이 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_16_type_fixed.wav'"
+    confidence: 0.88
+    rationale: "S5: 유형 고정은 응용력 제한. 비교표로 유형 간 차이 인식"
+
+  # ========== S6: 대표유형 (representative_type) ==========
+
+  - rule_id: "S6_R1_type_confusion"
+    priority: 83
+    description: "유형 혼동형 - 대표유형을 서로 혼동하여 잘못된 풀이법을 적용하는 패턴"
+    persona_id: 17
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "representative_type"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "type_confusion"
+      - OR:
+        - field: "type_misidentification_rate"
+          operator: ">="
+          value: 30
+        - field: "wrong_method_application"
+          operator: ">="
+          value: 2
+    action:
+      - "intervention_type: 'type_identification'"
+      - "action: '유형 판별 훈련 → 문제를 보고 어떤 유형인지 먼저 적기 → 풀이 전 유형 확인'"
+      - "check: '유형 판별이 정확했는지, 그에 맞는 풀이를 적용했는지 확인'"
+      - "teacher_dialog: '선생님, 문제를 보고 유형을 먼저 적어봤어요. 제 유형 판별이 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_17_type_confusion.wav'"
+    confidence: 0.92
+    rationale: "S6: 유형 혼동은 풀이 실패의 주요 원인. 판별 훈련으로 정확성 향상"
+
+  - rule_id: "S6_R2_mechanical_application"
+    priority: 82
+    description: "기계적 적용형 - 대표유형의 풀이법을 이해 없이 기계적으로 적용하는 패턴"
+    persona_id: 18
+    category: "surface_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "representative_type"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "mechanical_application"
+      - OR:
+        - field: "method_reasoning_ability"
+          operator: "<="
+          value: 30
+        - field: "blind_method_application"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'why_this_method'"
+      - "action: '왜 이 방법? 질문 → 풀이 전 이 유형에 이 방법을 쓰는 이유 한 줄 적기'"
+      - "check: '적은 이유가 논리적인지 확인'"
+      - "teacher_dialog: '선생님, 풀이 방법을 쓰는 이유를 적어봤어요. 제가 이해한 이유가 맞는지 봐주세요!'"
+      - "audio_feedback: 'persona_18_mechanical.wav'"
+    confidence: 0.90
+    rationale: "S6: 기계적 적용은 변형 문제에 취약. 이유 질문으로 원리 이해"
+
+  - rule_id: "S6_R3_variant_unrecognized"
+    priority: 81
+    description: "변형 미인식형 - 대표유형의 변형 문제를 알아보지 못하는 패턴"
+    persona_id: 19
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "representative_type"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "variant_unrecognized"
+      - OR:
+        - field: "variant_recognition_rate"
+          operator: "<="
+          value: 40
+        - field: "variant_failure_rate"
+          operator: ">="
+          value: 50
+    action:
+      - "intervention_type: 'variant_finder'"
+      - "action: '변형 찾기 훈련 → 기본 유형과 변형 문제를 나란히 놓고 차이점 3가지 찾기'"
+      - "check: '차이점을 정확히 찾았는지, 변형에 대응할 수 있는지 확인'"
+      - "teacher_dialog: '선생님, 기본 유형과 변형 문제의 차이점 3가지를 찾아봤어요. 제가 찾은 게 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_19_variant.wav'"
+    confidence: 0.89
+    rationale: "S6: 변형 인식 능력은 실전 대비의 핵심. 차이점 훈련으로 인식력 향상"
+
+  # ========== S7: 주제별테스트 (topic_test) ==========
+
+  - rule_id: "S7_R1_scope_confusion"
+    priority: 80
+    description: "범위 혼란형 - 테스트 범위 내 개념들을 체계적으로 정리하지 못하는 패턴"
+    persona_id: 20
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "topic_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "scope_confusion"
+      - OR:
+        - field: "scope_organization_score"
+          operator: "<="
+          value: 40
+        - field: "concept_coverage_gaps"
+          operator: ">="
+          value: 3
+    action:
+      - "intervention_type: 'scope_checklist'"
+      - "action: '범위 체크리스트 작성 → 테스트 범위 내 개념 목록 만들기 → 이해도 ○△× 표시'"
+      - "check: '체크리스트 완성 여부와 △× 부분 보충 학습 여부 확인'"
+      - "teacher_dialog: '선생님, 범위 체크리스트를 만들었어요. △× 표시한 부분을 어떻게 보충하면 좋을지 조언 부탁드려요!'"
+      - "audio_feedback: 'persona_20_scope.wav'"
+    confidence: 0.91
+    rationale: "S7: 범위 혼란은 테스트 준비 실패의 원인. 체크리스트로 체계적 정리"
+
+  - rule_id: "S7_R2_test_anxiety"
+    priority: 79
+    description: "시험 불안형 - 테스트에 대한 불안으로 실력 발휘를 못 하는 패턴"
+    persona_id: 21
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "topic_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "test_anxiety"
+      - OR:
+        - field: "pre_test_anxiety_level"
+          operator: ">="
+          value: 7
+        - field: "performance_drop_under_pressure"
+          operator: ">="
+          value: 20
+    action:
+      - "intervention_type: 'breathing_positive'"
+      - "action: '3분 호흡 + 긍정 자기 대화 → 테스트 전 심호흡 후 나는 준비됐다 3번 반복'"
+      - "check: '호흡법과 긍정 대화를 실천했는지, 불안이 감소했는지 확인'"
+      - "teacher_dialog: '선생님, 테스트 전에 호흡법과 긍정 대화를 했어요. 불안이 좀 줄었는데, 더 효과적인 방법이 있을까요?'"
+      - "audio_feedback: 'persona_21_anxiety.wav'"
+    confidence: 0.88
+    rationale: "S7: 시험 불안은 실력 발휘 저해. 호흡법과 긍정 대화로 안정화"
+
+  - rule_id: "S7_R3_time_mismanagement"
+    priority: 78
+    description: "시간 분배 실패형 - 테스트 시간 분배를 못해 뒷문제를 못 푸는 패턴"
+    persona_id: 22
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "topic_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "time_mismanagement"
+      - OR:
+        - field: "questions_unanswered_due_to_time"
+          operator: ">="
+          value: 2
+        - field: "time_per_question_variance"
+          operator: ">="
+          value: "high"
+    action:
+      - "intervention_type: 'time_allocation'"
+      - "action: '문제당 시간 설정 → 테스트 전 문제 수로 시간 배분 → 어려운 문제는 표시 후 나중에'"
+      - "check: '시간 배분을 지켰는지, 모든 문제에 답을 적었는지 확인'"
+      - "teacher_dialog: '선생님, 시간 배분 전략을 써봤어요. 더 효율적인 시간 관리법이 있을까요?'"
+      - "audio_feedback: 'persona_22_time.wav'"
+    confidence: 0.87
+    rationale: "S7: 시간 분배 실패는 점수 손실. 사전 계획으로 효율적 분배"
+
+  # ========== S8: 단원별테스트 (unit_test) ==========
+
+  - rule_id: "S8_R1_integration_failure"
+    priority: 77
+    description: "개념 통합 실패형 - 단원 전체 개념을 통합적으로 이해하지 못하는 패턴"
+    persona_id: 23
+    category: "misconception"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "unit_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "integration_failure"
+      - OR:
+        - field: "concept_integration_score"
+          operator: "<="
+          value: 40
+        - field: "cross_concept_question_failure"
+          operator: ">="
+          value: 50
+    action:
+      - "intervention_type: 'unit_summary'"
+      - "action: '단원 요약표 작성 → 단원의 핵심 개념들을 한 장에 정리 → 개념 간 관계 화살표로 표시'"
+      - "check: '요약표가 단원 전체를 포괄하는지, 관계가 정확한지 확인'"
+      - "teacher_dialog: '선생님, 단원 요약표를 만들었어요. 개념들의 관계를 제대로 이해했는지 확인해주세요!'"
+      - "audio_feedback: 'persona_23_integration.wav'"
+    confidence: 0.90
+    rationale: "S8: 개념 통합은 단원 이해의 핵심. 요약표로 전체 구조 시각화"
+
+  - rule_id: "S8_R2_complex_avoidance"
+    priority: 76
+    description: "복합 문제 회피형 - 여러 개념이 섞인 복합 문제를 회피하는 패턴"
+    persona_id: 24
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "unit_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "complex_avoidance"
+      - OR:
+        - field: "complex_problem_skip_rate"
+          operator: ">="
+          value: 50
+        - field: "multi_concept_problem_anxiety"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'decompose_assemble'"
+      - "action: '분해 후 조립 전략 → 복합 문제를 작은 단계로 분해 → 각 단계별로 필요한 개념 적기'"
+      - "check: '문제를 잘 분해했는지, 각 단계를 해결했는지 확인'"
+      - "teacher_dialog: '선생님, 복합 문제를 분해해서 풀어봤어요. 제 분해 방법이 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_24_complex.wav'"
+    confidence: 0.89
+    rationale: "S8: 복합 문제 회피는 실력 정체. 분해 전략으로 접근성 향상"
+
+  - rule_id: "S8_R3_cramming_dependent"
+    priority: 75
+    description: "벼락치기 의존형 - 단원별테스트 직전에만 몰아서 공부하는 패턴"
+    persona_id: 25
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "unit_test"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "cramming_dependent"
+      - OR:
+        - field: "study_distribution"
+          operator: "=="
+          value: "last_minute"
+        - field: "daily_study_variance"
+          operator: ">="
+          value: "high"
+    action:
+      - "intervention_type: 'distributed_learning'"
+      - "action: '분산 학습 계획 → 테스트 1주 전부터 매일 30분씩 복습 → 진도표에 체크'"
+      - "check: '분산 학습을 실천했는지, 테스트 전날 부담이 줄었는지 확인'"
+      - "teacher_dialog: '선생님, 이번엔 1주 전부터 매일 30분씩 공부했어요. 분산 학습이 도움이 됐는지 말씀드릴게요!'"
+      - "audio_feedback: 'persona_25_cramming.wav'"
+    confidence: 0.86
+    rationale: "S8: 벼락치기는 장기 기억 형성 불가. 분산 학습으로 효과적 기억"
+
+  # ========== S9: 설명듣기 (listen_explanation) ==========
+
+  - rule_id: "S9_R1_passive_listener"
+    priority: 74
+    description: "수동 청취형 - 설명을 들으면서 메모나 질문 없이 수동적으로 듣기만 하는 패턴"
+    persona_id: 26
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "listen_explanation"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "passive_listener"
+      - OR:
+        - field: "note_taking_during_explanation"
+          operator: "=="
+          value: false
+        - field: "question_frequency"
+          operator: "=="
+          value: 0
+    action:
+      - "intervention_type: 'active_listening'"
+      - "action: '능동 청취 노트 → 설명 중 핵심 키워드 3개 적기 → 궁금한 점 1개 메모'"
+      - "check: '키워드와 질문을 적었는지, 질문을 해결했는지 확인'"
+      - "teacher_dialog: '선생님, 설명 들으면서 핵심 키워드 3개와 궁금한 점 1개를 적었어요. 확인해주세요!'"
+      - "audio_feedback: 'persona_26_passive.wav'"
+    confidence: 0.91
+    rationale: "S9: 수동 청취는 기억 정착 불량. 능동 청취로 참여도 향상"
+
+  - rule_id: "S9_R2_attention_scattered"
+    priority: 73
+    description: "집중력 분산형 - 설명을 듣다가 집중력이 흐트러져 중요한 부분을 놓치는 패턴"
+    persona_id: 27
+    category: "attention_deficit"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "listen_explanation"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "attention_scattered"
+      - OR:
+        - field: "attention_span"
+          operator: "<="
+          value: 5
+        - field: "missed_key_points"
+          operator: ">="
+          value: 2
+    action:
+      - "intervention_type: '5min_focus_reset'"
+      - "action: '5분 집중 리셋 → 5분마다 자세 바로잡기 + 방금 들은 내용 한 줄 요약'"
+      - "check: '5분 요약을 실천했는지, 핵심을 놓치지 않았는지 확인'"
+      - "teacher_dialog: '선생님, 5분마다 요약을 적어봤어요. 중요한 부분을 놓치지 않았는지 확인해주세요!'"
+      - "audio_feedback: 'persona_27_attention.wav'"
+    confidence: 0.90
+    rationale: "S9: 집중력 분산은 핵심 누락 원인. 주기적 리셋으로 집중 유지"
+
+  - rule_id: "S9_R3_question_avoider"
+    priority: 72
+    description: "질문 회피형 - 모르는 부분이 있어도 질문하지 않고 넘어가는 패턴"
+    persona_id: 28
+    category: "avoidance"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "listen_explanation"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "question_avoider"
+      - OR:
+        - field: "questions_asked"
+          operator: "=="
+          value: 0
+        - field: "unresolved_doubts"
+          operator: ">="
+          value: 3
+    action:
+      - "intervention_type: 'mandatory_question'"
+      - "action: '질문 필수 규칙 → 설명 후 최소 1개 질문하기 → 질문 못 하면 메모해서 나중에 물어보기'"
+      - "check: '질문을 했거나 메모했는지, 의문이 해결됐는지 확인'"
+      - "teacher_dialog: '선생님, 오늘 설명 듣고 질문 1개를 했어요(또는 메모했어요). 더 물어볼 게 있어요!'"
+      - "audio_feedback: 'persona_28_question.wav'"
+    confidence: 0.89
+    rationale: "S9: 질문 회피는 이해 구멍 생성. 질문 필수 규칙으로 적극성 향상"
+
+  - rule_id: "S9_R4_speed_mismatch"
+    priority: 71
+    description: "속도 미스매치형 - 설명 속도를 따라가지 못해 중간에 포기하는 패턴"
+    persona_id: 29
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "listen_explanation"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "speed_mismatch"
+      - OR:
+        - field: "explanation_comprehension_rate"
+          operator: "<="
+          value: 50
+        - field: "gave_up_during_explanation"
+          operator: "=="
+          value: true
+    action:
+      - "intervention_type: 'pause_signal'"
+      - "action: '멈춤 신호 활용 → 이해 안 되면 손을 들어 멈춤 요청 → 천천히 다시 설명 요청'"
+      - "check: '멈춤 신호를 활용했는지, 이해가 됐는지 확인'"
+      - "teacher_dialog: '선생님, 설명이 빨라서 손을 들어 멈춤 요청했어요. 다시 설명해주셔서 이해했어요!'"
+      - "audio_feedback: 'persona_29_speed.wav'"
+    confidence: 0.87
+    rationale: "S9: 속도 미스매치는 이해 포기 원인. 멈춤 신호로 학습 속도 조절"
+
+  - rule_id: "S9_R5_review_delay"
+    priority: 70
+    description: "복습 지연형 - 설명을 들은 후 복습을 미루다 내용을 잊어버리는 패턴"
+    persona_id: 30
+    category: "passive_learning"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "listen_explanation"
+      - field: "detected_pattern"
+        operator: "=="
+        value: "review_delay"
+      - OR:
+        - field: "time_to_first_review"
+          operator: ">="
+          value: 48
+        - field: "content_forgotten_rate"
+          operator: ">="
+          value: 50
+    action:
+      - "intervention_type: '24h_review_rule'"
+      - "action: '24시간 복습 규칙 → 설명 들은 후 24시간 내에 노트 복습 → 핵심 3줄 요약'"
+      - "check: '24시간 내 복습을 했는지, 요약이 정확한지 확인'"
+      - "teacher_dialog: '선생님, 어제 설명 듣고 오늘 복습해서 핵심 3줄을 정리했어요. 맞는지 확인해주세요!'"
+      - "audio_feedback: 'persona_30_review.wav'"
+    confidence: 0.88
+    rationale: "S9: 복습 지연은 망각 가속. 24시간 규칙으로 기억 정착"
+
+  # ========== 복합 상황 대응 룰 (Complex Rules) ==========
+
+  - rule_id: "C1_multiple_passive_patterns"
+    priority: 95
+    description: "복합 수동적 학습 패턴 - 여러 영역에서 수동적 학습 패턴이 동시에 나타나는 경우"
+    category: "passive_learning"
+    conditions:
+      - AND:
+        - field: "passive_pattern_count"
+          operator: ">="
+          value: 3
+        - field: "active_engagement_score"
+          operator: "<="
+          value: 30
+    action:
+      - "analyze: 'root_cause_passive_learning'"
+      - "intervention_type: 'comprehensive_active_learning'"
+      - "generate_feedback: '여러 영역에서 수동적 학습 패턴이 발견되었습니다. 능동적 학습 전략을 종합적으로 적용합니다.'"
+      - "recommend_action: '능동 학습 종합 프로그램 시작'"
+    confidence: 0.93
+    rationale: "복합 수동적 패턴은 근본적 학습 태도 개선 필요"
+
+  - rule_id: "C2_surface_misconception_combo"
+    priority: 94
+    description: "표면적 학습 + 개념 오해 복합 - 얕은 학습이 개념 오해로 이어지는 경우"
+    conditions:
+      - AND:
+        - field: "surface_learning_detected"
+          operator: "=="
+          value: true
+        - field: "misconception_detected"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'surface_to_misconception_chain'"
+      - "intervention_type: 'deep_understanding_focus'"
+      - "generate_feedback: '표면적 학습이 개념 오해로 이어지고 있습니다. 깊은 이해를 위한 전략이 필요합니다.'"
+      - "recommend_action: '개념 심화 학습 시작'"
+    confidence: 0.92
+    rationale: "표면적 학습과 개념 오해의 연쇄를 끊어야 함"
+
+  - rule_id: "C3_cognitive_overload_cascade"
+    priority: 93
+    description: "인지 과부하 연쇄 - 과부하가 여러 영역에서 학습 실패로 이어지는 경우"
+    conditions:
+      - AND:
+        - field: "cognitive_overload_detected"
+          operator: "=="
+          value: true
+        - field: "failed_areas_count"
+          operator: ">="
+          value: 2
+    action:
+      - "analyze: 'overload_cascade_effect'"
+      - "intervention_type: 'load_reduction_strategy'"
+      - "generate_feedback: '인지 과부하가 여러 영역에서 학습 실패로 이어지고 있습니다. 학습량 조절이 필요합니다.'"
+      - "recommend_action: '학습 단위 축소 및 분산'"
+    confidence: 0.91
+    rationale: "인지 과부하 해소가 전체 학습 효율의 선결 조건"
+
+  - rule_id: "C4_avoidance_pattern_generalization"
+    priority: 92
+    description: "회피 패턴 일반화 - 한 영역의 회피가 다른 영역으로 확산되는 경우"
+    conditions:
+      - AND:
+        - field: "avoidance_pattern_count"
+          operator: ">="
+          value: 2
+        - field: "avoidance_spreading"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'avoidance_generalization'"
+      - "intervention_type: 'gradual_exposure'"
+      - "generate_feedback: '회피 패턴이 여러 영역으로 확산되고 있습니다. 점진적 노출 전략이 필요합니다.'"
+      - "recommend_action: '단계별 도전 프로그램 시작'"
+    confidence: 0.90
+    rationale: "회피 패턴 일반화는 학습 전반의 위축을 초래"
+
+  - rule_id: "C5_overconfidence_failure_cycle"
+    priority: 91
+    description: "과신-실패 순환 - 과신이 실패로 이어지고 다시 과신하는 패턴"
+    conditions:
+      - AND:
+        - field: "overconfidence_detected"
+          operator: "=="
+          value: true
+        - field: "unexpected_failure_count"
+          operator: ">="
+          value: 2
+        - field: "confidence_unchanged_after_failure"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'overconfidence_failure_cycle'"
+      - "intervention_type: 'calibrated_confidence'"
+      - "generate_feedback: '과신과 실패가 반복되고 있습니다. 정확한 자기 평가 능력이 필요합니다.'"
+      - "recommend_action: '자기 평가 정확도 훈련'"
+    confidence: 0.89
+    rationale: "과신-실패 순환은 메타인지 능력 부족의 증거"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '개념이해 패턴을 분석 중입니다. 추가 정보가 필요할 수 있습니다.'"
+    - "collect_info: 'additional_learning_data'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용 - 특정 패턴 미감지 시 추가 데이터 수집"

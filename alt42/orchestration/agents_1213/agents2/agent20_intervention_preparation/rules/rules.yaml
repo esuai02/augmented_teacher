@@ -1,0 +1,1354 @@
+# Auto-generated rules.yaml for intervention_preparation_agent
+# Generated at: 2025-01-21
+# Updated at: 2025-01-27 (Ontology 매핑 추가)
+# Source: intervention_preparation_agent schema → natural request extension
+# Ontology: alphatutor_ontology.owl (Agent 20 관련 클래스 및 Triples 참조)
+# Metadata: metadata.md (데이터 소스 및 Ontology 매핑 상세 정보)
+
+version: "2.1"
+scenario: "intervention_preparation"
+description: "개입 실행을 위한 리소스/메시지/타이밍 사전 준비 및 개입 계획 수립 (수학 특화 개입 전략 포함)"
+last_updated: "2025-01-27"
+improvement: "현직 수학선생님 수준 90% 달성을 위한 수학 특화 룰 추가, Ontology 매핑 정보 추가"
+
+# Ontology 매핑 정보
+ontology_mapping:
+  core_ontology: "InterventionTrigger"
+  related_ontologies:
+    - "InterventionTiming"
+    - "InterventionLocation"
+    - "InterventionMethod"
+    - "LearningFlowState"
+    - "MessageTone"
+    - "InterventionDelivery"
+    - "InterventionPurpose"
+    - "InterventionRisk"
+    - "InterventionResource"
+    - "InterventionScenario"
+    - "InterventionHistory"
+    - "InterventionPlan"
+  data_sources:
+    optimal_intervention_timing: "InterventionTiming"
+    interface_location: "InterventionLocation"
+    intervention_method_type: "InterventionMethod"
+    learning_flow_status: "LearningFlowState"
+    message_tone_type: "MessageTone"
+    intervention_purpose: "InterventionPurpose"
+    predicted_risks: "InterventionRisk"
+    required_resources: "InterventionResource"
+    intervention_scenario: "InterventionScenario"
+    intervention_history: "InterventionHistory"
+    successful_intervention_patterns: "InterventionHistory"
+    failed_intervention_patterns: "InterventionHistory"
+    intervention_plan_agent20: "InterventionPlan"
+
+rules:
+  # ========== 준비 상태 관련 룰 ==========
+  
+  - rule_id: "R1_preparation_status_check"
+    priority: 95
+    description: "개입 준비 상태 종합 확인"
+    conditions:
+      - field: "intervention_checklist"
+        operator: "!="
+        value: null
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+      - field: "intervention_messages"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'preparation_status'"
+      - "generate_description: 'comprehensive_preparation_status'"
+      - "display_message: '개입 준비 상태를 확인합니다. 체크리스트, 리소스, 메시지 준비 상태를 종합적으로 분석합니다.'"
+    confidence: 0.92
+    rationale: "개입 준비 상태 질문에 대한 종합적 답변 제공"
+
+  - rule_id: "R1a_partial_preparation_status"
+    priority: 90
+    description: "부분 준비 상태 확인"
+    conditions:
+      - field: "intervention_checklist"
+        operator: "=="
+        value: null
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+    action:
+      - "alert: '체크리스트 미완성'"
+      - "display_message: '리소스는 준비되었으나 체크리스트가 아직 완성되지 않았습니다. 체크리스트 항목을 확인해주세요.'"
+    confidence: 0.88
+    rationale: "부분 준비 상태에 대한 명확한 안내 필요"
+
+  - rule_id: "R1b_not_prepared_status"
+    priority: 85
+    description: "준비 미완료 상태 알림"
+    conditions:
+      - field: "intervention_checklist"
+        operator: "=="
+        value: null
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+      - field: "intervention_messages"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '개입 준비 미완료'"
+      - "display_message: '개입 준비가 아직 완료되지 않았습니다. 체크리스트, 리소스, 메시지를 순차적으로 준비해주세요.'"
+    confidence: 0.9
+    rationale: "완전 미준비 상태에 대한 경고 및 안내"
+
+  # ========== 체크리스트 준비 관련 룰 ==========
+  
+  - rule_id: "R2_checklist_completeness_check"
+    priority: 93
+    description: "체크리스트 항목 완성도 확인"
+    conditions:
+      - field: "checklist.target"
+        operator: "!="
+        value: null
+      - field: "checklist.goal"
+        operator: "!="
+        value: null
+      - field: "checklist.message"
+        operator: "!="
+        value: null
+      - field: "checklist.resource_link"
+        operator: "!="
+        value: null
+      - field: "checklist.time_window"
+        operator: "!="
+        value: null
+      - field: "checklist.responsible_person"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'checklist_completeness'"
+      - "generate_description: 'complete_checklist_status'"
+      - "display_message: '체크리스트 항목이 모두 준비되었습니다. 대상/목표/메시지, 자료 링크, 시간창, 책임자가 모두 확인되었습니다.'"
+    confidence: 0.94
+    rationale: "체크리스트 완성도 질문에 대한 정확한 답변"
+
+  - rule_id: "R2a_checklist_missing_target"
+    priority: 88
+    description: "체크리스트 대상/목표 미기입 확인"
+    conditions:
+      - field: "checklist.target"
+        operator: "=="
+        value: null
+      - field: "checklist.goal"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '대상/목표 미기입'"
+      - "display_message: '체크리스트에 대상과 목표가 아직 기입되지 않았습니다. 개입 대상과 목표를 먼저 설정해주세요.'"
+    confidence: 0.89
+    rationale: "체크리스트 핵심 항목 누락 경고"
+
+  - rule_id: "R2b_checklist_missing_message"
+    priority: 87
+    description: "체크리스트 메시지 미준비 확인"
+    conditions:
+      - field: "checklist.message"
+        operator: "=="
+        value: null
+      - field: "intervention_messages"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '메시지 미준비'"
+      - "display_message: '체크리스트의 메시지 항목이 비어있습니다. 개입 메시지를 준비해주세요.'"
+    confidence: 0.87
+    rationale: "메시지 준비 누락 안내"
+
+  - rule_id: "R2c_checklist_missing_resource_link"
+    priority: 86
+    description: "체크리스트 자료 링크 미기입 확인"
+    conditions:
+      - field: "checklist.resource_link"
+        operator: "=="
+        value: null
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '자료 링크 미기입'"
+      - "display_message: '체크리스트에 자료 링크가 없습니다. 개입에 필요한 자료를 연결해주세요.'"
+    confidence: 0.85
+    rationale: "리소스 연결 누락 안내"
+
+  - rule_id: "R2d_checklist_missing_time_window"
+    priority: 87
+    description: "체크리스트 시간창 미설정 확인"
+    conditions:
+      - field: "checklist.time_window"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '시간창 미설정'"
+      - "display_message: '체크리스트에 시간창이 설정되지 않았습니다. 개입 실행 시간대를 설정해주세요.'"
+    confidence: 0.88
+    rationale: "시간창 설정 누락 안내"
+
+  - rule_id: "R2e_checklist_missing_responsible_person"
+    priority: 86
+    description: "체크리스트 책임자 미할당 확인"
+    conditions:
+      - field: "checklist.responsible_person"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '책임자 미할당'"
+      - "display_message: '체크리스트에 책임자가 할당되지 않았습니다. 개입을 담당할 책임자를 지정해주세요.'"
+    confidence: 0.87
+    rationale: "책임자 할당 누락 안내"
+
+  # ========== 최적 타이밍 관련 룰 ==========
+  
+  - rule_id: "R3_optimal_timing_analysis"
+    priority: 92
+    description: "개입 최적 타이밍 종합 분석"
+    conditions:
+      - field: "checklist.time_window"
+        operator: "!="
+        value: null
+      - field: "intervention_trigger"
+        operator: "!="
+        value: null
+      - field: "student_activity_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'optimal_timing'"
+      - "generate_description: 'optimal_intervention_timing'"
+      - "display_message: '학생 활동 패턴과 개입 트리거를 분석하여 최적의 개입 타이밍을 제안합니다.'"
+    confidence: 0.91
+    rationale: "최적 타이밍 질문에 대한 데이터 기반 분석 제공"
+
+  - rule_id: "R3a_interface_location_timing"
+    priority: 89
+    description: "인터페이스 위치 기반 타이밍 추천"
+    conditions:
+      - field: "intervention_trigger"
+        operator: "=="
+        value: "인터페이스"
+      - field: "selectedOptions.interfaceLocation"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'interface_based_timing'"
+      - "generate_description: 'interface_location_timing_recommendation'"
+      - "display_message: '선택된 인터페이스 위치에 따라 개입 타이밍을 추천합니다. 학생이 해당 위치에 접근할 때 개입이 가장 효과적입니다.'"
+    confidence: 0.88
+    rationale: "인터페이스 위치 기반 타이밍 최적화"
+
+  - rule_id: "R3b_data_trigger_timing"
+    priority: 90
+    description: "데이터 트리거 기반 즉시 개입 타이밍"
+    conditions:
+      - field: "intervention_trigger"
+        operator: "=="
+        value: "데이터 트리거"
+      - field: "selectedOptions.dataTrigger"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'immediate_intervention_timing'"
+      - "generate_description: 'data_trigger_timing_recommendation'"
+      - "display_message: '데이터 트리거 조건이 충족되는 즉시 개입하는 것이 권장됩니다. 실시간 모니터링을 통해 적절한 시점에 자동 실행됩니다.'"
+    confidence: 0.89
+    rationale: "데이터 트리거는 즉시 반응이 필요"
+
+  - rule_id: "R3c_student_activity_pattern_timing"
+    priority: 88
+    description: "학생 활동 패턴 기반 타이밍 추천"
+    conditions:
+      - field: "student_activity_pattern.active_hours"
+        operator: "!="
+        value: null
+      - field: "student_activity_pattern.preferred_times"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'activity_pattern_based_timing'"
+      - "generate_description: 'student_activity_timing_analysis'"
+      - "display_message: '학생의 활동 패턴을 분석하여 가장 효과적인 개입 시간대를 추천합니다.'"
+    confidence: 0.87
+    rationale: "학생 활동 패턴 기반 개인화된 타이밍 제안"
+
+  - rule_id: "R3d_urgency_based_timing"
+    priority: 91
+    description: "긴급도 기반 즉시 개입 타이밍"
+    conditions:
+      - field: "intervention_urgency"
+        operator: "in"
+        value: ["긴급", "높음"]
+      - field: "selectedOptions.dataTrigger"
+        operator: "in"
+        value: ["침착도 하락", "오늘활동 위험", "개인규칙 이탈"]
+    action:
+      - "alert: '즉시 개입 필요'"
+      - "recommend: 'immediate_intervention'"
+      - "display_message: '긴급 상황으로 판단되어 즉시 개입이 필요합니다. 최대한 빠른 시간 내에 개입을 실행하세요.'"
+    confidence: 0.93
+    rationale: "긴급 상황은 즉시 대응 필요"
+
+  # ========== 리소스 준비 관련 룰 ==========
+  
+  - rule_id: "R4_resource_readiness_check"
+    priority: 91
+    description: "필요한 리소스 준비 상태 확인"
+    conditions:
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+      - field: "checklist.resource_link"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'resource_readiness'"
+      - "generate_description: 'resource_preparation_status'"
+      - "display_message: '개입에 필요한 리소스가 준비되었습니다. 자료 링크와 리소스 파일이 모두 확인되었습니다.'"
+    confidence: 0.9
+    rationale: "리소스 준비 상태 질문에 대한 답변"
+
+  - rule_id: "R4a_resource_types_analysis"
+    priority: 88
+    description: "개입 방식별 필요 리소스 타입 분석"
+    conditions:
+      - field: "selectedOptions.interventionMode"
+        operator: "!="
+        value: null
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'required_resource_types'"
+      - "generate_description: 'intervention_mode_resource_mapping'"
+      - "display_message: '선택된 개입 방식에 따라 필요한 리소스 타입을 분석합니다. 알림/메시지/채팅/호출 방식별로 적합한 리소스를 확인합니다.'"
+    confidence: 0.87
+    rationale: "개입 방식에 맞는 리소스 타입 제안"
+
+  - rule_id: "R4b_interface_location_resource"
+    priority: 87
+    description: "인터페이스 위치별 필요 리소스 추천"
+    conditions:
+      - field: "selectedOptions.interfaceLocation"
+        operator: "in"
+        value: ["개념미션", "심화미션", "내신미션", "수능미션"]
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'mission_based_resources'"
+      - "display_message: '미션 화면 개입을 위해 해당 미션의 문제, 해설, 개념 카드 등의 리소스가 필요합니다.'"
+    confidence: 0.86
+    rationale: "미션 화면 개입 시 특정 리소스 필요"
+
+  - rule_id: "R4c_message_resource_preparation"
+    priority: 89
+    description: "메시지 방식 개입 리소스 준비"
+    conditions:
+      - field: "selectedOptions.interventionMode"
+        operator: "=="
+        value: "메세지"
+      - field: "intervention_resources.message_content"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '메시지 컨텐츠 미준비'"
+      - "display_message: '메시지 방식 개입을 위해 메시지 컨텐츠가 필요합니다. Agent 19에서 생성된 상호작용 컨텐츠를 확인하세요.'"
+    confidence: 0.88
+    rationale: "메시지 방식은 컨텐츠가 필수"
+
+  - rule_id: "R4d_chat_resource_preparation"
+    priority: 88
+    description: "채팅 방식 개입 리소스 준비"
+    conditions:
+      - field: "selectedOptions.interventionMode"
+        operator: "=="
+        value: "채팅"
+      - field: "intervention_resources.chat_script"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '채팅 스크립트 미준비'"
+      - "display_message: '채팅 방식 개입을 위해 대화 스크립트와 대응 가이드가 필요합니다. 실시간 대화형 지원을 위한 리소스를 준비하세요.'"
+    confidence: 0.87
+    rationale: "채팅 방식은 스크립트와 가이드 필요"
+
+  - rule_id: "R4e_missing_resource_warning"
+    priority: 90
+    description: "리소스 미준비 경고"
+    conditions:
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+      - field: "checklist.resource_link"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '리소스 미준비'"
+      - "display_message: '개입에 필요한 리소스가 아직 준비되지 않았습니다. 자료 링크를 설정하거나 리소스 파일을 업로드해주세요.'"
+    confidence: 0.91
+    rationale: "리소스 미준비 상태 명확한 경고"
+
+  # ========== 메시지 준비 관련 룰 ==========
+  
+  - rule_id: "R5_message_readiness_check"
+    priority: 92
+    description: "메시지 준비 상태 종합 확인"
+    conditions:
+      - field: "intervention_messages"
+        operator: "!="
+        value: null
+      - field: "checklist.message"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'message_readiness'"
+      - "generate_description: 'message_preparation_status'"
+      - "display_message: '개입 메시지가 준비되었습니다. 메시지 내용과 전달 방식을 확인했습니다.'"
+    confidence: 0.93
+    rationale: "메시지 준비 상태 질문에 대한 정확한 답변"
+
+  - rule_id: "R5a_message_content_check"
+    priority: 89
+    description: "메시지 내용 완성도 확인"
+    conditions:
+      - field: "intervention_messages.content"
+        operator: "!="
+        value: null
+      - field: "intervention_messages.content"
+        operator: "!="
+        value: ""
+    action:
+      - "analyze: 'message_content_completeness'"
+      - "display_message: '메시지 내용이 준비되었습니다. 메시지의 완성도와 전달 효과를 확인합니다.'"
+    confidence: 0.88
+    rationale: "메시지 내용 존재 여부 확인"
+
+  - rule_id: "R5b_message_intervention_mode_match"
+    priority: 88
+    description: "메시지와 개입 방식 일치성 확인"
+    conditions:
+      - field: "selectedOptions.interventionMode"
+        operator: "in"
+        value: ["메세지", "채팅"]
+      - field: "intervention_messages.content"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'message_mode_compatibility'"
+      - "generate_description: 'message_intervention_mode_alignment'"
+      - "display_message: '메시지 내용이 선택된 개입 방식과 일치하는지 확인합니다. 메시지/채팅 방식에 적합한 컨텐츠인지 검증합니다.'"
+    confidence: 0.87
+    rationale: "개입 방식과 메시지 일치성 검증"
+
+  - rule_id: "R5c_message_tone_appropriateness"
+    priority: 86
+    description: "메시지 톤과 상황 적합성 확인"
+    conditions:
+      - field: "intervention_urgency"
+        operator: "in"
+        value: ["긴급", "높음"]
+      - field: "intervention_messages.tone"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'message_tone_appropriateness'"
+      - "display_message: '긴급 상황에 맞는 메시지 톤과 내용인지 확인합니다. 상황의 심각도에 맞는 메시지 스타일을 검증합니다.'"
+    confidence: 0.85
+    rationale: "상황에 맞는 메시지 톤 검증"
+
+  - rule_id: "R5d_message_missing_warning"
+    priority: 91
+    description: "메시지 미준비 경고"
+    conditions:
+      - field: "intervention_messages"
+        operator: "=="
+        value: null
+      - field: "checklist.message"
+        operator: "=="
+        value: null
+    action:
+      - "alert: '메시지 미준비'"
+      - "display_message: '개입 메시지가 아직 준비되지 않았습니다. Agent 19에서 생성된 상호작용 컨텐츠를 확인하거나 새로운 메시지를 작성해주세요.'"
+    confidence: 0.92
+    rationale: "메시지 미준비 상태 명확한 안내"
+
+  - rule_id: "R5e_message_from_agent19"
+    priority: 87
+    description: "Agent 19 연계 메시지 확인"
+    conditions:
+      - field: "intervention_messages.source"
+        operator: "=="
+        value: "agent19"
+      - field: "intervention_messages.content"
+        operator: "!="
+        value: null
+    action:
+      - "generate_description: 'agent19_message_integration'"
+      - "display_message: 'Agent 19에서 생성된 상호작용 컨텐츠가 메시지로 준비되었습니다. 컨텐츠와 개입 방식의 일치성을 확인합니다.'"
+    confidence: 0.86
+    rationale: "이전 단계(Agent 19) 연계 확인"
+
+  # ========== 개입 위치/방식 추천 관련 룰 ==========
+  
+  - rule_id: "R6_intervention_location_recommendation"
+    priority: 85
+    description: "개입 위치 추천 이유 생성"
+    conditions:
+      - field: "selectedOptions.interventionTrigger"
+        operator: "!="
+        value: null
+      - field: "selectedOptions.interfaceLocation"
+        operator: "!="
+        value: null
+      - field: "interventionReason"
+        operator: "=="
+        value: null
+    action:
+      - "generate_description: 'intervention_location_reason'"
+      - "display_message: '선택된 개입 위치와 방식에 대한 추천 이유를 생성합니다. 학생 상황과 목표에 맞는 개입 지점을 분석합니다.'"
+    confidence: 0.84
+    rationale: "개입 위치 선택 이유 자동 생성"
+
+  - rule_id: "R6a_data_trigger_location_recommendation"
+    priority: 87
+    description: "데이터 트리거 기반 개입 위치 추천"
+    conditions:
+      - field: "selectedOptions.dataTrigger"
+        operator: "in"
+        value: ["침착도 하락", "필기 지연", "오늘활동 위험"]
+      - field: "selectedOptions.interventionTrigger"
+        operator: "=="
+        value: "데이터 트리거"
+    action:
+      - "recommend: 'urgent_intervention_location'"
+      - "generate_description: 'data_trigger_based_location'"
+      - "display_message: '데이터 트리거 상황에 따라 가장 효과적인 개입 위치를 추천합니다. 위험 신호가 감지된 화면에서 즉시 개입하는 것이 좋습니다.'"
+    confidence: 0.88
+    rationale: "데이터 트리거 기반 위치 추천"
+
+  - rule_id: "R6b_interface_location_recommendation"
+    priority: 86
+    description: "인터페이스 위치별 개입 방식 추천"
+    conditions:
+      - field: "selectedOptions.interfaceLocation"
+        operator: "in"
+        value: ["개념미션", "심화미션", "내신미션", "수능미션"]
+      - field: "selectedOptions.interventionMode"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'mission_appropriate_intervention_mode'"
+      - "display_message: '미션 화면에서는 알림 표시나 메시지 방식이 효과적입니다. 학습 흐름을 방해하지 않으면서 필요한 정보를 전달할 수 있습니다.'"
+    confidence: 0.85
+    rationale: "인터페이스 위치에 맞는 개입 방식 제안"
+
+  - rule_id: "R6c_chat_mode_for_complex_guidance"
+    priority: 84
+    description: "복잡한 안내가 필요할 때 채팅 방식 추천"
+    conditions:
+      - field: "intervention_complexity"
+        operator: "in"
+        value: ["높음", "매우 높음"]
+      - field: "selectedOptions.interventionMode"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'chat_mode_intervention'"
+      - "display_message: '복잡한 안내나 설명이 필요한 경우 채팅 방식을 추천합니다. 실시간 대화를 통해 단계별로 도움을 제공할 수 있습니다.'"
+    confidence: 0.83
+    rationale: "복잡한 상황에 채팅 방식 적합"
+
+  - rule_id: "R6d_call_mode_for_urgent_situation"
+    priority: 88
+    description: "긴급 상황에서 호출 방식 추천"
+    conditions:
+      - field: "intervention_urgency"
+        operator: "=="
+        value: "긴급"
+      - field: "selectedOptions.dataTrigger"
+        operator: "in"
+        value: ["개인규칙 이탈", "오늘활동 위험", "침착도 하락"]
+    action:
+      - "recommend: 'call_mode_intervention'"
+      - "display_message: '긴급 상황에서는 호출 방식을 통해 즉각적인 주의를 환기하는 것이 효과적입니다. 학생의 즉각적인 반응이 필요합니다.'"
+    confidence: 0.89
+    rationale: "긴급 상황에 호출 방식 적합"
+
+  # ========== 체크리스트 완성도 종합 룰 ==========
+  
+  - rule_id: "R7_comprehensive_checklist_readiness"
+    priority: 94
+    description: "체크리스트 전체 항목 완성도 종합 평가"
+    conditions:
+      - field: "checklist.target"
+        operator: "!="
+        value: null
+      - field: "checklist.goal"
+        operator: "!="
+        value: null
+      - field: "checklist.message"
+        operator: "!="
+        value: null
+      - field: "checklist.resource_link"
+        operator: "!="
+        value: null
+      - field: "checklist.time_window"
+        operator: "!="
+        value: null
+      - field: "checklist.responsible_person"
+        operator: "!="
+        value: null
+      - field: "selectedOptions.interventionTrigger"
+        operator: "!="
+        value: null
+      - field: "selectedOptions.interventionMode"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'complete_checklist_evaluation'"
+      - "generate_description: 'full_preparation_status'"
+      - "display_message: '체크리스트의 모든 항목이 완성되었습니다. 개입 준비가 완료되어 Agent 21(개입 실행)로 전달할 수 있습니다.'"
+    confidence: 0.95
+    rationale: "체크리스트 완성도 질문에 대한 최종 답변"
+
+  - rule_id: "R7a_checklist_progress_summary"
+    priority: 89
+    description: "체크리스트 진행 상황 요약"
+    conditions:
+      - field: "checklist.target"
+        operator: "!="
+        value: null
+      - field: "checklist.goal"
+        operator: "=="
+        value: null
+    action:
+      - "generate_description: 'checklist_progress_summary'"
+      - "display_message: '체크리스트 진행 상황을 요약합니다. 완료된 항목과 남은 항목을 확인할 수 있습니다.'"
+    confidence: 0.87
+    rationale: "진행 상황 중간 확인 제공"
+
+  # ========== Agent 19 연계 룰 ==========
+  
+  - rule_id: "R8_agent19_content_integration"
+    priority: 86
+    description: "Agent 19 상호작용 컨텐츠 연계 확인"
+    conditions:
+      - field: "intervention_messages.source"
+        operator: "=="
+        value: "agent19"
+      - field: "intervention_messages.content"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'agent19_integration_status'"
+      - "generate_description: 'agent19_content_readiness'"
+      - "display_message: 'Agent 19에서 생성된 상호작용 컨텐츠가 개입 메시지로 준비되었습니다. 컨텐츠와 개입 방식을 매칭합니다.'"
+    confidence: 0.85
+    rationale: "이전 워크플로우 단계 연계 확인"
+
+  - rule_id: "R8a_missing_agent19_content"
+    priority: 87
+    description: "Agent 19 컨텐츠 미생성 경고"
+    conditions:
+      - field: "intervention_messages.source"
+        operator: "=="
+        value: "agent19"
+      - field: "intervention_messages.content"
+        operator: "=="
+        value: null
+    action:
+      - "alert: 'Agent 19 컨텐츠 필요'"
+      - "display_message: 'Agent 19에서 상호작용 컨텐츠가 아직 생성되지 않았습니다. 먼저 Agent 19에서 컨텐츠를 생성해주세요.'"
+    confidence: 0.88
+    rationale: "워크플로우 순서 준수 안내"
+
+  # ========== Agent 21 전달 준비 룰 ==========
+  
+  - rule_id: "R9_agent21_delivery_readiness"
+    priority: 92
+    description: "Agent 21 전달 준비 상태 확인"
+    conditions:
+      - field: "intervention_checklist"
+        operator: "!="
+        value: null
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+      - field: "intervention_messages"
+        operator: "!="
+        value: null
+      - field: "selectedOptions.interventionTrigger"
+        operator: "!="
+        value: null
+      - field: "selectedOptions.interventionMode"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'agent21_delivery_readiness'"
+      - "generate_description: 'intervention_plan_completeness'"
+      - "display_message: '개입 계획이 완성되어 Agent 21(개입 실행)로 전달할 준비가 되었습니다. 모든 필수 항목이 확인되었습니다.'"
+    confidence: 0.93
+    rationale: "다음 단계 전달 준비 상태 확인"
+
+  - rule_id: "R9a_data_trigger_delivery_note"
+    priority: 88
+    description: "데이터 트리거 선택 시 Agent 21 전달 안내"
+    conditions:
+      - field: "selectedOptions.interventionTrigger"
+        operator: "=="
+        value: "데이터 트리거"
+      - field: "selectedOptions.dataTrigger"
+        operator: "!="
+        value: null
+    action:
+      - "generate_description: 'data_trigger_delivery_note'"
+      - "display_message: '데이터 트리거를 선택한 경우, Agent 21에서 실제 모니터링 및 자동 실행을 담당합니다. 트리거 조건이 충족되면 자동으로 개입이 실행됩니다.'"
+    confidence: 0.89
+    rationale: "데이터 트리거 실행 방식 안내"
+
+  # ========== 수학 학습 맥락 학생 상태 진단 룰 ==========
+  
+  - rule_id: "R10_math_learning_stop_reason_analysis"
+    priority: 94
+    description: "수학 학습 정지 원인 분석 (계산 실수, 개념 오류, 문제 해석 오류)"
+    conditions:
+      - field: "student_status.learning_stopped"
+        operator: "=="
+        value: true
+      - field: "student_status.stop_reason"
+        operator: "!="
+        value: null
+      - field: "student_status.math_context"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'math_learning_stop_reason'"
+      - "generate_description: 'math_stop_reason_classification'"
+      - "display_message: '학생의 수학 학습 정지 원인을 분석합니다. 계산 실수, 개념 오류, 문제 해석 오류 중 어느 유형인지 파악하여 적절한 개입 전략을 수립합니다.'"
+    confidence: 0.91
+    rationale: "수학 학습 맥락에서 정지 원인 분석은 개입 전략의 핵심"
+
+  - rule_id: "R10a_calculation_error_diagnosis"
+    priority: 92
+    description: "계산 실수 진단 및 개입 전략 수립"
+    conditions:
+      - field: "student_status.stop_reason"
+        operator: "=="
+        value: "계산 실수"
+      - field: "student_status.error_type"
+        operator: "in"
+        value: ["부호 실수", "산술 연산 오류", "단위 변환 오류", "계산 과정 생략"]
+    action:
+      - "analyze: 'calculation_error_type'"
+      - "recommend: 'calculation_practice_resources'"
+      - "generate_description: 'calculation_error_intervention_strategy'"
+      - "display_message: '계산 실수로 판단되었습니다. 계산 연습 문제와 단계별 풀이 가이드를 준비합니다. 반복 연습을 통해 계산 정확도를 높일 수 있습니다.'"
+    confidence: 0.90
+    rationale: "계산 실수는 반복 연습으로 개선 가능"
+
+  - rule_id: "R10b_concept_error_diagnosis"
+    priority: 93
+    description: "개념 오류 진단 및 개념 재학습 자료 추천"
+    conditions:
+      - field: "student_status.stop_reason"
+        operator: "=="
+        value: "개념 오류"
+      - field: "student_status.concept_unit"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'concept_error_unit'"
+      - "recommend: 'concept_relearning_resources'"
+      - "generate_description: 'concept_error_intervention_strategy'"
+      - "display_message: '개념 오류로 판단되었습니다. 해당 단원의 개념 카드와 설명 영상을 준비합니다. 개념을 다시 학습한 후 문제를 풀어보는 것이 효과적입니다.'"
+    confidence: 0.92
+    rationale: "개념 오류는 개념 재학습이 필수"
+
+  - rule_id: "R10c_problem_interpretation_error_diagnosis"
+    priority: 91
+    description: "문제 해석 오류 진단 및 해석 전략 안내"
+    conditions:
+      - field: "student_status.stop_reason"
+        operator: "=="
+        value: "문제 해석 오류"
+      - field: "student_status.problem_type"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'problem_interpretation_error'"
+      - "recommend: 'problem_reading_strategy_resources'"
+      - "generate_description: 'interpretation_error_intervention_strategy'"
+      - "display_message: '문제 해석 오류로 판단되었습니다. 문제 읽기 전략과 키워드 파악 가이드를 준비합니다. 문제를 단계별로 분석하는 방법을 안내합니다.'"
+    confidence: 0.89
+    rationale: "문제 해석 오류는 읽기 전략 안내가 효과적"
+
+  - rule_id: "R11_misconception_diagnosis"
+    priority: 95
+    description: "오개념 진단 및 교정 필요성 판단"
+    conditions:
+      - field: "student_status.has_misconception"
+        operator: "=="
+        value: true
+      - field: "student_status.misconception_type"
+        operator: "!="
+        value: null
+      - field: "student_status.misconception_unit"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'misconception_analysis'"
+      - "recommend: 'misconception_correction_resources'"
+      - "generate_description: 'misconception_intervention_plan'"
+      - "display_message: '오개념이 진단되었습니다. 오개념 교정 자료와 비교 설명을 준비합니다. 정확한 개념과 혼동하는 개념을 비교하여 명확히 구분할 수 있도록 안내합니다.'"
+    confidence: 0.94
+    rationale: "오개념 교정은 수학 학습의 핵심 개입 요소"
+
+  - rule_id: "R11a_common_misconception_matching"
+    priority: 92
+    description: "흔한 오개념 DB 매칭 및 교정 자료 추천"
+    conditions:
+      - field: "student_status.misconception_type"
+        operator: "!="
+        value: null
+      - field: "misconception_db"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'common_misconception_match'"
+      - "recommend: 'matched_correction_resources'"
+      - "generate_description: 'misconception_db_resource_mapping'"
+      - "display_message: '진단된 오개념과 유사한 흔한 오개념을 찾아 교정 자료를 추천합니다. 검증된 교정 자료를 활용하여 효과적인 개입을 준비합니다.'"
+    confidence: 0.91
+    rationale: "흔한 오개념 DB 활용으로 검증된 교정 자료 제공"
+
+  - rule_id: "R12_unit_weakness_analysis"
+    priority: 93
+    description: "단원별 취약점 분석 및 맞춤 개입 자료 추천"
+    conditions:
+      - field: "student_status.weak_units"
+        operator: "!="
+        value: null
+      - field: "student_status.current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'unit_weakness_pattern'"
+      - "recommend: 'unit_specific_intervention_resources'"
+      - "generate_description: 'unit_weakness_intervention_strategy'"
+      - "display_message: '학생의 단원별 취약점을 분석하여 현재 학습 단원과 연계된 맞춤 개입 자료를 추천합니다. 취약 단원의 기초 개념부터 점진적으로 도움을 제공합니다.'"
+    confidence: 0.92
+    rationale: "단원별 취약점 기반 맞춤 개입이 효과적"
+
+  - rule_id: "R12a_unit_intervention_strategy"
+    priority: 90
+    description: "단원별 특화 개입 전략 적용 (함수/도형/통계 등)"
+    conditions:
+      - field: "student_status.current_unit"
+        operator: "in"
+        value: ["함수", "도형", "통계", "방정식", "확률"]
+      - field: "unit_intervention_strategy_db"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'unit_specific_strategy'"
+      - "recommend: 'unit_strategy_resources'"
+      - "generate_description: 'unit_intervention_strategy_mapping'"
+      - "display_message: '해당 단원의 특화 개입 전략을 적용합니다. 함수 단원은 그래프 활용, 도형 단원은 시각화 자료, 통계 단원은 실생활 예시를 활용합니다.'"
+    confidence: 0.89
+    rationale: "단원별 특화 전략이 학습 효과를 높임"
+
+  # ========== 수학 특화 개입 자료 타입 분류 룰 ==========
+  
+  - rule_id: "R13_math_resource_type_classification"
+    priority: 91
+    description: "수학 특화 자료 타입 분류 (개념 카드, 문제 풀이 영상, 단계별 풀이 가이드 등)"
+    conditions:
+      - field: "intervention_resources"
+        operator: "!="
+        value: null
+      - field: "student_status.math_context"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'math_resource_type'"
+      - "classify: 'math_resource_category'"
+      - "generate_description: 'math_resource_type_classification'"
+      - "display_message: '수학 특화 자료 타입을 분류합니다. 개념 카드, 문제 풀이 영상, 단계별 풀이 가이드, 오개념 교정 자료 등으로 구분하여 적절한 자료를 준비합니다.'"
+    confidence: 0.90
+    rationale: "수학 특화 자료 타입 분류는 효과적인 개입을 위한 기초"
+
+  - rule_id: "R13a_concept_card_recommendation"
+    priority: 89
+    description: "개념 이해 목적 시 개념 카드 추천"
+    conditions:
+      - field: "checklist.goal"
+        operator: "in"
+        value: ["개념 이해", "개념 정리", "개념 재학습"]
+      - field: "student_status.concept_unit"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'concept_card_resource'"
+      - "generate_description: 'concept_card_intervention_plan'"
+      - "display_message: '개념 이해가 목적이므로 해당 단원의 개념 카드를 추천합니다. 핵심 개념을 시각적으로 정리한 자료로 이해도를 높일 수 있습니다.'"
+    confidence: 0.88
+    rationale: "개념 이해 목적에는 개념 카드가 효과적"
+
+  - rule_id: "R13b_problem_solving_video_recommendation"
+    priority: 88
+    description: "문제 해결 목적 시 문제 풀이 영상 추천"
+    conditions:
+      - field: "checklist.goal"
+        operator: "in"
+        value: ["문제 해결", "문제 풀이 전략", "유형 연습"]
+      - field: "student_status.problem_type"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'problem_solving_video_resource'"
+      - "generate_description: 'problem_solving_video_intervention_plan'"
+      - "display_message: '문제 해결이 목적이므로 단계별 문제 풀이 영상을 추천합니다. 문제 해결 과정을 단계별로 시각적으로 학습할 수 있습니다.'"
+    confidence: 0.87
+    rationale: "문제 해결 목적에는 풀이 영상이 효과적"
+
+  - rule_id: "R13c_step_by_step_guide_recommendation"
+    priority: 89
+    description: "복잡한 문제 해결 시 단계별 풀이 가이드 추천"
+    conditions:
+      - field: "intervention_complexity"
+        operator: "in"
+        value: ["높음", "매우 높음"]
+      - field: "checklist.goal"
+        operator: "=="
+        value: "문제 해결"
+    action:
+      - "recommend: 'step_by_step_guide_resource'"
+      - "generate_description: 'step_by_step_guide_intervention_plan'"
+      - "display_message: '복잡한 문제 해결을 위해 단계별 풀이 가이드를 추천합니다. 문제 해결 프로세스를 단계별로 안내하여 체계적으로 접근할 수 있도록 도와줍니다.'"
+    confidence: 0.88
+    rationale: "복잡한 문제는 단계별 가이드가 필수"
+
+  - rule_id: "R14_student_level_resource_matching"
+    priority: 92
+    description: "학생 수준별 자료 난이도 매칭 (하위권/중위권/상위권)"
+    conditions:
+      - field: "student_status.level"
+        operator: "in"
+        value: ["하위권", "중위권", "상위권"]
+      - field: "intervention_resources.difficulty"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'student_level_resource_match'"
+      - "recommend: 'level_appropriate_resources'"
+      - "generate_description: 'level_based_resource_matching'"
+      - "display_message: '학생 수준에 맞는 자료 난이도를 매칭합니다. 하위권은 쉬운 문제, 중위권은 유형 문제, 상위권은 심화 문제를 추천합니다.'"
+    confidence: 0.91
+    rationale: "학생 수준에 맞는 자료가 학습 효과를 극대화"
+
+  - rule_id: "R14a_lower_level_resource_strategy"
+    priority: 90
+    description: "하위권 학생 자료 전략 (개념 중심, 반복 연습)"
+    conditions:
+      - field: "student_status.level"
+        operator: "=="
+        value: "하위권"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'lower_level_resources'"
+      - "generate_description: 'lower_level_intervention_strategy'"
+      - "display_message: '하위권 학생을 위해 개념 중심 자료와 반복 연습 문제를 추천합니다. 기초 개념을 탄탄히 다진 후 단계적으로 문제 난이도를 높여갑니다.'"
+    confidence: 0.89
+    rationale: "하위권은 개념 중심 학습이 효과적"
+
+  - rule_id: "R14b_middle_level_resource_strategy"
+    priority: 90
+    description: "중위권 학생 자료 전략 (유형 연습 중심)"
+    conditions:
+      - field: "student_status.level"
+        operator: "=="
+        value: "중위권"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'middle_level_resources'"
+      - "generate_description: 'middle_level_intervention_strategy'"
+      - "display_message: '중위권 학생을 위해 유형 연습 중심 자료를 추천합니다. 다양한 문제 유형을 경험하여 문제 해결 전략을 확장합니다.'"
+    confidence: 0.89
+    rationale: "중위권은 유형 연습이 효과적"
+
+  - rule_id: "R14c_upper_level_resource_strategy"
+    priority: 90
+    description: "상위권 학생 자료 전략 (심화 문제, 변형 문제)"
+    conditions:
+      - field: "student_status.level"
+        operator: "=="
+        value: "상위권"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'upper_level_resources'"
+      - "generate_description: 'upper_level_intervention_strategy'"
+      - "display_message: '상위권 학생을 위해 심화 문제와 변형 문제를 추천합니다. 창의적 사고와 문제 해결 능력을 향상시킬 수 있는 자료를 제공합니다.'"
+    confidence: 0.89
+    rationale: "상위권은 심화 문제가 효과적"
+
+  # ========== 개입 목적 구체화 및 자료 매칭 룰 ==========
+  
+  - rule_id: "R15_math_intervention_purpose_classification"
+    priority: 93
+    description: "수학 학습 목적 카테고리 분류 (개념 이해, 문제 해결, 오개념 교정, 동기 부여)"
+    conditions:
+      - field: "checklist.goal"
+        operator: "!="
+        value: null
+      - field: "student_status.math_context"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'math_intervention_purpose'"
+      - "classify: 'math_purpose_category'"
+      - "generate_description: 'math_purpose_classification'"
+      - "display_message: '수학 학습 목적을 구체적으로 분류합니다. 개념 이해, 문제 해결, 오개념 교정, 동기 부여 중 어느 목적인지 명확히 하여 적절한 개입 전략을 수립합니다.'"
+    confidence: 0.92
+    rationale: "명확한 목적 분류는 효과적인 개입의 기초"
+
+  - rule_id: "R15a_purpose_resource_matching"
+    priority: 91
+    description: "개입 목적별 추천 자료 매칭"
+    conditions:
+      - field: "checklist.goal"
+        operator: "in"
+        value: ["개념 이해", "문제 해결", "오개념 교정", "동기 부여"]
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'purpose_matched_resources'"
+      - "generate_description: 'purpose_resource_mapping'"
+      - "display_message: '개입 목적에 맞는 자료를 추천합니다. 개념 이해는 개념 카드, 문제 해결은 풀이 가이드, 오개념 교정은 비교 자료, 동기 부여는 성취 경험 자료를 준비합니다.'"
+    confidence: 0.90
+    rationale: "목적-자료 매칭이 개입 효과를 높임"
+
+  - rule_id: "R16_expected_effect_analysis"
+    priority: 88
+    description: "개입 목적 기반 예상 효과 분석"
+    conditions:
+      - field: "checklist.goal"
+        operator: "!="
+        value: null
+      - field: "student_status.current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'expected_intervention_effect'"
+      - "generate_description: 'expected_effect_analysis'"
+      - "display_message: '개입 목적과 학생 상태를 분석하여 예상 효과를 평가합니다. 이 개입으로 학생이 개념을 이해하고 문제를 풀 수 있을 것으로 예상됩니다.'"
+    confidence: 0.87
+    rationale: "예상 효과 분석은 개입 계획 검증에 도움"
+
+  # ========== 학습 단계별 개입 전략 룰 ==========
+  
+  - rule_id: "R17_learning_stage_detection"
+    priority: 91
+    description: "학습 단계 감지 (개념/유형/심화 단계)"
+    conditions:
+      - field: "student_status.learning_stage"
+        operator: "in"
+        value: ["개념", "유형", "심화"]
+      - field: "student_status.current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'current_learning_stage'"
+      - "generate_description: 'learning_stage_analysis'"
+      - "display_message: '학생의 현재 학습 단계를 분석합니다. 개념 단계, 유형 단계, 심화 단계 중 어느 단계인지 파악하여 단계에 맞는 개입 자료를 준비합니다.'"
+    confidence: 0.90
+    rationale: "학습 단계 파악은 단계별 맞춤 개입의 기초"
+
+  - rule_id: "R17a_concept_stage_intervention"
+    priority: 89
+    description: "개념 단계 개입 전략 (개념 카드, 설명 영상)"
+    conditions:
+      - field: "student_status.learning_stage"
+        operator: "=="
+        value: "개념"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'concept_stage_resources'"
+      - "generate_description: 'concept_stage_intervention_plan'"
+      - "display_message: '개념 단계에 맞는 개입 자료를 추천합니다. 개념 카드와 설명 영상을 제공하여 핵심 개념을 명확히 이해할 수 있도록 도와줍니다.'"
+    confidence: 0.88
+    rationale: "개념 단계는 개념 이해 자료가 효과적"
+
+  - rule_id: "R17b_type_stage_intervention"
+    priority: 89
+    description: "유형 단계 개입 전략 (유형 문제, 풀이 가이드)"
+    conditions:
+      - field: "student_status.learning_stage"
+        operator: "=="
+        value: "유형"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'type_stage_resources'"
+      - "generate_description: 'type_stage_intervention_plan'"
+      - "display_message: '유형 단계에 맞는 개입 자료를 추천합니다. 다양한 유형 문제와 단계별 풀이 가이드를 제공하여 문제 해결 전략을 습득할 수 있도록 도와줍니다.'"
+    confidence: 0.88
+    rationale: "유형 단계는 유형 문제 연습이 효과적"
+
+  - rule_id: "R17c_advanced_stage_intervention"
+    priority: 89
+    description: "심화 단계 개입 전략 (심화 문제, 변형 문제)"
+    conditions:
+      - field: "student_status.learning_stage"
+        operator: "=="
+        value: "심화"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'advanced_stage_resources'"
+      - "generate_description: 'advanced_stage_intervention_plan'"
+      - "display_message: '심화 단계에 맞는 개입 자료를 추천합니다. 심화 문제와 변형 문제를 제공하여 창의적 사고와 문제 해결 능력을 향상시킬 수 있도록 도와줍니다.'"
+    confidence: 0.88
+    rationale: "심화 단계는 심화 문제가 효과적"
+
+  - rule_id: "R18_learning_stage_timing"
+    priority: 87
+    description: "학습 단계별 타이밍 차별화 (개념 학습 중 즉시, 문제 풀이 중 완료 후)"
+    conditions:
+      - field: "student_status.learning_stage"
+        operator: "!="
+        value: null
+      - field: "student_status.current_activity"
+        operator: "in"
+        value: ["개념 학습", "문제 풀이"]
+    action:
+      - "analyze: 'stage_based_timing'"
+      - "recommend: 'stage_appropriate_timing'"
+      - "generate_description: 'learning_stage_timing_strategy'"
+      - "display_message: '학습 단계에 따라 개입 타이밍을 조정합니다. 개념 학습 중 정지 시 즉시 개입하고, 문제 풀이 중 정지 시 풀이 완료 후 개입합니다.'"
+    confidence: 0.86
+    rationale: "학습 단계별 타이밍 차별화가 학습 흐름을 방해하지 않음"
+
+  # ========== 계산 실수 vs 개념 오류 구분 전략 룰 ==========
+  
+  - rule_id: "R19_error_type_classification"
+    priority: 92
+    description: "오류 유형 분류 (계산 실수 vs 개념 오류)"
+    conditions:
+      - field: "student_status.error_type"
+        operator: "in"
+        value: ["계산 실수", "개념 오류"]
+      - field: "student_status.error_details"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'error_type_classification'"
+      - "generate_description: 'error_type_analysis'"
+      - "display_message: '학생의 오류 유형을 분류합니다. 계산 실수인지 개념 오류인지 구분하여 각각에 맞는 개입 전략을 수립합니다.'"
+    confidence: 0.91
+    rationale: "오류 유형 구분은 맞춤 개입의 핵심"
+
+  - rule_id: "R19a_calculation_error_intervention"
+    priority: 90
+    description: "계산 실수 개입 전략 (계산 연습 문제, 단계별 풀이)"
+    conditions:
+      - field: "student_status.error_type"
+        operator: "=="
+        value: "계산 실수"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'calculation_practice_resources'"
+      - "generate_description: 'calculation_error_intervention_strategy'"
+      - "display_message: '계산 실수로 판단되었으므로 계산 연습 문제와 단계별 풀이 가이드를 추천합니다. 반복 연습을 통해 계산 정확도를 높일 수 있습니다.'"
+    confidence: 0.89
+    rationale: "계산 실수는 반복 연습으로 개선"
+
+  - rule_id: "R19b_concept_error_intervention"
+    priority: 91
+    description: "개념 오류 개입 전략 (개념 재학습 자료, 개념 비교)"
+    conditions:
+      - field: "student_status.error_type"
+        operator: "=="
+        value: "개념 오류"
+      - field: "intervention_resources"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'concept_relearning_resources'"
+      - "generate_description: 'concept_error_intervention_strategy'"
+      - "display_message: '개념 오류로 판단되었으므로 개념 재학습 자료와 개념 비교 자료를 추천합니다. 정확한 개념을 다시 학습한 후 문제를 풀어보는 것이 효과적입니다.'"
+    confidence: 0.90
+    rationale: "개념 오류는 개념 재학습이 필수"
+
+  # ========== 수학 문제 연계 개입 룰 ==========
+  
+  - rule_id: "R20_concept_problem_linkage"
+    priority: 90
+    description: "개념 설명 후 관련 문제 연계 개입"
+    conditions:
+      - field: "checklist.goal"
+        operator: "=="
+        value: "개념 이해"
+      - field: "intervention_resources.concept_resource"
+        operator: "!="
+        value: null
+      - field: "intervention_resources.problem_resource"
+        operator: "=="
+        value: null
+    action:
+      - "recommend: 'linked_problem_resource'"
+      - "generate_description: 'concept_problem_linkage_plan'"
+      - "display_message: '개념 설명 후 이해도를 확인하기 위해 관련 문제를 연계하여 제공합니다. 개념을 이해한 직후 문제를 풀어보면 학습 효과가 높아집니다.'"
+    confidence: 0.89
+    rationale: "개념-문제 연계가 이해도 확인과 학습 효과 향상에 도움"
+
+  - rule_id: "R20a_problem_difficulty_progression"
+    priority: 88
+    description: "문제 난이도 점진적 상승 전략"
+    conditions:
+      - field: "intervention_resources.problem_sequence"
+        operator: "=="
+        value: null
+      - field: "student_status.level"
+        operator: "!="
+        value: null
+    action:
+      - "recommend: 'gradual_difficulty_progression'"
+      - "generate_description: 'problem_difficulty_progression_plan'"
+      - "display_message: '학생 수준에 맞게 문제 난이도를 점진적으로 상승시킵니다. 쉬운 문제부터 시작하여 단계적으로 난이도를 높여 학습 자신감을 키웁니다.'"
+    confidence: 0.87
+    rationale: "점진적 난이도 상승이 학습 동기 유지에 효과적"
+
+  # ========== 개입 후 추적 및 피드백 룰 ==========
+  
+  - rule_id: "R21_intervention_effect_tracking"
+    priority: 89
+    description: "개입 효과 측정 (학습 활동 추적)"
+    conditions:
+      - field: "intervention_executed"
+        operator: "=="
+        value: true
+      - field: "student_status.post_intervention_activity"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'intervention_effectiveness'"
+      - "track: 'student_learning_activity'"
+      - "generate_description: 'intervention_effect_analysis'"
+      - "display_message: '개입 후 학생의 학습 활동을 추적하여 효과를 측정합니다. 문제를 풀었는지, 개념을 이해했는지 확인하여 개입의 성공 여부를 평가합니다.'"
+    confidence: 0.88
+    rationale: "개입 효과 추적은 다음 개입 전략 수립에 필수"
+
+  - rule_id: "R21a_intervention_success_evaluation"
+    priority: 87
+    description: "개입 성공 여부 평가 (문제 해결, 개념 이해 확인)"
+    conditions:
+      - field: "student_status.post_intervention_activity"
+        operator: "in"
+        value: ["문제 해결 완료", "개념 이해 확인", "학습 재개"]
+      - field: "intervention_effectiveness"
+        operator: "!="
+        value: null
+    action:
+      - "evaluate: 'intervention_success'"
+      - "generate_description: 'intervention_success_report'"
+      - "display_message: '개입이 성공적으로 이루어진 것으로 판단됩니다. 학생이 문제를 해결하거나 개념을 이해한 것으로 확인되었습니다.'"
+    confidence: 0.86
+    rationale: "개입 성공 평가는 개입 전략 검증에 중요"
+
+  - rule_id: "R22_intervention_failure_alternative"
+    priority: 91
+    description: "개입 실패 시 대안 전략 수립 (채팅→호출, 메시지→채팅)"
+    conditions:
+      - field: "intervention_effectiveness"
+        operator: "=="
+        value: "실패"
+      - field: "selectedOptions.interventionMode"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'intervention_failure_reason'"
+      - "recommend: 'alternative_intervention_mode'"
+      - "generate_description: 'alternative_intervention_strategy'"
+      - "display_message: '개입이 효과적이지 않았습니다. 다른 개입 방식을 시도합니다. 메시지 방식이 효과 없었다면 채팅 방식으로, 채팅 방식이 효과 없었다면 호출 방식으로 변경하여 재개입합니다.'"
+    confidence: 0.90
+    rationale: "개입 실패 시 대안 전략이 학습 지속에 필수"
+
+  - rule_id: "R22a_alternative_mode_mapping"
+    priority: 88
+    description: "대안 개입 방식 매핑 (메시지→채팅, 채팅→호출)"
+    conditions:
+      - field: "selectedOptions.interventionMode"
+        operator: "in"
+        value: ["메세지", "채팅"]
+      - field: "intervention_effectiveness"
+        operator: "=="
+        value: "실패"
+    action:
+      - "recommend: 'next_intervention_mode'"
+      - "generate_description: 'alternative_mode_recommendation'"
+      - "display_message: '메시지 방식이 효과 없었다면 채팅 방식으로, 채팅 방식이 효과 없었다면 호출 방식으로 변경하여 더 직접적인 개입을 시도합니다.'"
+    confidence: 0.87
+    rationale: "점진적 강도 증가가 효과적"
+
+  - rule_id: "R23_intervention_result_feedback"
+    priority: 90
+    description: "개입 결과 피드백 수집 및 다음 개입 반영"
+    conditions:
+      - field: "intervention_executed"
+        operator: "=="
+        value: true
+      - field: "intervention_result"
+        operator: "!="
+        value: null
+    action:
+      - "collect: 'intervention_feedback'"
+      - "analyze: 'intervention_lessons_learned'"
+      - "generate_description: 'intervention_feedback_analysis'"
+      - "display_message: '개입 결과를 기록하고 피드백을 수집합니다. 학생 반응과 학습 성과를 분석하여 다음 개입에 반영할 수 있도록 정리합니다.'"
+    confidence: 0.89
+    rationale: "피드백 수집은 지속적 개선의 기초"
+
+  - rule_id: "R23a_feedback_integration"
+    priority: 86
+    description: "피드백 기반 개입 전략 개선"
+    conditions:
+      - field: "intervention_feedback"
+        operator: "!="
+        value: null
+      - field: "intervention_lessons_learned"
+        operator: "!="
+        value: null
+    action:
+      - "improve: 'intervention_strategy'"
+      - "generate_description: 'improved_intervention_plan'"
+      - "display_message: '수집된 피드백을 바탕으로 개입 전략을 개선합니다. 효과적이었던 요소는 유지하고 효과적이지 않았던 요소는 개선하여 다음 개입에 적용합니다.'"
+    confidence: 0.85
+    rationale: "피드백 기반 개선이 장기적 효과 향상에 중요"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '개입 준비 정보를 분석 중입니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용"

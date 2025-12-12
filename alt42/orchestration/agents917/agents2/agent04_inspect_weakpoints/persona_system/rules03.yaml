@@ -1,0 +1,1107 @@
+# Auto-generated rules03.yaml for problem_solving (문제풀이)
+# Generated at: 2025-12-03
+# Source: agent04_inspect_weakpoints/persona_system/4_problem_solving.php → agent11_problem_notes/rules/rules.yaml
+# Description: 문제풀이 시 60가지 인지관성 페르소나 기반 상황별 지도 규칙
+
+version: "1.0"
+scenario: "problem_solving"
+description: "문제풀이 시 발생하는 인지관성 패턴 탐지, 맞춤형 개입 전략, 교사 코칭 메시지 제공"
+
+# ==============================================================================
+# 메타데이터
+# ==============================================================================
+metadata:
+  name: "Problem Solving Persona Rules"
+  version: "1.0.0"
+  situation_id: 3
+  situation_name: "문제풀이"
+  situation_file: "4_problem_solving.php"
+  icon: "🧮"
+  color: "#ef4444"
+  total_personas: 60
+  categories: 8
+  scenarios: 10
+
+# ==============================================================================
+# 인지관성 카테고리 정의
+# ==============================================================================
+categories:
+  cognitive_overload:
+    id: 1
+    name: "인지 과부하"
+    description: "작업기억 용량 초과로 인한 정보 처리 장애"
+    icon: "🧠"
+    color: "#ef4444"
+    priority_weight: 1.0
+
+  confidence_distortion:
+    id: 2
+    name: "자신감 왜곡"
+    description: "과신 또는 과소 자신감으로 인한 판단 오류"
+    icon: "😰"
+    color: "#f59e0b"
+    priority_weight: 0.9
+
+  mistake_pattern:
+    id: 3
+    name: "실수 패턴"
+    description: "반복적인 계산/기호/단위 실수"
+    icon: "⚡"
+    color: "#8b5cf6"
+    priority_weight: 0.85
+
+  approach_error:
+    id: 4
+    name: "접근 전략 오류"
+    description: "문제 해결 전략 선택 및 적용 오류"
+    icon: "🎯"
+    color: "#06b6d4"
+    priority_weight: 0.8
+
+  learning_habit:
+    id: 5
+    name: "학습 습관"
+    description: "비효율적인 학습 습관 및 패턴"
+    icon: "📚"
+    color: "#10b981"
+    priority_weight: 0.75
+
+  time_pressure:
+    id: 6
+    name: "시간/압박 관리"
+    description: "시간 압박 및 스트레스 관리 실패"
+    icon: "⏰"
+    color: "#ec4899"
+    priority_weight: 0.85
+
+  verification_absence:
+    id: 7
+    name: "검증/확인 부재"
+    description: "검산 및 조건 확인 생략"
+    icon: "🔍"
+    color: "#6366f1"
+    priority_weight: 0.9
+
+  emotional_block:
+    id: 8
+    name: "감정적 장벽"
+    description: "피로, 감정, 환경 등 기타 요인"
+    icon: "🎭"
+    color: "#78716c"
+    priority_weight: 0.7
+
+rules:
+  # ========== S1: 문제 읽기 단계 (Problem Reading Phase) ==========
+
+  - rule_id: "S1_R1_idea_auto_fire"
+    priority: 99
+    description: "아이디어 해방 자동발화형 - 번쩍이는 아이디어가 떠오르면 검증 없이 바로 써 내려가는 패턴"
+    persona_id: 1
+    persona_name: "아이디어 해방 자동발화형"
+    category: "cognitive_overload"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "reading"
+      - field: "immediate_answer_attempt"
+        operator: "=="
+        value: true
+      - field: "reading_time_ratio"
+        operator: "<"
+        value: 0.2
+      - field: "verification_before_start"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'idea_auto_fire'"
+      - "trigger_pause: '5_second_stop'"
+      - "prompt_hypothesis: '약점 가설 1개 작성 유도'"
+      - "compare_with_problem: '문제 지문과 가설 비교'"
+      - "generate_intervention: 'slow_start_routine'"
+      - "provide_feedback: '아이디어가 떠오르면 5초 멈춤 → 약점 가설 1개 적기 → 문제 다시 읽기 루틴을 시도해볼까요?'"
+      - "log_pattern: 'idea_auto_fire_detected'"
+    solution:
+      action: "아이디어가 떠오르면 5초 멈춤 → 아이디어를 한 줄로 요약 후, '약점 가설' 1개를 곧바로 적는다 → 문제 지문을 다시 읽고, 가설과 비교한다"
+      check: "5초 멈춤→가설 쓰기 루틴을 세 번 성공했는지 확인. 요약이 적절했는지 짧게 피드백"
+      teacher_dialog: "선생님, 오늘 '5초 멈춤→가설 쓰기' 루틴을 세 번 성공했어요. 제 요약이 적절했는지 짧게 피드백 부탁드립니다!"
+    confidence: 0.95
+    rationale: "S1: 문제 읽기 단계에서 성급한 풀이 시작을 방지하고 신중한 분석 유도"
+
+  - rule_id: "S1_R2_defeat_premonition"
+    priority: 98
+    description: "3초 패배 예감형 - '못 풀 것 같다'는 느낌이 3초 만에 뇌를 잠그는 패턴"
+    persona_id: 2
+    persona_name: "3초 패배 예감형"
+    category: "confidence_distortion"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "reading"
+      - field: "give_up_signal_detected"
+        operator: "=="
+        value: true
+      - field: "time_before_giving_up"
+        operator: "<"
+        value: 10
+      - field: "attempt_duration"
+        operator: "<"
+        value: 30
+    action:
+      - "detect_pattern: 'defeat_premonition'"
+      - "trigger_timer: '3_minute_reinterpret'"
+      - "restart_problem_interpretation: true"
+      - "highlight_keywords: '조건, 단어 재색인'"
+      - "generate_intervention: 'confidence_recovery'"
+      - "provide_feedback: ''포기 신호'를 감지했어요. 3분 타이머를 켜고 문제를 처음부터 다시 읽어볼까요?'"
+    solution:
+      action: "'포기 신호'를 감지하면 3분 타이머를 켜고 문제 해석을 처음부터 다시 적는다 → 막힌 부분을 눈으로 3분간 응시하며 조건·단어를 재색인한다"
+      check: "'3분 재해석' 루틴을 두 번 사용했는지, 다시 읽은 메모에서 놓친 단어가 있었는지 검토"
+      teacher_dialog: "저는 오늘 '3분 재해석' 루틴을 두 번 썼습니다. 다시 읽은 메모에서 놓친 단어가 있었는지 검토해 주실 수 있나요?"
+    confidence: 0.94
+    rationale: "S1: 조기 포기 방지 및 문제 재해석을 통한 자신감 회복"
+
+  - rule_id: "S1_R3_working_memory_split"
+    priority: 97
+    description: "작업기억 ⅔ 할당형 - 다음 일정/잡생각이 머릿속을 스치며 2/3만 집중하는 패턴"
+    persona_id: 6
+    persona_name: "작업기억 ⅔ 할당형"
+    category: "cognitive_overload"
+    conditions:
+      - field: "solving_phase"
+        operator: "in"
+        value: ["reading", "analysis"]
+      - field: "distraction_count"
+        operator: ">="
+        value: 3
+      - field: "focus_duration_avg"
+        operator: "<"
+        value: 300
+      - field: "task_switching_detected"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'working_memory_split'"
+      - "suggest_postit_dump: '떠오른 일정 포스트잇 메모'"
+      - "activate_pomodoro: '25분 집중 / 5분 휴식'"
+      - "restrict_memo_check: '휴식 시간에만 확인'"
+      - "generate_intervention: 'focus_enhancement'"
+      - "provide_feedback: '잡생각이 자주 떠오르네요. 포스트잇에 적고 덮어두고, 25분 집중 세션을 시작해볼까요?'"
+    solution:
+      action: "떠오른 일정은 포스트잇에 적고 덮어두기 → 25분 집중 / 5분 휴식 Pomodoro 타이머 사용 → 휴식 때만 메모 확인·업데이트"
+      check: "25분 집중 세션 3번 돌렸는지, 중간에 잡생각 메모를 몇 번 했는지 확인"
+      teacher_dialog: "25분 집중 세션 3번 돌렸는데, 중간에 잡생각 메모를 몇 번 했는지 확인해 주실 수 있나요?"
+    confidence: 0.93
+    rationale: "S1: 주의력 분산 방지 및 집중력 강화"
+
+  # ========== S2: 문제 분석 단계 (Problem Analysis Phase) ==========
+
+  - rule_id: "S2_R1_overconfidence_tunnel"
+    priority: 96
+    description: "과신-시야 협착형 - 과한 자신감으로 숫자/기호의 미세한 차이를 인식하지 못하는 패턴"
+    persona_id: 3
+    persona_name: "과신-시야 협착형"
+    category: "confidence_distortion"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "analysis"
+      - field: "confidence_level"
+        operator: ">"
+        value: 0.85
+      - field: "detail_check_count"
+        operator: "<"
+        value: 2
+      - field: "similar_symbol_error"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'overconfidence_tunnel'"
+      - "trigger_breathing: '심호흡 10회'"
+      - "highlight_similar_symbols: '색펜 구분 표시'"
+      - "add_checkpoint: '작은 차이 체크 칸'"
+      - "generate_intervention: 'detail_awareness'"
+      - "provide_feedback: '풀이 시작 전 심호흡 10회 → 비슷한 기호를 색펜으로 표시해볼까요?'"
+    solution:
+      action: "풀이 착수 전 심호흡 10회 → 비슷한 기호·수치를 색펜으로 구분 표시 → 계산 단계마다 '작은 차이 체크' 칸에 ✔︎"
+      check: "색펜 표시한 부분을 같이 보며, 놓친 차이가 있었는지 확인"
+      teacher_dialog: "색펜 표시한 부분을 같이 보며, 제가 놓친 차이가 있었는지 알려주시면 감사하겠습니다."
+    confidence: 0.92
+    rationale: "S2: 과신으로 인한 세부사항 간과 방지"
+
+  - rule_id: "S2_R2_contradiction_fixation"
+    priority: 95
+    description: "모순 확신-답불가형 - '틀린 곳이 없다'는 집착으로 시야가 좁아지는 패턴"
+    persona_id: 5
+    persona_name: "모순 확신-답불가형"
+    category: "confidence_distortion"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "analysis"
+      - field: "stuck_duration"
+        operator: ">"
+        value: 300
+      - field: "self_correction_attempts"
+        operator: "<"
+        value: 2
+      - field: "insists_no_error"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'contradiction_fixation'"
+      - "display_phrase: '간단 실수 90% 문장'"
+      - "gamify_error_search: '사소한 실수 찾기 게임'"
+      - "suggest_color_rewrite: '다른 색 펜으로 다시 쓰기'"
+      - "generate_intervention: 'perspective_shift'"
+      - "provide_feedback: ''간단 실수 90%' 문장을 써서 관점을 전환해볼까요? 풀이를 거꾸로 읽어보세요!'"
+    solution:
+      action: "답이 안 나올 때 '간단 실수 90%' 문장을 써서 관점을 전환 → 풀이를 거꾸로 읽으며 '사소한 실수 찾기' 게임화 → 한 번은 다른 색 펜으로 다시 써보기"
+      check: "'간단 실수 게임'으로 찾은 오류를 검산, 또 다른 시야 전환 방법 제안"
+      teacher_dialog: "제가 '간단 실수 게임'으로 찾은 오류를 검산해 주실 수 있나요? 또 다른 시야 전환 방법이 있다면 알려주세요."
+    confidence: 0.91
+    rationale: "S2: 고착된 시야 전환 및 오류 발견 유도"
+
+  # ========== S3: 풀이 전략 수립 단계 (Strategy Planning Phase) ==========
+
+  - rule_id: "S3_R1_half_surrender_creativity"
+    priority: 94
+    description: "반(半)포기 창의 탐색형 - '어차피 틀릴 것'이라며 낮은 확률의 창의 풀이만 헤매는 패턴"
+    persona_id: 7
+    persona_name: "반(半)포기 창의 탐색형"
+    category: "approach_error"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "strategy"
+      - field: "standard_approach_skipped"
+        operator: "=="
+        value: true
+      - field: "creative_attempt_count"
+        operator: ">"
+        value: 3
+      - field: "time_on_unorthodox"
+        operator: ">"
+        value: 600
+    action:
+      - "detect_pattern: 'half_surrender_creativity'"
+      - "enforce_standard_first: 'A안 정석 10분 시도'"
+      - "require_analysis: 'A안 문제점 1줄 정리'"
+      - "allow_alternative: 'B안 스케치'"
+      - "suggest_solution_analysis: '해설 구조 분석'"
+      - "generate_intervention: 'strategy_structure'"
+      - "provide_feedback: '정석 접근 A안을 먼저 10분 시도하고, 문제점을 정리한 후 B안을 시도해볼까요?'"
+    solution:
+      action: "정석 접근 A안을 먼저 10분 시도 → 실패 시 A안 문제점 1줄 정리 → B안 스케치 → B안도 막히면 과감히 답안·해설 구조 분석"
+      check: "A안 10분, B안 5분 전략으로 풀어봤는지, A안 분석이 적절했는지 확인"
+      teacher_dialog: "오늘 A안 10분, B안 5분 전략으로 풀어봤어요. 제 A안 분석이 적절했는지 봐주실래요?"
+    confidence: 0.93
+    rationale: "S3: 비효율적 창의 탐색 방지 및 구조화된 전략 접근 유도"
+
+  - rule_id: "S3_R2_uncertain_forced"
+    priority: 93
+    description: "불확실 강행형 - 근거 부족인데도 '일단 적용'해서 오류가 연쇄되는 패턴"
+    persona_id: 10
+    persona_name: "불확실 강행형"
+    category: "approach_error"
+    conditions:
+      - field: "solving_phase"
+        operator: "in"
+        value: ["strategy", "execution"]
+      - field: "uncertain_step_count"
+        operator: ">="
+        value: 2
+      - field: "verification_skipped"
+        operator: "=="
+        value: true
+      - field: "cascading_error"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'uncertain_forced'"
+      - "introduce_confidence_marker: '확신 ★☆☆ 등급'"
+      - "flag_low_confidence: '별 1·2개 재검산 표시'"
+      - "prioritize_verification: '★ 1·2 지점 우선 점검'"
+      - "generate_intervention: 'certainty_check'"
+      - "provide_feedback: '근거가 약한 부분에 '확신 ★☆☆' 등급을 표시하고, 풀이 끝에 재검산해볼까요?'"
+    solution:
+      action: "근거 약하면 노란 포스트잇에 '확신 ★☆☆' 등급 표시 → 별 1·2개인 줄은 풀이 끝에 재검산 표시(✔︎) → 검산 단계에서 ★ 1·2 지점 우선 점검"
+      check: "노란 포스트잇으로 ★ 표시한 부분을 같이 검산, 다른 '확신 체크' 방법 제안"
+      teacher_dialog: "노란 포스트잇으로 ★ 표시한 부분을 같이 검산해 주시면 좋겠습니다. 다른 '확신 체크' 방법이 있을까요?"
+    confidence: 0.92
+    rationale: "S3: 불확실한 근거로 인한 연쇄 오류 방지"
+
+  # ========== S4: 풀이 실행 단계 (Solution Execution Phase) ==========
+
+  - rule_id: "S4_R1_unconscious_chain_mistake"
+    priority: 92
+    description: "무의식 연쇄 실수형 - 손이 먼저 움직여 사소한 계산 실수가 꼬리를 무는 패턴"
+    persona_id: 4
+    persona_name: "무의식 연쇄 실수형"
+    category: "mistake_pattern"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "execution"
+      - field: "calculation_speed"
+        operator: ">"
+        value: "threshold_fast"
+      - field: "micro_error_count"
+        operator: ">="
+        value: 2
+      - field: "error_propagation"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'unconscious_chain_mistake'"
+      - "enforce_pause: '숫자 한 줄마다 펜 내려놓고 1초'"
+      - "daily_log: '실수 장면 1개 기록'"
+      - "next_day_review: '다음 날 재확인'"
+      - "generate_intervention: 'mistake_awareness'"
+      - "provide_feedback: '숫자 한 줄 쓸 때마다 펜을 내려놓고 1초 휴식해볼까요? 실수 장면을 기록해두세요!'"
+    solution:
+      action: "숫자 한 줄 쓸 때마다 펜을 내려놓고 1초 휴식 → 매일 풀이 후 '실수 장면' 1개 기록 → 다음 날 첫 학습 전에 그 기록을 재확인"
+      check: "어제 적은 실수 장면을 보여드릴 때, 비슷한 실수를 막는 팁 제공"
+      teacher_dialog: "어제 적은 실수 장면을 보여드릴게요. 비슷한 실수를 막는 팁이 더 있을까요?"
+    confidence: 0.94
+    rationale: "S4: 무의식적 연쇄 실수 차단 및 의식적 점검 유도"
+
+  - rule_id: "S4_R2_explanation_mix"
+    priority: 91
+    description: "해설지-혼합 착각형 - 내 생각과 해설 내용을 섞어 쓰다 근거가 뒤섞이는 패턴"
+    persona_id: 8
+    persona_name: "해설지-혼합 착각형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "execution"
+      - field: "solution_reference_used"
+        operator: "=="
+        value: true
+      - field: "source_distinction"
+        operator: "=="
+        value: false
+      - field: "mixed_reasoning_detected"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'explanation_mix'"
+      - "enforce_color_separation: '내 풀이=파란색, 해설=빨간색'"
+      - "require_difference_note: '왜 다른가? 차이 2개 메모'"
+      - "schedule_review: '하루 뒤 통합 정리'"
+      - "generate_intervention: 'source_clarity'"
+      - "provide_feedback: '내 풀이는 파란색, 해설은 빨간색으로 분리해서 적어볼까요? 차이점 2개를 메모해보세요!'"
+    solution:
+      action: "내 풀이=파란색, 해설=빨간색 두 색깔 분리 기록 → 해설을 읽을 때 '왜 다른가?' 차이 2개 메모 → 하루 뒤, 파란·빨간 노트를 다시 읽어 통합 정리"
+      check: "파란·빨간 차이 두 가지를 설명드릴 때, 해설 흡수 과정 피드백"
+      teacher_dialog: "파란·빨간 차이 두 가지를 설명드릴게요. 제 해설 흡수 과정이 괜찮은지 피드백 부탁드립니다."
+    confidence: 0.90
+    rationale: "S4: 자기 풀이와 해설의 명확한 구분"
+
+  - rule_id: "S4_R3_practice_avoidance"
+    priority: 90
+    description: "연습 회피 관성형 - '이해했어' 착각으로 반복 연습을 건너뛰는 패턴"
+    persona_id: 9
+    persona_name: "연습 회피 관성형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "execution"
+      - field: "concept_understood_claim"
+        operator: "=="
+        value: true
+      - field: "practice_count"
+        operator: "<"
+        value: 3
+      - field: "similar_problem_attempt"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'practice_avoidance'"
+      - "require_difficulty_ladder: 'Low·Mid·High 1문제씩'"
+      - "flag_incomplete: '틀리면 불완전 표시 후 재학습'"
+      - "create_checklist: '주간 체크리스트 개념당 3회'"
+      - "generate_intervention: 'practice_reinforcement'"
+      - "provide_feedback: '새 개념을 배우면 Low·Mid·High 난이도별 1문제씩 풀어보세요!'"
+    solution:
+      action: "새 개념 배우면 즉시 난이도 Low·Mid·High 1문제씩 풀기 → Low / Mid 틀리면 해당 개념 '불완전'로 표시 후 재학습 → 주간 체크리스트: 개념당 최소 3회 재방문"
+      check: "Low·Mid·High 3문제 중 어떤 것을 틀렸는지, 어떤 부분을 더 연습해야 할지 조언"
+      teacher_dialog: "Low·Mid·High 3문제 중 Mid를 틀렸어요. 어떤 부분을 더 연습해야 할까요?"
+    confidence: 0.89
+    rationale: "S4: 연습 회피 방지 및 체계적 반복 학습 유도"
+
+  # ========== S5: 계산 과정 단계 (Calculation Process Phase) ==========
+
+  - rule_id: "S5_R1_speed_pressure_block"
+    priority: 89
+    description: "속도 압박 억제형 - 시험 시간이 눈에 들어올 때마다 압박이 기억을 눌러버리는 패턴"
+    persona_id: 11
+    persona_name: "속도 압박 억제형"
+    category: "time_pressure"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "calculation"
+      - field: "time_anxiety_detected"
+        operator: "=="
+        value: true
+      - field: "clock_check_frequency"
+        operator: ">"
+        value: 5
+      - field: "performance_degradation"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'speed_pressure_block'"
+      - "hide_visible_clock: '시계 뒤집기'"
+      - "set_silent_timer: '15분 간격 진동 타이머'"
+      - "require_summary: '타이머 울릴 때 1문장 요약'"
+      - "generate_intervention: 'time_management'"
+      - "provide_feedback: '시계를 뒤집고, 15분 간격으로 진동 타이머를 설정해볼까요?'"
+    solution:
+      action: "시작과 동시에 손목시계·휴대폰 시계 뒤집기 → 조용 타이머를 15분 간격으로 설정(삐 소리 X, 진동 O) → 타이머 울릴 때마다 현재 문제를 1문장으로 요약 후 진행 여부 판단"
+      check: "15분 타이머를 4번 돌렸는지, 진동이 왔을 때 요약이 적절했는지 확인"
+      teacher_dialog: "15분 타이머를 4번 돌렸는데 진동이 왔을 때 제 요약이 적절했는지, 한 번만 확인 부탁드려요."
+    confidence: 0.91
+    rationale: "S5: 시간 압박으로 인한 수행 저하 방지"
+
+  - rule_id: "S5_R2_unit_conversion_skip"
+    priority: 88
+    description: "단위 환산 생략형 - 단위 변환을 건너뛰거나 잘못 적용하는 패턴"
+    persona_id: 15
+    persona_name: "단위 환산 생략형"
+    category: "mistake_pattern"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "calculation"
+      - field: "unit_conversion_required"
+        operator: "=="
+        value: true
+      - field: "unit_conversion_performed"
+        operator: "=="
+        value: false
+      - OR:
+        - field: "unit_mismatch_error"
+          operator: "=="
+          value: true
+        - field: "answer_unit_missing"
+          operator: "=="
+          value: true
+    action:
+      - "detect_pattern: 'unit_conversion_skip'"
+      - "highlight_units: '모든 단위 색펜 표시'"
+      - "create_conversion_checklist: '단위 환산 체크리스트'"
+      - "verify_final_unit: '최종 답 단위 확인'"
+      - "generate_intervention: 'unit_awareness'"
+      - "provide_feedback: '문제에 나온 모든 단위를 색펜으로 표시하고, 환산이 필요한지 확인해볼까요?'"
+    solution:
+      action: "문제 읽을 때 모든 단위에 동그라미 → 단위 환산 필요 여부 체크 → 계산 중 단위 명시 → 최종 답에 단위 필수 기재"
+      check: "단위 표시와 환산 과정이 올바른지, 최종 답 단위가 문제 요구와 일치하는지 확인"
+      teacher_dialog: "제가 표시한 단위들과 환산 과정을 봐주세요. 최종 답 단위가 맞는지 확인 부탁드려요."
+    confidence: 0.88
+    rationale: "S5: 단위 관련 실수 방지"
+
+  - rule_id: "S5_R3_sign_error_chain"
+    priority: 87
+    description: "부호 실수 연쇄형 - +/- 부호 실수가 연쇄적으로 발생하는 패턴"
+    persona_id: 16
+    persona_name: "부호 실수 연쇄형"
+    category: "mistake_pattern"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "calculation"
+      - field: "sign_error_count"
+        operator: ">="
+        value: 2
+      - field: "sign_propagation_error"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'sign_error_chain'"
+      - "enforce_sign_highlight: '부호마다 색펜 강조'"
+      - "step_by_step_verify: '단계별 부호 확인'"
+      - "create_sign_checklist: '부호 체크리스트'"
+      - "generate_intervention: 'sign_awareness'"
+      - "provide_feedback: '부호마다 색펜으로 강조하고, 각 단계에서 부호를 확인해볼까요?'"
+    solution:
+      action: "모든 부호에 빨간색 표시 → 이항할 때마다 부호 변화 체크 → 계산 결과의 부호 예측 후 비교"
+      check: "부호 표시가 일관적인지, 이항 시 부호 변화가 올바른지 확인"
+      teacher_dialog: "제가 표시한 부호들을 봐주세요. 이항할 때 부호 변화가 맞는지 확인해주실 수 있나요?"
+    confidence: 0.87
+    rationale: "S5: 부호 실수 연쇄 방지"
+
+  # ========== S6: 답안 작성 단계 (Answer Writing Phase) ==========
+
+  - rule_id: "S6_R1_condition_neglect"
+    priority: 86
+    description: "조건 확인 생략형 - 문제의 조건이나 제약사항을 무시하고 답을 작성하는 패턴"
+    persona_id: 20
+    persona_name: "조건 확인 생략형"
+    category: "verification_absence"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "answer_writing"
+      - field: "problem_conditions_checked"
+        operator: "=="
+        value: false
+      - field: "constraint_violation"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'condition_neglect'"
+      - "highlight_conditions: '문제 조건 하이라이트'"
+      - "create_condition_checklist: '조건 체크리스트'"
+      - "verify_answer_against_conditions: '답이 조건 충족하는지 확인'"
+      - "generate_intervention: 'condition_awareness'"
+      - "provide_feedback: '답을 쓰기 전에 문제의 모든 조건을 다시 확인해볼까요?'"
+    solution:
+      action: "문제 읽을 때 조건에 밑줄 → 답 쓰기 전 조건 재확인 → 답이 모든 조건을 만족하는지 검증"
+      check: "조건 표시가 완전한지, 답이 모든 조건을 만족하는지 확인"
+      teacher_dialog: "제가 표시한 조건들과 답을 봐주세요. 모든 조건을 만족하는지 확인 부탁드려요."
+    confidence: 0.89
+    rationale: "S6: 조건 무시로 인한 오답 방지"
+
+  - rule_id: "S6_R2_answer_format_error"
+    priority: 85
+    description: "답안 형식 오류형 - 요구하는 형식(분수, 소수, 단위 등)과 다르게 답을 작성하는 패턴"
+    persona_id: 21
+    persona_name: "답안 형식 오류형"
+    category: "verification_absence"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "answer_writing"
+      - field: "required_format"
+        operator: "!="
+        value: null
+      - field: "answer_format_match"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'answer_format_error'"
+      - "highlight_format_requirement: '형식 요구사항 강조'"
+      - "show_format_examples: '올바른 형식 예시'"
+      - "verify_format: '형식 일치 확인'"
+      - "generate_intervention: 'format_compliance'"
+      - "provide_feedback: '문제에서 요구하는 답안 형식(분수/소수/단위)을 확인해볼까요?'"
+    solution:
+      action: "문제에서 '~로 나타내시오' 부분에 동그라미 → 최종 답 형식 확인 → 형식 변환 필요시 추가 계산"
+      check: "답안 형식이 문제 요구와 일치하는지 확인"
+      teacher_dialog: "제 답안 형식이 문제에서 요구하는 것과 맞는지 확인해주실 수 있나요?"
+    confidence: 0.88
+    rationale: "S6: 답안 형식 오류 방지"
+
+  # ========== S7: 검산/검증 단계 (Verification Phase) ==========
+
+  - rule_id: "S7_R1_verification_skip"
+    priority: 84
+    description: "검산 생략형 - 시간이 없다며 검산 과정을 건너뛰는 패턴"
+    persona_id: 25
+    persona_name: "검산 생략형"
+    category: "verification_absence"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "verification"
+      - field: "verification_performed"
+        operator: "=="
+        value: false
+      - field: "time_remaining"
+        operator: "<"
+        value: 300
+    action:
+      - "detect_pattern: 'verification_skip'"
+      - "allocate_verification_time: '최소 검산 시간 확보'"
+      - "prioritize_verification: '중요 문제 우선 검산'"
+      - "quick_check_method: '빠른 검산법 제시'"
+      - "generate_intervention: 'verification_habit'"
+      - "provide_feedback: '시간이 부족해도 중요한 문제는 반드시 검산해볼까요? 빠른 검산법을 알려드릴게요!'"
+    solution:
+      action: "풀이 시작 시 검산 시간 미리 확보 → 중요도 높은 문제 우선 검산 → 대입 검산 또는 역연산 검산 활용"
+      check: "검산 시간을 확보했는지, 어떤 검산 방법을 사용했는지 확인"
+      teacher_dialog: "제가 사용한 검산 방법이 효과적인지 봐주세요. 더 빠른 검산법이 있을까요?"
+    confidence: 0.90
+    rationale: "S7: 검산 습관 형성"
+
+  - rule_id: "S7_R2_partial_verification"
+    priority: 83
+    description: "부분 검산형 - 일부만 검산하고 전체를 확인했다고 착각하는 패턴"
+    persona_id: 26
+    persona_name: "부분 검산형"
+    category: "verification_absence"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "verification"
+      - field: "verification_coverage"
+        operator: "<"
+        value: 0.5
+      - field: "confidence_in_verification"
+        operator: ">"
+        value: 0.8
+    action:
+      - "detect_pattern: 'partial_verification'"
+      - "show_verification_gaps: '검산되지 않은 부분 표시'"
+      - "create_verification_checklist: '단계별 검산 체크리스트'"
+      - "enforce_complete_check: '전체 검산 유도'"
+      - "generate_intervention: 'complete_verification'"
+      - "provide_feedback: '모든 단계를 검산했는지 확인해볼까요? 체크리스트로 놓친 부분을 찾아보세요!'"
+    solution:
+      action: "풀이 각 단계에 번호 매기기 → 검산 시 각 번호 옆에 체크 → 모든 번호에 체크될 때까지 검산"
+      check: "모든 단계가 검산되었는지, 놓친 부분이 있는지 확인"
+      teacher_dialog: "제 검산 체크리스트를 봐주세요. 놓친 단계가 있는지 확인해주실 수 있나요?"
+    confidence: 0.87
+    rationale: "S7: 완전한 검산 유도"
+
+  # ========== S8: 오답 분석 단계 (Error Analysis Phase) ==========
+
+  - rule_id: "S8_R1_superficial_error_analysis"
+    priority: 82
+    description: "피상적 오답 분석형 - '실수했다'로만 정리하고 근본 원인을 분석하지 않는 패턴"
+    persona_id: 30
+    persona_name: "피상적 오답 분석형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "error_analysis"
+      - field: "error_cause_depth"
+        operator: "<"
+        value: 2
+      - field: "generic_explanation"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'superficial_error_analysis'"
+      - "require_5why_analysis: '5Why 분석 유도'"
+      - "categorize_error_type: '오류 유형 분류'"
+      - "create_improvement_plan: '개선 계획 수립'"
+      - "generate_intervention: 'deep_error_analysis'"
+      - "provide_feedback: ''왜 틀렸을까?'를 5번 물어보며 근본 원인을 찾아볼까요?'"
+    solution:
+      action: "'왜?' 질문 5번 반복하여 근본 원인 찾기 → 오류 유형 분류 (개념/계산/주의력/시간) → 유형별 개선 전략 수립"
+      check: "5Why 분석이 충분히 깊은지, 개선 전략이 구체적인지 확인"
+      teacher_dialog: "제 5Why 분석을 봐주세요. 근본 원인을 제대로 찾았는지 확인해주실 수 있나요?"
+    confidence: 0.88
+    rationale: "S8: 깊이 있는 오답 분석 유도"
+
+  - rule_id: "S8_R2_same_mistake_repeat"
+    priority: 81
+    description: "동일 실수 반복형 - 같은 유형의 실수를 반복하면서 인지하지 못하는 패턴"
+    persona_id: 31
+    persona_name: "동일 실수 반복형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "error_analysis"
+      - field: "same_error_type_count"
+        operator: ">="
+        value: 3
+      - field: "error_pattern_awareness"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'same_mistake_repeat'"
+      - "show_error_history: '동일 유형 오류 이력 표시'"
+      - "create_error_pattern_card: '실수 패턴 카드 생성'"
+      - "set_alert_trigger: '패턴 발생 시 알림'"
+      - "generate_intervention: 'pattern_breaking'"
+      - "provide_feedback: '같은 유형의 실수가 반복되고 있어요. 실수 패턴 카드를 만들어 매번 확인해볼까요?'"
+    solution:
+      action: "실수 유형별 카드 만들기 → 문제 풀기 전 해당 카드 읽기 → 같은 실수 시 카드에 기록 추가"
+      check: "실수 패턴이 줄어들고 있는지, 카드 활용이 효과적인지 확인"
+      teacher_dialog: "제 실수 패턴 카드를 봐주세요. 카드를 보고 실수가 줄었는지 함께 확인해주실 수 있나요?"
+    confidence: 0.89
+    rationale: "S8: 반복 실수 패턴 인식 및 개선"
+
+  # ========== S9: 시간 관리 단계 (Time Management Phase) ==========
+
+  - rule_id: "S9_R1_time_blindness"
+    priority: 80
+    description: "시간 맹목형 - 시간 흐름을 인지하지 못하고 한 문제에 과도하게 시간을 쓰는 패턴"
+    persona_id: 35
+    persona_name: "시간 맹목형"
+    category: "time_pressure"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "time_management"
+      - field: "time_per_problem"
+        operator: ">"
+        value: "average_time * 2"
+      - field: "time_awareness"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'time_blindness'"
+      - "set_problem_timer: '문제별 타이머 설정'"
+      - "show_time_warning: '시간 초과 경고'"
+      - "suggest_skip_strategy: '넘어가기 전략 제시'"
+      - "generate_intervention: 'time_awareness'"
+      - "provide_feedback: '한 문제에 너무 오래 머물고 있어요. 문제별 시간 제한을 두어볼까요?'"
+    solution:
+      action: "문제별 목표 시간 설정 → 목표 시간 도달 시 알림 → 1분 추가 후에도 해결 안 되면 표시 후 다음으로"
+      check: "시간 배분이 개선되었는지, 전체 문제 해결률이 높아졌는지 확인"
+      teacher_dialog: "제 시간 배분 기록을 봐주세요. 더 효율적인 시간 관리 방법이 있을까요?"
+    confidence: 0.86
+    rationale: "S9: 시간 인식 및 효율적 배분"
+
+  - rule_id: "S9_R2_perfectionism_trap"
+    priority: 79
+    description: "완벽주의 함정형 - 모든 문제를 완벽하게 풀려다 시간을 낭비하는 패턴"
+    persona_id: 36
+    persona_name: "완벽주의 함정형"
+    category: "time_pressure"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "time_management"
+      - field: "perfectionism_indicator"
+        operator: ">"
+        value: 0.8
+      - field: "time_efficiency"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect_pattern: 'perfectionism_trap'"
+      - "reframe_goal: '80점 목표로 전환'"
+      - "prioritize_problems: '문제 우선순위 설정'"
+      - "allow_strategic_skip: '전략적 건너뛰기 허용'"
+      - "generate_intervention: 'strategic_imperfection'"
+      - "provide_feedback: '모든 문제를 완벽하게 푸는 것보다, 중요한 문제를 확실히 맞히는 게 효율적이에요!'"
+    solution:
+      action: "시험 시작 시 문제 난이도 빠르게 파악 → 쉬운/중간/어려운 문제 분류 → 쉬운 문제부터 확실히 득점"
+      check: "우선순위 설정이 적절했는지, 시간 대비 득점이 최적화되었는지 확인"
+      teacher_dialog: "제 문제 우선순위 설정을 봐주세요. 더 효율적인 전략이 있을까요?"
+    confidence: 0.85
+    rationale: "S9: 완벽주의로 인한 시간 낭비 방지"
+
+  # ========== S10: 복습/정리 단계 (Review Phase) ==========
+
+  - rule_id: "S10_R1_shallow_review"
+    priority: 78
+    description: "피상적 복습형 - 답만 확인하고 풀이 과정을 복습하지 않는 패턴"
+    persona_id: 40
+    persona_name: "피상적 복습형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "review"
+      - field: "review_depth"
+        operator: "<"
+        value: 2
+      - field: "process_review"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'shallow_review'"
+      - "require_process_review: '풀이 과정 복습 유도'"
+      - "compare_with_solution: '모범 풀이와 비교'"
+      - "extract_learning_points: '학습 포인트 추출'"
+      - "generate_intervention: 'deep_review'"
+      - "provide_feedback: '답만 확인하지 말고, 풀이 과정을 모범 답안과 비교해볼까요?'"
+    solution:
+      action: "내 풀이와 모범 풀이 나란히 놓고 비교 → 차이점 3가지 이상 찾기 → 더 효율적인 방법 메모"
+      check: "풀이 비교가 충분했는지, 학습 포인트를 제대로 추출했는지 확인"
+      teacher_dialog: "제가 찾은 차이점들을 봐주세요. 놓친 중요한 포인트가 있는지 확인해주실 수 있나요?"
+    confidence: 0.87
+    rationale: "S10: 깊이 있는 복습 유도"
+
+  - rule_id: "S10_R2_no_consolidation"
+    priority: 77
+    description: "정리 부재형 - 배운 내용을 정리하지 않고 다음으로 넘어가는 패턴"
+    persona_id: 41
+    persona_name: "정리 부재형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "review"
+      - field: "summary_created"
+        operator: "=="
+        value: false
+      - field: "key_concept_noted"
+        operator: "=="
+        value: false
+    action:
+      - "detect_pattern: 'no_consolidation'"
+      - "require_summary: '핵심 정리 요구'"
+      - "create_concept_card: '개념 카드 생성'"
+      - "schedule_review: '복습 일정 설정'"
+      - "generate_intervention: 'consolidation_habit'"
+      - "provide_feedback: '오늘 배운 핵심 3가지를 정리해볼까요? 개념 카드로 만들면 복습에 도움이 돼요!'"
+    solution:
+      action: "학습 후 핵심 개념 3가지 정리 → 개념 카드에 기록 → 3일 후 복습 일정 설정"
+      check: "정리가 충분했는지, 복습 일정을 지켰는지 확인"
+      teacher_dialog: "제 핵심 정리를 봐주세요. 중요한 내용을 놓치지 않았는지 확인해주실 수 있나요?"
+    confidence: 0.86
+    rationale: "S10: 학습 내용 정리 및 장기 기억 강화"
+
+  - rule_id: "S10_R3_success_routine_modeling"
+    priority: 76
+    description: "성공 루틴 모델링 - 성취도 향상 학생의 패턴을 분석하고 확산"
+    persona_id: 50
+    persona_name: "성공 루틴 모델형"
+    category: "learning_habit"
+    conditions:
+      - field: "solving_phase"
+        operator: "=="
+        value: "review"
+      - field: "achievement_improvement_rate"
+        operator: ">"
+        value: 0.2
+      - field: "consistent_routine"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'success_routine'"
+      - "extract_success_pattern: '성공 패턴 추출'"
+      - "create_routine_template: '루틴 템플릿 생성'"
+      - "suggest_to_others: '다른 학생에게 제안'"
+      - "generate_report: 'success_routine_report'"
+      - "provide_feedback: '좋은 학습 루틴이 형성되고 있어요! 이 패턴을 계속 유지해볼까요?'"
+    solution:
+      action: "성공한 학습 루틴 기록 → 핵심 요소 분석 → 다른 상황에도 적용 시도"
+      check: "루틴이 일관되게 유지되는지, 다른 상황에도 적용 가능한지 확인"
+      teacher_dialog: "제 성공 루틴을 기록해봤어요. 이 루틴의 핵심 요소가 무엇인지 함께 분석해주실 수 있나요?"
+    confidence: 0.90
+    rationale: "S10: 성공 패턴 강화 및 확산"
+
+# ==============================================================================
+# 페르소나별 추가 규칙 (카테고리별 그룹화)
+# ==============================================================================
+
+  # ---------- 인지 과부하 (Cognitive Overload) 추가 규칙 ----------
+
+  - rule_id: "CO_R1_information_overload"
+    priority: 75
+    description: "정보 과부하형 - 너무 많은 정보를 동시에 처리하려다 혼란"
+    persona_id: 12
+    persona_name: "정보 과부하형"
+    category: "cognitive_overload"
+    conditions:
+      - field: "concurrent_info_count"
+        operator: ">"
+        value: 5
+      - field: "processing_confusion"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'information_overload'"
+      - "chunk_information: '정보 청킹'"
+      - "prioritize_info: '정보 우선순위화'"
+      - "generate_intervention: 'info_management'"
+      - "provide_feedback: '정보가 너무 많아요. 핵심만 추려서 단계별로 처리해볼까요?'"
+    solution:
+      action: "정보를 3-4개 덩어리로 나누기 → 한 덩어리씩 처리 → 각 단계 완료 후 다음으로"
+      check: "정보 청킹이 적절했는지, 처리 순서가 효율적인지 확인"
+      teacher_dialog: "정보를 나눈 방식이 괜찮은지 봐주세요. 더 효율적인 방법이 있을까요?"
+    confidence: 0.85
+    rationale: "인지 과부하 상황에서의 정보 관리"
+
+  # ---------- 자신감 왜곡 (Confidence Distortion) 추가 규칙 ----------
+
+  - rule_id: "CD_R1_extreme_self_doubt"
+    priority: 74
+    description: "극단적 자기 의심형 - 맞는 답도 의심하며 수정하다 틀리는 패턴"
+    persona_id: 13
+    persona_name: "극단적 자기 의심형"
+    category: "confidence_distortion"
+    conditions:
+      - field: "answer_change_count"
+        operator: ">"
+        value: 2
+      - field: "correct_to_wrong_change"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'extreme_self_doubt'"
+      - "enforce_first_answer_rule: '첫 답 유지 원칙'"
+      - "require_evidence_for_change: '변경 시 근거 필요'"
+      - "generate_intervention: 'confidence_building'"
+      - "provide_feedback: '첫 번째 답을 바꾸려면 명확한 근거가 필요해요. 근거 없이 바꾸지 않기로 해볼까요?'"
+    solution:
+      action: "답 수정 전 '왜 바꾸는가?' 1줄 기록 필수 → 근거 없으면 첫 답 유지 → 수정 후 결과 비교 분석"
+      check: "불필요한 답 변경이 줄었는지, 근거 기반 변경이 늘었는지 확인"
+      teacher_dialog: "제가 답을 바꾼 근거들을 봐주세요. 바꾸지 말았어야 할 것들이 있었나요?"
+    confidence: 0.84
+    rationale: "불필요한 답 변경으로 인한 오답 방지"
+
+  # ---------- 접근 전략 오류 (Approach Error) 추가 규칙 ----------
+
+  - rule_id: "AE_R1_formula_blind_application"
+    priority: 73
+    description: "공식 맹목 적용형 - 상황 파악 없이 공식을 기계적으로 적용"
+    persona_id: 18
+    persona_name: "공식 맹목 적용형"
+    category: "approach_error"
+    conditions:
+      - field: "formula_used"
+        operator: "=="
+        value: true
+      - field: "context_analysis"
+        operator: "=="
+        value: false
+      - field: "formula_mismatch"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'formula_blind_application'"
+      - "require_context_first: '상황 분석 우선'"
+      - "match_formula_to_context: '공식-상황 매칭'"
+      - "generate_intervention: 'contextual_formula'"
+      - "provide_feedback: '공식을 쓰기 전에, 이 문제에 이 공식이 맞는지 먼저 확인해볼까요?'"
+    solution:
+      action: "문제 상황 먼저 분석 → 적용 가능한 공식 후보 나열 → 각 공식의 적용 조건 확인 → 가장 적합한 공식 선택"
+      check: "공식 선택 과정이 논리적인지, 조건 확인이 충분했는지 확인"
+      teacher_dialog: "제가 공식을 선택한 과정을 봐주세요. 더 적합한 공식이 있었을까요?"
+    confidence: 0.83
+    rationale: "맥락 무시한 공식 적용 오류 방지"
+
+  # ---------- 감정적 장벽 (Emotional Block) 추가 규칙 ----------
+
+  - rule_id: "EB_R1_math_anxiety"
+    priority: 72
+    description: "수학 불안형 - 수학에 대한 불안감이 수행을 저하시키는 패턴"
+    persona_id: 45
+    persona_name: "수학 불안형"
+    category: "emotional_block"
+    conditions:
+      - field: "anxiety_indicator"
+        operator: ">"
+        value: 0.7
+      - field: "avoidance_behavior"
+        operator: "=="
+        value: true
+      - field: "performance_below_ability"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'math_anxiety'"
+      - "provide_reassurance: '불안 완화 메시지'"
+      - "start_with_easy: '쉬운 문제부터 시작'"
+      - "celebrate_small_wins: '작은 성공 축하'"
+      - "generate_intervention: 'anxiety_reduction'"
+      - "provide_feedback: '긴장하지 마세요. 쉬운 문제부터 천천히 시작해볼까요? 작은 성공이 자신감을 키워요!'"
+    solution:
+      action: "심호흡 3회로 시작 → 가장 쉬운 문제 먼저 풀기 → 맞힐 때마다 스스로 칭찬 → 점진적으로 난이도 올리기"
+      check: "불안 수준이 낮아졌는지, 자신감이 생겼는지 확인"
+      teacher_dialog: "오늘 쉬운 문제부터 시작해봤어요. 덜 긴장되고 더 잘 풀리는 느낌이 드는지 함께 확인해주세요."
+    confidence: 0.88
+    rationale: "수학 불안으로 인한 수행 저하 완화"
+
+  - rule_id: "EB_R2_frustration_cycle"
+    priority: 71
+    description: "좌절 순환형 - 틀리면 좌절하고, 좌절하면 더 틀리는 악순환"
+    persona_id: 46
+    persona_name: "좌절 순환형"
+    category: "emotional_block"
+    conditions:
+      - field: "frustration_level"
+        operator: ">"
+        value: 0.7
+      - field: "error_rate_increasing"
+        operator: "=="
+        value: true
+      - field: "negative_self_talk"
+        operator: "=="
+        value: true
+    action:
+      - "detect_pattern: 'frustration_cycle'"
+      - "interrupt_cycle: '순환 중단'"
+      - "reframe_mistakes: '실수 재해석'"
+      - "set_break: '짧은 휴식'"
+      - "generate_intervention: 'frustration_management'"
+      - "provide_feedback: '잠깐 멈추고 심호흡해볼까요? 틀리는 건 배우는 과정이에요. 2분 휴식 후 다시 시작해요!'"
+    solution:
+      action: "좌절 신호 감지 시 2분 휴식 → '틀려도 괜찮아, 이게 배움이야' 자기 대화 → 이전 성공 경험 떠올리기 → 쉬운 문제로 자신감 회복"
+      check: "좌절 순환이 끊어졌는지, 긍정적 자기 대화가 늘었는지 확인"
+      teacher_dialog: "좌절했을 때 2분 휴식을 시도했어요. 다시 시작할 때 기분이 어땠는지 이야기해볼까요?"
+    confidence: 0.86
+    rationale: "좌절의 악순환 차단"
+
+# ==============================================================================
+# 기본 규칙 (Default Rule)
+# ==============================================================================
+
+default_rule:
+  rule_id: "default"
+  description: "조건에 맞는 규칙이 없을 때 기본 분석 수행"
+  action:
+    - "analyze: 'basic_problem_solving_analysis'"
+    - "monitor: 'solving_behavior'"
+    - "log_activity: 'problem_solving_session'"
+    - "display_message: '문제 풀이 과정을 모니터링하고 있어요. 도움이 필요하면 알려주세요!'"
+  confidence: 0.5
+  rationale: "기본 모니터링 및 분석 수행"
+
+# ==============================================================================
+# 피드백 톤 설정
+# ==============================================================================
+feedback_tones:
+  supportive:
+    name: "지지적"
+    description: "격려와 지지를 통한 긍정적 접근"
+    keywords: ["잘하고 있어요", "함께 해봐요", "천천히", "괜찮아요"]
+    use_when: ["frustration", "anxiety", "low_confidence"]
+
+  directive:
+    name: "지시적"
+    description: "명확한 지침과 방향 제시"
+    keywords: ["~해보세요", "~하는 게 좋아요", "이렇게 해볼까요"]
+    use_when: ["confusion", "strategy_needed", "clear_error"]
+
+  analytical:
+    name: "분석적"
+    description: "논리적 분석과 설명 중심"
+    keywords: ["왜냐하면", "분석해보면", "패턴을 보면", "이유는"]
+    use_when: ["pattern_detection", "error_analysis", "concept_explanation"]
+
+  motivational:
+    name: "동기부여"
+    description: "동기 유발과 자신감 강화"
+    keywords: ["할 수 있어요", "잘하고 있어요", "성장하고 있어요"]
+    use_when: ["success", "improvement", "effort_recognition"]
+
+  reflective:
+    name: "성찰적"
+    description: "자기 성찰을 유도하는 질문 중심"
+    keywords: ["어떻게 생각해요?", "왜 그랬을까요?", "다음엔 어떻게?"]
+    use_when: ["self_awareness", "metacognition", "learning_from_mistakes"]
+
+# ==============================================================================
+# 관련 DB 테이블 및 필드 정보
+# ==============================================================================
+#
+# Database Tables:
+# - mdl_augmented_teacher_solving_log: 문제풀이 로그
+#   - id (INT): Primary key
+#   - userid (INT): 사용자 ID
+#   - problemid (INT): 문제 ID
+#   - solving_phase (VARCHAR): 풀이 단계
+#   - time_spent (INT): 소요 시간 (초)
+#   - answer_correct (TINYINT): 정답 여부
+#   - timecreated (INT): 생성 시간
+#
+# - mdl_augmented_teacher_persona_detection: 페르소나 탐지 기록
+#   - id (INT): Primary key
+#   - userid (INT): 사용자 ID
+#   - persona_id (INT): 페르소나 ID
+#   - detection_confidence (FLOAT): 탐지 신뢰도
+#   - intervention_provided (TEXT): 제공된 개입
+#   - timecreated (INT): 생성 시간
+#
+# - mdl_augmented_teacher_intervention_log: 개입 기록
+#   - id (INT): Primary key
+#   - userid (INT): 사용자 ID
+#   - rule_id (VARCHAR): 적용된 규칙 ID
+#   - feedback_message (TEXT): 피드백 메시지
+#   - student_response (TEXT): 학생 반응
+#   - effectiveness_score (FLOAT): 효과성 점수
+#   - timecreated (INT): 생성 시간

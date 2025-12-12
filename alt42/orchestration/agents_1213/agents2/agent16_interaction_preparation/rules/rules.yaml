@@ -1,0 +1,418 @@
+# Rules for Agent 16 - Interaction Preparation
+# Generated at: 2025-01-21
+# Purpose: 현직 수학선생님 수준의 상호작용 준비 (90% 목표)
+# Source: teacher_level_evaluation.md 분석 기반 확장
+
+version: "2.0"
+scenario: "interaction_preparation"
+description: "수학 학습 단계별 세계관 매핑 및 학원 맥락을 고려한 상호작용 준비 - 현직 선생님 수준 90% 달성"
+
+rules:
+  # ========== S0: 수학 학습 상태 파악 및 정량화 ==========
+  
+  - rule_id: "S0_R1_math_learning_stage_detection"
+    priority: 99
+    description: "수학 학습 단계 감지 (개념/유형/심화/기출)"
+    conditions:
+      - field: "math_learning_stage"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "interaction_trigger"
+          operator: "!="
+          value: null
+    action:
+      - "collect_info: 'math_learning_stage'"
+      - "question: '현재 학습 중인 단계는 무엇인가요? (A) 개념학습 (B) 유형연습 (C) 심화 (D) 기출'"
+      - "validate: '학습 단계는 개념학습, 유형연습, 심화, 기출 중 하나여야 합니다'"
+      - "store: 'math_learning_stage'"
+    confidence: 0.95
+    rationale: "S0: 학습 단계 감지는 세계관 매핑의 기초 데이터"
+    data_source: "학생설문"
+  
+  - rule_id: "S0_R2_math_performance_quantification"
+    priority: 98
+    description: "수학 성과 정량화 (정답률, 단원별 성취도)"
+    conditions:
+      - field: "math_recent_accuracy"
+        operator: "=="
+        value: null
+      - OR:
+        - field: "interaction_trigger"
+          operator: "!="
+          value: null
+    action:
+      - "collect_info: 'math_performance'"
+      - "question: '최근 수학 문제 정답률은 몇 %인가요? (예: 70%)'"
+      - "question: '단원별 정답률을 알려주세요. (함수: __%, 도형: __%, 통계: __%)'"
+      - "store: 'math_recent_accuracy', 'unit_accuracy'"
+    confidence: 0.94
+    rationale: "S0: 성과 정량화는 학생 수준 판단 및 세계관 선택의 기준"
+    data_source: "학생설문"
+  
+  - rule_id: "S0_R3_student_level_classification"
+    priority: 97
+    description: "학생 수준 분류 (하위권/중위권/상위권)"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: null
+      - field: "math_recent_accuracy"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'student_level = classify_by_accuracy(math_recent_accuracy)'"
+      - "if: 'math_recent_accuracy < 50' -> 'student_level = 하위권'"
+      - "if: 'math_recent_accuracy >= 50 AND math_recent_accuracy < 80' -> 'student_level = 중위권'"
+      - "if: 'math_recent_accuracy >= 80' -> 'student_level = 상위권'"
+      - "store: 'student_level'"
+    confidence: 0.93
+    rationale: "S0: 학생 수준 분류는 수준별 차별화 전략의 기초"
+    data_source: "자동 계산 (정답률 기반)"
+  
+  - rule_id: "S0_R4_math_learning_style_integration"
+    priority: 96
+    description: "수학 학습 스타일 정보 통합 (Agent 01 온보딩 데이터)"
+    conditions:
+      - field: "math_learning_style"
+        operator: "=="
+        value: null
+    action:
+      - "fetch_from_agent: 'agent01', 'math_learning_style'"
+      - "if_not_exists: 'collect_info: math_learning_style'"
+      - "question: '수학 문제를 풀 때 어떤 방식이 편하신가요? (A) 계산형 (B) 개념형 (C) 응용형'"
+      - "store: 'math_learning_style'"
+    confidence: 0.92
+    rationale: "S0: 학습 스타일은 세계관 선택에 영향"
+    data_source: "Agent 01 연계 또는 학생설문"
+  
+  - rule_id: "S0_R5_weak_unit_identification"
+    priority: 95
+    description: "취약 단원 식별"
+    conditions:
+      - field: "weak_units"
+        operator: "=="
+        value: null
+      - field: "unit_accuracy"
+        operator: "!="
+        value: null
+    action:
+      - "calculate: 'weak_units = identify_weak_units(unit_accuracy, threshold=60)'"
+      - "question: '어떤 단원에서 가장 도움이 필요하신가요?'"
+      - "store: 'weak_units'"
+    confidence: 0.91
+    rationale: "S0: 취약 단원은 도제학습 모드 우선 선택의 기준"
+    data_source: "자동 계산 또는 학생설문"
+  
+  # ========== S1: 수학 학습 단계별 세계관 매핑 ==========
+  
+  - rule_id: "S1_R1_concept_learning_worldview_mapping"
+    priority: 90
+    description: "개념 학습 단계 → 세계관 매핑"
+    conditions:
+      - field: "math_learning_stage"
+        operator: "=="
+        value: "개념학습"
+    action:
+      - "if: 'student_question_frequency == high' -> 'select_worldview: 도제학습'"
+      - "if: 'student_question_frequency == low' -> 'select_worldview: 탐구학습'"
+      - "if: 'math_learning_style == 개념형' -> 'select_worldview: 탐구학습'"
+      - "if: 'math_learning_style == 계산형' -> 'select_worldview: 도제학습'"
+      - "set_narrative_theme: '개념을 탐구하는 여정' 또는 '선생님과 함께하는 개념 이해'"
+      - "set_tone: '호기심 유도' 또는 '안내형'"
+    confidence: 0.90
+    rationale: "S1: 개념 학습은 탐구학습 또는 도제학습 모드가 적합"
+    data_source: "선생님 체크리스트: '개념 학습 단계: 탐구학습 모드 권장'"
+  
+  - rule_id: "S1_R2_type_practice_worldview_mapping"
+    priority: 89
+    description: "유형 연습 단계 → 세계관 매핑"
+    conditions:
+      - field: "math_learning_stage"
+        operator: "=="
+        value: "유형연습"
+    action:
+      - "if: 'student_motivation == low' -> 'select_worldview: 단기미션'"
+      - "if: 'student_motivation == high' -> 'select_worldview: 자기주도'"
+      - "if: 'student_level == 하위권' -> 'select_worldview: 단기미션'"
+      - "if: 'student_level == 상위권' -> 'select_worldview: 자기주도'"
+      - "set_narrative_theme: '오늘 3개 유형 완료 목표' 또는 '자율적 연습의 시간'"
+      - "set_tone: '목표 지향' 또는 '자율 강조'"
+    confidence: 0.89
+    rationale: "S1: 유형 연습은 단기미션 또는 자기주도 모드가 적합"
+    data_source: "선생님 체크리스트: '유형 연습 단계: 단기미션 모드 권장'"
+  
+  - rule_id: "S1_R3_advanced_problem_worldview_mapping"
+    priority: 88
+    description: "심화 문제 단계 → 세계관 매핑"
+    conditions:
+      - field: "math_learning_stage"
+        operator: "=="
+        value: "심화"
+    action:
+      - "if: 'student_fatigue == high' -> 'select_worldview: 맞춤학습'"
+      - "if: 'student_fatigue == low' -> 'select_worldview: 자기성찰'"
+      - "if: 'student_level == 하위권' -> 'select_worldview: 맞춤학습'"
+      - "if: 'student_level == 상위권' -> 'select_worldview: 자기성찰'"
+      - "set_narrative_theme: '틀려도 성장하는 시간' 또는 '나에게 맞는 난이도'"
+      - "set_tone: '격려 중심' 또는 '성장 강조'"
+    confidence: 0.88
+    rationale: "S1: 심화 문제는 자기성찰 또는 맞춤학습 모드가 적합"
+    data_source: "선생님 체크리스트: '심화 문제 단계: 자기성찰 모드 권장'"
+  
+  - rule_id: "S1_R4_past_exam_worldview_mapping"
+    priority: 87
+    description: "기출 문제 단계 → 세계관 매핑"
+    conditions:
+      - field: "math_learning_stage"
+        operator: "=="
+        value: "기출"
+      - field: "exam_d_day"
+        operator: "<="
+        value: 14
+    action:
+      - "if: 'exam_d_day <= 7' -> 'select_worldview: 시험대비'"
+      - "if: 'exam_d_day > 7' -> 'select_worldview: 시간성찰'"
+      - "if: 'time_management_issue == true' -> 'select_worldview: 시간성찰'"
+      - "set_narrative_theme: 'D-__일, 마지막 스퍼트' 또는 '시간과 함께 걷는 느낌'"
+      - "set_tone: '긴장 완화' 또는 '시간 관리 강조'"
+    confidence: 0.87
+    rationale: "S1: 기출 문제는 시험대비 또는 시간성찰 모드가 적합"
+    data_source: "선생님 체크리스트: '기출 문제: 시험대비 모드 (D-14일 이내)'"
+  
+  # ========== S2: 학원 수업 맥락 고려 ==========
+  
+  - rule_id: "S2_R1_academy_pre_class_preparation"
+    priority: 85
+    description: "학원 수업 전 상호작용 준비"
+    conditions:
+      - field: "academy_class_time"
+        operator: "!="
+        value: null
+      - field: "current_time"
+        operator: "<"
+        value: "academy_class_time - 2hours"
+      - field: "pre_class_interaction_needed"
+        operator: "=="
+        value: true
+    action:
+      - "question: '학원 수업 전 어떤 도움이 필요하신가요? (A) 예습 가이드 (B) 개념 리마인드 (C) 문제 선행 학습'"
+      - "if: 'preparation_type == 예습 가이드' -> 'select_worldview: 맞춤학습'"
+      - "if: 'preparation_type == 개념 리마인드' -> 'select_worldview: 도제학습'"
+      - "if: 'preparation_type == 문제 선행 학습' -> 'select_worldview: 단기미션'"
+      - "set_narrative_theme: '학원 수업을 위한 준비'"
+      - "set_tone: '안내형'"
+    confidence: 0.85
+    rationale: "S2: 학원 수업 전 준비는 수업 효과성 향상에 중요"
+    data_source: "학생설문: '학원 수업 전 상호작용이 필요하신가요?'"
+  
+  - rule_id: "S2_R2_academy_post_class_preparation"
+    priority: 84
+    description: "학원 수업 후 상호작용 준비"
+    conditions:
+      - field: "academy_class_completed"
+        operator: "=="
+        value: true
+      - field: "post_class_interaction_needed"
+        operator: "=="
+        value: true
+    action:
+      - "collect_info: 'academy_class_content', 'student_understanding_level'"
+      - "question: '학원 수업 내용은 무엇이었나요? (단원: __)'"
+      - "question: '학원 수업 이해도는 어떠신가요? (A) 완전 이해 (B) 부분 이해 (C) 이해 부족'"
+      - "if: 'understanding_level == 완전 이해' -> 'select_worldview: 자기주도'"
+      - "if: 'understanding_level == 부분 이해' -> 'select_worldview: 도제학습'"
+      - "if: 'understanding_level == 이해 부족' -> 'select_worldview: 자기성찰'"
+      - "set_narrative_theme: '학원 수업 복습 및 정리'"
+      - "set_tone: '지원형'"
+    confidence: 0.84
+    rationale: "S2: 학원 수업 후 준비는 학습 내구성 향상에 중요"
+    data_source: "선생님 체크리스트: '학원 수업 후: 복습 상호작용 준비'"
+  
+  # ========== S3: 문제 풀이 중 실시간 상호작용 준비 ==========
+  
+  - rule_id: "S3_R1_problem_solving_stuck_detection"
+    priority: 83
+    description: "문제 풀이 중 막힘 감지 시 즉시 상호작용 준비"
+    conditions:
+      - field: "problem_solving_status"
+        operator: "=="
+        value: "in_progress"
+      - field: "problem_solving_time"
+        operator: ">="
+        value: "stuck_threshold_minutes"
+      - field: "progress_detected"
+        operator: "=="
+        value: false
+    action:
+      - "detect_problem_type: 'concept' or 'calculation'"
+      - "if: 'problem_type == concept' -> 'select_worldview: 도제학습'"
+      - "if: 'problem_type == calculation' -> 'select_worldview: 단기미션'"
+      - "prepare_hint: '적절한 힌트 준비'"
+      - "set_narrative_theme: '막힘을 돌파하는 순간'"
+      - "set_tone: '지원형'"
+    confidence: 0.83
+    rationale: "S3: 막힘 감지는 즉시 개입으로 학습 효율 향상"
+    data_source: "선생님 체크리스트: '문제 풀이 중 막힘 감지 시간: __분 (기본값: 5분)'"
+  
+  - rule_id: "S3_R2_calculation_error_pattern_detection"
+    priority: 82
+    description: "계산 실수 패턴 감지 시 상호작용 준비"
+    conditions:
+      - field: "calculation_error_frequency"
+        operator: ">="
+        value: 3
+      - field: "calculation_error_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "classify_error_type: '부호 실수' or '계산 과정 오류' or '답안 옮기기 실수'"
+      - "select_worldview: 자기성찰"
+      - "set_narrative_theme: '실수를 통해 개선하는 시간'"
+      - "set_tone: '격려 중심'"
+      - "prepare_attention_guide: '계산 실수 유형별 주의 안내'"
+    confidence: 0.82
+    rationale: "S3: 계산 실수 패턴 감지는 반복 실수 방지에 중요"
+    data_source: "선생님 텍스트 입력: '계산 실수 패턴 감지 시: 주의 안내 상호작용 준비'"
+  
+  - rule_id: "S3_R3_problem_solving_progress_based_preparation"
+    priority: 81
+    description: "문제 풀이 진도 기반 상호작용 준비"
+    conditions:
+      - field: "problem_solving_speed"
+        operator: "<"
+        value: "expected_speed"
+      - field: "time_limit_approaching"
+        operator: "=="
+        value: true
+    action:
+      - "select_worldview: 시간성찰"
+      - "set_narrative_theme: '시간과 함께 걷는 느낌'"
+      - "set_tone: '시간 관리 강조'"
+      - "prepare_time_management_guide: '시간 관리 전략 안내'"
+    confidence: 0.81
+    rationale: "S3: 진도 기반 준비는 시간 관리 향상에 도움"
+    data_source: "자동 수집 (문제 풀이 로그)"
+  
+  # ========== S4: 단원별 취약점 기반 상호작용 준비 ==========
+  
+  - rule_id: "S4_R1_weak_unit_based_worldview_selection"
+    priority: 80
+    description: "취약 단원 학습 시 세계관 선택"
+    conditions:
+      - field: "current_unit"
+        operator: "in"
+        value: "weak_units"
+      - field: "current_unit_accuracy"
+        operator: "<"
+        value: 60
+    action:
+      - "select_worldview: 도제학습"
+      - "set_priority: 'high'"
+      - "set_narrative_theme: '취약 단원 집중 지원'"
+      - "set_tone: '지원형'"
+      - "prepare_focused_support: '단원별 특성 반영 지원'"
+    confidence: 0.80
+    rationale: "S4: 취약 단원은 도제학습 모드로 집중 지원 필요"
+    data_source: "학생설문: '어떤 단원에서 가장 도움이 필요하신가요?'"
+  
+  - rule_id: "S4_R2_unit_specific_strategy"
+    priority: 79
+    description: "단원별 특성 반영 전략"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+    action:
+      - "if: 'current_unit == 함수' -> 'strategy: 그래프 이해 중심'"
+      - "if: 'current_unit == 도형' -> 'strategy: 작도 과정 중심'"
+      - "if: 'current_unit == 통계' -> 'strategy: 데이터 해석 중심'"
+      - "if: 'current_unit == 방정식' -> 'strategy: 단계별 풀이 과정 중심'"
+      - "adjust_worldview_narrative: '단원별 특성 반영'"
+    confidence: 0.79
+    rationale: "S4: 단원별 특성 반영은 학습 효과 향상"
+    data_source: "선생님 텍스트 입력: '함수 단원: 그래프 이해 중심 상호작용'"
+  
+  # ========== S5: 학생 수준별 차별화 ==========
+  
+  - rule_id: "S5_R1_level_based_worldview_selection"
+    priority: 78
+    description: "학생 수준별 세계관 선택"
+    conditions:
+      - field: "student_level"
+        operator: "!="
+        value: null
+    action:
+      - "if: 'student_level == 하위권' -> 'select_worldview: 자기성찰', 'set_tone: 격려 중심'"
+      - "if: 'student_level == 중위권' -> 'select_worldview: 단기미션', 'set_tone: 도전 중심'"
+      - "if: 'student_level == 상위권' -> 'select_worldview: 탐구학습', 'set_tone: 심화 중심'"
+      - "adjust_narrative_theme: '수준별 적합한 테마'"
+    confidence: 0.78
+    rationale: "S5: 학생 수준별 차별화는 효과성 향상"
+    data_source: "선생님 체크리스트: '하위권: 격려 중심 → 자기성찰 모드'"
+  
+  - rule_id: "S5_R2_learning_style_based_adjustment"
+    priority: 77
+    description: "학습 스타일 기반 세계관 조정"
+    conditions:
+      - field: "math_learning_style"
+        operator: "!="
+        value: null
+    action:
+      - "if: 'math_learning_style == 계산형' -> 'adjust_to: 단기미션'"
+      - "if: 'math_learning_style == 개념형' -> 'adjust_to: 탐구학습'"
+      - "if: 'math_learning_style == 응용형' -> 'adjust_to: 자기주도'"
+      - "preserve_worldview_if_conflict: '기존 선택 유지하되 톤 조정'"
+    confidence: 0.77
+    rationale: "S5: 학습 스타일 반영은 개인화 향상"
+    data_source: "Agent 01 연계 또는 학생설문"
+  
+  # ========== S6: 상호작용 연속성 및 개인화 ==========
+  
+  - rule_id: "S6_R1_previous_interaction_continuity"
+    priority: 76
+    description: "이전 상호작용 연속성 유지"
+    conditions:
+      - field: "previous_worldview"
+        operator: "!="
+        value: null
+      - field: "previous_narrative_theme"
+        operator: "!="
+        value: null
+    action:
+      - "check_worldview_compatibility: '이전 세계관과 호환성 확인'"
+      - "if_compatible: 'maintain_worldview: 이전 세계관 유지'"
+      - "if_not_compatible: 'transition_smoothly: 자연스러운 전환'"
+      - "maintain_character_consistency: '캐릭터 일관성 유지'"
+      - "preserve_emotional_tone: '감정 톤 유지'"
+    confidence: 0.76
+    rationale: "S6: 연속성 유지는 관계 형성에 중요"
+    data_source: "이전 상호작용 기록"
+  
+  - rule_id: "S6_R2_personalized_worldview_preference"
+    priority: 75
+    description: "학생별 선호 세계관 학습 및 적용"
+    conditions:
+      - field: "interaction_history_count"
+        operator: ">="
+        value: 5
+      - field: "worldview_effectiveness_data"
+        operator: "!="
+        value: null
+    action:
+      - "analyze_effectiveness: '세계관별 효과성 분석'"
+      - "identify_preferred_worldview: '학생별 선호 세계관 식별'"
+      - "prioritize_preferred: '선호 세계관 우선 선택'"
+      - "track_effectiveness: '효과성 추적 지속'"
+    confidence: 0.75
+    rationale: "S6: 개인화 깊이 강화로 효과성 향상"
+    data_source: "상호작용 효과성 데이터 수집"
+
+default_rule:
+  rule_id: "default_interaction_preparation"
+  action:
+    - "select_worldview: 맞춤학습"
+    - "set_narrative_theme: '학생 중심 맞춤 상호작용'"
+    - "set_tone: '친근하고 진심이 느껴지는 톤'"
+  confidence: 0.5
+  rationale: "기본값: 데이터 부족 시 안전한 선택"

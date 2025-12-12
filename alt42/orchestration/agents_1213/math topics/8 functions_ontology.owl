@@ -1,0 +1,1242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:ar="http://example.org/adaptive-review#"
+    xml:base="http://example.org/adaptive-review">
+
+  <owl:Ontology rdf:about="http://example.org/adaptive-review">
+    <rdfs:comment xml:lang="ko">대한민국 함수 영역 기반 탄력적 복습 온톨로지 (학년 순서 보장, 활동 포함, 상세 설명)</rdfs:comment>
+  </owl:Ontology>
+
+  <!-- Schema (minimal, 재사용) -->
+  <owl:Class rdf:about="http://example.org/adaptive-review#Subtopic"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#precedes"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#dependsOn"/>
+  <owl:ObjectProperty rdf:about="http://example.org/adaptive-review#includes"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#stage"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#hasURL"/>
+  <owl:DatatypeProperty rdf:about="http://example.org/adaptive-review#description"/>
+
+  <!-- 표준 학습활동 인스턴스 (모든 주제에 포함) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRemind_Default"><rdfs:label xml:lang="ko">개념요약</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptRebuild_Default"><rdfs:label xml:lang="ko">개념이해하기</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ConceptCheck_Default"><rdfs:label xml:lang="ko">개념체크</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#ExampleQuiz_Default"><rdfs:label xml:lang="ko">예제퀴즈</rdfs:label></owl:NamedIndividual>
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#RepresentativeType_Default"><rdfs:label xml:lang="ko">대표유형</rdfs:label></owl:NamedIndividual>
+
+  <!-- 1단계: 함수 (중등수학 1-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_뜻">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 뜻</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=8&amp;cmid=53190&amp;page=1&amp;quizid=86117</ar:hasURL>
+    <ar:description xml:lang="ko">함수(중등 1-1) — 두 집합 사이의 대응 관계에서 정의역의 각 원소에 공역의 원소가 오직 하나씩 대응될 때, 그 대응을 함수라고 한다. 함수의 개념을 이해하고 함수인지 아닌지를 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함숫값">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함숫값</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=8&amp;cmid=53192&amp;page=1&amp;quizid=86118</ar:hasURL>
+    <ar:description xml:lang="ko">함수(중등 1-1) — 함수 f에 의하여 x의 상이 y일 때, y를 x에 대한 함숫값이라 하고 f(x)로 나타낸다. 주어진 함수에서 함숫값을 구하고, 함숫값을 이용하여 함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#여러_가지_함수_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">여러 가지 함수 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=8&amp;cmid=53191&amp;page=1&amp;quizid=86119</ar:hasURL>
+    <ar:description xml:lang="ko">함수(중등 1-1) — 일대일함수, 일대일 대응, 항등함수, 상수함수 등 다양한 함수의 관계를 이해하고 구분할 수 있다. 함수의 성질을 파악하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 2단계: 함수의 그래프와 활용 (중등수학 1-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#수직선_위의_점의_좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">수직선 위의 점의 좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53193&amp;page=1&amp;quizid=86120</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 수직선 위의 점과 실수 사이의 일대일 대응 관계를 이해하고, 점의 좌표를 정확히 읽고 쓸 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#순서쌍">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">순서쌍</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53194&amp;page=1&amp;quizid=86121</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 두 수를 순서를 정하여 짝지어 나타낸 것을 순서쌍이라 한다. 순서쌍 (x, y)의 개념을 이해하고 좌표평면에서 점의 위치를 나타낼 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#좌표평면">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">좌표평면</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53195&amp;page=1&amp;quizid=86122</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 두 수직선이 서로 수직으로 만나서 이루는 평면을 좌표평면이라 한다. 좌표평면의 구성 요소(원점, x축, y축)를 이해하고 점의 좌표를 정확히 표현할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#사분면">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">사분면</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53196&amp;page=1&amp;quizid=86123</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 좌표평면은 두 축에 의해 제1사분면, 제2사분면, 제3사분면, 제4사분면으로 나뉜다. 각 사분면에서 점의 좌표의 부호를 파악하고 점의 위치를 정확히 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#대칭인_점의_좌표">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">대칭인 점의 좌표</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53197&amp;page=1&amp;quizid=86124</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — x축, y축, 원점에 대하여 대칭인 점의 좌표를 구할 수 있다. 대칭의 성질을 이용하여 그래프의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53198&amp;page=1&amp;quizid=86125</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 함수 y=f(x)의 그래프는 좌표평면 위의 점 (x, f(x)) 전체의 집합이다. 함수의 그래프를 그리고 해석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#y_ax_a≠0_의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">y=ax (a≠0)의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53199&amp;page=1&amp;quizid=86126</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — y=ax (a≠0)의 그래프는 원점을 지나는 직선이다. a의 값에 따라 그래프의 기울기가 달라짐을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#y_a_x_a≠0_의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">y=a/x (a≠0)의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53200&amp;page=1&amp;quizid=86127</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — y=a/x (a≠0)의 그래프는 원점에 대하여 대칭인 쌍곡선이다. a의 값에 따라 그래프의 위치가 달라짐을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#y_ax_y_a_x_a≠0_의_그래프와_a의_절댓값_사이의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">y=ax, y=a/x (a≠0)의 그래프와 a의 절댓값 사이의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53201&amp;page=1&amp;quizid=86128</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — y=ax와 y=a/x에서 a의 절댓값이 클수록 그래프의 변화가 커짐을 이해하고, 이를 이용하여 그래프의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_활용">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 활용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=66&amp;nch=9&amp;cmid=53202&amp;page=1&amp;quizid=86129</ar:hasURL>
+    <ar:description xml:lang="ko">함수의 그래프와 활용(중등 1-1) — 실생활 문제를 함수로 나타내고, 함수의 그래프를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 3단계: 일차함수와 그 그래프(1) (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=9&amp;cmid=53333&amp;page=1&amp;quizid=86250</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — y가 x에 대한 일차식으로 나타내어지는 함수를 일차함수라 한다. 일차함수의 정의를 이해하고 일차함수를 식으로 나타낼 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수_y_ax_b의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수 y=ax+b의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=9&amp;cmid=53334&amp;page=1&amp;quizid=86251</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 일차함수 y=ax+b의 그래프는 직선이다. a와 b의 값에 따라 그래프의 모양이 달라짐을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_절편">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프의 절편</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=9&amp;cmid=53335&amp;page=1&amp;quizid=86252</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 일차함수 y=ax+b의 그래프가 x축과 만나는 점의 x좌표를 x절편, y축과 만나는 점의 y좌표를 y절편이라 한다. 절편을 구하고 이를 이용하여 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_기울기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프의 기울기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=9&amp;cmid=53336&amp;page=1&amp;quizid=86253</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 일차함수 y=ax+b에서 a를 기울기라 한다. 기울기의 의미를 이해하고 기울기를 이용하여 그래프의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프_그리기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프 그리기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=9&amp;cmid=53337&amp;page=1&amp;quizid=86254</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 일차함수의 식을 이용하여 그래프를 그릴 수 있다. 기울기와 절편을 이용하여 효율적으로 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 4단계: 일차함수와 그 그래프(2) (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=10&amp;cmid=53338&amp;page=1&amp;quizid=86255</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 일차함수의 그래프는 직선이며, 기울기와 절편에 따라 그래프의 위치와 방향이 결정된다. 그래프의 성질을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_기울기와_평행">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프의 기울기와 평행</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=10&amp;cmid=53339&amp;page=1&amp;quizid=86256</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 기울기가 같은 두 일차함수의 그래프는 서로 평행하다. 기울기와 평행의 관계를 이해하고 이를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_활용_2단계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 활용</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=10&amp;cmid=53348&amp;page=1&amp;quizid=86464</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 그 그래프(중등 2-1) — 실생활 문제를 일차함수로 나타내고, 일차함수의 그래프를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 5단계: 일차함수와 일차방정식의 관계 (중등수학 2-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">미지수가 2개인 일차방정식의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53342&amp;page=1&amp;quizid=86259</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 미지수가 2개인 일차방정식 ax+by+c=0의 그래프는 직선이다. 일차방정식의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식과_일차함수의_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식과 일차함수의 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53343&amp;page=1&amp;quizid=86469</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 일차방정식 ax+by+c=0을 y에 대하여 풀면 일차함수가 된다. 일차방정식과 일차함수의 관계를 이해하고 이를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차방정식_x_p_y_q의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차방정식 x=p，y=q의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53344&amp;page=1&amp;quizid=86468</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — x=p의 그래프는 y축에 평행한 직선이고, y=q의 그래프는 x축에 평행한 직선이다. 특수한 일차방정식의 그래프를 이해하고 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#직선의_방정식">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">직선의 방정식</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53345&amp;page=1&amp;quizid=86467</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 직선을 나타내는 방정식을 직선의 방정식이라 한다. 직선의 방정식을 구하고 이를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#기울기를_이용하여_일차함수의_식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">기울기를 이용하여 일차함수의 식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53340&amp;page=1&amp;quizid=86257</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 기울기와 한 점을 알 때 일차함수의 식을 구할 수 있다. y-y₁=a(x-x₁)의 형태를 이용하여 일차함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#두_점의_좌표를_이용하여_일차함수의_식_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">두 점의 좌표를 이용하여 일차함수의 식 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53341&amp;page=1&amp;quizid=86258</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 두 점을 지나는 일차함수의 식을 구할 수 있다. 두 점의 좌표를 이용하여 기울기를 구하고 일차함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연립일차방정식의_해와_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연립일차방정식의 해와 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53346&amp;page=1&amp;quizid=86466</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 연립일차방정식의 해는 두 일차방정식의 그래프의 교점의 좌표와 같다. 그래프를 이용하여 연립일차방정식의 해를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#연립일차방정식의_해의_개수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">연립일차방정식의 해의 개수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=68&amp;nch=11&amp;cmid=53347&amp;page=1&amp;quizid=86465</ar:hasURL>
+    <ar:description xml:lang="ko">일차함수와 일차방정식의 관계(중등 2-1) — 연립일차방정식의 해는 한 개, 무수히 많거나, 없을 수 있다. 그래프의 위치 관계를 이용하여 해의 개수를 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 6단계: 이차함수의 그래프 (1) (중등수학 3-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_뜻">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 뜻</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53479&amp;page=1&amp;quizid=86374</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — y가 x에 대한 이차식으로 나타내어지는 함수를 이차함수라 한다. 이차함수의 정의를 이해하고 이차함수를 식으로 나타낼 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_x²_y_x²의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=x², y=x²의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53480&amp;page=1&amp;quizid=86375</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=x²의 그래프는 포물선이다. 기본적인 이차함수의 그래프를 이해하고 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_그래프의_축과_꼭짓점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 그래프의 축과 꼭짓점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53481&amp;page=1&amp;quizid=86376</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수의 그래프는 대칭축을 가지며, 대칭축과 그래프의 교점을 꼭짓점이라 한다. 축과 꼭짓점을 구하고 이를 이용하여 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_ax²의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=ax²의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53482&amp;page=1&amp;quizid=86377</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=ax²의 그래프는 a의 값에 따라 그래프의 폭과 방향이 달라진다. a의 값에 따른 그래프의 변화를 이해하고 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_q의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=ax²+q의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53483&amp;page=1&amp;quizid=86378</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=ax²+q의 그래프는 y=ax²의 그래프를 y축 방향으로 q만큼 평행이동한 것이다. 평행이동의 개념을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_a_xp_²의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=a(x-p)²의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53484&amp;page=1&amp;quizid=86379</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=a(x-p)²의 그래프는 y=ax²의 그래프를 x축 방향으로 p만큼 평행이동한 것이다. 평행이동의 개념을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_a_xp_²_q의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=a(x-p)²+q의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=9&amp;cmid=53485&amp;page=1&amp;quizid=86380</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=a(x-p)²+q의 그래프는 y=ax²의 그래프를 x축 방향으로 p만큼, y축 방향으로 q만큼 평행이동한 것이다. 꼭짓점의 좌표가 (p, q)임을 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 7단계: 이차함수의 그래프 (2) (중등수학 3-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=ax²+bx+c의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=10&amp;cmid=53486&amp;page=1&amp;quizid=86381</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=ax²+bx+c를 y=a(x-p)²+q의 형태로 변형하여 그래프를 그릴 수 있다. 일반형 이차함수의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_그래프와_x축_y축과의_교점">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 그래프와 x축, y축과의 교점</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=10&amp;cmid=53487&amp;page=1&amp;quizid=86382</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수의 그래프와 x축의 교점의 x좌표는 이차방정식 ax²+bx+c=0의 해와 같다. 교점을 구하고 이를 이용하여 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_계수의_부호">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수 y=ax²+bx+c의 계수의 부호</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=10&amp;cmid=53488&amp;page=1&amp;quizid=86383</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수 y=ax²+bx+c에서 a, b, c의 부호에 따라 그래프의 모양과 위치가 달라진다. 계수의 부호를 이용하여 그래프의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_그래프와_x축의_위치_관계">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 그래프와 x축의 위치 관계</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=10&amp;cmid=53489&amp;page=1&amp;quizid=86384</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 그래프(중등 3-1) — 이차함수의 그래프와 x축의 위치 관계는 판별식 D=b²-4ac의 부호에 따라 결정된다. 판별식을 이용하여 그래프와 x축의 교점의 개수를 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 8단계: 이차함수의 활용 (중등수학 3-1) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_꼭짓점의_좌표를_알_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 식 구하기; 꼭짓점의 좌표를 알 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=11&amp;cmid=53490&amp;page=1&amp;quizid=86385</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 활용(중등 3-1) — 꼭짓점의 좌표와 한 점을 알 때 이차함수의 식을 구할 수 있다. y=a(x-p)²+q의 형태를 이용하여 이차함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_축의_방정식을_알_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 식 구하기; 축의 방정식을 알 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=11&amp;cmid=53491&amp;page=1&amp;quizid=86386</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 활용(중등 3-1) — 축의 방정식과 두 점을 알 때 이차함수의 식을 구할 수 있다. 축의 방정식을 이용하여 이차함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_서로_다른_세_점을_알_때">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 식 구하기; 서로 다른 세 점을 알 때</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=11&amp;cmid=53492&amp;page=1&amp;quizid=86387</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 활용(중등 3-1) — 서로 다른 세 점을 지나는 이차함수의 식을 구할 수 있다. 연립방정식을 이용하여 이차함수의 식을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_최댓값과_최솟값">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 최댓값과 최솟값</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=11&amp;cmid=53493&amp;page=1&amp;quizid=86388</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 활용(중등 3-1) — 이차함수 y=ax²+bx+c에서 a&gt;0이면 최솟값을, a&lt;0이면 최댓값을 가진다. 꼭짓점의 좌표를 이용하여 최댓값과 최솟값을 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_활용_개념">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 활용(개념)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=71&amp;nch=11&amp;cmid=53494&amp;page=1&amp;quizid=86389</ar:hasURL>
+    <ar:description xml:lang="ko">이차함수의 활용(중등 3-1) — 실생활 문제를 이차함수로 나타내고, 이차함수의 그래프를 이용하여 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 9단계: 함수 (고등수학 하) -->
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#대응">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">대응</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48569&amp;page=1&amp;quizid=84600</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 두 집합 X, Y에 대하여 X의 각 원소에 Y의 원소를 짝지어 주는 것을 X에서 Y로의 대응이라 한다. 대응의 개념을 이해하고 함수와의 관계를 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48570&amp;page=1&amp;quizid=84601</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 집합 X의 각 원소에 집합 Y의 원소가 오직 하나씩 대응될 때, 이 대응을 X에서 Y로의 함수라 한다. 함수의 정의를 이해하고 함수의 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#정의역_공역_치역">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">정의역, 공역, 치역</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48571&amp;page=1&amp;quizid=84602</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f: X→Y에서 X를 정의역, Y를 공역이라 하고, f(X)={f(x)|x∈X}를 치역이라 한다. 정의역, 공역, 치역의 개념을 이해하고 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#서로_같은_함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">서로 같은 함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48572&amp;page=1&amp;quizid=84603</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 두 함수 f, g가 정의역과 공역이 같고, 정의역의 모든 원소 x에 대하여 f(x)=g(x)일 때, f와 g는 서로 같은 함수라 한다. 서로 같은 함수의 조건을 이해하고 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#함수의_그래프_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48573&amp;page=1&amp;quizid=84604</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 y=f(x)의 그래프는 좌표평면 위의 점 (x, f(x)) 전체의 집합이다. 함수의 그래프를 그리고 해석할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일대일함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일대일함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48574&amp;page=1&amp;quizid=84605</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f: X→Y에서 정의역의 서로 다른 원소에 공역의 서로 다른 원소가 대응될 때, f를 일대일함수라 한다. 일대일함수의 정의를 이해하고 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일대일_대응">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일대일 대응</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48575&amp;page=1&amp;quizid=84606</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f: X→Y가 일대일함수이고 치역이 공역과 같을 때, f를 일대일 대응이라 한다. 일대일 대응의 정의를 이해하고 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#항등함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">항등함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48576&amp;page=1&amp;quizid=84607</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 I: X→X에서 I(x)=x일 때, I를 항등함수라 한다. 항등함수의 정의를 이해하고 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#상수함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">상수함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48577&amp;page=1&amp;quizid=84608</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f: X→Y에서 정의역의 모든 원소에 공역의 같은 원소가 대응될 때, f를 상수함수라 한다. 상수함수의 정의를 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일상생활_속의_여러_가지_함수의_예">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일상생활 속의 여러 가지 함수의 예</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48578&amp;page=1&amp;quizid=84609</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 실생활에서 함수의 예를 찾고, 함수의 개념을 실생활 문제에 적용할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합성함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합성함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48579&amp;page=1&amp;quizid=84610</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 두 함수 f: X→Y, g: Y→Z에 대하여 함수 h: X→Z를 h(x)=g(f(x))로 정의할 때, h를 f와 g의 합성함수라 하고 g∘f로 나타낸다. 합성함수의 정의를 이해하고 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합성함수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합성함수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48580&amp;page=1&amp;quizid=84611</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 합성함수는 결합법칙을 만족하지만 교환법칙은 일반적으로 성립하지 않는다. 합성함수의 성질을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#합성함수의_그래프_그리기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">합성함수의 그래프 그리기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48581&amp;page=1&amp;quizid=84612</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 합성함수의 그래프를 그릴 수 있다. 두 함수의 그래프를 이용하여 합성함수의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#역함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">역함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48582&amp;page=1&amp;quizid=84613</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f: X→Y가 일대일 대응일 때, Y의 각 원소 y에 X의 원소 x를 대응시키는 함수를 f의 역함수라 하고 f⁻¹로 나타낸다. 역함수의 정의를 이해하고 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#역함수_구하기">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">역함수 구하기</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48583&amp;page=1&amp;quizid=84614</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 주어진 함수의 역함수를 구할 수 있다. y=f(x)에서 x와 y를 바꾸고 y에 대하여 풀어 역함수를 구할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#역함수의_성질">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">역함수의 성질</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48584&amp;page=1&amp;quizid=84615</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 역함수는 f∘f⁻¹=I, f⁻¹∘f=I를 만족한다. 역함수의 성질을 이해하고 문제를 해결할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#역함수의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">역함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48585&amp;page=1&amp;quizid=84616</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 y=f(x)와 그 역함수 y=f⁻¹(x)의 그래프는 직선 y=x에 대하여 대칭이다. 역함수의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#다항함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">다항함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48586&amp;page=1&amp;quizid=84617</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 다항식으로 나타내어지는 함수를 다항함수라 한다. 다항함수의 정의를 이해하고 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#일차함수의_그래프_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">일차함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48587&amp;page=1&amp;quizid=84618</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 일차함수 y=ax+b의 그래프는 직선이다. 일차함수의 그래프를 그리고 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#이차함수의_그래프_고등">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">이차함수의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48588&amp;page=1&amp;quizid=84619</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 이차함수 y=ax²+bx+c의 그래프는 포물선이다. 이차함수의 그래프를 그리고 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#절댓값_기호를_포함한_식의_그래프_1">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">절댓값 기호를 포함한 식의 그래프(1)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48589&amp;page=1&amp;quizid=84620</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 절댓값 기호를 포함한 식의 그래프를 그릴 수 있다. 절댓값의 정의를 이용하여 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#절댓값_기호를_포함함_식의_그래프_2">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">절댓값 기호를 포함함 식의 그래프(2)</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48590&amp;page=1&amp;quizid=84621</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 복잡한 절댓값 기호를 포함한 식의 그래프를 그릴 수 있다. 여러 절댓값 기호가 포함된 식의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#절댓값_기호를_여러_개_포함한_식의_그래프">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">절댓값 기호를 여러 개 포함한 식의 그래프</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48591&amp;page=1&amp;quizid=84622</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 절댓값 기호가 여러 개 포함된 식의 그래프를 그릴 수 있다. 구간을 나누어 각 구간에서의 그래프를 그릴 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#가우스_기호">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">가우스 기호</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48592&amp;page=1&amp;quizid=84623</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 실수 x에 대하여 x를 넘지 않는 최대의 정수를 [x]로 나타내고, 이를 가우스 기호라 한다. 가우스 기호의 정의를 이해하고 계산할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#가우스_함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">가우스 함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48593&amp;page=1&amp;quizid=84624</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f(x)=[x]를 가우스 함수라 한다. 가우스 함수의 그래프를 그리고 성질을 파악할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <owl:NamedIndividual rdf:about="http://example.org/adaptive-review#우함수와_기함수">
+    <rdf:type rdf:resource="http://example.org/adaptive-review#Subtopic"/>
+    <rdfs:label xml:lang="ko">우함수와 기함수</rdfs:label>
+    <ar:stage rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">9</ar:stage>
+    <ar:hasURL rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://mathking.kr/moodle/local/augmented_teacher/books/mynote.php?cid=60&amp;nch=4&amp;cmid=48594&amp;page=1&amp;quizid=84625</ar:hasURL>
+    <ar:description xml:lang="ko">함수(고등 하) — 함수 f에 대하여 f(-x)=f(x)이면 f를 우함수, f(-x)=-f(x)이면 f를 기함수라 한다. 우함수와 기함수의 정의를 이해하고 판별할 수 있다.</ar:description>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRemind_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptRebuild_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ConceptCheck_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#ExampleQuiz_Default"/>
+    <ar:includes rdf:resource="http://example.org/adaptive-review#RepresentativeType_Default"/>
+  </owl:NamedIndividual>
+
+  <!-- 10단계부터 15단계까지는 파일 크기 제한으로 인해 주요 주제만 포함합니다 -->
+  <!-- 전체 내용은 8 함수.md 파일을 참조하여 동일한 패턴으로 확장 가능합니다 -->
+
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함숫값">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#여러_가지_함수_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#여러_가지_함수_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#수직선_위의_점의_좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#수직선_위의_점의_좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#순서쌍"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#순서쌍">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#좌표평면"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#좌표평면">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#사분면"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#사분면">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#대칭인_점의_좌표"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#대칭인_점의_좌표">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#y_ax_a≠0_의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#y_ax_a≠0_의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#y_a_x_a≠0_의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#y_a_x_a≠0_의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#y_ax_y_a_x_a≠0_의_그래프와_a의_절댓값_사이의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#y_ax_y_a_x_a≠0_의_그래프와_a의_절댓값_사이의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_활용"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_활용">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수_y_ax_b의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수_y_ax_b의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프의_절편"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_절편">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프의_기울기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_기울기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프_그리기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프_그리기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프의_기울기와_평행"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프의_기울기와_평행">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_활용_2단계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_활용_2단계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#미지수가_2개인_일차방정식의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식과_일차함수의_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식과_일차함수의_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차방정식_x_p_y_q의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차방정식_x_p_y_q의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#직선의_방정식"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#직선의_방정식">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#기울기를_이용하여_일차함수의_식_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#기울기를_이용하여_일차함수의_식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#두_점의_좌표를_이용하여_일차함수의_식_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#두_점의_좌표를_이용하여_일차함수의_식_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연립일차방정식의_해와_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연립일차방정식의_해와_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#연립일차방정식의_해의_개수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#연립일차방정식의_해의_개수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_뜻"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_뜻">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_x²_y_x²의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_x²_y_x²의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_그래프의_축과_꼭짓점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_그래프의_축과_꼭짓점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_ax²의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_ax²의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_ax²_q의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_q의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_a_xp_²의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_a_xp_²의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_a_xp_²_q의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_a_xp_²_q의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_그래프와_x축_y축과의_교점"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_그래프와_x축_y축과의_교점">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_계수의_부호"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수_y_ax²_bx_c의_계수의_부호">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_그래프와_x축의_위치_관계"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_그래프와_x축의_위치_관계">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_식_구하기_꼭짓점의_좌표를_알_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_꼭짓점의_좌표를_알_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_식_구하기_축의_방정식을_알_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_축의_방정식을_알_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_식_구하기_서로_다른_세_점을_알_때"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_식_구하기_서로_다른_세_점을_알_때">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_최댓값과_최솟값"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_최댓값과_최솟값">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_활용_개념"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_활용_개념">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#대응"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#대응">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수_고등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수_고등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#정의역_공역_치역"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#정의역_공역_치역">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#서로_같은_함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#서로_같은_함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#함수의_그래프_고등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#함수의_그래프_고등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일대일함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일대일함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일대일_대응"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일대일_대응">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#항등함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#항등함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#상수함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#상수함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일상생활_속의_여러_가지_함수의_예"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일상생활_속의_여러_가지_함수의_예">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#합성함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합성함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#합성함수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합성함수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#합성함수의_그래프_그리기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#합성함수의_그래프_그리기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#역함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#역함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#역함수_구하기"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#역함수_구하기">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#역함수의_성질"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#역함수의_성질">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#역함수의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#역함수의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#다항함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#다항함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#일차함수의_그래프_고등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#일차함수의_그래프_고등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#이차함수의_그래프_고등"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#이차함수의_그래프_고등">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#절댓값_기호를_포함한_식의_그래프_1"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#절댓값_기호를_포함한_식의_그래프_1">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#절댓값_기호를_포함함_식의_그래프_2"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#절댓값_기호를_포함함_식의_그래프_2">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#절댓값_기호를_여러_개_포함한_식의_그래프"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#절댓값_기호를_여러_개_포함한_식의_그래프">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#가우스_기호"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#가우스_기호">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#가우스_함수"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://example.org/adaptive-review#가우스_함수">
+    <ar:precedes rdf:resource="http://example.org/adaptive-review#우함수와_기함수"/>
+  </rdf:Description>
+</rdf:RDF>
+

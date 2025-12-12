@@ -1,0 +1,11 @@
+[NEXT_STEP_GUIDE]
+
+다음 단계로 {{next_action}}을(를) 진행하면 좋겠어요.
+
+[DETAIL]
+
+{{step_description}}
+
+[ENCOURAGEMENT]
+
+준비가 되시면 알려주세요. 함께 시작해 봐요!

@@ -1,0 +1,3 @@
+cd /home/moodle/public_html/moodle/local/augmented_teacher/alt42/orchestration13/agents/agent01_onboarding/ontology
+put SchemaLoader.php
+exit

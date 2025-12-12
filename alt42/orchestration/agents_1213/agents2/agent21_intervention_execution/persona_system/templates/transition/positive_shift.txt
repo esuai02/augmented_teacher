@@ -1,0 +1,23 @@
+[RECOGNITION]
+
+{{student_name}}님, 변화가 느껴져요!
+
+[OBSERVATION]
+
+처음에는 {{previous_state}}하셨는데,
+지금은 {{current_state}}하시는 모습이 보여요.
+
+[VALIDATION]
+
+이런 변화가 쉬운 게 아니에요.
+{{student_name}}님이 노력하신 결과예요.
+
+[REINFORCEMENT]
+
+이 긍정적인 변화를 함께 이어나가요.
+{{student_name}}님이라면 할 수 있어요.
+
+[ENCOURAGEMENT]
+
+앞으로도 {{student_name}}님의 페이스에 맞춰
+함께 가겠습니다. 정말 잘 하고 계세요!

@@ -1,8 +1,30 @@
 <?php
-// OpenAI API 설정
-define('OPENAI_API_KEY', 'your-openai-api-key-here');
+/**
+ * WXSPERTA 설정
+ * - OpenAI 키는 Moodle 메인 config.php의 $CFG->openai_api_key 값을 우선 사용
+ * - (대안) 서버 환경변수 OPENAI_API_KEY
+ *
+ * 주의: 이 파일에 실키를 저장하지 마세요.
+ */
+
+// OpenAI API 설정 (키는 Moodle $CFG를 우선 사용)
+global $CFG;
+
+if (!defined('OPENAI_API_KEY')) {
+    $keyFromMoodle = '';
+    if (isset($CFG) && isset($CFG->openai_api_key)) {
+        $keyFromMoodle = trim((string)$CFG->openai_api_key);
+    }
+    $keyFromEnv = trim((string)getenv('OPENAI_API_KEY'));
+    define('OPENAI_API_KEY', $keyFromMoodle !== '' ? $keyFromMoodle : ($keyFromEnv !== '' ? $keyFromEnv : 'your-openai-api-key-here'));
+}
+
+if (!defined('OPENAI_MODEL')) {
 define('OPENAI_MODEL', 'gpt-4o');
+}
+if (!defined('OPENAI_API_URL')) {
 define('OPENAI_API_URL', 'https://api.openai.com/v1/chat/completions');
+}
 
 // 데이터베이스 설정 (Moodle 설정에서 상속됨)
 // 추가 커스텀 테이블 접두사
@@ -93,9 +115,19 @@ function wxsperta_log($message, $level = 'INFO') {
 
 // API 헬퍼 함수
 function call_openai_api($messages, $temperature = 0.7) {
+    // 환경변수 우선 (서버에서 SetEnv OPENAI_API_KEY ... 형태로 주입 가능)
+    $apiKey = getenv('OPENAI_API_KEY');
+    if (!$apiKey && defined('OPENAI_API_KEY')) $apiKey = OPENAI_API_KEY;
+    $apiKey = trim((string)$apiKey);
+
+    // API 키가 설정되지 않은 경우: 데모 응답으로 폴백(시스템이 멈추지 않게)
+    if ($apiKey === '' || wxsperta_is_placeholder_openai_key($apiKey)) {
+        return wxsperta_demo_openai_response($messages);
+    }
+
     $headers = [
         'Content-Type: application/json',
-        'Authorization: Bearer ' . OPENAI_API_KEY
+        'Authorization: Bearer ' . $apiKey
     ];
     
     $data = [
@@ -111,10 +143,18 @@ function call_openai_api($messages, $temperature = 0.7) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_TIMEOUT, API_TIMEOUT);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     
     $response = curl_exec($ch);
+    $curl_error = curl_error($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
+
+    if ($response === false) {
+        wxsperta_log("OpenAI API curl error: {$curl_error}", 'ERROR');
+        return false;
+    }
     
     if ($http_code !== 200) {
         wxsperta_log("OpenAI API error: HTTP $http_code - $response", 'ERROR');
@@ -127,6 +167,76 @@ function call_openai_api($messages, $temperature = 0.7) {
     }
     
     return false;
+}
+
+/**
+ * OPENAI_API_KEY가 플레이스홀더인지 확인
+ */
+function wxsperta_is_placeholder_openai_key($key) {
+    $key = trim((string)$key);
+    if ($key === '') return true;
+    $lower = strtolower($key);
+    if (strpos($lower, 'your-api-key') !== false) return true;
+    if (strpos($lower, 'your-openai-api-key') !== false) return true;
+    return false;
+}
+
+/**
+ * API 실패/미설정 시 데모 응답 생성
+ * - 일부 호출은 JSON만 요구하므로, 프롬프트를 보고 JSON 형식도 맞춰 반환
+ */
+function wxsperta_demo_openai_response($messages) {
+    $last_user = '';
+    for ($i = count($messages) - 1; $i >= 0; $i--) {
+        if (($messages[$i]['role'] ?? '') === 'user') {
+            $last_user = (string)($messages[$i]['content'] ?? '');
+            break;
+        }
+    }
+    $u = trim($last_user);
+
+    // 1) "반드시 JSON만" 형태 (글로벌 초기 멘트 등)
+    if (stripos($u, '반드시 json') !== false && stripos($u, '"suggestions"') !== false) {
+        $obj = [
+            'message' => "안녕! 지금은 데모 모드로 대화 중이야. 그래도 너의 흐름을 같이 정리해볼 수 있어. 오늘은 전반적으로 뭐가 제일 중요한지 하나만 골라줘.",
+            'suggestions' => [
+                '오늘 제일 막히는 한 가지부터 정리해줘',
+                '이번 주 목표를 1개로 줄여서 잡아보자',
+                '요즘 컨디션/불안부터 먼저 다뤄보자'
+            ]
+        ];
+        return json_encode($obj, JSON_UNESCAPED_UNICODE);
+    }
+
+    // 2) 홀론 업데이트 JSON
+    if (stripos($u, 'related_agent_keys') !== false && stripos($u, '"updates"') !== false) {
+        $obj = [
+            'related_agent_keys' => [],
+            'updates' => (object)[]
+        ];
+        return json_encode($obj, JSON_UNESCAPED_UNICODE);
+    }
+
+    // 3) WXSPERTA 레이어 추출 JSON
+    if (stripos($u, 'wxsperta') !== false && stripos($u, '"worldview"') !== false) {
+        $obj = [
+            'worldView' => null,
+            'context' => null,
+            'structure' => null,
+            'process' => null,
+            'execution' => null,
+            'reflection' => null,
+            'transfer' => null,
+            'abstraction' => null
+        ];
+        return json_encode($obj, JSON_UNESCAPED_UNICODE);
+    }
+
+    // 4) 일반 채팅 텍스트 응답(친근한 반말)
+    if ($u !== '') {
+        return "좋아, 지금은 데모 모드지만 대화는 계속할 수 있어. 방금 말한 걸 보면 \"$u\"가 핵심 같아. 그중에서 오늘 당장 바꿀 수 있는 한 가지는 뭐야?";
+    }
+    return "안녕! 지금은 데모 모드야. 그래도 같이 정리하고 다음 한 걸음은 잡을 수 있어. 오늘 제일 중요한 거 하나만 말해줘.";
 }
 
 // CSRF 토큰 생성 및 검증

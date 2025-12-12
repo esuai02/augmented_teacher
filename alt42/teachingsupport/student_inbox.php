@@ -3297,6 +3297,99 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
         }
         };
 
+        /**
+         * 화이트보드 iframe에 로드되는 페이지에서 "이미지가 너무 크게/안보임" 이슈를 완화하기 위한 뷰포트 보정.
+         * - 같은 도메인인 경우 iframe 내부에 CSS를 주입하여 img/canvas/svg를 화면에 맞게 제한
+         * - 동적으로 추가되는 요소도 MutationObserver로 보정
+         * - 기존 동작을 깨지 않도록 실패 시 조용히 무시
+         */
+        function loadWhiteboardUrlWithViewportFix(iframe, url) {
+            try {
+                if (iframe && iframe._ktmViewportFixCleanup) {
+                    iframe._ktmViewportFixCleanup();
+                    iframe._ktmViewportFixCleanup = null;
+                }
+            } catch (e) {
+                // ignore
+            }
+
+            const applyFix = () => {
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+                    if (!doc) return;
+
+                    // CSS 주입 (중복 방지)
+                    const styleId = 'ktm-whiteboard-viewport-fix';
+                    let styleEl = doc.getElementById(styleId);
+                    if (!styleEl) {
+                        styleEl = doc.createElement('style');
+                        styleEl.id = styleId;
+                        (doc.head || doc.documentElement).appendChild(styleEl);
+                    }
+                    styleEl.textContent = `
+                        html, body { margin: 0 !important; padding: 8px !important; overflow: auto !important; }
+                        img, canvas, svg, video {
+                            max-width: 100% !important;
+                            width: auto !important;
+                            height: auto !important;
+                            max-height: 100vh !important;
+                            object-fit: contain !important;
+                            display: block !important;
+                            margin-left: auto !important;
+                            margin-right: auto !important;
+                        }
+                    `;
+
+                    // 이미 존재하는 요소에도 즉시 적용 (inline 스타일이 있더라도 !important CSS가 우선)
+                    const nodes = doc.querySelectorAll('img, canvas, svg, video');
+                    nodes.forEach((el) => {
+                        try {
+                            el.style.maxWidth = '100%';
+                            el.style.maxHeight = '100vh';
+                            el.style.objectFit = 'contain';
+                        } catch (e) {
+                            // ignore
+                        }
+                    });
+                } catch (e) {
+                    // cross-origin 이거나 접근 불가한 경우 조용히 무시
+                }
+            };
+
+            const onLoad = () => {
+                // 즉시 + 약간 지연(이미지/캔버스 동적 로딩 대응)
+                applyFix();
+                setTimeout(applyFix, 150);
+                setTimeout(applyFix, 800);
+
+                // 동적 추가 요소 대응
+                try {
+                    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+                    if (!doc || !doc.body) return;
+
+                    const observer = new MutationObserver(() => {
+                        applyFix();
+                    });
+                    observer.observe(doc.body, { childList: true, subtree: true });
+
+                    iframe._ktmViewportFixCleanup = () => {
+                        try { observer.disconnect(); } catch (e) {}
+                    };
+                } catch (e) {
+                    // ignore
+                }
+            };
+
+            // src 설정 전에 load 리스너를 등록해야 캐시/빠른 로드에서도 누락이 적음
+            try {
+                iframe.addEventListener('load', onLoad, { once: true });
+            } catch (e) {
+                // ignore
+            }
+
+            iframe.src = url;
+        }
+
         // 강의 모달 열기
         async function openLectureModal(interactionId) {
             console.log('[openLectureModal] 시작, Interaction ID:', interactionId);
@@ -3364,7 +3457,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                             }
                         }
                         const whiteboardUrl = `https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board_capture.php?id=${wboardid}&studentid=${studentId}&interactionid=${interactionId}`;
-                        iframe.src = whiteboardUrl;
+                        loadWhiteboardUrlWithViewportFix(iframe, whiteboardUrl);
                         console.log('[openLectureModal] board_capture.php 로드 완료, wboardid:', wboardid, 'URL:', whiteboardUrl);
                         
                         // 단계별 재생 인터페이스 생성
@@ -3406,7 +3499,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                             }
                         }
                         const whiteboardUrl = `https://mathking.kr/moodle/local/augmented_teacher/whiteboard/board_capture.php?id=${wboardid}&studentid=${studentId}&interactionid=${interactionId}`;
-                        iframe.src = whiteboardUrl;
+                        loadWhiteboardUrlWithViewportFix(iframe, whiteboardUrl);
                         console.log('[openLectureModal] board_capture.php 로드 완료, wboardid:', wboardid, 'URL:', whiteboardUrl);
                         
                         // 단계별 재생 인터페이스 생성
@@ -3473,8 +3566,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                         console.log('[openLectureModal] 모든 관련 레코드:', data.debug.all_records);
                     }
                     
-                    // iframe에 화이트보드 로드
-                    iframe.src = whiteboardUrl;
+                    // iframe에 화이트보드 로드 (+ 뷰포트 보정)
+                    loadWhiteboardUrlWithViewportFix(iframe, whiteboardUrl);
                     console.log('[openLectureModal] 화이트보드 iframe 로드 완료');
                     
                     // 플로팅 헤드폰 아이콘 생성 (단계별 재생 인터페이스)

@@ -1,0 +1,823 @@
+# Rules for Agent04 - QA Session Persona System
+# Generated at: 2025-12-03
+# Purpose: 질의응답 과정에서 발생하는 인지관성 패턴 탐지 및 개입 (agent10+agent11 하이브리드 구조)
+# Source: 6_qa_session.php 페르소나 기반
+
+version: "2.0"
+scenario: "qa_session"
+description: "질의응답 과정에서 발생하는 인지관성 패턴 탐지, 원인 진단, 개인화 개입 제공"
+
+metadata:
+  agent_id: 4
+  agent_name: "Agent04_InspectWeakpoints"
+  persona_type: "qa_session"
+  total_personas: 30
+  total_sub_items: 10
+  categories: 6
+  confidence_threshold: 0.6
+  last_updated: "2025-12-03"
+
+rules:
+  # ========== S1: 질의응답 효능감 인식 (qa_efficacy) - 3개 ==========
+
+  - rule_id: "S1_R1_question_uselessness"
+    priority: 100
+    description: "질문해도 도움이 안 된다고 생각하여 질문을 포기하는 패턴 탐지"
+    persona_id: 1
+    category: "confidence_distortion"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "qa_efficacy"
+      - field: "question_avoidance_score"
+        operator: ">="
+        value: 0.7
+    action:
+      - "detect: 'question_uselessness_pattern'"
+      - "analyze: 'past_qa_experience'"
+      - "identify: 'successful_qa_memory'"
+      - "strategy: 'small_question_start'"
+      - "message: '질문으로 해결된 과거 경험을 상기시키고, 작은 질문부터 시도해봅시다'"
+      - "check_point: '질문의 가치를 인식하고 시도 의향이 있는지 확인'"
+      - "teacher_dialog: '질문하면 정말 이해가 안 될까? 지난번에 질문했을 때 어떤 점이 도움이 됐는지 기억해볼까?'"
+    confidence: 0.90
+    rationale: "S1: 질문 무용론은 과거 성공 경험 회상으로 개선 가능"
+
+  - rule_id: "S1_R2_question_embarrassment"
+    priority: 99
+    description: "질문하면 바보처럼 보일까봐 질문을 회피하는 패턴 탐지"
+    persona_id: 2
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "qa_efficacy"
+      - field: "social_anxiety_indicator"
+        operator: ">="
+        value: 0.6
+    action:
+      - "detect: 'embarrassment_avoidance_pattern'"
+      - "analyze: 'emotional_barrier'"
+      - "strategy: 'safe_environment_creation'"
+      - "message: '질문은 학습의 중요한 도구임을 인식시키고 안전한 환경 조성'"
+      - "check_point: '질문에 대한 심리적 부담이 줄었는지 확인'"
+      - "teacher_dialog: '질문하는 건 모르는 게 아니라 더 알고 싶다는 거야. 선생님은 질문하는 친구가 정말 멋지다고 생각해.'"
+    confidence: 0.88
+    rationale: "S1: 질문 회피는 심리적 안전감 조성으로 개선"
+
+  - rule_id: "S1_R3_self_solve_obsession"
+    priority: 98
+    description: "모든 것을 혼자 해결해야 한다고 생각하여 질문을 기피하는 패턴 탐지"
+    persona_id: 3
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "qa_efficacy"
+      - field: "self_reliance_excess"
+        operator: ">="
+        value: 0.7
+    action:
+      - "detect: 'self_solve_obsession_pattern'"
+      - "analyze: 'time_efficiency_comparison'"
+      - "strategy: 'efficient_learning_awareness'"
+      - "message: '적절한 질문이 효율적인 학습 방법임을 설명'"
+      - "check_point: '필요시 질문할 의향이 있는지 확인'"
+      - "teacher_dialog: '혼자 해결하려는 노력은 좋지만, 때로는 질문하는 게 더 빠르고 효과적일 수 있어.'"
+    confidence: 0.85
+    rationale: "S1: 자기 해결 강박은 효율성 인식으로 개선"
+
+  # ========== S2: 의문발생 (doubt_occurrence) - 3개 ==========
+
+  - rule_id: "S2_R1_doubt_recognition_failure"
+    priority: 97
+    description: "이해가 안 되는 부분이 있어도 그것을 의문으로 인식하지 못하는 패턴 탐지"
+    persona_id: 4
+    category: "attention_deficit"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "doubt_occurrence"
+      - field: "metacognition_level"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'doubt_recognition_failure_pattern'"
+      - "analyze: 'understanding_gaps'"
+      - "strategy: 'doubt_marking_training'"
+      - "message: '학습 중 모르는 부분을 체크하는 습관 형성 훈련'"
+      - "check_point: '이해 안 되는 부분을 스스로 인식할 수 있는지 확인'"
+      - "teacher_dialog: '방금 배운 내용 중에서 조금이라도 애매한 부분이 있었니? 100% 확실하지 않은 부분을 찾아볼까?'"
+    confidence: 0.88
+    rationale: "S2: 의문 인식 실패는 메타인지 훈련으로 개선"
+
+  - rule_id: "S2_R2_doubt_dismissal"
+    priority: 96
+    description: "의문이 생겼지만 중요하지 않다고 판단하여 무시하는 패턴 탐지"
+    persona_id: 5
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "doubt_occurrence"
+      - field: "doubt_dismissal_count"
+        operator: ">="
+        value: 3
+    action:
+      - "detect: 'doubt_dismissal_pattern'"
+      - "analyze: 'dismissed_doubts_impact'"
+      - "strategy: 'doubt_recording_habit'"
+      - "message: '작은 의문도 중요할 수 있음을 인식시키고 기록 습관 형성'"
+      - "check_point: '의문을 기록하고 해결하려는 의지가 있는지 확인'"
+      - "teacher_dialog: '작은 의문 하나가 큰 이해로 이어질 수 있어. 그 의문을 한번 메모해볼까?'"
+    confidence: 0.85
+    rationale: "S2: 의문 무시는 기록 습관으로 개선"
+
+  - rule_id: "S2_R3_doubt_overflow"
+    priority: 95
+    description: "모든 것에 의문을 품어 학습 진행이 어려운 패턴 탐지"
+    persona_id: 6
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "doubt_occurrence"
+      - field: "doubt_count_per_session"
+        operator: ">="
+        value: 10
+    action:
+      - "detect: 'doubt_overflow_pattern'"
+      - "analyze: 'doubt_prioritization'"
+      - "strategy: 'core_doubt_filtering'"
+      - "message: '핵심 의문과 부차적 의문을 구분하는 방법 안내'"
+      - "check_point: '우선순위를 정해서 의문을 해결할 수 있는지 확인'"
+      - "teacher_dialog: '의문이 많다는 건 생각을 많이 한다는 거야. 그 중에서 가장 중요한 것부터 하나씩 해결해볼까?'"
+    confidence: 0.86
+    rationale: "S2: 의문 과잉은 우선순위 필터링으로 개선"
+
+  # ========== S3: 질문생성 (question_generation) - 3개 ==========
+
+  - rule_id: "S3_R1_question_verbalization_failure"
+    priority: 94
+    description: "의문은 있지만 질문으로 표현하지 못하는 패턴 탐지"
+    persona_id: 7
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_generation"
+      - field: "verbalization_difficulty"
+        operator: ">="
+        value: 0.7
+    action:
+      - "detect: 'verbalization_failure_pattern'"
+      - "analyze: 'expression_barriers'"
+      - "strategy: 'question_template_provision'"
+      - "message: '질문 템플릿 제공 (예: ~가 왜 ~인지 모르겠어요)'"
+      - "check_point: '질문 형태로 의문을 표현할 수 있는지 확인'"
+      - "teacher_dialog: '어떤 부분이 궁금한지 정확히 말로 표현하기 어려울 수 있어. \"이 부분이 왜 이렇게 되는지 모르겠어요\"처럼 말해볼까?'"
+    confidence: 0.87
+    rationale: "S3: 언어화 실패는 템플릿 제공으로 개선"
+
+  - rule_id: "S3_R2_vague_question"
+    priority: 93
+    description: "질문이 너무 광범위하거나 모호하여 답변받기 어려운 패턴 탐지"
+    persona_id: 8
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_generation"
+      - field: "question_specificity"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'vague_question_pattern'"
+      - "analyze: 'question_structure'"
+      - "strategy: '5W1H_question_method'"
+      - "message: '구체적인 질문 만드는 방법 안내 (5W1H 활용)'"
+      - "check_point: '질문이 구체적이고 답변 가능한 형태인지 확인'"
+      - "teacher_dialog: '\"이거 모르겠어요\"보다 \"이 공식이 왜 이렇게 적용되는지 모르겠어요\"가 더 도움을 받기 쉬워.'"
+    confidence: 0.85
+    rationale: "S3: 모호한 질문은 5W1H 방법으로 구체화"
+
+  - rule_id: "S3_R3_core_question_avoidance"
+    priority: 92
+    description: "진짜 모르는 것 대신 덜 중요한 질문만 하는 패턴 탐지"
+    persona_id: 9
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_generation"
+      - field: "question_depth_score"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'core_avoidance_pattern'"
+      - "analyze: 'question_authenticity'"
+      - "strategy: 'safe_core_questioning'"
+      - "message: '안전한 환경에서 핵심 질문을 하도록 격려'"
+      - "check_point: '진짜 궁금한 것을 질문할 용기가 있는지 확인'"
+      - "teacher_dialog: '혹시 정말 궁금한 건 따로 있는데 물어보기 어려웠니? 어떤 질문이든 괜찮아.'"
+    confidence: 0.84
+    rationale: "S3: 핵심 질문 회피는 심리적 안전감으로 개선"
+
+  # ========== S4: 집중해결 (focused_resolution) - 3개 ==========
+
+  - rule_id: "S4_R1_answer_inattention"
+    priority: 91
+    description: "답변을 들으면서 다른 생각을 하거나 집중하지 못하는 패턴 탐지"
+    persona_id: 10
+    category: "attention_deficit"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "focused_resolution"
+      - field: "answer_attention_score"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect: 'answer_inattention_pattern'"
+      - "analyze: 'attention_distribution'"
+      - "strategy: 'note_taking_while_listening'"
+      - "message: '답변 내용을 메모하거나 요약하면서 듣는 습관 형성'"
+      - "check_point: '답변 내용을 자신의 말로 요약할 수 있는지 확인'"
+      - "teacher_dialog: '선생님 설명을 들으면서 핵심 내용을 메모해볼까? 그러면 더 집중하게 될 거야.'"
+    confidence: 0.87
+    rationale: "S4: 답변 미집중은 메모 습관으로 개선"
+
+  - rule_id: "S4_R2_understanding_check_skip"
+    priority: 90
+    description: "답변을 받고 이해했는지 확인하지 않고 넘어가는 패턴 탐지"
+    persona_id: 11
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "focused_resolution"
+      - field: "understanding_verification_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'understanding_check_skip_pattern'"
+      - "analyze: 'verification_habit'"
+      - "strategy: 'self_explanation_habit'"
+      - "message: '답변 후 자신의 말로 다시 설명해보는 습관 형성'"
+      - "check_point: '답변 내용을 제대로 이해했는지 확인'"
+      - "teacher_dialog: '방금 들은 설명을 네 말로 다시 한번 정리해볼 수 있어?'"
+    confidence: 0.85
+    rationale: "S4: 이해 확인 생략은 자기 설명으로 개선"
+
+  - rule_id: "S4_R3_partial_understanding_satisfaction"
+    priority: 89
+    description: "일부만 이해하고도 완전히 이해했다고 생각하는 패턴 탐지"
+    persona_id: 12
+    category: "confidence_distortion"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "focused_resolution"
+      - field: "overconfidence_indicator"
+        operator: ">="
+        value: 0.6
+    action:
+      - "detect: 'partial_satisfaction_pattern'"
+      - "analyze: 'understanding_completeness'"
+      - "strategy: 'comprehension_check_questions'"
+      - "message: '이해도 점검 질문을 통해 빈 부분 확인'"
+      - "check_point: '모든 부분을 이해했는지 꼼꼼히 확인'"
+      - "teacher_dialog: '지금 설명한 것 중에서 100% 확실하게 이해한 부분과 좀 애매한 부분을 나눠볼까?'"
+    confidence: 0.88
+    rationale: "S4: 부분 이해 만족은 점검 질문으로 개선"
+
+  # ========== S5: 질문결정 (question_decision) - 3개 ==========
+
+  - rule_id: "S5_R1_question_selection_paralysis"
+    priority: 88
+    description: "여러 의문 중 어떤 것을 질문할지 결정하지 못하는 패턴 탐지"
+    persona_id: 13
+    category: "cognitive_overload"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_decision"
+      - field: "decision_time"
+        operator: ">="
+        value: 180
+    action:
+      - "detect: 'selection_paralysis_pattern'"
+      - "analyze: 'decision_factors'"
+      - "strategy: 'priority_sorting_method'"
+      - "message: '의문을 나열하고 우선순위를 정하는 방법 안내'"
+      - "check_point: '질문 우선순위를 정할 수 있는지 확인'"
+      - "teacher_dialog: '궁금한 게 여러 개 있구나. 그 중에서 지금 가장 급한 것, 또는 가장 기본이 되는 것부터 정해볼까?'"
+    confidence: 0.85
+    rationale: "S5: 질문 선택 마비는 우선순위 정렬로 개선"
+
+  - rule_id: "S5_R2_timing_decision_failure"
+    priority: 87
+    description: "언제 질문해야 할지 적절한 타이밍을 잡지 못하는 패턴 탐지"
+    persona_id: 14
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_decision"
+      - field: "timing_appropriateness"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'timing_failure_pattern'"
+      - "analyze: 'timing_patterns'"
+      - "strategy: 'timing_guide_provision'"
+      - "message: '질문하기 좋은 타이밍 가이드 제공'"
+      - "check_point: '적절한 질문 타이밍을 인식하는지 확인'"
+      - "teacher_dialog: '질문은 설명이 끝난 직후나, 이해가 안 될 때 바로 하는 게 좋아. 메모해뒀다가 나중에 해도 괜찮고.'"
+    confidence: 0.82
+    rationale: "S5: 타이밍 결정 실패는 가이드 제공으로 개선"
+
+  - rule_id: "S5_R3_perfect_question_obsession"
+    priority: 86
+    description: "완벽한 질문을 만들려다가 결국 질문하지 못하는 패턴 탐지"
+    persona_id: 15
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "question_decision"
+      - field: "perfectionism_indicator"
+        operator: ">="
+        value: 0.7
+    action:
+      - "detect: 'perfect_question_obsession_pattern'"
+      - "analyze: 'perfectionism_barrier'"
+      - "strategy: 'imperfect_question_acceptance'"
+      - "message: '불완전한 질문도 괜찮다는 것을 인식시킴'"
+      - "check_point: '부담 없이 질문할 수 있는지 확인'"
+      - "teacher_dialog: '완벽한 질문이 아니어도 괜찮아. 대충 어떤 부분이 궁금한지만 말해줘도 선생님이 이해할 수 있어.'"
+    confidence: 0.84
+    rationale: "S5: 완벽 강박은 불완전 수용으로 개선"
+
+  # ========== S6: 질의응답 스스로 주도하기 (self_directed_qa) - 3개 ==========
+
+  - rule_id: "S6_R1_passive_qa"
+    priority: 85
+    description: "선생님이 물어봐야만 질문하고, 스스로 질문을 시작하지 않는 패턴 탐지"
+    persona_id: 16
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "self_directed_qa"
+      - field: "self_initiated_question_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'passive_qa_pattern'"
+      - "analyze: 'initiative_barriers'"
+      - "strategy: 'question_routine_formation'"
+      - "message: '자발적 질문의 중요성 인식 및 질문 루틴 형성'"
+      - "check_point: '스스로 질문을 시작하려는 의지가 있는지 확인'"
+      - "teacher_dialog: '공부하다가 궁금한 게 생기면 먼저 질문해봐. 네가 먼저 물어보면 더 많이 배울 수 있어.'"
+    confidence: 0.85
+    rationale: "S6: 수동적 질의응답은 루틴 형성으로 개선"
+
+  - rule_id: "S6_R2_shallow_question_preference"
+    priority: 84
+    description: "표면적인 질문만 하고 깊이 있는 질문을 피하는 패턴 탐지"
+    persona_id: 17
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "self_directed_qa"
+      - field: "question_depth_average"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'shallow_question_pattern'"
+      - "analyze: 'depth_avoidance_reasons'"
+      - "strategy: 'why_how_questioning'"
+      - "message: '\"왜\"와 \"어떻게\" 질문을 하도록 유도'"
+      - "check_point: '깊이 있는 질문을 시도하는지 확인'"
+      - "teacher_dialog: '\"왜 이렇게 되는 걸까?\" \"다른 방법은 없을까?\" 같은 질문도 해보면 더 깊이 이해할 수 있어.'"
+    confidence: 0.83
+    rationale: "S6: 표면 질문 선호는 왜/어떻게 유도로 개선"
+
+  - rule_id: "S6_R3_question_connection_failure"
+    priority: 83
+    description: "답변을 받은 후 후속 질문으로 이어가지 못하는 패턴 탐지"
+    persona_id: 18
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "self_directed_qa"
+      - field: "followup_question_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'connection_failure_pattern'"
+      - "analyze: 'followup_generation'"
+      - "strategy: 'chain_questioning_method'"
+      - "message: '꼬리질문 하는 방법 안내'"
+      - "check_point: '후속 질문을 생각해낼 수 있는지 확인'"
+      - "teacher_dialog: '방금 들은 설명에서 더 궁금한 점은 없어? \"그러면 이건 어떻게 되나요?\"처럼 이어서 물어봐도 좋아.'"
+    confidence: 0.82
+    rationale: "S6: 질문 연결 실패는 꼬리질문 방법으로 개선"
+
+  # ========== S7: 질문 듣는 중 개입방법 (intervention_method) - 3개 ==========
+
+  - rule_id: "S7_R1_intervention_timing_error"
+    priority: 82
+    description: "설명 중간에 너무 자주 끊거나, 아예 끊지 않는 패턴 탐지"
+    persona_id: 19
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "intervention_method"
+      - OR:
+        - field: "interruption_frequency"
+          operator: ">="
+          value: 5
+        - field: "interruption_frequency"
+          operator: "=="
+          value: 0
+    action:
+      - "detect: 'intervention_timing_error_pattern'"
+      - "analyze: 'interruption_pattern'"
+      - "strategy: 'appropriate_timing_guide'"
+      - "message: '적절한 개입 타이밍 가이드 제공'"
+      - "check_point: '적절한 타이밍에 개입할 수 있는지 확인'"
+      - "teacher_dialog: '설명 중에 이해가 안 되면 바로 말해도 괜찮아. 단, 문장이 끝나는 시점에 끊어서 물어보면 더 좋아.'"
+    confidence: 0.80
+    rationale: "S7: 개입 타이밍 오류는 가이드로 개선"
+
+  - rule_id: "S7_R2_reexplanation_request_hesitation"
+    priority: 81
+    description: "이해가 안 되는데 다시 설명해달라고 요청하지 못하는 패턴 탐지"
+    persona_id: 20
+    category: "emotional_block"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "intervention_method"
+      - field: "reexplanation_request_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'reexplanation_hesitation_pattern'"
+      - "analyze: 'request_barriers'"
+      - "strategy: 'normalization_of_reexplanation'"
+      - "message: '재설명 요청이 자연스러운 것임을 인식시킴'"
+      - "check_point: '필요시 재설명을 요청할 수 있는지 확인'"
+      - "teacher_dialog: '\"잠깐만요, 그 부분 다시 설명해주세요\"라고 말하는 건 전혀 부끄러운 게 아니야.'"
+    confidence: 0.84
+    rationale: "S7: 재설명 요청 주저는 정상화 인식으로 개선"
+
+  - rule_id: "S7_R3_example_request_failure"
+    priority: 80
+    description: "추상적 설명을 듣고도 구체적 예시를 요청하지 못하는 패턴 탐지"
+    persona_id: 21
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "intervention_method"
+      - field: "example_request_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'example_request_failure_pattern'"
+      - "analyze: 'example_seeking_behavior'"
+      - "strategy: 'example_request_training'"
+      - "message: '예시 요청의 효과를 알리고 요청 방법 안내'"
+      - "check_point: '필요시 예시를 요청할 수 있는지 확인'"
+      - "teacher_dialog: '설명이 이해하기 어려우면 \"예를 들어주세요\"라고 말해봐. 예시를 들으면 훨씬 이해가 쉬워.'"
+    confidence: 0.83
+    rationale: "S7: 예시 요청 실패는 요청 방법 훈련으로 개선"
+
+  # ========== S8: 마무리 (closing) - 3개 ==========
+
+  - rule_id: "S8_R1_closing_summary_skip"
+    priority: 79
+    description: "질의응답 후 배운 내용을 정리하지 않고 넘어가는 패턴 탐지"
+    persona_id: 22
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing"
+      - field: "summary_completion_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'summary_skip_pattern'"
+      - "analyze: 'summary_habit'"
+      - "strategy: 'post_qa_summary_routine'"
+      - "message: '질의응답 후 요약 정리 습관 형성'"
+      - "check_point: '배운 내용을 정리했는지 확인'"
+      - "teacher_dialog: '방금 질문하고 들은 내용을 한 줄로 정리해볼까? 그래야 오래 기억할 수 있어.'"
+    confidence: 0.85
+    rationale: "S8: 마무리 정리 생략은 요약 루틴으로 개선"
+
+  - rule_id: "S8_R2_additional_question_missed"
+    priority: 78
+    description: "마무리 단계에서 추가로 궁금한 점을 확인하지 않는 패턴 탐지"
+    persona_id: 23
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing"
+      - field: "additional_question_check_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'additional_question_missed_pattern'"
+      - "analyze: 'closing_completeness'"
+      - "strategy: 'closing_checklist_routine'"
+      - "message: '마무리 전 추가 질문 확인 루틴 형성'"
+      - "check_point: '추가 질문이 없는지 확인했는지 점검'"
+      - "teacher_dialog: '질문이 다 해결됐니? 혹시 설명을 듣다가 새로 생긴 궁금증은 없어?'"
+    confidence: 0.80
+    rationale: "S8: 추가 질문 누락은 체크리스트 루틴으로 개선"
+
+  - rule_id: "S8_R3_gratitude_omission"
+    priority: 77
+    description: "도움을 받고도 적절한 감사를 표현하지 않는 패턴 탐지"
+    persona_id: 24
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "closing"
+      - field: "gratitude_expression_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'gratitude_omission_pattern'"
+      - "analyze: 'social_habit'"
+      - "strategy: 'gratitude_habit_formation'"
+      - "message: '감사 표현의 중요성과 방법 안내'"
+      - "check_point: '적절한 감사 표현을 하는지 확인'"
+      - "teacher_dialog: '도움을 받았을 때 고맙다고 표현하면, 다음에도 더 기꺼이 도움을 줄 수 있어.'"
+    confidence: 0.78
+    rationale: "S8: 감사 누락은 습관 형성으로 개선"
+
+  # ========== S9: 추적 및 후속 학습 (tracking_followup) - 3개 ==========
+
+  - rule_id: "S9_R1_followup_check_skip"
+    priority: 76
+    description: "질문으로 해결한 내용을 나중에 다시 확인하지 않는 패턴 탐지"
+    persona_id: 25
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "tracking_followup"
+      - field: "review_completion_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'followup_check_skip_pattern'"
+      - "analyze: 'review_habit'"
+      - "strategy: 'qa_content_review_schedule'"
+      - "message: '질의응답 내용 복습 스케줄 수립'"
+      - "check_point: '해결한 내용을 나중에 복습할 계획이 있는지 확인'"
+      - "teacher_dialog: '오늘 질문한 내용을 내일 한번 더 확인해보면 더 오래 기억할 수 있어.'"
+    confidence: 0.85
+    rationale: "S9: 후속 점검 미실시는 복습 스케줄로 개선"
+
+  - rule_id: "S9_R2_similar_problem_practice_avoidance"
+    priority: 75
+    description: "질문으로 이해한 후 비슷한 문제로 연습하지 않는 패턴 탐지"
+    persona_id: 26
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "tracking_followup"
+      - field: "practice_after_qa_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'practice_avoidance_pattern'"
+      - "analyze: 'practice_habit'"
+      - "strategy: 'similar_problem_practice_habit'"
+      - "message: '이해한 내용을 유사 문제로 확인하는 습관 형성'"
+      - "check_point: '유사 문제 연습 의향이 있는지 확인'"
+      - "teacher_dialog: '이해됐다면 비슷한 문제를 몇 개 풀어보면 확실해져. 연습문제 해볼까?'"
+    confidence: 0.87
+    rationale: "S9: 유사 문제 회피는 연습 습관으로 개선"
+
+  - rule_id: "S9_R3_question_history_unmanaged"
+    priority: 74
+    description: "과거 질문과 답변을 기록하고 관리하지 않는 패턴 탐지"
+    persona_id: 27
+    category: "habit_pattern"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "tracking_followup"
+      - field: "qa_record_keeping_rate"
+        operator: "<"
+        value: 0.2
+    action:
+      - "detect: 'history_unmanaged_pattern'"
+      - "analyze: 'record_keeping_habit'"
+      - "strategy: 'qa_note_habit_formation'"
+      - "message: '질문 노트 작성 습관 형성'"
+      - "check_point: '질문과 답변을 기록하는 습관이 있는지 확인'"
+      - "teacher_dialog: '질문했던 내용을 노트에 정리해두면, 나중에 같은 의문이 생겼을 때 바로 찾아볼 수 있어.'"
+    confidence: 0.84
+    rationale: "S9: 질문 이력 미관리는 노트 습관으로 개선"
+
+  # ========== S10: 닫기 (close_session) - 3개 ==========
+
+  - rule_id: "S10_R1_hasty_closure"
+    priority: 73
+    description: "질의응답을 제대로 마무리하지 않고 급하게 끝내는 패턴 탐지"
+    persona_id: 28
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "close_session"
+      - field: "closure_completeness"
+        operator: "<"
+        value: 0.4
+    action:
+      - "detect: 'hasty_closure_pattern'"
+      - "analyze: 'closure_quality'"
+      - "strategy: 'closure_checklist_provision'"
+      - "message: '질의응답 마무리 체크리스트 제공'"
+      - "check_point: '모든 마무리 단계를 거쳤는지 확인'"
+      - "teacher_dialog: '끝내기 전에 오늘 질문한 내용 정리했니? 다음에 더 궁금한 게 있으면 또 물어봐.'"
+    confidence: 0.84
+    rationale: "S10: 급한 종료는 체크리스트로 개선"
+
+  - rule_id: "S10_R2_unresolved_abandonment"
+    priority: 72
+    description: "해결되지 않은 의문을 남겨둔 채 세션을 종료하는 패턴 탐지"
+    persona_id: 29
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "close_session"
+      - field: "unresolved_questions_count"
+        operator: ">="
+        value: 1
+    action:
+      - "detect: 'unresolved_abandonment_pattern'"
+      - "analyze: 'unresolved_questions'"
+      - "strategy: 'unresolved_question_tracking'"
+      - "message: '미해결 질문 목록 작성 및 후속 계획 수립'"
+      - "check_point: '미해결 질문이 있는지 확인하고 해결 계획이 있는지 점검'"
+      - "teacher_dialog: '아직 해결 안 된 궁금한 게 있니? 있다면 메모해두고 다음에 다시 물어보자.'"
+    confidence: 0.88
+    rationale: "S10: 미해결 방치는 추적 시스템으로 개선"
+
+  - rule_id: "S10_R3_learning_connection_failure"
+    priority: 71
+    description: "질의응답에서 배운 것을 다음 학습과 연결하지 못하는 패턴 탐지"
+    persona_id: 30
+    category: "approach_error"
+    conditions:
+      - field: "sub_item"
+        operator: "=="
+        value: "close_session"
+      - field: "learning_connection_rate"
+        operator: "<"
+        value: 0.3
+    action:
+      - "detect: 'learning_connection_failure_pattern'"
+      - "analyze: 'connection_opportunities'"
+      - "strategy: 'qa_to_learning_bridge'"
+      - "message: '질의응답 내용과 학습 계획 연결 방법 안내'"
+      - "check_point: '배운 내용을 다음 학습에 적용할 계획이 있는지 확인'"
+      - "teacher_dialog: '오늘 배운 내용이 다음에 공부할 때 어디서 쓰일 수 있을지 생각해봤어?'"
+    confidence: 0.83
+    rationale: "S10: 학습 연계 실패는 브릿지 전략으로 개선"
+
+  # ========== 복합 상황 대응 룰 (Complex Rules) ==========
+
+  - rule_id: "C1_emotional_cognitive_compound"
+    priority: 95
+    description: "감정적 장벽 + 인지 과부하 복합 상황 (질문 자체가 스트레스)"
+    conditions:
+      - AND:
+        - field: "emotional_block_indicator"
+          operator: ">="
+          value: 0.6
+        - field: "cognitive_load_indicator"
+          operator: ">="
+          value: 0.7
+    action:
+      - "detect: 'emotional_cognitive_compound_pattern'"
+      - "analyze: 'compound_barrier_sources'"
+      - "strategy: 'simplification_with_emotional_support'"
+      - "message: '질문을 가장 단순한 형태로 줄이고, 정서적 지지를 동시에 제공'"
+      - "generate_feedback: '질문하는 게 어렵게 느껴질 수 있어. 가장 간단한 것 하나만 물어보자.'"
+      - "teacher_dialog: '지금 많이 복잡하고 어렵지? 괜찮아, 가장 쉬운 것 하나만 물어봐. 천천히 하나씩 해결하자.'"
+    confidence: 0.90
+    rationale: "복합 패턴: 감정+인지 부하는 단순화와 정서 지지 병행"
+
+  - rule_id: "C2_habit_approach_compound"
+    priority: 94
+    description: "습관 패턴 + 접근 전략 오류 복합 상황 (잘못된 습관 고착)"
+    conditions:
+      - AND:
+        - field: "habit_pattern_indicator"
+          operator: ">="
+          value: 0.7
+        - field: "approach_error_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'habit_approach_compound_pattern'"
+      - "analyze: 'habit_formation_history'"
+      - "strategy: 'habit_replacement_with_correct_approach'"
+      - "message: '기존 습관을 올바른 접근법으로 점진적 대체'"
+      - "generate_feedback: '지금까지의 방식이 익숙하겠지만, 조금 다른 방법을 시도해볼까?'"
+      - "teacher_dialog: '습관처럼 하던 방식이 있구나. 그 방식도 나쁘진 않지만, 이렇게 하면 더 효과적일 수 있어.'"
+    confidence: 0.88
+    rationale: "복합 패턴: 습관+접근오류는 점진적 대체 전략"
+
+  - rule_id: "C3_attention_confidence_compound"
+    priority: 93
+    description: "주의력 결핍 + 자신감 왜곡 복합 상황 (집중 못하면서 과신)"
+    conditions:
+      - AND:
+        - field: "attention_deficit_indicator"
+          operator: ">="
+          value: 0.6
+        - field: "confidence_distortion_indicator"
+          operator: ">="
+          value: 0.6
+    action:
+      - "detect: 'attention_confidence_compound_pattern'"
+      - "analyze: 'attention_confidence_gap'"
+      - "strategy: 'attention_focus_with_reality_check'"
+      - "message: '집중 훈련과 실제 이해도 확인을 동시에 진행'"
+      - "generate_feedback: '이해했다고 생각하지만, 한번 더 확인해보자.'"
+      - "teacher_dialog: '알 것 같지? 그럼 방금 내용을 네 말로 설명해볼 수 있어? 확인해보자.'"
+    confidence: 0.87
+    rationale: "복합 패턴: 주의력+과신은 집중 훈련과 현실 점검 병행"
+
+  - rule_id: "C4_multiple_qa_stage_failure"
+    priority: 92
+    description: "질의응답 여러 단계에서 연속 실패 패턴 (시스템적 문제)"
+    conditions:
+      - field: "consecutive_stage_failures"
+        operator: ">="
+        value: 3
+    action:
+      - "detect: 'multiple_stage_failure_pattern'"
+      - "analyze: 'systemic_qa_barriers'"
+      - "identify: 'root_cause_stage'"
+      - "strategy: 'fundamental_qa_skill_building'"
+      - "message: '질의응답 기본 스킬부터 차근차근 재구축'"
+      - "generate_feedback: '여러 단계에서 어려움이 발견됐어요. 기초부터 다시 연습해봅시다.'"
+      - "teacher_dialog: '질문하는 전체 과정이 조금 어렵게 느껴지는 것 같아. 처음부터 천천히 연습해볼까?'"
+    confidence: 0.89
+    rationale: "복합 패턴: 연속 실패는 시스템적 재구축 필요"
+
+  - rule_id: "C5_qa_efficacy_loop_failure"
+    priority: 91
+    description: "효능감 부재 → 질문 회피 → 학습 정체 → 효능감 하락 악순환"
+    conditions:
+      - AND:
+        - field: "qa_efficacy_score"
+          operator: "<"
+          value: 0.3
+        - field: "question_frequency"
+          operator: "<"
+          value: 0.2
+        - field: "learning_progress"
+          operator: "<"
+          value: 0.3
+    action:
+      - "detect: 'efficacy_loop_failure_pattern'"
+      - "analyze: 'negative_loop_entry_point'"
+      - "strategy: 'small_success_experience_creation'"
+      - "message: '작은 성공 경험을 통해 악순환 고리 끊기'"
+      - "generate_feedback: '작은 질문 하나로 성공 경험을 만들어봅시다.'"
+      - "teacher_dialog: '질문하기가 어려워서 학습도 잘 안 되는 것 같아. 아주 간단한 질문 하나만 해볼까? 그게 시작이야.'"
+    confidence: 0.90
+    rationale: "복합 패턴: 효능감 악순환은 작은 성공 경험으로 돌파"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  description: "조건이 일치하지 않는 경우 기본 지원 제공"
+  action:
+    - "detect: 'general_qa_support_needed'"
+    - "strategy: 'general_qa_encouragement'"
+    - "message: '질의응답 과정에서 도움이 필요하시면 말씀해주세요.'"
+    - "display_message: '질의응답 데이터를 분석 중입니다. 추가 정보가 필요할 수 있습니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용 - 조건 불일치 시 일반적 지원 제공"

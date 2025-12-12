@@ -1,0 +1,234 @@
+# 수학 단원 연계성 데이터베이스
+# 현직 수학선생님 수준 도달을 위한 핵심 DB
+# 선생님 체크리스트 및 텍스트 입력을 통한 데이터 수집 가정
+
+version: "1.0"
+description: "중학교 수학 단원 간 선후관계 및 연계성 데이터"
+
+units:
+  # 중학교 1학년
+  - unit_id: "middle1_integer"
+    unit_name: "정수와 유리수"
+    grade: 1
+    semester: 1
+    prerequisites: []  # 기초 단원
+    related_units: ["middle1_equation"]  # 후속 단원
+    difficulty: 4  # 1-10 척도
+    avg_study_time_concept: 2  # 개념 학습 시간(시간)
+    avg_study_time_practice: 2  # 유형 연습 시간(시간)
+    avg_study_time_advanced: 1  # 심화 학습 시간(시간)
+    exam_weight: 0.15  # 출제 비중
+    question_type_distribution:
+      basic: 0.70
+      type: 0.25
+      advanced: 0.05
+    
+  - unit_id: "middle1_equation"
+    unit_name: "일차방정식"
+    grade: 1
+    semester: 1
+    prerequisites: ["middle1_integer"]  # 선행 단원 필수
+    related_units: ["middle1_function", "middle2_system_equation"]  # 후속 단원 및 연계 단원
+    difficulty: 6
+    avg_study_time_concept: 2.5
+    avg_study_time_practice: 3
+    avg_study_time_advanced: 1.5
+    exam_weight: 0.25
+    question_type_distribution:
+      basic: 0.60
+      type: 0.30
+      advanced: 0.10
+    learning_order_note: "정수와 유리수 완료 후 진행 필수. 함수 학습의 기초가 됨."
+    
+  - unit_id: "middle1_function"
+    unit_name: "함수"
+    grade: 1
+    semester: 2
+    prerequisites: ["middle1_equation"]  # 방정식 완료 필수
+    related_units: ["middle2_linear_function", "middle1_graph"]  # 연계 학습 권장
+    difficulty: 8
+    avg_study_time_concept: 3
+    avg_study_time_practice: 4
+    avg_study_time_advanced: 2
+    exam_weight: 0.30
+    question_type_distribution:
+      basic: 0.50
+      type: 0.35
+      advanced: 0.15
+    learning_order_note: "일차방정식 완료 후 진행. 함수와 그래프는 동시 학습 권장."
+    
+  - unit_id: "middle1_graph"
+    unit_name: "함수와 그래프"
+    grade: 1
+    semester: 2
+    prerequisites: ["middle1_function"]  # 함수 완료 후
+    related_units: ["middle1_function"]  # 함수와 연계 학습 필수
+    difficulty: 7
+    avg_study_time_concept: 2.5
+    avg_study_time_practice: 3.5
+    avg_study_time_advanced: 2
+    exam_weight: 0.20
+    question_type_distribution:
+      basic: 0.55
+      type: 0.30
+      advanced: 0.15
+    learning_order_note: "함수 단원과 동시 학습 또는 직후 학습 권장."
+    
+  # 중학교 2학년
+  - unit_id: "middle2_linear_function"
+    unit_name: "일차함수"
+    grade: 2
+    semester: 1
+    prerequisites: ["middle1_function", "middle1_equation"]  # 중1 함수와 방정식 완료 필수
+    related_units: ["middle2_system_equation"]  # 연립방정식과 연계 학습 권장
+    difficulty: 7
+    avg_study_time_concept: 3
+    avg_study_time_practice: 4
+    avg_study_time_advanced: 2
+    exam_weight: 0.28
+    question_type_distribution:
+      basic: 0.55
+      type: 0.30
+      advanced: 0.15
+    learning_order_note: "일차함수와 연립방정식은 함께 공부하면 효과적."
+    
+  - unit_id: "middle2_system_equation"
+    unit_name: "연립방정식"
+    grade: 2
+    semester: 1
+    prerequisites: ["middle1_equation", "middle2_linear_function"]  # 방정식과 일차함수 완료 필수
+    related_units: ["middle2_linear_function"]  # 일차함수와 연계 학습 권장
+    difficulty: 7
+    avg_study_time_concept: 2.5
+    avg_study_time_practice: 3.5
+    avg_study_time_advanced: 2
+    exam_weight: 0.25
+    question_type_distribution:
+      basic: 0.60
+      type: 0.30
+      advanced: 0.10
+    learning_order_note: "일차함수와 함께 학습하면 응용 문제 이해가 쉬움."
+    
+  - unit_id: "middle2_geometry"
+    unit_name: "도형의 성질"
+    grade: 2
+    semester: 2
+    prerequisites: []  # 독립적이나 기하 기초 권장
+    related_units: []
+    difficulty: 8
+    avg_study_time_concept: 3.5
+    avg_study_time_practice: 4.5
+    avg_study_time_advanced: 3
+    exam_weight: 0.25
+    question_type_distribution:
+      basic: 0.50
+      type: 0.35
+      advanced: 0.15
+    learning_order_note: "도형 단원은 독립적이나 증명 부분이 어려움."
+    
+  # 중학교 3학년
+  - unit_id: "middle3_quadratic_function"
+    unit_name: "이차함수"
+    grade: 3
+    semester: 1
+    prerequisites: ["middle2_linear_function", "middle3_quadratic_equation"]  # 일차함수와 이차방정식 완료 필수
+    related_units: ["middle3_quadratic_equation"]  # 이차방정식과 연계 학습 필수
+    difficulty: 9
+    avg_study_time_concept: 4
+    avg_study_time_practice: 5
+    avg_study_time_advanced: 3
+    exam_weight: 0.30
+    question_type_distribution:
+      basic: 0.45
+      type: 0.35
+      advanced: 0.20
+    learning_order_note: "이차함수와 이차방정식은 반드시 함께 학습해야 함."
+    
+  - unit_id: "middle3_quadratic_equation"
+    unit_name: "이차방정식"
+    grade: 3
+    semester: 1
+    prerequisites: ["middle2_system_equation"]  # 연립방정식 완료 필수
+    related_units: ["middle3_quadratic_function"]  # 이차함수와 연계 학습 필수
+    difficulty: 8
+    avg_study_time_concept: 3
+    avg_study_time_practice: 4
+    avg_study_time_advanced: 2.5
+    exam_weight: 0.28
+    question_type_distribution:
+      basic: 0.55
+      type: 0.30
+      advanced: 0.15
+    learning_order_note: "이차함수와 함께 학습하면 응용 문제 해결이 쉬움."
+    
+  - unit_id: "middle3_statistics"
+    unit_name: "통계"
+    grade: 3
+    semester: 2
+    prerequisites: []  # 독립적
+    related_units: []
+    difficulty: 4
+    avg_study_time_concept: 2
+    avg_study_time_practice: 2.5
+    avg_study_time_advanced: 1
+    exam_weight: 0.15
+    question_type_distribution:
+      basic: 0.70
+      type: 0.25
+      advanced: 0.05
+    learning_order_note: "통계 단원은 상대적으로 쉬워 시간 부족 시 후순위 가능."
+
+# 단원 연계 학습 전략
+learning_strategies:
+  - strategy_id: "simultaneous_learning"
+    description: "연계 단원 동시 학습"
+    applicable_units:
+      - ["middle1_function", "middle1_graph"]
+      - ["middle2_linear_function", "middle2_system_equation"]
+      - ["middle3_quadratic_function", "middle3_quadratic_equation"]
+    benefit: "서로 연관된 개념을 함께 학습하면 이해도가 높아짐"
+    
+  - strategy_id: "sequential_learning"
+    description: "선후관계 기반 순차 학습"
+    applicable_units:
+      - ["middle1_integer", "middle1_equation", "middle1_function"]
+      - ["middle1_equation", "middle2_linear_function"]
+      - ["middle2_system_equation", "middle3_quadratic_equation"]
+    benefit: "기초 단원 완료 후 후속 단원 학습 시 이해도 향상"
+
+# 교재별 단원 학습 전략
+textbook_strategies:
+  - textbook: "쎈"
+    unit_strategy:
+      - unit: "middle1_function"
+        stages:
+          - stage: "A"
+            description: "기본형, 목표 정답률 80%"
+            avg_time_per_problem: 3  # 분
+          - stage: "B"
+            description: "유형, 목표 정답률 70%"
+            avg_time_per_problem: 4.5
+          - stage: "C"
+            description: "심화, 목표 정답률 60%"
+            avg_time_per_problem: 6
+            
+  - textbook: "개념원리"
+    unit_strategy:
+      - unit: "middle1_function"
+        description: "개념 설명 중심, 페이지당 평균 20분"
+        focus: "개념 이해"
+
+# 데이터 수집 방법 참고
+data_collection_methods:
+  student_survey:
+    - "어떤 단원이 어렵다고 느끼시나요?"
+    - "어떤 단원을 먼저 배웠나요?"
+    
+  teacher_checklist:
+    - "학년별 단원 선후관계 정의"
+    - "연계 단원 동시 학습 전략"
+    
+  teacher_text_input:
+    - "중1 함수 단원 난이도: 8/10, 평균 학습 시간: 6시간"
+    - "함수와 그래프는 같이 공부하면 효과적"
+

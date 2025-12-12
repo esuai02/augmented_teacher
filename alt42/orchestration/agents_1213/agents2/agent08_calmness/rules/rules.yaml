@@ -1,0 +1,1254 @@
+# Auto-generated rules.yaml for calmness_agent
+# Generated at: 2025-01-21
+# Source: agent08_calmness_questions.md → natural request extension
+
+version: "1.0"
+scenario: "calmness_agent"
+description: "침착도 분석 기반 학습 수행 적합도 판단 및 개입 제안"
+
+rules:
+  # ========== S1: 연속 오답 발생 시 관련 룰 ==========
+  
+  - rule_id: "R1_consecutive_errors_detection"
+    priority: 95
+    description: "연속 오답 발생 시 불안정한 판단 패턴 감지"
+    conditions:
+      - field: "consecutive_errors"
+        operator: ">="
+        value: 5
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "analyze: 'unstable_judgment_pattern'"
+      - "detect_calm_decline: true"
+      - "generate_description: 'consecutive_errors_analysis'"
+      - "display_message: '최근 5문제에서 연속 오답이 발생했습니다. 침착도 데이터를 분석한 결과 사고가 너무 빠르게 결정된 것으로 보입니다.'"
+    confidence: 0.92
+    rationale: "연속 오답은 침착도 저하의 명확한 신호"
+
+  - rule_id: "R1a_verification_skipped_analysis"
+    priority: 93
+    description: "확인 단계 없이 답을 선택한 구간 분석"
+    conditions:
+      - field: "consecutive_errors"
+        operator: ">="
+        value: 3
+      - field: "verification_skipped"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'verification_skipped_segments'"
+      - "generate_description: 'skipped_verification_logs'"
+      - "recommend: 'self_reflection_questions'"
+      - "display_message: '풀이 로그를 분석한 결과 확인 단계 없이 답을 선택한 구간이 있습니다. 학생에게 왜 멈추지 않았는지 선택하게 도와주세요.'"
+    confidence: 0.9
+    rationale: "확인 단계 생략은 침착도 저하의 핵심 원인"
+
+  - rule_id: "R1b_rapid_decision_warning"
+    priority: 90
+    description: "급한 선택 패턴 경고"
+    conditions:
+      - field: "solving_speed"
+        operator: ">"
+        value: "fast"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+      - field: "consecutive_errors"
+        operator: ">="
+        value: 2
+    action:
+      - "alert: '급한 선택 경고'"
+      - "generate_description: 'rapid_decision_analysis'"
+      - "display_message: '문제를 풀 때 확인 없이 빠르게 선택하는 패턴이 감지되었습니다. 선택 전 잠깐 멈춰서 생각하는 습관을 기르는 것이 중요합니다.'"
+    confidence: 0.88
+    rationale: "급한 선택은 실수의 주요 원인"
+
+  # ========== S2: 정답률 높으나 풀이 속도 빠를 때 관련 룰 ==========
+  
+  - rule_id: "R2_high_accuracy_fast_speed_analysis"
+    priority: 92
+    description: "정답률 높으나 풀이 속도 과도하게 빠를 때 직감형 풀이 분류"
+    conditions:
+      - field: "accuracy_rate"
+        operator: ">="
+        value: 0.8
+      - field: "solving_speed"
+        operator: ">"
+        value: "fast"
+      - field: "average_solving_time"
+        operator: "<"
+        value: "baseline_70_percent"
+    action:
+      - "analyze: 'intuition_vs_certainty_classification'"
+      - "generate_description: 'intuition_pattern_analysis'"
+      - "display_message: '이번 세션의 정답률은 높지만 평균 풀이 시간이 평소보다 30% 짧습니다. 실제 확신이 있었던 문제와 단순 직감으로 푼 문제를 분류합니다.'"
+    confidence: 0.91
+    rationale: "직감형 풀이 패턴 누적은 침착도 저하로 연결될 수 있음"
+
+  - rule_id: "R2a_intuition_warning"
+    priority: 88
+    description: "직감형 풀이 패턴 누적 경고"
+    conditions:
+      - field: "intuition_problems_count"
+        operator: ">="
+        value: 3
+      - field: "certainty_problems_count"
+        operator: "<"
+        value: 2
+    action:
+      - "alert: '직감형 풀이 경고'"
+      - "generate_description: 'intuition_accumulation_warning'"
+      - "display_message: '직감형 풀이의 패턴이 누적되고 있습니다. 이는 침착도 저하로 연결될 수 있으니 경고 피드백을 생성합니다.'"
+    confidence: 0.87
+    rationale: "직감 의존은 장기적으로 불안정한 학습 패턴"
+
+  - rule_id: "R2b_confidence_vs_intuition_comparison"
+    priority: 85
+    description: "확신 문제와 직감 문제 비교 분석"
+    conditions:
+      - field: "intuition_problems_count"
+        operator: ">="
+        value: 1
+      - field: "certainty_problems_count"
+        operator: ">="
+        value: 1
+    action:
+      - "analyze: 'confidence_intuition_comparison'"
+      - "generate_description: 'problem_classification_summary'"
+      - "display_message: '확신이 있었던 문제와 직감으로 푼 문제를 비교 분석하여 학습 패턴을 파악합니다.'"
+    confidence: 0.84
+    rationale: "확신과 직감의 구분은 침착도 향상의 핵심"
+
+  # ========== S3: 정답률 낮고 풀이 속도 느릴 때 관련 룰 ==========
+  
+  - rule_id: "R3_low_accuracy_slow_speed_analysis"
+    priority: 91
+    description: "정답률 낮고 풀이 속도 느릴 때 확신 부족형 문제 감지"
+    conditions:
+      - field: "accuracy_rate"
+        operator: "<"
+        value: 0.6
+      - field: "solving_speed"
+        operator: "=="
+        value: "slow"
+      - field: "average_solving_time"
+        operator: ">"
+        value: "baseline_130_percent"
+    action:
+      - "analyze: 'uncertainty_pattern_detection'"
+      - "generate_description: 'uncertainty_analysis'"
+      - "display_message: '학생이 풀이를 오래 고민하지만 정답률이 낮습니다. 이는 확신 부족형 문제로 보입니다.'"
+    confidence: 0.89
+    rationale: "확신 부족은 학습 효율 저하의 주요 원인"
+
+  - rule_id: "R3a_hesitation_pattern_visualization"
+    priority: 89
+    description: "선택 직전 멈춤 구간의 사고흐름 시각화"
+    conditions:
+      - field: "hesitation_count"
+        operator: ">="
+        value: 3
+      - field: "accuracy_rate"
+        operator: "<"
+        value: 0.65
+    action:
+      - "analyze: 'hesitation_segments'"
+      - "generate_description: 'hesitation_flow_visualization'"
+      - "display_message: '생각은 깊지만 선택이 주저된 패턴을 감지했습니다. 선택 직전 멈춤 구간의 사고흐름을 시각화합니다.'"
+    confidence: 0.87
+    rationale: "주저 패턴 분석은 확신 형성에 도움"
+
+  - rule_id: "R3b_self_reflection_questions"
+    priority: 86
+    description: "자기 피드백 문항 생성"
+    conditions:
+      - field: "hesitation_count"
+        operator: ">="
+        value: 2
+      - field: "self_reflection_triggered"
+        operator: "=="
+        value: false
+    action:
+      - "recommend: 'self_reflection_questions'"
+      - "generate_description: 'self_reflection_items'"
+      - "display_message: '무엇이 나를 망설이게 했을까? 자기 피드백 문항을 생성하여 학생의 사고 과정을 되돌아보게 합니다.'"
+    confidence: 0.85
+    rationale: "자기 인식 유도는 확신 형성의 기초"
+
+  # ========== S4: 집중력 저하 구간 관련 룰 ==========
+  
+  - rule_id: "R4_focus_decline_detection"
+    priority: 93
+    description: "집중력 저하 구간 감지 및 분석"
+    conditions:
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+      - field: "focus_decline_segments"
+        operator: "!="
+        value: null
+      - field: "decline_percentage"
+        operator: ">="
+        value: 20
+    action:
+      - "detect_calm_decline: true"
+      - "analyze: 'focus_decline_analysis'"
+      - "generate_description: 'focus_decline_report'"
+      - "display_message: '최근 40분 구간에서 침착도가 평균 대비 20% 하락했습니다. 시간대별 침착도 변화를 분석합니다.'"
+    confidence: 0.91
+    rationale: "집중력 저하는 학습 효율 저하의 직접적 원인"
+
+  - rule_id: "R4a_fatigue_vs_distraction_classification"
+    priority: 90
+    description: "피로 누적형 vs 순간 산만형 구분"
+    conditions:
+      - field: "focus_decline_segments"
+        operator: "!="
+        value: null
+      - field: "session_duration"
+        operator: ">="
+        value: 40
+    action:
+      - "analyze: 'decline_type_classification'"
+      - "generate_description: 'fatigue_vs_distraction_analysis'"
+      - "display_message: '피로 누적형인지 순간 산만형인지 구분하여 원인을 파악합니다.'"
+    confidence: 0.88
+    rationale: "원인 구분은 적절한 개입 전략 수립에 필수"
+
+  - rule_id: "R4b_fatigue_recovery_routine"
+    priority: 88
+    description: "피로 누적형일 경우 휴식루틴 에이전트 연동"
+    conditions:
+      - field: "decline_type"
+        operator: "=="
+        value: "fatigue_accumulation"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "recommend_break: true"
+      - "create_break_routine: true"
+      - "connect_agent: 'rest_routine'"
+      - "display_message: '피로 누적형으로 판단되면 휴식루틴 에이전트와 연동하여 회복 제안 피드백을 연결합니다.'"
+    confidence: 0.86
+    rationale: "피로 누적은 적극적인 휴식 개입 필요"
+
+  - rule_id: "R4c_momentary_distraction_handling"
+    priority: 82
+    description: "순간 산만형일 경우 집중 회복 전략"
+    conditions:
+      - field: "decline_type"
+        operator: "=="
+        value: "momentary_distraction"
+      - field: "calm_score"
+        operator: ">="
+        value: 75
+    action:
+      - "recommend: 'focus_recovery_strategy'"
+      - "generate_description: 'distraction_recovery_guide'"
+      - "display_message: '순간 산만형으로 판단되면 집중 회복 전략을 제안합니다.'"
+    confidence: 0.83
+    rationale: "순간 산만은 경미한 개입으로 해결 가능"
+
+  # ========== S5: 시험 대비 모드 전환 시기 관련 룰 ==========
+  
+  - rule_id: "R5_exam_mode_unstable_pattern_detection"
+    priority: 94
+    description: "시험 대비 모드에서 불안정한 판단 패턴 검출"
+    conditions:
+      - field: "exam_mode"
+        operator: "=="
+        value: true
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "analyze: 'exam_unstable_patterns'"
+      - "generate_description: 'exam_mode_analysis'"
+      - "display_message: '시험 대비 모드 진입 구간입니다. 침착도 기반으로 실전 상황에서 불안정한 판단 패턴(시간압박, 실수, 직감선택 등)을 검출합니다.'"
+    confidence: 0.92
+    rationale: "시험 모드에서는 침착도가 더욱 중요"
+
+  - rule_id: "R5a_time_pressure_detection"
+    priority: 91
+    description: "시간압박 패턴 감지"
+    conditions:
+      - field: "exam_mode"
+        operator: "=="
+        value: true
+      - field: "time_pressure_indicators"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze: 'time_pressure_patterns'"
+      - "generate_description: 'time_pressure_analysis'"
+      - "display_message: '시간압박으로 인한 불안정한 판단 패턴이 감지되었습니다.'"
+    confidence: 0.89
+    rationale: "시간압박은 시험 모드에서 주요 스트레스 요인"
+
+  - rule_id: "R5b_exam_calm_routine_recommendation"
+    priority: 89
+    description: "실전형 침착 루틴 추천"
+    conditions:
+      - field: "exam_mode"
+        operator: "=="
+        value: true
+      - field: "unstable_patterns_count"
+        operator: ">="
+        value: 1
+    action:
+      - "recommend: 'exam_calm_routines'"
+      - "generate_description: 'practical_calm_routines'"
+      - "display_message: '각 패턴에 맞는 실전형 침착 루틴(심호흡, 5초 점검법 등)을 추천합니다.'"
+    confidence: 0.87
+    rationale: "실전 침착 루틴은 시험 성과 향상에 직접적 도움"
+
+  - rule_id: "R5c_error_pattern_in_exam_mode"
+    priority: 87
+    description: "시험 모드에서 실수 패턴 분석"
+    conditions:
+      - field: "exam_mode"
+        operator: "=="
+        value: true
+      - field: "error_rate"
+        operator: ">"
+        value: 0.3
+    action:
+      - "analyze: 'exam_error_patterns'"
+      - "generate_description: 'exam_error_analysis'"
+      - "display_message: '시험 모드에서 발생한 실수 패턴을 분석하여 대응 전략을 수립합니다.'"
+    confidence: 0.85
+    rationale: "시험 모드 실수 패턴 분석은 실전 대비에 필수"
+
+  # ========== S6: 전일 대비 침착도 급하락 시 관련 룰 ==========
+  
+  - rule_id: "R6_sudden_calm_decline_detection"
+    priority: 96
+    description: "전일 대비 침착도 급하락 감지"
+    conditions:
+      - field: "calm_score"
+        operator: "!="
+        value: null
+      - field: "previous_day_calm"
+        operator: "!="
+        value: null
+      - field: "calm_decline_percentage"
+        operator: ">="
+        value: 15
+    action:
+      - "detect_calm_decline: true"
+      - "alert: '침착도 급하락 경고'"
+      - "analyze: 'sudden_decline_causes'"
+      - "generate_description: 'calm_decline_analysis'"
+      - "display_message: '오늘 침착도가 전일 대비 15% 하락했습니다. 원인을 분석합니다.'"
+    confidence: 0.94
+    rationale: "급격한 침착도 하락은 즉각적 개입 필요"
+
+  - rule_id: "R6a_emotional_vs_fatigue_cross_analysis"
+    priority: 92
+    description: "감정 데이터와 피로 데이터 교차 분석"
+    conditions:
+      - field: "calm_decline_percentage"
+        operator: ">="
+        value: 15
+      - field: "emotional_data_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'emotional_fatigue_cross_analysis'"
+      - "generate_description: 'decline_cause_classification'"
+      - "display_message: '감정 데이터(표정·시선흐름·학습로그)를 교차 분석해서 원인이 정서적 요인인지, 피로인지 구분합니다.'"
+    confidence: 0.9
+    rationale: "원인 구분은 적절한 개입 전략 수립에 필수"
+
+  - rule_id: "R6b_emotional_cause_learning_emotion_connection"
+    priority: 90
+    description: "감정형 원인일 경우 학습감정 분석 에이전트 연결"
+    conditions:
+      - field: "decline_cause"
+        operator: "=="
+        value: "emotional"
+      - field: "emotional_indicators"
+        operator: ">="
+        value: 2
+    action:
+      - "connect_agent: 'learning_emotion'"
+      - "generate_description: 'emotional_intervention_guide'"
+      - "display_message: '감정형 원인일 경우 학습감정 분석 에이전트와 연결해 조정 피드백을 생성합니다.'"
+    confidence: 0.88
+    rationale: "감정 요인은 전문 에이전트의 개입 필요"
+
+  - rule_id: "R6c_fatigue_cause_recovery_routine"
+    priority: 88
+    description: "피로형 원인일 경우 복구 루틴 제안"
+    conditions:
+      - field: "decline_cause"
+        operator: "=="
+        value: "fatigue"
+      - field: "calm_score"
+        operator: "<"
+        value: 75
+    action:
+      - "recommend_break: true"
+      - "suggest_recovery_activities: true"
+      - "display_message: '피로형 원인으로 판단되면 복구 활동을 제안합니다.'"
+    confidence: 0.86
+    rationale: "피로는 적극적인 회복 전략 필요"
+
+  # ========== S7: 오답 원인 파악 요청 시 관련 룰 ==========
+  
+  - rule_id: "R7_error_cause_analysis_request"
+    priority: 89
+    description: "오답 원인 파악 요청 시 화이트보드 로그 분석"
+    conditions:
+      - field: "error_analysis_requested"
+        operator: "=="
+        value: true
+      - field: "whiteboard_logs_available"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'whiteboard_error_logs'"
+      - "generate_description: 'error_cause_summary'"
+      - "display_message: '학생이 무리하게 시도한 문제들의 화이트보드 로그를 모아서 각 문항별로 어떤 사고 생략이 있었는지 요약합니다.'"
+    confidence: 0.87
+    rationale: "화이트보드 로그는 오답 원인 분석의 핵심 자료"
+
+  - rule_id: "R7a_thought_omission_analysis"
+    priority: 87
+    description: "사고 생략 구간 분석"
+    conditions:
+      - field: "error_analysis_requested"
+        operator: "=="
+        value: true
+      - field: "thought_omission_count"
+        operator: ">="
+        value: 1
+    action:
+      - "analyze: 'thought_omission_segments'"
+      - "generate_description: 'omission_analysis_report'"
+      - "display_message: '각 문항별로 어떤 사고 생략이 있었는지 상세히 분석합니다.'"
+    confidence: 0.85
+    rationale: "사고 생략 분석은 침착도 향상의 핵심"
+
+  - rule_id: "R7b_self_selection_error_causes"
+    priority: 85
+    description: "학생이 직접 선택할 수 있는 오답 원인 항목 제시 (수학 특화)"
+    conditions:
+      - field: "error_analysis_requested"
+        operator: "=="
+        value: true
+      - field: "error_causes_generated"
+        operator: "=="
+        value: false
+    action:
+      - "recommend: 'error_cause_selection_items'"
+      - "generate_description: 'self_selection_error_causes'"
+      - "display_message: '학생이 직접 원인을 선택할 수 있는 수학 특화 항목을 제시합니다: 시간압박, 근거부족, 자신감과잉, 착각, 피로, 계산실수, 개념혼동, 조건놓침, 수식오류'"
+    confidence: 0.83
+    rationale: "자기 인식 유도는 학습 개선의 기초, 수학 특화 오류 원인 포함"
+
+  # ========== S8: 침착도 수준별 개입 전략 관련 룰 ==========
+  
+  - rule_id: "R8_very_calm_recommendation"
+    priority: 88
+    description: "매우 침착 상태에서 고난도/심화 추천 (학생 수준별 기준 적용)"
+    conditions:
+      - field: "calm_score"
+        operator: ">="
+        value: "level_baseline_plus_5"
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_level_baseline: true"
+      - "suggest_deep_content: true"
+      - "adjust_difficulty_by_calm: 'high'"
+      - "display_message: '매우 침착한 상태입니다. 고난도/심화 콘텐츠를 추천합니다.'"
+    confidence: 0.86
+    rationale: "높은 침착도는 도전적 학습 기회, 학생 수준별 기준 적용"
+
+  - rule_id: "R8a_calm_standard_learning"
+    priority: 85
+    description: "침착 상태(90~94)에서 표준 학습 진행 권장"
+    conditions:
+      - field: "calm_score"
+        operator: ">="
+        value: 90
+      - field: "calm_score"
+        operator: "<"
+        value: 95
+    action:
+      - "recommend_path: '표준 학습 진행'"
+      - "display_message: '침착한 상태입니다. 표준 학습을 진행하는 것을 권장합니다.'"
+    confidence: 0.83
+    rationale: "안정적 침착도는 표준 학습에 적합"
+
+  - rule_id: "R8b_stable_gradual_increase"
+    priority: 82
+    description: "안정 상태(85~89)에서 가벼운 복습 후 점진적 난이도 상승"
+    conditions:
+      - field: "calm_score"
+        operator: ">="
+        value: 85
+      - field: "calm_score"
+        operator: "<"
+        value: 90
+    action:
+      - "recommend_review: true"
+      - "adjust_difficulty_by_calm: 'gradual_increase'"
+      - "display_message: '안정 상태입니다. 가벼운 복습 후 점진적으로 난이도를 상승시킵니다.'"
+    confidence: 0.8
+    rationale: "안정 상태는 점진적 도전에 적합"
+
+  - rule_id: "R8c_normal_warmup_needed"
+    priority: 80
+    description: "보통 상태(80~84)에서 쉬운 과제로 워밍업 후 본학습"
+    conditions:
+      - field: "calm_score"
+        operator: ">="
+        value: 80
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "recommend_path: '워밍업 후 본학습'"
+      - "adjust_difficulty_by_calm: 'warmup'"
+      - "display_message: '보통 상태입니다. 쉬운 과제로 워밍업 후 본학습을 진행합니다.'"
+    confidence: 0.78
+    rationale: "보통 상태는 워밍업을 통한 점진적 진입 필요"
+
+  - rule_id: "R8d_low_break_needed"
+    priority: 88
+    description: "낮음 상태(75~79)에서 3~5분 휴식/호흡 후 재시작"
+    conditions:
+      - field: "calm_score"
+        operator: ">="
+        value: 75
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "recommend_break: true"
+      - "create_break_routine: '3-5min_breathing'"
+      - "display_message: '침착도가 낮습니다. 3~5분 휴식/호흡 후 재시작하는 것을 권장합니다.'"
+    confidence: 0.86
+    rationale: "낮은 침착도는 휴식 개입 필요"
+
+  - rule_id: "R8e_urgent_recovery_needed"
+    priority: 95
+    description: "긴급 복구 상태(<75)에서 휴식·수분섭취·스트레칭 권장"
+    conditions:
+      - field: "calm_score"
+        operator: "<"
+        value: 75
+    action:
+      - "alert: '긴급 복구 필요'"
+      - "suggest_recovery_activities: 'urgent'"
+      - "recommend_break: true"
+      - "display_message: '침착도가 매우 낮습니다. 긴급 복구가 필요합니다. 휴식·수분섭취·스트레칭을 권장합니다.'"
+    confidence: 0.93
+    rationale: "매우 낮은 침착도는 즉각적 복구 개입 필요"
+
+  # ========== S9: 침착도 추이 기반 전략 관련 룰 ==========
+  
+  - rule_id: "R9_high_efficiency_deep_content"
+    priority: 87
+    description: "기준선 대비 +5 이상일 때 고효율 상태로 심화 콘텐츠 배치"
+    conditions:
+      - field: "calm_trend"
+        operator: "=="
+        value: "improving"
+      - field: "calm_score"
+        operator: ">="
+        value: "baseline_plus_5"
+    action:
+      - "suggest_deep_content: true"
+      - "adjust_difficulty_by_calm: 'high'"
+      - "display_message: '기준선 대비 침착도가 5점 이상 상승했습니다. 고효율 상태이므로 심화 콘텐츠를 배치합니다.'"
+    confidence: 0.85
+    rationale: "침착도 상승은 도전적 학습 기회"
+
+  - rule_id: "R9a_fatigue_accumulation_break"
+    priority: 89
+    description: "기준선 대비 -5 이하일 때 피로 누적로 휴식 루틴 삽입"
+    conditions:
+      - field: "calm_trend"
+        operator: "=="
+        value: "declining"
+      - field: "calm_score"
+        operator: "<="
+        value: "baseline_minus_5"
+    action:
+      - "recommend_break: true"
+      - "create_break_routine: true"
+      - "display_message: '기준선 대비 침착도가 5점 이상 하락했습니다. 피로 누적으로 판단되므로 휴식 루틴을 삽입합니다.'"
+    confidence: 0.87
+    rationale: "침착도 하락은 휴식 개입 필요"
+
+  - rule_id: "R9b_stable_continuation"
+    priority: 75
+    description: "안정적 추이일 때 현재 학습 계속"
+    conditions:
+      - field: "calm_trend"
+        operator: "=="
+        value: "stable"
+    action:
+      - "recommend_path: '현재 학습 계속'"
+      - "display_message: '침착도가 안정적으로 유지되고 있습니다. 현재 학습을 계속 진행합니다.'"
+    confidence: 0.73
+    rationale: "안정적 추이는 현재 전략 유지"
+
+  # ========== S10: 복합 상황 대응 관련 룰 ==========
+  
+  - rule_id: "R10_combined_consecutive_errors_low_calm"
+    priority: 96
+    description: "연속 오답과 낮은 침착도 복합 상황"
+    conditions:
+      - field: "consecutive_errors"
+        operator: ">="
+        value: 5
+      - field: "calm_score"
+        operator: "<"
+        value: 75
+    action:
+      - "alert: '긴급 개입 필요'"
+      - "detect_calm_decline: true"
+      - "recommend_break: true"
+      - "suggest_recovery_activities: 'urgent'"
+      - "analyze: 'combined_crisis_analysis'"
+      - "display_message: '연속 오답과 낮은 침착도가 동시에 발생했습니다. 긴급 개입이 필요합니다.'"
+    confidence: 0.94
+    rationale: "복합 위기 상황은 최우선 개입 필요"
+
+  - rule_id: "R10a_fast_speed_low_accuracy_high_calm"
+    priority: 84
+    description: "빠른 속도, 낮은 정답률, 높은 침착도 역설 상황"
+    conditions:
+      - field: "solving_speed"
+        operator: ">"
+        value: "fast"
+      - field: "accuracy_rate"
+        operator: "<"
+        value: 0.6
+      - field: "calm_score"
+        operator: ">="
+        value: 90
+    action:
+      - "analyze: 'paradoxical_situation'"
+      - "generate_description: 'speed_accuracy_calm_paradox'"
+      - "display_message: '빠른 속도와 낮은 정답률이 높은 침착도와 함께 나타나는 역설적 상황을 분석합니다.'"
+    confidence: 0.82
+    rationale: "역설적 상황은 심층 분석 필요"
+
+  - rule_id: "R10b_exam_mode_high_stress"
+    priority: 92
+    description: "시험 모드에서 높은 스트레스와 침착도 저하"
+    conditions:
+      - field: "exam_mode"
+        operator: "=="
+        value: true
+      - field: "stress_level"
+        operator: ">="
+        value: "high"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "alert: '시험 모드 스트레스 경고'"
+      - "recommend: 'exam_stress_management'"
+      - "connect_agent: 'learning_emotion'"
+      - "display_message: '시험 모드에서 높은 스트레스와 침착도 저하가 감지되었습니다. 스트레스 관리 전략을 제안합니다.'"
+    confidence: 0.9
+    rationale: "시험 모드 스트레스는 즉각적 관리 필요"
+
+  # ========== S11: 장기적 침착도 향상 관련 룰 ==========
+  
+  - rule_id: "R11_long_term_calm_improvement"
+    priority: 83
+    description: "장기적 침착도 향상을 위한 패턴 분석"
+    conditions:
+      - field: "factors.recent_average"
+        operator: "!="
+        value: null
+      - field: "baseline_calm"
+        operator: "!="
+        value: null
+      - field: "factors.data_count"
+        operator: ">="
+        value: 10
+    action:
+      - "analyze: 'long_term_calm_trend'"
+      - "generate_description: 'calm_improvement_strategy'"
+      - "display_message: '장기적 침착도 추이를 분석하여 향상 전략을 수립합니다.'"
+    confidence: 0.81
+    rationale: "장기적 추이는 학습 안정성의 핵심"
+
+  - rule_id: "R11a_calm_consistency_analysis"
+    priority: 80
+    description: "침착도 일관성 분석"
+    conditions:
+      - field: "factors.recent_min"
+        operator: "!="
+        value: null
+      - field: "factors.recent_max"
+        operator: "!="
+        value: null
+      - field: "calm_variance"
+        operator: ">"
+        value: 15
+    action:
+      - "analyze: 'calm_consistency'"
+      - "generate_description: 'consistency_improvement_guide'"
+      - "display_message: '침착도 변동성이 높습니다. 일관성 향상을 위한 전략을 제안합니다.'"
+    confidence: 0.78
+    rationale: "일관성은 안정적 학습의 기초"
+
+  - rule_id: "R11b_whiteboard_feedback_accumulation"
+    priority: 85
+    description: "화이트보드 피드백 누적 데이터 분석"
+    conditions:
+      - field: "whiteboard_feedback_count"
+        operator: ">="
+        value: 10
+      - field: "learning_psychology_change_requested"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'accumulated_whiteboard_feedback'"
+      - "generate_description: 'learning_psychology_analysis'"
+      - "display_message: '누적된 화이트보드 피드백 데이터를 분석하여 학습심리 변화를 파악합니다.'"
+    confidence: 0.83
+    rationale: "누적 데이터는 학습 패턴 변화 추적에 필수"
+
+  # ========== S12: 수학 문제 유형별 침착도 해석 관련 룰 ==========
+  
+  - rule_id: "R12_problem_type_calm_interpretation"
+    priority: 91
+    description: "문제 유형별 침착도 기준선 적용 및 해석"
+    conditions:
+      - field: "problem_type"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'math_problem_type_calm_db.yaml'"
+      - "apply_type_baseline: true"
+      - "analyze: 'type_specific_calm_interpretation'"
+      - "generate_description: 'problem_type_calm_analysis'"
+      - "display_message: '문제 유형({problem_type})에 맞는 침착도 기준선을 적용하여 해석합니다.'"
+    confidence: 0.89
+    rationale: "문제 유형별로 침착도 기준이 다르므로 차별화된 해석 필요"
+
+  - rule_id: "R12a_calculation_type_calm_management"
+    priority: 90
+    description: "계산형 문제에서 침착도 저하 시 워밍업 전략"
+    conditions:
+      - field: "problem_type"
+        operator: "=="
+        value: "calculation"
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "load_db: 'math_problem_type_calm_db.yaml'"
+      - "apply_intervention: 'calculation_low_calm'"
+      - "recommend_path: '쉬운 계산 문제로 워밍업'"
+      - "display_message: '계산형 문제에서 침착도가 85 이하입니다. 쉬운 계산 문제로 워밍업한 후 본 문제를 풀어보세요.'"
+    confidence: 0.88
+    rationale: "계산 문제는 침착도가 높을 때 정확도가 크게 향상됨"
+
+  - rule_id: "R12b_conceptual_type_calm_management"
+    priority: 89
+    description: "개념형 문제에서 침착도 저하 시 개념 복습 전략"
+    conditions:
+      - field: "problem_type"
+        operator: "=="
+        value: "conceptual"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "load_db: 'math_problem_type_calm_db.yaml'"
+      - "apply_intervention: 'conceptual_low_calm'"
+      - "recommend_path: '기본 개념 복습'"
+      - "display_message: '개념형 문제에서 침착도가 80 이하입니다. 기본 개념을 다시 확인한 후 문제를 풀어보세요.'"
+    confidence: 0.87
+    rationale: "개념 문제는 침착도가 낮을 때 개념 혼동이 자주 발생"
+
+  - rule_id: "R12c_application_type_calm_management"
+    priority: 92
+    description: "응용형 문제에서 침착도 저하 시 단계적 접근 전략"
+    conditions:
+      - field: "problem_type"
+        operator: "=="
+        value: "application"
+      - field: "calm_score"
+        operator: "<"
+        value: 90
+    action:
+      - "load_db: 'math_problem_type_calm_db.yaml'"
+      - "apply_intervention: 'application_low_calm'"
+      - "recommend_path: '쉬운 응용 문제로 단계적 접근'"
+      - "display_message: '응용형 문제에서 침착도가 90 이하입니다. 쉬운 응용 문제로 단계적으로 접근해보세요.'"
+    confidence: 0.9
+    rationale: "응용 문제는 침착도가 높을 때 해결 가능"
+
+  - rule_id: "R12d_proof_type_calm_management"
+    priority: 88
+    description: "증명형 문제에서 침착도 저하 시 기본 패턴 복습 전략"
+    conditions:
+      - field: "problem_type"
+        operator: "=="
+        value: "proof"
+      - field: "calm_score"
+        operator: "<"
+        value: 75
+    action:
+      - "load_db: 'math_problem_type_calm_db.yaml'"
+      - "apply_intervention: 'proof_low_calm'"
+      - "recommend_path: '기본 증명 패턴 복습'"
+      - "display_message: '증명형 문제에서 침착도가 75 이하입니다. 기본 증명 패턴을 다시 확인한 후 문제를 풀어보세요.'"
+    confidence: 0.86
+    rationale: "증명 문제는 침착도가 낮을 때 논리 오류가 자주 발생"
+
+  # ========== S13: 단원별 침착도 관리 관련 룰 ==========
+  
+  - rule_id: "R13_unit_specific_calm_management"
+    priority: 90
+    description: "단원별 침착도 특성 적용 및 관리"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'math_unit_calm_db.yaml'"
+      - "apply_unit_baseline: true"
+      - "analyze: 'unit_specific_calm_analysis'"
+      - "generate_description: 'unit_calm_management'"
+      - "display_message: '현재 단원({current_unit})의 침착도 특성을 적용하여 관리합니다.'"
+    confidence: 0.88
+    rationale: "단원별로 침착도 특성이 다르므로 차별화된 관리 필요"
+
+  - rule_id: "R13a_unit_calm_decline_intervention"
+    priority: 89
+    description: "단원별 침착도 저하 시 단원 특화 개입 전략"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "<"
+        value: "unit_baseline_minus_5"
+    action:
+      - "load_db: 'math_unit_calm_db.yaml'"
+      - "apply_unit_intervention: true"
+      - "generate_description: 'unit_specific_intervention'"
+      - "display_message: '현재 단원에서 침착도가 기준선보다 5점 이상 하락했습니다. 단원 특화 복구 전략을 적용합니다.'"
+    confidence: 0.87
+    rationale: "단원별 특성에 맞는 개입 전략이 효과적"
+
+  - rule_id: "R13b_unit_prerequisite_check"
+    priority: 87
+    description: "선행 단원 이해도 부족으로 인한 침착도 저하 감지"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "<"
+        value: "unit_baseline_minus_10"
+      - field: "prerequisite_mastery"
+        operator: "<"
+        value: 0.7
+    action:
+      - "load_db: 'math_unit_calm_db.yaml'"
+      - "analyze: 'prerequisite_impact'"
+      - "recommend_path: '선행 단원 복습'"
+      - "display_message: '침착도가 단원 기준선보다 10점 이상 하락했고, 선행 단원 이해도가 부족합니다. 선행 단원을 복습하는 것을 권장합니다.'"
+    confidence: 0.85
+    rationale: "선행 단원 이해도 부족은 침착도 저하의 주요 원인"
+
+  # ========== S14: 학생 수준별 침착도 해석 관련 룰 ==========
+  
+  - rule_id: "R14_student_level_calm_interpretation"
+    priority: 92
+    description: "학생 수준별 침착도 기준선 적용 및 해석"
+    conditions:
+      - field: "student_level"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_level_baseline: true"
+      - "analyze: 'level_specific_calm_interpretation'"
+      - "generate_description: 'student_level_calm_analysis'"
+      - "display_message: '학생 수준({student_level})에 맞는 침착도 기준선을 적용하여 해석합니다.'"
+    confidence: 0.9
+    rationale: "학생 수준별로 침착도 기준이 다르므로 차별화된 해석 필요"
+
+  - rule_id: "R14a_top_level_calm_management"
+    priority: 91
+    description: "상위권 학생 침착도 관리"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "top_level"
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_intervention: 'top_level_low_calm'"
+      - "recommend_path: '기본 문제로 복습, 개념 재확인'"
+      - "display_message: '상위권 학생의 침착도가 85 이하입니다. 기본 문제로 복습하고 개념을 다시 확인하는 것을 권장합니다.'"
+    confidence: 0.89
+    rationale: "상위권 학생은 높은 침착도 요구"
+
+  - rule_id: "R14b_middle_level_calm_management"
+    priority: 90
+    description: "중위권 학생 침착도 관리"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "middle_level"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_intervention: 'middle_level_low_calm'"
+      - "recommend_path: '기본 문제로 복습, 개념 재학습'"
+      - "display_message: '중위권 학생의 침착도가 80 이하입니다. 기본 문제로 복습하고 개념을 다시 학습하는 것을 권장합니다.'"
+    confidence: 0.88
+    rationale: "중위권 학생은 적정 침착도 요구"
+
+  - rule_id: "R14c_bottom_level_calm_management"
+    priority: 89
+    description: "하위권 학생 침착도 관리"
+    conditions:
+      - field: "student_level"
+        operator: "=="
+        value: "bottom_level"
+      - field: "calm_score"
+        operator: "<"
+        value: 75
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_intervention: 'bottom_level_low_calm'"
+      - "recommend_path: '기본 개념 재학습, 쉬운 문제 반복'"
+      - "display_message: '하위권 학생의 침착도가 75 이하입니다. 기본 개념을 다시 학습하고 쉬운 문제를 반복하는 것을 권장합니다.'"
+    confidence: 0.87
+    rationale: "하위권 학생은 점진적 침착도 향상 목표"
+
+  - rule_id: "R14d_personal_baseline_application"
+    priority: 88
+    description: "개인 기준선 적용 및 조정"
+    conditions:
+      - field: "personal_baseline"
+        operator: "!="
+        value: null
+      - field: "calm_data_count"
+        operator: ">="
+        value: 10
+    action:
+      - "load_db: 'student_level_calm_db.yaml'"
+      - "apply_personal_baseline: true"
+      - "analyze: 'personal_baseline_comparison'"
+      - "generate_description: 'personal_calm_analysis'"
+      - "display_message: '개인 기준선을 적용하여 침착도를 해석합니다. 개인 기준선: {personal_baseline}'"
+    confidence: 0.86
+    rationale: "개인 기준선은 학생별 맞춤형 관리에 필수"
+
+  # ========== S15: 수학 오류 유형별 침착도 패턴 분석 관련 룰 ==========
+  
+  - rule_id: "R15_error_type_calm_pattern_analysis"
+    priority: 90
+    description: "수학 오류 유형별 침착도 패턴 분석"
+    conditions:
+      - field: "error_type"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'error_type_calm_correlation'"
+      - "generate_description: 'error_calm_pattern_analysis'"
+      - "display_message: '오류 유형({error_type})과 침착도 패턴을 분석합니다.'"
+    confidence: 0.88
+    rationale: "오류 유형별 침착도 패턴 분석은 정밀한 원인 파악에 도움"
+
+  - rule_id: "R15a_calculation_error_calm_analysis"
+    priority: 89
+    description: "계산 실수와 침착도 연관성 분석"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "calculation_error"
+      - field: "calm_score"
+        operator: "<="
+        value: 75
+    action:
+      - "analyze: 'calculation_error_calm_correlation'"
+      - "generate_description: 'calculation_error_analysis'"
+      - "display_message: '계산 실수가 침착도 75 이하에서 주로 발생하는 것으로 분석됩니다. 침착도 향상을 통해 계산 실수를 줄일 수 있습니다.'"
+    confidence: 0.87
+    rationale: "계산 실수는 침착도 저하와 밀접한 관련"
+
+  - rule_id: "R15b_concept_error_calm_analysis"
+    priority: 86
+    description: "개념 오류와 침착도 연관성 분석"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "concept_error"
+      - field: "calm_score"
+        operator: ">="
+        value: 85
+    action:
+      - "analyze: 'concept_error_calm_correlation'"
+      - "generate_description: 'concept_error_analysis'"
+      - "display_message: '개념 오류는 침착도와 무관하게 발생할 수 있습니다. 개념 이해도 자체를 확인하는 것이 중요합니다.'"
+    confidence: 0.84
+    rationale: "개념 오류는 침착도와 상대적으로 독립적"
+
+  - rule_id: "R15c_condition_miss_calm_analysis"
+    priority: 88
+    description: "조건 놓침과 침착도 연관성 분석"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "condition_miss"
+      - field: "calm_score"
+        operator: "<="
+        value: 80
+    action:
+      - "analyze: 'condition_miss_calm_correlation'"
+      - "generate_description: 'condition_miss_analysis'"
+      - "display_message: '조건 놓침이 침착도 80 이하에서 주로 발생하는 것으로 분석됩니다. 문제를 풀기 전 조건을 꼼꼼히 확인하는 습관이 필요합니다.'"
+    confidence: 0.86
+    rationale: "조건 놓침은 침착도 저하 시 자주 발생"
+
+  - rule_id: "R15d_formula_error_calm_analysis"
+    priority: 87
+    description: "수식 오류와 침착도 연관성 분석"
+    conditions:
+      - field: "error_type"
+        operator: "=="
+        value: "formula_error"
+      - field: "calm_score"
+        operator: "<="
+        value: 75
+    action:
+      - "analyze: 'formula_error_calm_correlation'"
+      - "generate_description: 'formula_error_analysis'"
+      - "display_message: '수식 오류가 침착도 75 이하에서 주로 발생하는 것으로 분석됩니다. 침착도 향상과 함께 수식 적용 연습이 필요합니다.'"
+    confidence: 0.85
+    rationale: "수식 오류는 침착도 저하 시 발생 빈도 증가"
+
+  # ========== S16: 문제 난이도별 기준선 차별화 관련 룰 ==========
+  
+  - rule_id: "R16_difficulty_level_calm_baseline"
+    priority: 89
+    description: "문제 난이도별 침착도 기준선 차별화"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "apply_difficulty_baseline: true"
+      - "analyze: 'difficulty_specific_calm_interpretation'"
+      - "generate_description: 'difficulty_calm_analysis'"
+      - "display_message: '문제 난이도({problem_difficulty})에 맞는 침착도 기준선을 적용합니다.'"
+    confidence: 0.87
+    rationale: "난이도별로 침착도 기준이 다르므로 차별화 필요"
+
+  - rule_id: "R16a_basic_difficulty_calm_interpretation"
+    priority: 88
+    description: "기본 문제에서 침착도 저하 시 컨디션 문제 의심"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "=="
+        value: "basic"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+    action:
+      - "analyze: 'basic_difficulty_calm_decline'"
+      - "recommend_path: '컨디션 점검 및 휴식'"
+      - "display_message: '기본 문제에서 침착도가 떨어지면 컨디션 문제일 가능성이 높습니다. 휴식을 권장합니다.'"
+    confidence: 0.86
+    rationale: "기본 문제에서 침착도 저하는 컨디션 문제 신호"
+
+  - rule_id: "R16b_advanced_difficulty_calm_interpretation"
+    priority: 87
+    description: "심화 문제에서 침착도 저하는 정상 범위로 해석"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "=="
+        value: "advanced"
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+      - field: "calm_score"
+        operator: ">="
+        value: 75
+    action:
+      - "analyze: 'advanced_difficulty_calm_decline'"
+      - "recommend_path: '정상 범위로 해석, 단계적 접근'"
+      - "display_message: '심화 문제에서 침착도가 낮아지는 것은 정상 범위입니다. 단계적으로 접근하는 것을 권장합니다.'"
+    confidence: 0.85
+    rationale: "심화 문제에서 침착도 저하는 자연스러운 현상"
+
+  - rule_id: "R16c_difficulty_specific_intervention"
+    priority: 86
+    description: "난이도별 차별화된 개입 전략"
+    conditions:
+      - field: "problem_difficulty"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "<"
+        value: "difficulty_baseline_minus_5"
+    action:
+      - "apply_difficulty_intervention: true"
+      - "generate_description: 'difficulty_specific_intervention'"
+      - "display_message: '문제 난이도에 맞는 차별화된 개입 전략을 적용합니다.'"
+    confidence: 0.84
+    rationale: "난이도별 차별화된 개입이 효과적"
+
+  # ========== S17: 학습 단계별 침착도 관리 관련 룰 ==========
+  
+  - rule_id: "R17_learning_stage_calm_management"
+    priority: 88
+    description: "학습 단계별 침착도 기준 차별화"
+    conditions:
+      - field: "learning_stage"
+        operator: "!="
+        value: null
+      - field: "calm_score"
+        operator: "!="
+        value: null
+    action:
+      - "apply_stage_baseline: true"
+      - "analyze: 'stage_specific_calm_interpretation'"
+      - "generate_description: 'learning_stage_calm_analysis'"
+      - "display_message: '학습 단계({learning_stage})에 맞는 침착도 기준을 적용합니다.'"
+    confidence: 0.86
+    rationale: "학습 단계별로 침착도 기준이 다르므로 차별화 필요"
+
+  - rule_id: "R17a_concept_learning_stage_calm"
+    priority: 87
+    description: "개념 학습 단계에서 침착도 저하는 허용 범위"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "concept_learning"
+      - field: "calm_score"
+        operator: "<"
+        value: 80
+      - field: "calm_score"
+        operator: ">="
+        value: 70
+    action:
+      - "analyze: 'concept_stage_calm_decline'"
+      - "recommend_path: '정상 범위로 해석, 개념 이해에 집중'"
+      - "display_message: '개념 학습 단계에서 침착도가 낮아지는 것은 정상 범위입니다. 개념 이해에 집중하는 것을 권장합니다.'"
+    confidence: 0.85
+    rationale: "개념 학습 단계는 침착도 낮아도 괜찮음"
+
+  - rule_id: "R17b_practice_stage_calm"
+    priority: 89
+    description: "유형 연습 단계에서 침착도 높이기 필요"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "pattern_practice"
+      - field: "calm_score"
+        operator: "<"
+        value: 85
+    action:
+      - "analyze: 'practice_stage_calm_decline'"
+      - "recommend_path: '침착도 향상 후 연습 진행'"
+      - "display_message: '유형 연습 단계에서는 침착도가 높아야 합니다. 침착도를 향상시킨 후 연습을 진행하는 것을 권장합니다.'"
+    confidence: 0.87
+    rationale: "유형 연습 단계는 높은 침착도 필요"
+
+  - rule_id: "R17c_advanced_stage_calm"
+    priority: 90
+    description: "심화 단계에서 침착도 매우 높아야 함"
+    conditions:
+      - field: "learning_stage"
+        operator: "=="
+        value: "advanced"
+      - field: "calm_score"
+        operator: "<"
+        value: 90
+    action:
+      - "analyze: 'advanced_stage_calm_decline'"
+      - "recommend_path: '침착도 향상 후 심화 학습 진행'"
+      - "display_message: '심화 단계에서는 침착도가 매우 높아야 합니다. 침착도를 향상시킨 후 심화 학습을 진행하는 것을 권장합니다.'"
+    confidence: 0.88
+    rationale: "심화 단계는 매우 높은 침착도 필요"
+
+  # ========== S18: 복합 상황 통합 분석 관련 룰 ==========
+  
+  - rule_id: "R18_comprehensive_calm_analysis"
+    priority: 93
+    description: "문제 유형, 단원, 학생 수준, 난이도를 종합한 침착도 분석"
+    conditions:
+      - field: "problem_type"
+        operator: "!="
+        value: null
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "student_level"
+        operator: "!="
+        value: null
+      - field: "problem_difficulty"
+        operator: "!="
+        value: null
+    action:
+      - "load_db: ['math_problem_type_calm_db.yaml', 'math_unit_calm_db.yaml', 'student_level_calm_db.yaml']"
+      - "analyze: 'comprehensive_calm_analysis'"
+      - "apply_multi_factor_baseline: true"
+      - "generate_description: 'integrated_calm_analysis'"
+      - "display_message: '문제 유형, 단원, 학생 수준, 난이도를 종합하여 침착도를 분석합니다.'"
+    confidence: 0.91
+    rationale: "다중 요소 종합 분석이 가장 정확한 침착도 해석"
+
+  - rule_id: "R18a_conflicting_signals_resolution"
+    priority: 92
+    description: "상충되는 침착도 신호 해결"
+    conditions:
+      - field: "conflicting_signals"
+        operator: "=="
+        value: true
+    action:
+      - "analyze: 'signal_priority_analysis'"
+      - "apply_priority_rules: true"
+      - "generate_description: 'conflict_resolution'"
+      - "display_message: '상충되는 침착도 신호를 우선순위 규칙에 따라 해결합니다.'"
+    confidence: 0.9
+    rationale: "상충 신호는 우선순위 규칙으로 해결"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '침착도 정보를 분석 중입니다.'"
+  confidence: 0.5
+  rationale: "기본 루틴 적용"

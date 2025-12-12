@@ -1,0 +1,402 @@
+# Agent17 페르소나 식별 규칙
+# 잔여 활동 조정 에이전트용 규칙 정의
+#
+# 구조:
+# - rules: 페르소나 식별 규칙 목록
+# - defaults: 기본값 설정
+# - metadata: 메타데이터
+
+metadata:
+  agent_id: agent17
+  agent_name: "잔여 활동 조정 에이전트"
+  version: "1.0"
+  last_updated: "2025-12-02"
+  description: "학습 진행 상태에 따른 페르소나 식별 및 전략 선택 규칙"
+
+# 기본값 설정
+defaults:
+  persona: "R2_P1"
+  tone: "Supportive"
+  intervention: "InformationProvision"
+  confidence: 0.5
+
+# 페르소나 식별 규칙
+rules:
+  # ========================================
+  # R5: 리듬 붕괴 상태 (최우선 처리)
+  # ========================================
+
+  - id: "rule_R5_001"
+    name: "리듬 붕괴 - 장시간 비활동"
+    description: "60분 이상 활동 없음 감지"
+    priority: 100
+    situation: "R5"
+    conditions:
+      OR:
+        - field: "last_activity_gap_minutes"
+          operator: ">"
+          value: 60
+    persona: "R5_P1"
+    actions:
+      - "set_tone:Empathetic"
+      - "prioritize_intervention:EmotionalSupport"
+    confidence: 0.95
+
+  - id: "rule_R5_002"
+    name: "리듬 붕괴 - 연속 실패"
+    description: "5회 이상 연속 실패"
+    priority: 98
+    situation: "R5"
+    conditions:
+      AND:
+        - field: "consecutive_failures"
+          operator: ">="
+          value: 5
+    persona: "R5_P2"
+    actions:
+      - "set_tone:Patient"
+      - "prioritize_intervention:SteppingStone"
+    confidence: 0.92
+
+  - id: "rule_R5_003"
+    name: "리듬 붕괴 - 포기 의사 표현"
+    description: "사용자가 포기 관련 발화"
+    priority: 99
+    situation: "R5"
+    conditions:
+      AND:
+        - field: "intent"
+          operator: "=="
+          value: "frustration_expression"
+        - field: "emotional_state"
+          operator: "in"
+          value: ["frustrated", "exhausted"]
+    persona: "R5_P1"
+    actions:
+      - "set_tone:Empathetic"
+      - "prioritize_intervention:CrisisSupport"
+      - "flag:alert_teacher"
+    confidence: 0.98
+
+  # ========================================
+  # R4: 정체 진행 상태
+  # ========================================
+
+  - id: "rule_R4_001"
+    name: "정체 - 낮은 완료율"
+    description: "완료율 30% 미만"
+    priority: 90
+    situation: "R4"
+    conditions:
+      AND:
+        - field: "completion_rate"
+          operator: "<"
+          value: 30
+    persona: "R4_P1"
+    actions:
+      - "set_tone:Supportive"
+      - "prioritize_intervention:IntensiveTutoring"
+    confidence: 0.88
+
+  - id: "rule_R4_002"
+    name: "정체 - 연속 실패 (3회 이상)"
+    description: "3회 이상 연속 실패"
+    priority: 88
+    situation: "R4"
+    conditions:
+      AND:
+        - field: "consecutive_failures"
+          operator: ">="
+          value: 3
+        - field: "consecutive_failures"
+          operator: "<"
+          value: 5
+    persona: "R4_P2"
+    actions:
+      - "set_tone:Encouraging"
+      - "prioritize_intervention:Demonstration"
+    confidence: 0.85
+
+  - id: "rule_R4_003"
+    name: "정체 - 자신감 상실"
+    description: "자신감 낮고 회피 행동"
+    priority: 87
+    situation: "R4"
+    conditions:
+      AND:
+        - field: "confidence_level"
+          operator: "=="
+          value: "low"
+        - field: "engagement_level"
+          operator: "in"
+          value: ["disengaged", "passive"]
+    persona: "R4_P3"
+    actions:
+      - "set_tone:Gentle"
+      - "prioritize_intervention:GoalReset"
+    confidence: 0.82
+
+  # ========================================
+  # R3: 지연 진행 상태
+  # ========================================
+
+  - id: "rule_R3_001"
+    name: "지연 - 중간 완료율"
+    description: "완료율 30-50%"
+    priority: 75
+    situation: "R3"
+    conditions:
+      AND:
+        - field: "completion_rate"
+          operator: ">="
+          value: 30
+        - field: "completion_rate"
+          operator: "<"
+          value: 50
+    persona: "R3_P1"
+    actions:
+      - "set_tone:Patient"
+      - "prioritize_intervention:Apprenticeship"
+    confidence: 0.80
+
+  - id: "rule_R3_002"
+    name: "지연 - 다중 시도"
+    description: "5회 이상 시도했으나 진전 없음"
+    priority: 77
+    situation: "R3"
+    conditions:
+      AND:
+        - field: "attempt_count"
+          operator: ">"
+          value: 5
+        - field: "completion_rate"
+          operator: "<"
+          value: 60
+    persona: "R3_P2"
+    actions:
+      - "set_tone:Practical"
+      - "prioritize_intervention:TaskSimplification"
+    confidence: 0.78
+
+  - id: "rule_R3_003"
+    name: "지연 - 역량 격차 인식"
+    description: "도움 요청하면서 어려움 표현"
+    priority: 76
+    situation: "R3"
+    conditions:
+      AND:
+        - field: "intent"
+          operator: "=="
+          value: "help_request"
+        - field: "emotional_state"
+          operator: "=="
+          value: "confused"
+    persona: "R3_P3"
+    actions:
+      - "set_tone:Encouraging"
+      - "prioritize_intervention:BridgeActivity"
+    confidence: 0.83
+
+  # ========================================
+  # R2: 적절 진행 상태
+  # ========================================
+
+  - id: "rule_R2_001"
+    name: "적절 - 일반적 진행"
+    description: "완료율 50-80% 사이"
+    priority: 60
+    situation: "R2"
+    conditions:
+      AND:
+        - field: "completion_rate"
+          operator: ">="
+          value: 50
+        - field: "completion_rate"
+          operator: "<"
+          value: 80
+    persona: "R2_P1"
+    actions:
+      - "set_tone:Professional"
+      - "prioritize_intervention:Clarification"
+    confidence: 0.75
+
+  - id: "rule_R2_002"
+    name: "적절 - 속도 조절 필요"
+    description: "부담감 표시하면서도 지속 의지"
+    priority: 62
+    situation: "R2"
+    conditions:
+      AND:
+        - field: "pace_preference"
+          operator: "=="
+          value: "slow"
+        - field: "stress_level"
+          operator: "=="
+          value: "medium"
+    persona: "R2_P2"
+    actions:
+      - "set_tone:Calm"
+      - "prioritize_intervention:ScopeAdjustment"
+    confidence: 0.72
+
+  # ========================================
+  # R1: 원활 진행 상태
+  # ========================================
+
+  - id: "rule_R1_001"
+    name: "원활 - 높은 완료율"
+    description: "완료율 80% 이상, 정시율 90% 이상"
+    priority: 50
+    situation: "R1"
+    conditions:
+      AND:
+        - field: "completion_rate"
+          operator: ">="
+          value: 80
+        - field: "on_time_rate"
+          operator: ">="
+          value: 90
+    persona: "R1_P1"
+    actions:
+      - "set_tone:Encouraging"
+      - "prioritize_intervention:Advancement"
+    confidence: 0.90
+
+  - id: "rule_R1_002"
+    name: "원활 - 도전 욕구"
+    description: "빠른 완료 + 높은 참여도"
+    priority: 52
+    situation: "R1"
+    conditions:
+      AND:
+        - field: "completion_rate"
+          operator: ">="
+          value: 85
+        - field: "engagement_level"
+          operator: "=="
+          value: "highly_engaged"
+    persona: "R1_P2"
+    actions:
+      - "set_tone:Inspiring"
+      - "prioritize_intervention:ChallengePresentation"
+    confidence: 0.88
+
+  # ========================================
+  # 학습 스타일 기반 규칙
+  # ========================================
+
+  - id: "rule_style_001"
+    name: "체험형 학습자 + 어려움"
+    description: "체험형 학습자가 지연/정체 상태"
+    priority: 85
+    situation: "R3"
+    conditions:
+      AND:
+        - field: "learning_style"
+          operator: "=="
+          value: "kinesthetic"
+        - field: "completion_rate"
+          operator: "<"
+          value: 50
+    persona: "R3_P1"
+    actions:
+      - "set_tone:Active"
+      - "prioritize_intervention:HandsOnDemonstration"
+    confidence: 0.84
+
+  - id: "rule_style_002"
+    name: "높은 자율성 선호"
+    description: "자율성 높은 학습자의 일반 상태"
+    priority: 55
+    situation: "R2"
+    conditions:
+      AND:
+        - field: "autonomy_preference"
+          operator: "=="
+          value: "high"
+        - field: "completion_rate"
+          operator: ">="
+          value: 40
+    persona: "R2_P1"
+    actions:
+      - "set_tone:Respectful"
+      - "prioritize_intervention:SelfDiscoveryQuestion"
+    confidence: 0.76
+
+  # ========================================
+  # 감정 기반 규칙
+  # ========================================
+
+  - id: "rule_emotion_001"
+    name: "불안 상태 감지"
+    description: "불안한 상태에서 도움 요청"
+    priority: 86
+    situation: "R3"
+    conditions:
+      AND:
+        - field: "emotional_state"
+          operator: "=="
+          value: "anxious"
+        - field: "intent"
+          operator: "=="
+          value: "help_request"
+    persona: "R3_P3"
+    actions:
+      - "set_tone:Reassuring"
+      - "prioritize_intervention:StresReduction"
+    confidence: 0.87
+
+  - id: "rule_emotion_002"
+    name: "긍정적 진행 보고"
+    description: "완료 보고 + 긍정적 감정"
+    priority: 55
+    situation: "R1"
+    conditions:
+      AND:
+        - field: "intent"
+          operator: "=="
+          value: "progress_report"
+        - field: "emotional_state"
+          operator: "=="
+          value: "positive"
+    persona: "R1_P1"
+    actions:
+      - "set_tone:Celebratory"
+      - "prioritize_intervention:PositiveReinforcement"
+    confidence: 0.92
+
+# 톤(Tone) 정의
+tones:
+  Empathetic: "공감적, 이해하는 태도"
+  Patient: "인내심 있는, 차분한"
+  Supportive: "지지적, 도움을 주는"
+  Encouraging: "격려하는, 응원하는"
+  Professional: "전문적, 객관적"
+  Gentle: "부드러운, 온화한"
+  Practical: "실용적, 현실적"
+  Calm: "차분한, 평온한"
+  Inspiring: "영감을 주는"
+  Active: "활동적, 에너지 있는"
+  Respectful: "존중하는"
+  Reassuring: "안심시키는"
+  Celebratory: "축하하는"
+
+# 개입 유형(Intervention) 정의
+interventions:
+  EmotionalSupport: "정서적 지원 및 안정화"
+  SteppingStone: "징검다리 활동 제공"
+  CrisisSupport: "위기 대응 지원"
+  IntensiveTutoring: "1:1 집중 튜터링"
+  Demonstration: "시범 보여주기 (도제학습)"
+  GoalReset: "목표 재설정"
+  Apprenticeship: "도제학습 방식 적용"
+  TaskSimplification: "과제 단순화"
+  BridgeActivity: "선수 학습 활동"
+  Clarification: "명확화 질문"
+  ScopeAdjustment: "범위 조정"
+  Advancement: "다음 단계 안내"
+  ChallengePresentation: "도전 과제 제시"
+  HandsOnDemonstration: "실습 중심 시범"
+  SelfDiscoveryQuestion: "자기 발견 유도 질문"
+  StresReduction: "스트레스 완화"
+  PositiveReinforcement: "긍정적 강화"

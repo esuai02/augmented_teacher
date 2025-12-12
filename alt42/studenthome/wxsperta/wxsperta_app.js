@@ -69,14 +69,14 @@ const defaultProperties = {
 };
 
 const propertyLabels = {
-    worldView: { title: '세계관', desc: '미션의 기본 철학과 이상적 성과를 정의합니다.' },
-    context: { title: '문맥', desc: '미션이 운영되는 환경과 조건을 인식합니다.' },
-    structure: { title: '구조', desc: '미션 수행을 위한 구조적 설계를 담당합니다.' },
-    process: { title: '절차', desc: '미션 실행의 단계별 프로세스를 정의합니다.' },
-    execution: { title: '실행', desc: '미션 달성을 위한 구체적 실행 방식을 설계합니다.' },
-    reflection: { title: '성찰', desc: '미션 성과 평가와 개선 전략을 관리합니다.' },
-    transfer: { title: '전파', desc: '미션 수행의 경험과 학습을 전파합니다.' },
-    abstraction: { title: '추상화', desc: '미션의 핵심 목표와 가치를 추상화합니다.' }
+    worldView: { title: '나침반(왜)', desc: '너한테 중요한 기준/가치/의미(왜 하는지)야.' },
+    context: { title: '지금 상황', desc: '지금 조건/환경/시간/에너지/막힘을 잡아보는 거야.' },
+    structure: { title: '핵심 정리', desc: '복잡한 걸 핵심 2~3개로 묶어서 보는 거야.' },
+    process: { title: '순서(방법)', desc: '어떻게 해볼지 순서를 가볍게 만드는 거야.' },
+    execution: { title: '한 칸 실천', desc: '지금 바로 할 수 있는 한 걸음(5분)부터야.' },
+    reflection: { title: '되돌아보기', desc: '해보고 난 뒤 느낀 점/배운 점을 한 줄로 남겨.' },
+    transfer: { title: '확장/공유', desc: '다른 과목/상황에도 써먹는 방법이야.' },
+    abstraction: { title: '한 문장 원리', desc: '핵심을 한 문장으로 뽑아서 “내 룰”로 만드는 거야.' }
 };
 
 // ==================== 섹터 및 매핑 정보 ====================
@@ -1027,42 +1027,21 @@ function renderAgentGrid() {
     const grid = document.getElementById('missionGrid');
     grid.innerHTML = '';
     
-    const groupedMissions = {};
-    state.agents.forEach(agent => {
-        const cat = agent.category || 'other';
-        if (!groupedMissions[cat]) groupedMissions[cat] = [];
-        groupedMissions[cat].push(agent);
-    });
-    
-    const sectorOrder = ['future_design', 'execution', 'branding', 'knowledge_management'];
-    
-    sectorOrder.forEach(category => {
-        const missions = groupedMissions[category];
-        if (!missions || missions.length === 0) return;
-        
-        const section = document.createElement('div');
-        section.className = 'sector-section';
-        
-        const title = document.createElement('div');
-        title.className = 'sector-title';
-        title.style.borderColor = sectorGroups[category]?.color || '#ccc';
-        title.innerHTML = `
-            <span style="color: ${sectorGroups[category]?.color}">${sectorGroups[category]?.title}</span>
-            <span style="font-size: 0.75rem; opacity: 0.7;">${sectorGroups[category]?.subtitle}</span>
-        `;
-        
-        const sectorGrid = document.createElement('div');
-        sectorGrid.className = 'sector-grid';
-        
-        missions.forEach((agent, idx) => {
-            const card = createMissionCard(agent, category, idx);
-            sectorGrid.appendChild(card);
+    // 메뉴(섹터)로 분리하지 않고, 번호 순서대로 한 덩어리로 밀착 배치
+    const unified = document.createElement('div');
+    unified.className = 'unified-grid';
+
+    const ordered = [...state.agents].sort((a, b) => (a.number || 999) - (b.number || 999));
+    const idxByCategory = { future_design: 0, execution: 0, branding: 0, knowledge_management: 0, other: 0 };
+
+    ordered.forEach((agent) => {
+        const category = agent.category || 'other';
+        const idx = idxByCategory[category] ?? 0;
+        idxByCategory[category] = idx + 1;
+        unified.appendChild(createMissionCard(agent, category, idx));
         });
         
-        section.appendChild(title);
-        section.appendChild(sectorGrid);
-        grid.appendChild(section);
-    });
+    grid.appendChild(unified);
 }
 
 function createMissionCard(agent, category, idx) {
@@ -1080,6 +1059,10 @@ function createMissionCard(agent, category, idx) {
     const displayIcon = agent.icon || icons[iconIdx];
     
     div.innerHTML = `
+        <div class="mission-type-badge" data-category="${category}">
+            <span class="type-dot"></span>
+            <span class="type-text">${sectorGroups[category]?.title || category}</span>
+        </div>
         <div class="mission-icon">${displayIcon}</div>
         <div class="mission-name">${agent.shortDesc || agent.name}</div>
         <div class="status-dot"></div>
@@ -1207,6 +1190,14 @@ function closeProjectPopup() {
 // ==================== 에이전트 클릭 & 모달 ====================
 function handleAgentClick(agent) {
     console.log('Agent clicked:', agent.name, 'Role:', phpData.role);
+    
+    // 다른 홀론(에이전트/노드) 클릭 시 채팅 패널이 열려있다면 자동으로 닫기
+    try {
+        const chatPanel = document.getElementById('chatPanel');
+        if (chatPanel && chatPanel.classList.contains('open') && window.handleChatClose) {
+            window.handleChatClose();
+        }
+    } catch (e) {}
     
     // 바로 전체 화면 모달로 에이전트 페이지 열기
     openAgentFullscreen(agent);
@@ -1351,6 +1342,58 @@ function openChat(agent) {
     adjustGrid();
 }
 
+// ==================== Standalone UI를 채팅 패널로 임베드 ====================
+window.openGlobalMentorChat = function openGlobalMentorChat() {
+    // 버전 패널 열려있으면 닫기
+    if (window.versionControl && window.versionControl.elements &&
+        window.versionControl.elements.panel.classList.contains('open')) {
+        window.versionControl.closePanel();
+    }
+
+    // agent highlight 제거
+    if (state.activeAgentCard) {
+        state.activeAgentCard.classList.remove('highlighted');
+        state.activeAgentCard = null;
+    }
+
+    state.chatAgent = null;
+    state.showChat = true;
+
+    const chatPanel = document.getElementById('chatPanel');
+    chatPanel.innerHTML = `
+        <div class="chat-header" style="background: linear-gradient(135deg, var(--space-mid) 0%, var(--space-dark) 100%); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem; display: flex; align-items: center;">
+            <div style="width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 0.75rem;">🌌</div>
+            <div style="flex: 1;">
+                <h3 style="font-weight: 600; color: var(--moon); font-size: 0.95rem;">마이 궤도 멘토링</h3>
+                <p style="font-size: 0.7rem; color: var(--starlight); margin-top: 3px;">Standalone UI</p>
+            </div>
+            <button onclick="window.handleChatClose()" style="width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); cursor: pointer; color: var(--starlight);">✕</button>
+        </div>
+        <div style="flex: 1; min-height: 0;">
+            <iframe
+                src="standalone_ui/index.html?agent_id=global"
+                style="width:100%; height:100%; border:0; background: transparent;"
+            ></iframe>
+        </div>
+    `;
+
+    document.getElementById('mainContainer').classList.add('shifted');
+    document.getElementById('chatPanel').classList.add('open');
+    adjustGrid();
+};
+
+// ==================== WXSPERTA 뉴런 뷰 ====================
+window.openWXSPERTANeuron = function openWXSPERTANeuron() {
+    // 현재 컨텍스트가 있으면 그 홀론을 기본값으로
+    const agentKey =
+        (state.chatAgent && state.chatAgent.id) ||
+        (state.selectedAgent && state.selectedAgent.id) ||
+        'global';
+
+    const url = `wxsperta_neuron.php?agent_key=${encodeURIComponent(agentKey)}`;
+    showProjectPopup(url, 'W.X.S.P.E.R.T.A');
+};
+
 function renderChat() {
     const chatPanel = document.getElementById('chatPanel');
     const agent = state.chatAgent;
@@ -1399,7 +1442,7 @@ function renderChat() {
             onclick: 'generateInitialValues()'
         });
     } else {
-        addMessage('agent', `안녕하세요! ${agent.name}입니다. 현재 설정된 세계관과 문맥을 기반으로 도와드리겠습니다.`);
+        addMessage('agent', `안녕! ${agent.name}야. 너의 나침반(왜)랑 지금 상황을 바탕으로 같이 길 찾아보자.`);
     }
 }
 
@@ -1577,8 +1620,8 @@ function displayAgentProperties() {
         propertiesDisplay.style.display = 'block';
         propertiesContainer.innerHTML = `
             <div class="space-y-2 text-sm">
-                ${properties.worldView ? `<div><span class="font-medium">세계관:</span> ${properties.worldView.substring(0, 50)}...</div>` : ''}
-                ${properties.context ? `<div><span class="font-medium">문맥:</span> ${properties.context.substring(0, 50)}...</div>` : ''}
+                ${properties.worldView ? `<div><span class="font-medium">나침반(왜):</span> ${properties.worldView.substring(0, 50)}...</div>` : ''}
+                ${properties.context ? `<div><span class="font-medium">지금 상황:</span> ${properties.context.substring(0, 50)}...</div>` : ''}
             </div>
         `;
         document.getElementById('initPropertiesBtn').style.display = 'none';

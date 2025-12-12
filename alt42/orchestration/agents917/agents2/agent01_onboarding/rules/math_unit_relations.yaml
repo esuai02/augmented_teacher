@@ -1,0 +1,208 @@
+version: "1.0"
+description: "수학 단원 간 선후 관계 및 난이도 데이터베이스 (Based on Math Topics Ontology)"
+
+units:
+  # 1. 수체계 (Number Systems)
+  # 관련 파일: 1 numbers_ontology.owl, 1 수체계_영역.md
+  number_systems:
+    name: "수체계"
+    code: "NS"
+    level: "중등1"
+    difficulty: 1
+    prerequisites: []
+    related_units: ["expression_calculation", "sets_and_propositions"]
+    keywords: ["실수", "정수", "유리수", "무리수", "복소수"]
+  
+  # 2. 식의 계산 (Expression Calculation)
+  # 관련 파일: 4 expression_calculation_ontology.owl, 4 식의 계산.md
+  expression_calculation:
+    name: "식의 계산"
+    code: "EC"
+    level: "중등1-2"
+    difficulty: 2
+    prerequisites: ["number_systems"]
+    related_units: ["equations", "inequalities", "functions"]
+    keywords: ["다항식", "인수분해", "곱셈공식"]
+
+  # 3. 방정식 (Equations)
+  # 관련 파일: 6 방정식_ontology.owl, 6 방정식.md
+  equations:
+    name: "방정식"
+    code: "EQ"
+    level: "중등1-3"
+    difficulty: 3
+    prerequisites: ["expression_calculation"]
+    related_units: ["inequalities", "functions", "plane_coordinates"]
+    keywords: ["일차방정식", "이차방정식", "연립방정식", "근의공식"]
+  
+  # 4. 부등식 (Inequalities)
+  # 관련 파일: 7 부등식_ontology.owl, 7 부등식.md
+  inequalities:
+    name: "부등식"
+    code: "IE"
+    level: "중등2"
+    difficulty: 3
+    prerequisites: ["equations"]
+    related_units: ["functions"]
+    keywords: ["일차부등식", "이차부등식", "절대부등식"]
+
+  # 5. 함수 (Functions)
+  # 관련 파일: 8 functions_ontology.owl, 8 함수.md
+  functions:
+    name: "함수"
+    code: "FN"
+    level: "중등2-3"
+    difficulty: 4
+    prerequisites: ["equations", "inequalities", "plane_coordinates"]
+    related_units: ["differentiation", "integration", "exponents_and_logs"]
+    keywords: ["일차함수", "이차함수", "유리함수", "무리함수", "삼각함수"]
+
+  # 6. 평면도형 (Plane Figures)
+  # 관련 파일: 11 평면도형_ontology.owl, 11 평면도형.md
+  plane_figures:
+    name: "평면도형"
+    code: "PF"
+    level: "중등1-3"
+    difficulty: 3
+    prerequisites: []
+    related_units: ["plane_coordinates", "solid_figures", "geometry_and_vectors"]
+    keywords: ["삼각형", "사각형", "원", "피타고라스"]
+    
+  # 7. 평면좌표 (Plane Coordinates)
+  # 관련 파일: 12 plane_coordinates_ontology.owl, 12 평면좌표.md
+  plane_coordinates:
+    name: "평면좌표"
+    code: "PC"
+    level: "고등수학(상)"
+    difficulty: 4
+    prerequisites: ["plane_figures", "equations"]
+    related_units: ["functions", "vectors", "space_coordinates"]
+    keywords: ["점과좌표", "직선의방정식", "원의방정식"]
+
+  # 8. 집합과 명제 (Sets and Propositions)
+  # 관련 파일: 5 sets_and_propositions_ontology.owl, 5 집합과 명제.md
+  sets_and_propositions:
+    name: "집합과 명제"
+    code: "SP"
+    level: "고등수학(하)"
+    difficulty: 3
+    prerequisites: ["number_systems"]
+    related_units: ["functions", "probability_and_statistics"]
+    keywords: ["집합의연산", "명제", "조건", "증명"]
+
+  # 9. 지수와 로그 (Exponents and Logarithms)
+  # 관련 파일: 2 exponential_logarithm_ontology.owl, 2 지수와 로그.md
+  exponents_and_logs:
+    name: "지수와 로그"
+    code: "EL"
+    level: "수학1"
+    difficulty: 4
+    prerequisites: ["number_systems", "functions"]
+    related_units: ["sequences", "differentiation"]
+    keywords: ["지수법칙", "로그성질", "지수함수", "로그함수"]
+
+  # 10. 수열 (Sequences)
+  # 관련 파일: 3 수열_ontology.owl, 3 수열.md
+  sequences:
+    name: "수열"
+    code: "SQ"
+    level: "수학1"
+    difficulty: 5
+    prerequisites: ["functions", "exponents_and_logs"]
+    related_units: ["differentiation", "integration"]
+    keywords: ["등차수열", "등비수열", "수열의합", "수학적귀납법"]
+
+  # 11. 미분 (Differentiation)
+  # 관련 파일: 9 differentiation_ontology.owl, 9 미분.md
+  differentiation:
+    name: "미분"
+    code: "DF"
+    level: "수학2"
+    difficulty: 7
+    prerequisites: ["functions", "sequences", "exponents_and_logs"]
+    related_units: ["integration", "geometry_and_vectors"]
+    keywords: ["극한", "연속", "미분계수", "도함수", "접선의방정식"]
+
+  # 12. 적분 (Integration)
+  # 관련 파일: 10 integration_ontology.owl, 10 적분.md
+  integration:
+    name: "적분"
+    code: "IT"
+    level: "수학2"
+    difficulty: 7
+    prerequisites: ["differentiation"]
+    related_units: ["probability_and_statistics"]
+    keywords: ["부정적분", "정적분", "정적분의활용"]
+
+  # 13. 입체도형 (Solid Figures)
+  # 관련 파일: 13 solid_figures_ontology.owl, 13 입체도형.md
+  solid_figures:
+    name: "입체도형"
+    code: "SF"
+    level: "중등1"
+    difficulty: 3
+    prerequisites: ["plane_figures"]
+    related_units: ["space_coordinates"]
+    keywords: ["다면체", "회전체", "겉넓이", "부피"]
+
+  # 14. 공간좌표 (Space Coordinates)
+  # 관련 파일: 14 space_coordinates_ontology.owl, 14 공간좌표.md
+  space_coordinates:
+    name: "공간좌표"
+    code: "SC"
+    level: "기하"
+    difficulty: 6
+    prerequisites: ["plane_coordinates", "solid_figures"]
+    related_units: ["geometry_and_vectors"]
+    keywords: ["공간좌표", "구의방정식"]
+
+  # 15. 기하와 벡터 (Geometry and Vectors)
+  # 관련 파일: 15 vector_ontology.owl, 15 벡터.md
+  geometry_and_vectors:
+    name: "기하와 벡터"
+    code: "GV"
+    level: "기하"
+    difficulty: 8
+    prerequisites: ["plane_figures", "plane_coordinates", "space_coordinates"]
+    related_units: ["differentiation"]
+    keywords: ["벡터의연산", "내적", "직선과평면"]
+
+  # 16. 경우의 수와 확률 (Probability)
+  # 관련 파일: 16 Number_of_cases_and_probability_ontology.owl
+  probability:
+    name: "경우의 수와 확률"
+    code: "PB"
+    level: "확률과통계"
+    difficulty: 5
+    prerequisites: ["sets_and_propositions"]
+    related_units: ["statistics"]
+    keywords: ["순열", "조합", "확률의덧셈정리", "조건부확률"]
+
+  # 17. 통계 (Statistics)
+  # 관련 파일: 17 statistics_ontology.owl
+  statistics:
+    name: "통계"
+    code: "ST"
+    level: "확률과통계"
+    difficulty: 5
+    prerequisites: ["probability", "integration"]
+    related_units: []
+    keywords: ["확률분포", "통계적추정", "정규분포"]
+
+learning_paths:
+  standard_curriculum:
+    - number_systems
+    - expression_calculation
+    - equations
+    - plane_figures
+    - inequalities
+    - functions
+    - probability
+    - plane_coordinates
+    - sets_and_propositions
+    - exponents_and_logs
+    - sequences
+    - differentiation
+    - integration
+    - statistics
+    - geometry_and_vectors

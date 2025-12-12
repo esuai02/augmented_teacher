@@ -1,0 +1,240 @@
+# Rules for Agent 17 - Remaining Activities
+# Generated at: 2025-01-27
+# Purpose: 잔여활동 조정 및 리듬 회복을 위한 룰셋
+# Source: data_based_questions.js 기반 확장
+
+version: "1.0"
+scenario: "remaining_activities"
+description: "학습 흐름 단절 원인 진단, 활동 재배치 최적화, 장기 학습 리듬 유지를 위한 잔여활동 조정 룰셋"
+
+rules:
+  # ========== 포괄형 질문 1: 학습 흐름 단절 원인 및 리듬 회복 ==========
+  
+  - rule_id: "Q1_R1_rhythm_breakdown_diagnosis"
+    priority: 95
+    description: "리듬 붕괴 원인 종합 진단 (잔여시간, 피로도, 감정 상태, 집중 흐름, 병목 원인)"
+    conditions:
+      - field: "rhythm_status_code"
+        operator: "in"
+        value: ["불균형", "붕괴"]
+      - OR:
+        - field: "flow_interruption_detected"
+          operator: "=="
+          value: true
+        - field: "routine_collapse_detected"
+          operator: "=="
+          value: true
+    action:
+      - "analyze: 'remaining_time'"
+      - "analyze: 'fatigue_level'"
+      - "analyze: 'ref(agent05.emotion_status)'"
+      - "analyze: 'concentration_flow'"
+      - "analyze: 'bottleneck_cause'"
+      - "diagnose: 'rhythm_breakdown_cause'"
+      - "generate_report: '리듬 붕괴 원인 진단 리포트'"
+    confidence: 0.92
+    rationale: "잔여시간, 피로도, 감정 상태, 집중 흐름, 병목 원인을 종합 분석하여 리듬 붕괴의 근본 원인을 진단합니다."
+    ontology: "FlowInterruptionRecovery"
+    data_sources:
+      - "remaining_time"
+      - "fatigue_level"
+      - "ref(agent05.emotion_status)"
+      - "concentration_flow"
+      - "bottleneck_cause"
+  
+  - rule_id: "Q1_R2_short_term_recovery_routine"
+    priority: 94
+    description: "단기 회복 루틴 설계 (예열-핵심-정리 구조) 및 정서 안정 장치 포함"
+    conditions:
+      - field: "rhythm_breakdown_cause"
+        operator: "!="
+        value: null
+      - field: "remaining_time"
+        operator: ">"
+        value: 20
+    action:
+      - "design: 'short_term_recovery_routine'"
+      - "structure: 'warmup_core_summary'"
+      - "include: 'emotional_stability_device'"
+      - "create_routine: '예열(5분) → 핵심활동(15분) → 정리(5분)'"
+      - "apply: '정서 안정 장치 (성공 경험, 회복 루프, 미니 루틴)'"
+    confidence: 0.90
+    rationale: "단기 회복 루틴을 예열-핵심-정리 구조로 설계하고 정서 안정 장치를 포함하여 빠른 리듬 회복을 도모합니다."
+    ontology: "RecoveryRoutineStructure"
+    data_sources:
+      - "short_term_recovery_routine"
+      - "warmup_core_summary"
+      - "emotional_stability_device"
+  
+  - rule_id: "Q1_R3_rhythm_recovery_strategy"
+    priority: 93
+    description: "학습 흐름 단절 원인 분석 및 리듬 회복 전략 도출"
+    conditions:
+      - field: "flow_interruption_cause"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'flow_interruption_cause'"
+      - "design: 'rhythm_recovery_strategy'"
+      - "apply_strategy: '리듬 회복 전략 실행'"
+      - "monitor: '리듬 회복 진행 상황 모니터링'"
+    confidence: 0.88
+    rationale: "학습 흐름이 왜 멈췄는지 분석하고 적절한 리듬 회복 전략을 도출하여 학습 흐름을 재개합니다."
+    ontology: "RhythmRecovery"
+    data_sources:
+      - "flow_interruption_cause"
+      - "rhythm_recovery_strategy"
+  
+  # ========== 포괄형 질문 2: 활동 재배치 최적화 ==========
+  
+  - rule_id: "Q2_R1_core_activity_selection"
+    priority: 92
+    description: "핵심 20% 활동 선별 (가용 시간, 인지 부하, 활동 난이도, 우선순위 고려)"
+    conditions:
+      - field: "remaining_activities_count"
+        operator: ">"
+        value: 5
+      - field: "available_time"
+        operator: "<"
+        value: 60
+    action:
+      - "analyze: 'available_time'"
+      - "analyze: 'cognitive_load'"
+      - "analyze: 'activity_difficulty'"
+      - "analyze: 'priority'"
+      - "select: '핵심 20% 활동 (파레토 원칙)'"
+      - "rank: '활동 우선순위 리스트 생성'"
+    confidence: 0.91
+    rationale: "가용 시간, 인지 부하, 활동 난이도, 우선순위를 함께 고려하여 핵심 20% 활동을 선별합니다."
+    ontology: "ActivityReallocation"
+    data_sources:
+      - "available_time"
+      - "cognitive_load"
+      - "activity_difficulty"
+      - "priority"
+  
+  - rule_id: "Q2_R2_time_slot_reallocation"
+    priority: 91
+    description: "시간 슬롯 단위 재배치 및 피로 누적 방지형 루틴 구성"
+    conditions:
+      - field: "core_activities_selected"
+        operator: "=="
+        value: true
+      - field: "fatigue_level"
+        operator: ">"
+        value: 0.6
+    action:
+      - "reallocate: 'time_slot_reallocation'"
+      - "design: 'fatigue_prevention_routine'"
+      - "schedule: '시간 슬롯 단위 활동 재배치'"
+      - "prevent: '피로 누적 방지 (휴식 시간 포함)'"
+    confidence: 0.89
+    rationale: "시간 슬롯 단위로 활동을 재배치하고 피로 누적을 방지하는 루틴을 구성합니다."
+    ontology: "TimeSlotReallocation"
+    data_sources:
+      - "time_slot_reallocation"
+      - "fatigue_prevention_routine"
+  
+  - rule_id: "Q2_R3_sustainable_reallocation"
+    priority: 90
+    description: "현실적이고 지속 가능한 활동 재배치 (남은 학습 시간, 에너지 수준 고려)"
+    conditions:
+      - field: "remaining_learning_time"
+        operator: "!="
+        value: null
+      - field: "energy_level"
+        operator: "<"
+        value: 0.7
+    action:
+      - "analyze: 'remaining_learning_time'"
+      - "analyze: 'energy_level'"
+      - "design: 'sustainable_reallocation'"
+      - "validate: '현실성 검증 (시간 대비 활동량)'"
+      - "apply: '지속 가능한 활동 재배치 실행'"
+    confidence: 0.87
+    rationale: "현재 남은 학습 시간과 에너지 수준을 고려하여 현실적이고 지속 가능한 활동 재배치를 수행합니다."
+    ontology: "SustainableReallocation"
+    data_sources:
+      - "remaining_learning_time"
+      - "energy_level"
+      - "sustainable_reallocation"
+  
+  # ========== 포괄형 질문 3: 장기 학습 리듬 유지 ==========
+  
+  - rule_id: "Q3_R1_rhythm_stabilization_pattern"
+    priority: 89
+    description: "단기 → 중기 → 장기 리듬 안정화 패턴 설계 (최근 리듬 패턴, 정서 루프, 집중 유지 시간, 루틴 붕괴 이력 기반)"
+    conditions:
+      - field: "recent_rhythm_pattern"
+        operator: "!="
+        value: null
+      - field: "routine_collapse_history"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'recent_rhythm_pattern'"
+      - "analyze: 'ref(agent05.emotional_loop)'"
+      - "analyze: 'concentration_maintenance_time'"
+      - "analyze: 'routine_collapse_history'"
+      - "design: '단기 → 중기 → 장기 리듬 안정화 패턴'"
+      - "create_pattern: '리듬 안정화 패턴 생성'"
+    confidence: 0.90
+    rationale: "최근 리듬 패턴, 정서 루프, 집중 유지 시간, 루틴 붕괴 이력을 기반으로 단기 → 중기 → 장기 리듬 안정화 패턴을 설계합니다."
+    ontology: "LongTermRhythmMaintenance"
+    data_sources:
+      - "recent_rhythm_pattern"
+      - "ref(agent05.emotional_loop)"
+      - "concentration_maintenance_time"
+      - "routine_collapse_history"
+  
+  - rule_id: "Q3_R2_routine_return_persistence"
+    priority: 88
+    description: "루틴 복귀 지속성 예측 및 오늘의 회복 패턴 설계"
+    conditions:
+      - field: "routine_return_persistence"
+        operator: "!="
+        value: null
+      - field: "recovery_pattern_needed"
+        operator: "=="
+        value: true
+    action:
+      - "predict: 'routine_return_persistence'"
+      - "design: 'recovery_pattern_for_today'"
+      - "create_pattern: '오늘의 회복 패턴 생성'"
+      - "monitor: '루틴 복귀 지속성 모니터링'"
+    confidence: 0.86
+    rationale: "루틴 복귀 지속성을 예측하고 오늘 만들어야 할 회복 패턴을 설계합니다."
+    ontology: "RoutineReturnPersistence"
+    data_sources:
+      - "routine_return_persistence"
+      - "recovery_pattern_for_today"
+  
+  - rule_id: "Q3_R3_long_term_rhythm_maintenance"
+    priority: 87
+    description: "장기적으로 학습 리듬을 유지하기 위한 오늘의 회복 패턴 설계"
+    conditions:
+      - field: "long_term_rhythm_maintenance"
+        operator: "!="
+        value: null
+      - field: "today_recovery_pattern"
+        operator: "=="
+        value: null
+    action:
+      - "analyze: 'long_term_rhythm_maintenance'"
+      - "design: 'today_recovery_pattern'"
+      - "create_pattern: '장기 리듬 유지를 위한 오늘의 회복 패턴'"
+      - "apply: '회복 패턴 실행 및 모니터링'"
+    confidence: 0.85
+    rationale: "장기적으로 학습 리듬을 유지하기 위한 오늘의 회복 패턴을 설계하고 실행합니다."
+    ontology: "LongTermRhythmStability"
+    data_sources:
+      - "long_term_rhythm_maintenance"
+      - "today_recovery_pattern"
+
+default_rule:
+  rule_id: "default"
+  action:
+    - "log: '기본 룰 실행 - 추가 분석 필요'"
+  confidence: 0.5
+  rationale: "기본 룰 - 특정 조건에 맞지 않을 때 실행"
+

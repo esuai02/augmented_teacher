@@ -1,0 +1,1291 @@
+# Auto-generated rules.yaml for learning_emotion_agent
+# Generated at: 2025-01-21
+# Source: agent05_learning_emotion_questions.md + agent05_learning_emotion_mission.md → comprehensive emotion analysis rules
+
+version: "1.0"
+scenario: "learning_emotion"
+description: "학습 감정 상태 분석 및 페르소나 매칭 기반 맞춤형 피드백 루틴 설계"
+
+rules:
+  # ========== S1: 상황별 감정 탐지 룰 (agent05_learning_emotion_questions.md 기반) ==========
+  
+  - rule_id: "R1_concept_understanding_emotion_detection"
+    priority: 95
+    description: "개념이해 직후 감정 상태 및 집중 흐름 파악"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "activity_status"
+        operator: "=="
+        value: "completed"
+      - field: "focus_stability"
+        operator: "<"
+        value: 0.7
+    action:
+      - "detect_emotion_state: 'concept_post_emotion'"
+      - "analyze: 'understanding_level_emotion_mapping'"
+      - "generate_description: 'concept_post_emotion_summary'"
+      - "display_message: '지금 이 개념을 정리했을 때, 머릿속이 어떤 느낌이야? 완전히 정리됐다 쪽이야, 아니면 조금 헷갈리는데 괜찮겠지 하는 느낌이야?'"
+      - "recommend_path: 'concept_note_agent'"
+    confidence: 0.92
+    rationale: "개념이해 직후 감정 몰입도 파악은 후속 학습 조정의 핵심"
+
+  - rule_id: "R2_type_learning_interest_loss"
+    priority: 90
+    description: "유형학습 중 흥미 손실 또는 과몰입 상태 감지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "interest_level"
+        operator: "<"
+        value: 4
+      - field: "engagement_state"
+        operator: "in"
+        value: ["lost_interest", "over_immersed"]
+    action:
+      - "detect_emotion_state: 'type_learning_emotion'"
+      - "analyze: 'motivation_level_frustration'"
+      - "generate_description: 'type_learning_emotion_analysis'"
+      - "display_message: '지금 문제들이 조금 지겨워졌어? 아니면 익숙해서 빨라졌어? 이럴 땐 지루한 몰입이랑 루틴 몰입이 헷갈릴 때가 많거든.'"
+      - "recommend_path: 'type_learning_agent'"
+      - "recommend_path: 'calmness_agent'"
+    confidence: 0.89
+    rationale: "유형학습 중 동기 수준과 좌절감 식별은 난이도 조정의 기초"
+
+  - rule_id: "R3_problem_solving_pause_detection"
+    priority: 93
+    description: "문제풀이 도중 긴 멈춤 시간 감지 및 불안/혼란/확신부족 원인 식별"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "pause_duration"
+        operator: ">"
+        value: 30
+      - field: "pause_count"
+        operator: ">="
+        value: 3
+    action:
+      - "detect_emotion_state: 'problem_solving_pause_emotion'"
+      - "analyze: 'pause_reason_classification'"
+      - "generate_description: 'problem_pause_emotion_analysis'"
+      - "display_message: '지금 멈춘 이유가 뭐 같아? (1) 막혀서 답답, (2) 실수할까봐 불안, (3) 아직 생각 정리가 안 돼서?'"
+      - "recommend_path: 'problem_note_agent'"
+      - "recommend_path: 'qa_agent'"
+    confidence: 0.91
+    rationale: "문제풀이 멈춤은 감정 원인 식별이 학습 지속성에 핵심"
+
+  - rule_id: "R4_error_note_emotion_assessment"
+    priority: 88
+    description: "오답노트 작성 전후 학습 피로감과 성취감 균형 진단"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_note"
+      - field: "activity_status"
+        operator: "in"
+        value: ["before_start", "after_completion"]
+      - field: "facial_expression"
+        operator: "in"
+        value: ["blank", "tired"]
+    action:
+      - "detect_emotion_state: 'error_note_emotion'"
+      - "analyze: 'fatigue_achievement_balance'"
+      - "generate_description: 'error_note_emotion_summary'"
+      - "display_message: '이 문제 다시 보는 게 지금 좀 부담돼 보여. 왜 틀렸는지 알고 싶은 쪽이야, 다시 하기 싫은 쪽이야?'"
+      - "recommend_path: 'error_note_agent'"
+      - "recommend_path: 'review_routine_agent'"
+    confidence: 0.87
+    rationale: "오답노트 감정 저항도는 자기성찰형 vs 회피형 식별의 핵심"
+
+  - rule_id: "R5_qa_hesitation_detection"
+    priority: 85
+    description: "질의응답 시점 질문 망설임/자신감 및 정서유형 탐색"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qa"
+      - field: "question_hesitation_time"
+        operator: ">"
+        value: 10
+      - field: "eye_contact_pattern"
+        operator: "=="
+        value: "avoiding"
+    action:
+      - "detect_emotion_state: 'qa_emotion'"
+      - "analyze: 'hesitation_confidence_type'"
+      - "generate_description: 'qa_emotion_analysis'"
+      - "display_message: '지금 물어보려던 거, 머릿속에선 이미 질문이 만들어졌는데 지금 물어봐도 될까 하는 생각이 먼저 들었지?'"
+      - "recommend_path: 'qa_agent'"
+      - "recommend_path: 'concept_note_agent'"
+    confidence: 0.86
+    rationale: "질문 망설임 감정 탐색은 질의응답 효과성 향상의 기초"
+
+  - rule_id: "R6_review_routine_resistance"
+    priority: 87
+    description: "복습 루틴 진입 전 부담감 및 저항감 감정 탐지"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "activity_status"
+        operator: "=="
+        value: "before_start"
+      - field: "hesitation_gesture"
+        operator: "=="
+        value: "present"
+    action:
+      - "detect_emotion_state: 'review_pre_emotion'"
+      - "analyze: 'burden_resistance_level'"
+      - "generate_description: 'review_emotion_summary'"
+      - "display_message: '지금 복습 들어가기 전, 느낌이 어때? 이거만 하면 완벽해질 것 같아 쪽이야, 아니면 또 해야 돼 쪽이야?'"
+      - "recommend_path: 'review_routine_agent'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.88
+    rationale: "복습 진입 전 감정 저항도는 동기 지속도 계산의 핵심"
+
+  - rule_id: "R7_pomodoro_post_emotion"
+    priority: 84
+    description: "포모도르 종료 직후 몰입도-피로도 균형 확인"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro"
+      - field: "activity_status"
+        operator: "=="
+        value: "completed"
+      - field: "movement_speed"
+        operator: "<"
+        value: 0.5
+    action:
+      - "detect_emotion_state: 'pomodoro_post_emotion'"
+      - "analyze: 'immersion_fatigue_balance'"
+      - "generate_description: 'pomodoro_emotion_summary'"
+      - "display_message: '이번 세션 끝났을 때, 머릿속은 맑아졌어, 아니면 좀 퍼석한 느낌이야? 이 피로감이 성취감 섞인 피로인지 그냥 지침인지 구분해보자.'"
+      - "recommend_path: 'pomodoro_agent'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.85
+    rationale: "포모도르 종료 감정 분리는 몰입형 vs 소진형 판정의 핵심"
+
+  - rule_id: "R8_home_check_emotion_closing"
+    priority: 82
+    description: "귀가검사 직전 하루 학습 정서 마무리 상태 파악"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "home_check"
+      - field: "activity_status"
+        operator: "=="
+        value: "before_start"
+      - field: "concentration_level"
+        operator: ">="
+        value: 0.6
+      - field: "emotional_weight"
+        operator: ">"
+        value: 0.5
+    action:
+      - "detect_emotion_state: 'home_check_emotion'"
+      - "analyze: 'daily_emotion_closing'"
+      - "generate_description: 'home_check_emotion_summary'"
+      - "display_message: '오늘 하루 공부를 딱 떠올리면, 어떤 한 장면이 제일 강하게 남아? 그게 잘됐다의 순간이야, 힘들었다의 순간이야?'"
+      - "recommend_path: 'home_check_agent'"
+      - "recommend_path: 'fatigue_analysis_agent'"
+    confidence: 0.83
+    rationale: "하루 감정 클로징 데이터는 성장지향 vs 소진형 판정의 기초"
+
+  - rule_id: "R9_exam_prep_stress_analysis"
+    priority: 90
+    description: "시험 대비 2~3주 전 스트레스·불안·긴장감 누적 분석"
+    conditions:
+      - field: "exam_days_remaining"
+        operator: "<="
+        value: 21
+      - field: "exam_days_remaining"
+        operator: ">="
+        value: 14
+      - field: "stress_level"
+        operator: ">"
+        value: 0.6
+    action:
+      - "detect_emotion_state: 'exam_prep_emotion'"
+      - "analyze: 'stress_anxiety_tension_pattern'"
+      - "generate_description: 'exam_prep_emotion_analysis'"
+      - "display_message: '요즘 공부할 때, 시간이 모자랄 것 같아 하는 생각이 자주 들어? 아니면 이제 감이 좀 잡힌다는 생각이 많아?'"
+      - "recommend_path: 'exam_schedule_agent'"
+      - "recommend_path: 'goals_analysis_agent'"
+      - "recommend_path: 'calmness_agent'"
+    confidence: 0.91
+    rationale: "시험 대비 감정 분석은 불안-준비도 매핑의 핵심"
+
+  - rule_id: "R10_routine_breakdown_detection"
+    priority: 92
+    description: "장기간 학습패턴 변화 감지 시 정서기복 및 루틴 붕괴 조기 경보"
+    conditions:
+      - field: "learning_pattern_duration"
+        operator: ">="
+        value: 7
+      - field: "pattern_stability"
+        operator: "<"
+        value: 0.5
+      - field: "emotional_volatility"
+        operator: ">"
+        value: 0.6
+    action:
+      - "detect_emotion_state: 'routine_breakdown_emotion'"
+      - "analyze: 'emotional_inertia_cognitive_fatigue'"
+      - "generate_description: 'routine_breakdown_analysis'"
+      - "display_message: '요즘 공부할 때, 예전처럼 몰입되는 순간이 잘 안 오는 느낌이야? 아니면 의욕은 있는데 집중이 안 된다 쪽이야?'"
+      - "recommend_path: 'rest_routine_agent'"
+      - "recommend_path: 'calmness_agent'"
+      - "recommend_path: 'learning_management_agent'"
+    confidence: 0.93
+    rationale: "루틴 붕괴 감지는 정서적 관성/인지적 피로/동기 저하 유형 식별의 핵심"
+
+  # ========== S2: 활동별 페르소나 매칭 룰 (agent05_learning_emotion_mission.md 기반) ==========
+  
+  - rule_id: "R11_concept_understanding_persona_matching"
+    priority: 88
+    description: "개념이해 활동별 페르소나 유형 매칭 (정리형/반복형/탐색형/저항형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "concept_survey_response"
+        operator: "in"
+        value: ["정리가 잘 되는 편", "막히면 집중 떨어짐", "이해는 되는데 연결 안 됨", "처음부터 막막함"]
+    action:
+      - "track_emotion_pattern: 'concept_persona_pattern'"
+      - "analyze: 'persona_type_classification'"
+      - "generate_description: 'concept_persona_summary'"
+      - "display_message: '새로운 개념을 공부할 때, 머릿속이 어떻게 느껴지나요?'"
+      - "recommend_path: 'concept_note_agent'"
+    confidence: 0.89
+    rationale: "개념이해 페르소나 매칭은 집중감소형/저항형에 대한 맞춤 피드백 제공의 기초"
+
+  - rule_id: "R12_type_learning_persona_matching"
+    priority: 86
+    description: "유형학습 활동별 페르소나 유형 매칭 (도전형/보조형/완벽형/회피형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "type_survey_response"
+        operator: "in"
+        value: ["익숙한 문제 빠르게 맞출 때", "선생님 힌트 듣고 다시 풀 때", "실수 없이 끝냈을 때", "틀렸지만 왜 틀렸는지 바로 알았을 때"]
+    action:
+      - "track_emotion_pattern: 'type_learning_persona_pattern'"
+      - "analyze: 'type_persona_classification'"
+      - "generate_description: 'type_persona_summary'"
+      - "display_message: '유형문제를 풀 때 어떤 순간에 자신감이 생기나요?'"
+      - "recommend_path: 'type_learning_agent'"
+    confidence: 0.87
+    rationale: "유형학습 페르소나 매칭은 도전형/회피형에 대한 난이도 조정 및 피드백 제공의 기초"
+
+  - rule_id: "R13_problem_solving_persona_matching"
+    priority: 89
+    description: "문제풀이 활동별 페르소나 유형 매칭 (긴장형/회의형/안정형/자신형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "problem_survey_response"
+        operator: "in"
+        value: ["막히면 불안해요", "실수를 반복할까 걱정돼요", "풀 때는 괜찮은데 끝나면 확신이 안 들어요", "생각보다 쉽게 느껴질 때가 많아요"]
+    action:
+      - "track_emotion_pattern: 'problem_solving_persona_pattern'"
+      - "analyze: 'problem_persona_classification'"
+      - "generate_description: 'problem_persona_summary'"
+      - "display_message: '문제를 풀 때 가장 자주 느끼는 감정은 무엇인가요?'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.88
+    rationale: "문제풀이 페르소나 매칭은 긴장형/회의형에 대한 심호흡 유도 및 긍정 리플레이 제공의 기초"
+
+  - rule_id: "R14_error_note_persona_matching"
+    priority: 85
+    description: "오답노트 활동별 페르소나 유형 매칭 (분석형/체념형/성장형/회피형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_note"
+      - field: "error_survey_response"
+        operator: "in"
+        value: ["다시 도전해보고 싶어요", "짜증나지만 해야죠", "아예 보기 싫어요", "틀린 이유가 궁금해요"]
+    action:
+      - "track_emotion_pattern: 'error_note_persona_pattern'"
+      - "analyze: 'error_persona_classification'"
+      - "generate_description: 'error_persona_summary'"
+      - "display_message: '틀린 문제를 다시 볼 때, 어떤 감정이 먼저 떠오르나요?'"
+      - "recommend_path: 'error_note_agent'"
+    confidence: 0.86
+    rationale: "오답노트 페르소나 매칭은 분석형/회피형에 대한 인지적 도제 피드백 및 저항감 완화 가이드 제공의 기초"
+
+  - rule_id: "R15_qa_persona_matching"
+    priority: 84
+    description: "질의응답 활동별 페르소나 유형 매칭 (즉흥형/망설임형/탐색형/무반응형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qa"
+      - field: "qa_survey_response"
+        operator: "in"
+        value: ["이건 내가 모르는 게 맞아", "이건 좀 부끄럽다", "조금만 더 생각해볼까", "지금 바로 물어보자"]
+    action:
+      - "track_emotion_pattern: 'qa_persona_pattern'"
+      - "analyze: 'qa_persona_classification'"
+      - "generate_description: 'qa_persona_summary'"
+      - "display_message: '질문하고 싶을 때, 머릿속에서 어떤 생각이 먼저 드나요?'"
+      - "recommend_path: 'qa_agent'"
+      - "recommend_path: 'concept_note_agent'"
+    confidence: 0.85
+    rationale: "질의응답 페르소나 매칭은 망설임형/탐색형에 대한 좋은 질문 타이밍 피드백 및 근거기반 질문 도출의 기초"
+
+  - rule_id: "R16_review_persona_matching"
+    priority: 83
+    description: "복습활동별 페르소나 유형 매칭 (계획형/압박형/회피형/안정형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "review"
+      - field: "review_survey_response"
+        operator: "in"
+        value: ["완성감", "부담감", "귀찮음", "안 하면 불안함"]
+    action:
+      - "track_emotion_pattern: 'review_persona_pattern'"
+      - "analyze: 'review_persona_classification'"
+      - "generate_description: 'review_persona_summary'"
+      - "display_message: '복습할 때, 어떤 감정이 가장 크게 작용하나요?'"
+      - "recommend_path: 'review_routine_agent'"
+    confidence: 0.84
+    rationale: "복습 페르소나 매칭은 회피형/압박형에 대한 짧은 복습 세션 추천 및 완성감 중심 루틴 유도의 기초"
+
+  - rule_id: "R17_pomodoro_persona_matching"
+    priority: 82
+    description: "포모도르 활동별 페르소나 유형 매칭 (몰입형/흐름형/단절형/저항형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro"
+      - field: "pomodoro_survey_response"
+        operator: "in"
+        value: ["초반엔 집중, 후반엔 지침", "전체적으로 몰입됨", "중간에 흐름이 자주 끊김", "시작이 제일 힘들었음"]
+    action:
+      - "track_emotion_pattern: 'pomodoro_persona_pattern'"
+      - "analyze: 'pomodoro_persona_classification'"
+      - "generate_description: 'pomodoro_persona_summary'"
+      - "display_message: '짧은 공부 세션 중 감정의 변화는 어땠나요?'"
+      - "recommend_path: 'pomodoro_agent'"
+    confidence: 0.83
+    rationale: "포모도르 페르소나 매칭은 단절형/저항형에 대한 세션 중간 리듬보정 및 시작 버튼 시각적 피드백 강화의 기초"
+
+  - rule_id: "R18_home_check_persona_matching"
+    priority: 81
+    description: "귀가검사 활동별 페르소나 유형 매칭 (성취형/완벽추구형/소진형/성장지향형)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "home_check"
+      - field: "home_check_survey_response"
+        operator: "in"
+        value: ["뿌듯했어요", "아직 부족하다고 느꼈어요", "그냥 끝나서 다행이에요", "내일은 좀 다르게 하고 싶어요"]
+    action:
+      - "track_emotion_pattern: 'home_check_persona_pattern'"
+      - "analyze: 'home_check_persona_classification'"
+      - "generate_description: 'home_check_persona_summary'"
+      - "display_message: '오늘의 공부를 마칠 때 어떤 기분이었나요?'"
+      - "recommend_path: 'rest_routine_agent'"
+      - "recommend_path: 'goals_analysis_agent'"
+    confidence: 0.82
+    rationale: "귀가검사 페르소나 매칭은 소진형/성장형에 대한 에너지회복 피드백 및 다음 목표 긍정 루틴 제안의 기초"
+
+  # ========== S3: 감정 상태별 정서 조절 룰 ==========
+  
+  - rule_id: "R19_negative_emotion_persistent"
+    priority: 94
+    description: "부정 감정 지속 시 루틴 강도 완화 및 짧은 승리 과제 배치"
+    conditions:
+      - field: "emotion_type"
+        operator: "in"
+        value: ["anxiety", "frustration", "fatigue", "resistance"]
+      - field: "emotion_duration"
+        operator: ">"
+        value: 3
+      - field: "emotion_intensity"
+        operator: ">"
+        value: 0.6
+    action:
+      - "suggest_emotion_regulation: 'routine_intensity_reduction'"
+      - "recommend_break_activity: 'short_win_task'"
+      - "provide_encouragement: 'small_success_design'"
+      - "display_message: '지금은 짧은 성공을 설계해 동력을 만들어요.'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.92
+    rationale: "부정 감정 지속은 루틴 강도 완화와 짧은 승리 과제가 필수"
+
+  - rule_id: "R20_positive_emotion_rising"
+    priority: 91
+    description: "긍정 감정 상승 시 도전 과제 배치 및 피드백 강화"
+    conditions:
+      - field: "emotion_type"
+        operator: "in"
+        value: ["confidence", "engagement", "achievement", "curiosity"]
+      - field: "emotion_trend"
+        operator: "=="
+        value: "rising"
+      - field: "emotion_intensity"
+        operator: ">"
+        value: 0.7
+    action:
+      - "suggest_motivation_activity: 'challenge_task'"
+      - "adjust_difficulty_by_emotion: 'increase'"
+      - "provide_encouragement: 'feedback_enhancement'"
+      - "display_message: '좋은 흐름입니다. 도전 난이도를 시도해볼까요?'"
+    confidence: 0.9
+    rationale: "긍정 감정 상승은 도전 과제 배치와 피드백 강화의 최적 시점"
+
+  - rule_id: "R21_high_anxiety_detection"
+    priority: 96
+    description: "높은 불안 감정 감지 시 즉각적 정서 조절 전략 제안"
+    conditions:
+      - field: "emotion_type"
+        operator: "=="
+        value: "anxiety"
+      - field: "emotion_intensity"
+        operator: ">"
+        value: 0.8
+      - field: "physiological_signs"
+        operator: "in"
+        value: ["rapid_breathing", "tense_posture", "avoidance_behavior"]
+    action:
+      - "suggest_emotion_regulation: 'immediate_calming_strategy'"
+      - "recommend_break_activity: 'breathing_exercise'"
+      - "provide_encouragement: 'anxiety_reduction_message'"
+      - "display_message: '지금은 숨을 고르고 마음을 편안하게 해볼까요?'"
+      - "recommend_path: 'calmness_agent'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.95
+    rationale: "높은 불안은 즉각적 개입이 필요한 최우선 상황"
+
+  - rule_id: "R22_fatigue_exhaustion_detection"
+    priority: 93
+    description: "피로 및 소진 감정 감지 시 휴식 루틴 자동 제안"
+    conditions:
+      - field: "emotion_type"
+        operator: "in"
+        value: ["fatigue", "exhaustion", "burnout"]
+      - field: "emotion_intensity"
+        operator: ">"
+        value: 0.7
+      - field: "learning_duration"
+        operator: ">"
+        value: 120
+    action:
+      - "recommend_break_activity: 'mandatory_rest'"
+      - "suggest_emotion_regulation: 'recovery_strategy'"
+      - "generate_description: 'fatigue_recovery_plan'"
+      - "display_message: '지금은 충분한 휴식이 필요해 보여요. 에너지를 회복할 시간을 가져봐요.'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.94
+    rationale: "피로 소진은 학습 지속성에 치명적이므로 즉각 휴식 제안 필요"
+
+  - rule_id: "R23_engagement_flow_state"
+    priority: 88
+    description: "몰입 및 플로우 상태 감지 시 학습 지속 유도"
+    conditions:
+      - field: "emotion_type"
+        operator: "=="
+        value: "engagement"
+      - field: "flow_state"
+        operator: "=="
+        value: "active"
+      - field: "concentration_level"
+        operator: ">"
+        value: 0.8
+    action:
+      - "track_emotion_pattern: 'flow_state_pattern'"
+      - "adjust_difficulty_by_emotion: 'maintain_optimal'"
+      - "generate_description: 'flow_state_summary'"
+      - "display_message: '좋은 집중 상태네요. 이 흐름을 유지해봐요.'"
+    confidence: 0.89
+    rationale: "플로우 상태는 학습 효과가 최대이므로 유지가 핵심"
+
+  # ========== S4: 페르소나 유형별 맞춤 피드백 룰 ==========
+  
+  - rule_id: "R24_resistant_persona_intervention"
+    priority: 92
+    description: "저항형 페르소나에 대한 감정해소형 진입전략"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "resistant"
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "entry_resistance"
+        operator: ">"
+        value: 0.6
+    action:
+      - "suggest_motivation_activity: 'easy_example_entry'"
+      - "adjust_difficulty_by_emotion: 'easy_start'"
+      - "display_message: '쉬운 예제로 시작해볼까요? 감정을 풀어가며 천천히 들어가요.'"
+      - "recommend_path: 'concept_note_agent'"
+    confidence: 0.91
+    rationale: "저항형 페르소나는 쉬운 예제로 진입하는 감정해소 전략 필수"
+
+  - rule_id: "R25_avoidance_persona_intervention"
+    priority: 90
+    description: "회피형 페르소나에 대한 성공률 높은 복습 및 TTS 가이드 중심 전환"
+    conditions:
+      - field: "persona_type"
+        operator: "in"
+        value: ["avoidance_type_learning", "avoidance_error_note"]
+      - field: "avoidance_behavior"
+        operator: "=="
+        value: "high"
+    action:
+      - "suggest_motivation_activity: 'high_success_rate_review'"
+      - "recommend_path: 'tts_guide_mode'"
+      - "display_message: '비슷한 문제로 도전해볼까요? 성공할 수 있는 문제부터 시작해봐요.'"
+      - "recommend_path: 'type_learning_agent'"
+    confidence: 0.89
+    rationale: "회피형 페르소나는 성공률 높은 복습과 TTS 가이드로 저항감 완화 필요"
+
+  - rule_id: "R26_tension_persona_intervention"
+    priority: 89
+    description: "긴장형 페르소나에 대한 풀이시작 구간 심호흡 유도 메시지"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "tension"
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "tension_level"
+        operator: ">"
+        value: 0.6
+    action:
+      - "suggest_emotion_regulation: 'breathing_before_solving'"
+      - "provide_encouragement: 'calming_message'"
+      - "display_message: '풀이 시작 전에 마음 정리해볼래? 깊게 숨을 들이쉬고 나가봐요.'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.88
+    rationale: "긴장형 페르소나는 풀이 시작 전 심호흡으로 긴장 완화 필요"
+
+  - rule_id: "R27_doubt_persona_intervention"
+    priority: 87
+    description: "회의형 페르소나에 대한 풀이마무리 시 긍정 리플레이 제공"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "doubt"
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "confidence_level"
+        operator: "<"
+        value: 0.5
+    action:
+      - "provide_encouragement: 'positive_replay'"
+      - "generate_description: 'solution_summary'"
+      - "display_message: '풀이를 잘 마무리했어요. 과정을 다시 한번 확인해볼까요?'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.86
+    rationale: "회의형 페르소나는 풀이 마무리 시 긍정 리플레이로 자신감 회복 필요"
+
+  - rule_id: "R28_hesitation_persona_intervention"
+    priority: 86
+    description: "망설임형 페르소나에 대한 좋은 질문 타이밍 피드백"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "hesitation"
+      - field: "activity_type"
+        operator: "=="
+        value: "qa"
+      - field: "hesitation_duration"
+        operator: ">"
+        value: 10
+    action:
+      - "provide_encouragement: 'good_question_timing'"
+      - "display_message: '지금이 딱 좋은 질문 타이밍이에요. 물어보고 싶은 거 있으면 언제든 말해요.'"
+      - "recommend_path: 'qa_agent'"
+    confidence: 0.85
+    rationale: "망설임형 페르소나는 질문 타이밍 피드백으로 질문 장벽 낮추기 필요"
+
+  - rule_id: "R29_analysis_persona_intervention"
+    priority: 85
+    description: "분석형 페르소나에 대한 인지적 도제 피드백 (TTS 서술형 설명)"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "analysis"
+      - field: "activity_type"
+        operator: "=="
+        value: "error_note"
+    action:
+      - "recommend_path: 'tts_narrative_explanation'"
+      - "generate_description: 'cognitive_apprenticeship_feedback'"
+      - "display_message: '틀린 이유를 찾아보는 게 재밌지 않을까요? 차근차근 설명해드릴게요.'"
+      - "recommend_path: 'error_note_agent'"
+    confidence: 0.84
+    rationale: "분석형 페르소나는 인지적 도제 피드백으로 학습 깊이 강화"
+
+  - rule_id: "R30_challenge_persona_intervention"
+    priority: 86
+    description: "도전형 페르소나에 대한 난이도 조정 및 심화학습 연결"
+    conditions:
+      - field: "persona_type"
+        operator: "=="
+        value: "challenge"
+      - field: "activity_type"
+        operator: "=="
+        value: "type_learning"
+      - field: "success_rate"
+        operator: ">"
+        value: 0.8
+    action:
+      - "adjust_difficulty_by_emotion: 'increase'"
+      - "recommend_path: 'advanced_learning'"
+      - "display_message: '좋은 흐름이에요. 조금 더 도전적인 문제로 넘어가볼까요?'"
+      - "recommend_path: 'type_learning_agent'"
+    confidence: 0.87
+    rationale: "도전형 페르소나는 난이도 조정과 심화학습으로 몰입 유지"
+
+  # ========== S5: 복합 상황 처리 룰 ==========
+  
+  - rule_id: "R31_high_concentration_excessive_tension"
+    priority: 94
+    description: "집중도는 높지만 긴장도 과다 시 휴식 루틴 에이전트 연동"
+    conditions:
+      - field: "concentration_level"
+        operator: ">"
+        value: 0.8
+      - field: "tension_level"
+        operator: ">"
+        value: 0.7
+      - field: "emotion_type"
+        operator: "=="
+        value: "anxiety"
+    action:
+      - "analyze: 'concentration_tension_balance'"
+      - "recommend_break_activity: 'tension_release'"
+      - "display_message: '집중은 잘 되고 있지만 긴장이 좀 과해 보여요. 잠깐 휴식을 취해볼까요?'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.93
+    rationale: "높은 집중도와 과다 긴장은 소진으로 이어질 수 있어 조기 개입 필요"
+
+  - rule_id: "R32_anxiety_question_avoidance"
+    priority: 91
+    description: "불안 및 질문회피 성향 시 질의응답 에이전트에 메타인지 피드백 전송"
+    conditions:
+      - field: "emotion_type"
+        operator: "=="
+        value: "anxiety"
+      - field: "question_avoidance_behavior"
+        operator: "=="
+        value: "high"
+      - field: "activity_type"
+        operator: "=="
+        value: "qa"
+    action:
+      - "analyze: 'anxiety_avoidance_pattern'"
+      - "generate_description: 'meta_cognitive_feedback'"
+      - "display_message: '질문하는 건 자연스러운 과정이에요. 지금 물어보고 싶은 게 있으면 편하게 말해봐요.'"
+      - "recommend_path: 'qa_agent'"
+    confidence: 0.9
+    rationale: "불안과 질문회피는 메타인지 피드백으로 질문 장벽 낮추기 필요"
+
+  - rule_id: "R33_signature_routine_detection"
+    priority: 96
+    description: "감정 패턴 흐름이 성취로 이어지는 반복구간을 시그너처 루틴으로 정의"
+    conditions:
+      - field: "emotion_pattern_repetition"
+        operator: ">="
+        value: 3
+      - field: "achievement_rate"
+        operator: ">"
+        value: 0.7
+      - field: "pattern_stability"
+        operator: ">"
+        value: 0.8
+    action:
+      - "track_emotion_pattern: 'signature_routine_pattern'"
+      - "generate_description: 'signature_routine_definition'"
+      - "display_message: '이런 흐름이 당신에게 잘 맞는 것 같아요. 이 루틴을 계속 유지해봐요.'"
+      - "recommend_path: 'signature_routine_agent'"
+    confidence: 0.95
+    rationale: "시그너처 루틴 도출은 개인화된 학습 패턴 강화의 핵심"
+
+  - rule_id: "R34_emotional_inertia_cognitive_fatigue"
+    priority: 92
+    description: "정서적 관성/인지적 피로/동기 저하 유형 식별 후 재가동 시나리오 생성"
+    conditions:
+      - field: "emotional_volatility"
+        operator: ">"
+        value: 0.6
+      - field: "cognitive_fatigue_level"
+        operator: ">"
+        value: 0.7
+      - field: "motivation_level"
+        operator: "<"
+        value: 0.4
+    action:
+      - "analyze: 'emotional_inertia_type'"
+      - "analyze: 'cognitive_fatigue_level'"
+      - "analyze: 'motivation_decline_type'"
+      - "generate_description: 'restart_scenario'"
+      - "display_message: '요즘 공부할 때, 예전처럼 몰입되는 순간이 잘 안 오는 느낌이야? 아니면 의욕은 있는데 집중이 안 된다 쪽이야?'"
+      - "recommend_path: 'rest_routine_agent'"
+      - "recommend_path: 'calmness_agent'"
+      - "recommend_path: 'learning_management_agent'"
+    confidence: 0.93
+    rationale: "루틴 붕괴는 정서적 관성/인지적 피로/동기 저하 유형 식별 후 재가동 시나리오 필요"
+
+  - rule_id: "R35_achievement_fatigue_balance"
+    priority: 88
+    description: "성취감 섞인 피로 vs 지침 구분 및 회복루틴 전달"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "pomodoro"
+      - field: "achievement_satisfaction"
+        operator: ">"
+        value: 0.6
+      - field: "fatigue_level"
+        operator: ">"
+        value: 0.6
+    action:
+      - "analyze: 'achievement_fatigue_type'"
+      - "generate_description: 'fatigue_type_classification'"
+      - "display_message: '이번 세션 끝났을 때, 머릿속은 맑아졌어, 아니면 좀 퍼석한 느낌이야? 이 피로감이 성취감 섞인 피로인지 그냥 지침인지 구분해보자.'"
+      - "recommend_path: 'rest_routine_agent'"
+    confidence: 0.89
+    rationale: "성취감 섞인 피로와 지침 구분은 적절한 회복 전략 선택의 핵심"
+
+  - rule_id: "R36_daily_emotion_closing"
+    priority: 85
+    description: "하루 감정 클로징 데이터 및 성장지향 vs 소진형 판정"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "home_check"
+      - field: "daily_learning_summary"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'daily_emotion_summary'"
+      - "analyze: 'growth_vs_exhaustion_type'"
+      - "generate_description: 'daily_emotion_closing_summary'"
+      - "display_message: '오늘 하루 공부를 딱 떠올리면, 어떤 한 장면이 제일 강하게 남아? 그게 잘됐다의 순간이야, 힘들었다의 순간이야?'"
+      - "recommend_path: 'home_check_agent'"
+      - "recommend_path: 'fatigue_analysis_agent'"
+    confidence: 0.86
+    rationale: "하루 감정 클로징은 성장지향 vs 소진형 판정으로 다음 날 학습 조정의 기초"
+
+  - rule_id: "R37_exam_anxiety_readiness_mapping"
+    priority: 90
+    description: "시험 대비 불안-준비도 매핑 및 침착도 및 계획조정 에이전트로 전달"
+    conditions:
+      - field: "exam_days_remaining"
+        operator: "<="
+        value: 21
+      - field: "exam_days_remaining"
+        operator: ">="
+        value: 14
+      - field: "anxiety_level"
+        operator: ">"
+        value: 0.6
+      - field: "readiness_level"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'anxiety_readiness_mapping'"
+      - "generate_description: 'exam_prep_emotion_readiness_analysis'"
+      - "display_message: '요즘 공부할 때, 시간이 모자랄 것 같아 하는 생각이 자주 들어? 아니면 이제 감이 좀 잡힌다는 생각이 많아?'"
+      - "recommend_path: 'exam_schedule_agent'"
+      - "recommend_path: 'goals_analysis_agent'"
+      - "recommend_path: 'calmness_agent'"
+    confidence: 0.91
+    rationale: "시험 대비 불안-준비도 매핑은 침착도 및 계획조정의 핵심 데이터"
+
+  # ========== S6: 감정 트리거 분석 룰 ==========
+  
+  - rule_id: "R38_emotion_trigger_analysis"
+    priority: 87
+    description: "감정 트리거 이벤트 분석 및 패턴 도출"
+    conditions:
+      - field: "emotion_trigger_event"
+        operator: "!="
+        value: null
+      - field: "trigger_frequency"
+        operator: ">="
+        value: 2
+    action:
+      - "analyze_emotion_triggers: 'trigger_pattern_analysis'"
+      - "generate_description: 'emotion_trigger_summary'"
+      - "display_message: '이런 상황에서 특별한 감정이 드는 것 같아요. 어떤 점이 그런 감정을 만드는지 함께 찾아봐요.'"
+    confidence: 0.88
+    rationale: "감정 트리거 분석은 감정 패턴 예측 및 사전 대응의 기초"
+
+  - rule_id: "R39_emotion_pattern_prediction"
+    priority: 85
+    description: "과거 감정 패턴 기반 미래 감정 상태 예측"
+    conditions:
+      - field: "emotion_history_count"
+        operator: ">="
+        value: 10
+      - field: "pattern_consistency"
+        operator: ">"
+        value: 0.7
+    action:
+      - "track_emotion_pattern: 'pattern_prediction'"
+      - "generate_description: 'emotion_prediction_summary'"
+      - "display_message: '이전 패턴을 보면 이런 상황에서 이런 감정이 올 수 있어요. 미리 준비해볼까요?'"
+    confidence: 0.86
+    rationale: "감정 패턴 예측은 사전 개입 및 학습 흐름 최적화의 기초"
+
+  # ========== S7: 에이전트 간 연동 룰 ==========
+  
+  - rule_id: "R40_emotion_to_concept_note"
+    priority: 88
+    description: "개념이해 감정 상태를 개념노트 에이전트로 전달"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "concept_understanding"
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+      - field: "persona_type"
+        operator: "!="
+        value: null
+    action:
+      - "generate_description: 'concept_emotion_summary'"
+      - "recommend_path: 'concept_note_agent'"
+      - "display_message: '개념 정리 방식을 감정 상태에 맞게 조정해볼게요.'"
+    confidence: 0.89
+    rationale: "개념이해 감정 상태는 개념노트 피드백 방식 조정의 핵심"
+
+  - rule_id: "R41_emotion_to_problem_note"
+    priority: 87
+    description: "문제풀이 감정 상태를 문제노트 에이전트로 전달"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+      - field: "pause_pattern"
+        operator: "!="
+        value: null
+    action:
+      - "generate_description: 'problem_emotion_summary'"
+      - "recommend_path: 'problem_note_agent'"
+      - "display_message: '문제풀이 방식을 감정 상태에 맞게 조정해볼게요.'"
+    confidence: 0.88
+    rationale: "문제풀이 감정 상태는 문제노트 피드백 방식 조정의 핵심"
+
+  - rule_id: "R42_emotion_to_rest_routine"
+    priority: 92
+    description: "피로 및 소진 감정을 휴식루틴 에이전트로 전달"
+    conditions:
+      - field: "emotion_type"
+        operator: "in"
+        value: ["fatigue", "exhaustion", "burnout"]
+      - field: "emotion_intensity"
+        operator: ">"
+        value: 0.6
+    action:
+      - "generate_description: 'fatigue_emotion_summary'"
+      - "recommend_path: 'rest_routine_agent'"
+      - "display_message: '충분한 휴식이 필요해 보여요. 에너지를 회복할 시간을 가져봐요.'"
+    confidence: 0.93
+    rationale: "피로 소진 감정은 휴식루틴 즉시 제안의 필수 조건"
+
+  - rule_id: "R43_emotion_to_qa_agent"
+    priority: 86
+    description: "질문 망설임 감정을 질의응답 에이전트로 전달"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "qa"
+      - field: "hesitation_pattern"
+        operator: "=="
+        value: "high"
+      - field: "emotion_type"
+        operator: "in"
+        value: ["anxiety", "doubt", "shame"]
+    action:
+      - "generate_description: 'qa_hesitation_summary'"
+      - "recommend_path: 'qa_agent'"
+      - "display_message: '질문하는 건 자연스러운 과정이에요. 편하게 물어봐요.'"
+    confidence: 0.87
+    rationale: "질문 망설임 감정은 질의응답 피드백 방식 조정의 핵심"
+
+  # ========== S8: 수학 학습 특화 감정 룰 (90% 수준 달성을 위한 추가) ==========
+  
+  - rule_id: "R44_math_problem_type_emotion_detection"
+    priority: 92
+    description: "수학 문제 유형별 감정 패턴 감지 (계산/개념/응용/증명)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "problem_type"
+        operator: "in"
+        value: ["calculation", "concept", "application", "proof"]
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'problem_type_emotion'"
+      - "analyze: 'problem_type_emotion_mapping'"
+      - "generate_description: 'problem_type_emotion_analysis'"
+      - "display_message: '어떤 유형의 문제를 풀 때 가장 자주 막히나요? (A) 계산 문제 (B) 개념 이해 문제 (C) 응용 문제 (D) 증명 문제'"
+      - "track_emotion_pattern: 'problem_type_emotion_pattern'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.91
+    rationale: "수학 문제 유형별 감정 패턴은 맞춤형 피드백의 핵심 데이터"
+    survey_question: "어떤 유형의 문제를 풀 때 가장 자주 막히나요?"
+    survey_options:
+      - "계산 문제 (계산 실수 두려움, 집중력 필요)"
+      - "개념 이해 문제 (이해도 부족 좌절, 개념 재학습 필요)"
+      - "응용 문제 (도전 의욕 또는 두려움)"
+      - "증명 문제 (논리적 사고 즐거움 또는 좌절)"
+
+  - rule_id: "R45_error_type_emotion_mapping"
+    priority: 93
+    description: "계산 실수 vs 개념 오류 감정 차이 매핑"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "error_note"
+      - field: "error_type"
+        operator: "in"
+        value: ["calculation_error", "concept_error", "misreading", "time_shortage"]
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'error_type_emotion'"
+      - "analyze: 'error_type_emotion_classification'"
+      - "generate_description: 'error_type_emotion_mapping'"
+      - "display_message: '문제를 틀렸을 때, 계산 실수였을 때와 개념을 몰랐을 때 감정이 다르나요?'"
+      - "track_emotion_pattern: 'error_type_emotion_pattern'"
+      - "recommend_path: 'error_note_agent'"
+    confidence: 0.92
+    rationale: "오류 유형별 감정 차이는 맞춤형 학습 전략의 핵심"
+    survey_question: "문제를 틀렸을 때, 계산 실수였을 때와 개념을 몰랐을 때 감정이 다르나요?"
+    error_type_emotion_mapping:
+      calculation_error:
+        typical_emotions: ["regret", "caution", "focus_increase"]
+        description: "아쉬움, 다음에 조심해야겠다는 생각"
+      concept_error:
+        typical_emotions: ["frustration", "need_relearning"]
+        description: "좌절감, 개념 재학습 필요성 인식"
+      misreading:
+        typical_emotions: ["annoyance", "need_careful_reading"]
+        description: "짜증, 다음에 꼼꼼히 읽어야겠다는 생각"
+      time_shortage:
+        typical_emotions: ["tension", "need_time_management"]
+        description: "긴장감, 시간 관리 필요성 인식"
+
+  - rule_id: "R46_unit_emotion_pattern_analysis"
+    priority: 94
+    description: "수학 단원별 감정 패턴 분석 (어려움/흥미도/성취감)"
+    conditions:
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+      - OR:
+        - field: "activity_type"
+          operator: "=="
+          value: "concept_understanding"
+        - field: "activity_type"
+          operator: "=="
+          value: "problem_solving"
+        - field: "activity_type"
+          operator: "=="
+          value: "type_learning"
+    action:
+      - "detect_emotion_state: 'unit_emotion'"
+      - "analyze: 'unit_emotion_pattern_analysis'"
+      - "generate_description: 'unit_emotion_summary'"
+      - "display_message: '어떤 단원에서 가장 어려움을 느끼나요? (함수, 도형, 통계, 확률 등)'"
+      - "track_emotion_pattern: 'unit_emotion_pattern'"
+      - "recommend_path: 'concept_note_agent'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.93
+    rationale: "단원별 감정 패턴은 단원별 맞춤형 학습 전략의 기초"
+    survey_question: "어떤 단원에서 가장 어려움을 느끼나요?"
+    unit_emotion_patterns:
+      function:
+        typical_difficulty: "high"
+        typical_emotions: ["frustration", "confusion"]
+        description: "추상적이라 어려움 → 좌절감 높음"
+      geometry:
+        typical_difficulty: "medium"
+        typical_emotions: ["confidence", "interest"]
+        description: "시각적이라 이해 쉬움 → 자신감 높음"
+      statistics:
+        typical_difficulty: "low"
+        typical_emotions: ["boredom", "concentration_loss"]
+        description: "계산 많아서 지루함 → 집중력 저하"
+      probability:
+        typical_difficulty: "high"
+        typical_emotions: ["confusion", "uncertainty"]
+        description: "확률적 사고 어려움 → 혼란감"
+
+  - rule_id: "R47_difficulty_emotion_response"
+    priority: 91
+    description: "난이도별 감정 반응 패턴 분석 (기본/유형/심화)"
+    conditions:
+      - field: "activity_type"
+        operator: "in"
+        value: ["problem_solving", "type_learning"]
+      - field: "problem_difficulty"
+        operator: "in"
+        value: ["basic", "type", "advanced"]
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'difficulty_emotion'"
+      - "analyze: 'difficulty_emotion_response_pattern'"
+      - "generate_description: 'difficulty_emotion_analysis'"
+      - "display_message: '어려운 문제를 마주했을 때 어떤 감정이 드나요? (A) 도전하고 싶어요 (B) 포기하고 싶어요 (C) 조금씩 풀어보고 싶어요 (D) 먼저 쉬운 문제부터 하고 싶어요'"
+      - "track_emotion_pattern: 'difficulty_emotion_pattern'"
+      - "adjust_difficulty_by_emotion: 'based_on_response'"
+    confidence: 0.90
+    rationale: "난이도별 감정 반응은 난이도 조정 전략의 핵심"
+    survey_question: "어려운 문제를 마주했을 때 어떤 감정이 드나요?"
+    difficulty_emotion_mapping:
+      basic:
+        typical_emotions: ["confidence", "ease"]
+        description: "자신감, 편안함"
+      type:
+        typical_emotions: ["challenge", "motivation"]
+        description: "도전감, 동기 부여"
+      advanced:
+        typical_emotions: ["anxiety", "interest", "fear"]
+        description: "불안 또는 흥미, 두려움"
+
+  - rule_id: "R48_academy_context_emotion"
+    priority: 89
+    description: "학원 맥락 감정 요인 분석 (학원 수업 이해도, 학원 친구 비교, 학원 과제 부담감)"
+    conditions:
+      - field: "academy_context"
+        operator: "=="
+        value: true
+      - OR:
+        - field: "academy_class_understanding"
+          operator: "<"
+          value: 0.7
+        - field: "academy_friend_comparison"
+          operator: "=="
+          value: "slower"
+        - field: "academy_homework_burden"
+          operator: ">"
+          value: 0.6
+    action:
+      - "detect_emotion_state: 'academy_context_emotion'"
+      - "analyze: 'academy_emotion_factor_analysis'"
+      - "generate_description: 'academy_context_emotion_summary'"
+      - "display_message: '학원 수업을 이해하지 못했을 때 어떤 감정이 드나요? (A) 자신감이 떨어져요 (B) 더 열심히 해야겠다고 생각해요 (C) 포기하고 싶어요 (D) 집에서 다시 공부하면 되겠다고 생각해요'"
+      - "track_emotion_pattern: 'academy_emotion_pattern'"
+      - "recommend_path: 'concept_note_agent'"
+      - "recommend_path: 'goals_analysis_agent'"
+    confidence: 0.88
+    rationale: "학원 맥락 감정 요인은 집 학습 동기와 직결되는 핵심 요소"
+    survey_questions:
+      - question: "학원 수업을 이해하지 못했을 때 어떤 감정이 드나요?"
+        options:
+          - "자신감이 떨어져요"
+          - "더 열심히 해야겠다고 생각해요"
+          - "포기하고 싶어요"
+          - "집에서 다시 공부하면 되겠다고 생각해요"
+      - question: "학원에서 다른 친구들보다 문제를 늦게 풀 때 어떤 기분이 드나요?"
+        options:
+          - "부끄러워요"
+          - "더 열심히 해야겠다고 생각해요"
+          - "나만 못하는 것 같아요"
+          - "괜찮아요, 나만의 속도가 있어요"
+      - question: "학원 과제가 많을 때 집에서 공부할 때 어떤 감정이 드나요?"
+        options:
+          - "부담스러워요"
+          - "피로감이 들어요"
+          - "도전적으로 받아들여요"
+          - "계획을 세워서 해결하고 싶어요"
+
+  - rule_id: "R49_solving_process_emotion_tracking"
+    priority: 90
+    description: "풀이 과정별 감정 변화 추적 (문제 읽기 → 풀이 시작 → 중간 계산 → 답 확인)"
+    conditions:
+      - field: "activity_type"
+        operator: "=="
+        value: "problem_solving"
+      - field: "solving_stage"
+        operator: "in"
+        value: ["reading", "planning", "calculating", "checking"]
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'solving_stage_emotion'"
+      - "track_emotion_pattern: 'solving_process_emotion_timeline'"
+      - "analyze: 'solving_stage_emotion_analysis'"
+      - "generate_description: 'solving_process_emotion_summary'"
+      - "display_message: '문제를 풀 때, 어느 단계에서 가장 스트레스를 받나요? (A) 문제를 읽을 때 (B) 풀이 방법을 생각할 때 (C) 계산하는 과정 (D) 답을 확인할 때'"
+      - "recommend_path: 'problem_note_agent'"
+    confidence: 0.89
+    rationale: "풀이 과정별 감정 추적은 취약 단계 파악 및 맞춤형 지원의 핵심"
+    survey_question: "문제를 풀 때, 어느 단계에서 가장 스트레스를 받나요?"
+    solving_stage_emotion_mapping:
+      reading:
+        typical_emotions: ["confusion", "anxiety"]
+        description: "문제 이해 어려움"
+      planning:
+        typical_emotions: ["uncertainty", "hesitation"]
+        description: "풀이 방법 불확실"
+      calculating:
+        typical_emotions: ["focus", "tension", "fatigue"]
+        description: "계산 집중 또는 피로"
+      checking:
+        typical_emotions: ["anxiety", "uncertainty", "relief"]
+        description: "답 확인 불안 또는 안도"
+
+  - rule_id: "R50_time_pressure_emotion"
+    priority: 87
+    description: "시간 압박 감정 패턴 분석 (시험 시간 부족 시 감정)"
+    conditions:
+      - field: "time_pressure"
+        operator: "=="
+        value: true
+      - field: "remaining_time"
+        operator: "<"
+        value: 0.3
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'time_pressure_emotion'"
+      - "analyze: 'time_pressure_emotion_classification'"
+      - "generate_description: 'time_pressure_emotion_summary'"
+      - "display_message: '시간이 부족할 때 어떤 감정이 드나요? (A) 긴장감이 높아져요 (B) 집중력이 올라가요 (C) 당황해서 실수를 해요 (D) 포기하고 싶어요'"
+      - "track_emotion_pattern: 'time_pressure_emotion_pattern'"
+      - "recommend_path: 'exam_schedule_agent'"
+      - "recommend_path: 'calmness_agent'"
+    confidence: 0.86
+    rationale: "시간 압박 감정은 시험 대비 전략 및 침착도 관리의 핵심"
+    survey_question: "시간이 부족할 때 어떤 감정이 드나요?"
+    time_pressure_emotion_types:
+      tension_increase:
+        description: "긴장감이 높아져요"
+        impact: "positive_or_negative"
+      focus_increase:
+        description: "집중력이 올라가요"
+        impact: "positive"
+      panic_mistakes:
+        description: "당황해서 실수를 해요"
+        impact: "negative"
+      give_up:
+        description: "포기하고 싶어요"
+        impact: "negative"
+
+  - rule_id: "R51_unit_transition_emotion"
+    priority: 88
+    description: "단원 간 감정 전이 패턴 분석 (이전 단원 실패 → 다음 단원 두려움)"
+    conditions:
+      - field: "previous_unit_performance"
+        operator: "<"
+        value: 0.6
+      - field: "current_unit"
+        operator: "!="
+        value: null
+      - field: "unit_relationship"
+        operator: "=="
+        value: "prerequisite"
+      - field: "emotion_state"
+        operator: "!="
+        value: null
+    action:
+      - "detect_emotion_state: 'unit_transition_emotion'"
+      - "analyze: 'unit_transition_emotion_pattern'"
+      - "generate_description: 'unit_transition_emotion_summary'"
+      - "display_message: '이전 단원을 못하면 다음 단원에 대한 감정이 달라지나요?'"
+      - "track_emotion_pattern: 'unit_transition_emotion_pattern'"
+      - "recommend_path: 'concept_note_agent'"
+      - "recommend_path: 'goals_analysis_agent'"
+    confidence: 0.87
+    rationale: "단원 간 감정 전이는 선행 단원 보완 전략의 핵심"
+    survey_question: "이전 단원을 못하면 다음 단원에 대한 감정이 달라지나요?"
+    unit_transition_emotion_patterns:
+      fear_increase:
+        description: "다음 단원에 대한 두려움 증가"
+        action: "prerequisite_review_recommended"
+      motivation_decrease:
+        description: "동기 저하"
+        action: "small_success_design"
+      confidence_loss:
+        description: "자신감 상실"
+        action: "encouragement_and_review"
+
+  - rule_id: "R52_composite_persona_profile"
+    priority: 85
+    description: "복합 페르소나 프로필 구축 (활동별 페르소나를 통합한 학생별 통합 페르소나)"
+    conditions:
+      - field: "persona_history_count"
+        operator: ">="
+        value: 3
+      - field: "activity_persona_mapping"
+        operator: "!="
+        value: null
+    action:
+      - "analyze: 'composite_persona_analysis'"
+      - "generate_description: 'composite_persona_profile'"
+      - "track_emotion_pattern: 'composite_persona_pattern'"
+      - "display_message: '학생님의 학습 스타일을 종합적으로 분석하여 맞춤형 학습 전략을 제안합니다.'"
+      - "recommend_path: 'goals_analysis_agent'"
+    confidence: 0.84
+    rationale: "복합 페르소나 프로필은 개인화된 학습 경험 설계의 핵심"
+    persona_integration_method:
+      - "활동별 페르소나 수집 (최소 3개 활동)"
+      - "페르소나 패턴 분석 및 일관성 확인"
+      - "통합 페르소나 프로필 생성"
+      - "맞춤형 학습 전략 제안"
+
+# Default fallback rule
+default_rule:
+  rule_id: "default"
+  action:
+    - "display_message: '학습 감정을 분석 중입니다. 조금만 기다려주세요.'"
+  confidence: 0.5
+  rationale: "기본 감정 분석 루틴 적용"
+
+# ========== 데이터 기반 질문 연계 정보 ==========
+# 
+# 이 rules.yaml 파일은 questions.html의 포괄형 질문과 data_based_questions.js의 데이터 기반 질문과 연계됩니다.
+#
+# 포괄형 질문 1: "이 학생의 학습활동 전반에서 감정의 흐름은 어떤 패턴으로 움직이고 있을까?"
+#   - 연계 룰: R1~R5 (상황별 감정 탐지)
+#   - 데이터 소스: emotion_score, emotion_curve, fatigue_pattern, recovery_time_avg, immersion_pattern, emotion_transition_zone
+#   - 온톨로지: EmotionFlowPattern, EmotionTransitionZone, SignatureRoutineEmotionPattern
+#
+# 포괄형 질문 2: "이 학생의 감정 페르소나를 기반으로, 어떤 방식의 피드백과 상호작용이 학습 효율을 극대화할까?"
+#   - 연계 룰: R6~R10 (감정 페르소나 분석 및 피드백 최적화)
+#   - 데이터 소스: emotion_persona, feedback_acceptance_rate, recovery_time_avg, preferred_interaction_channel, intervention_type_effectiveness
+#   - 온톨로지: EmotionPersona, PersonaBasedFeedback, InterventionTypeOptimization
+#   - 연계 에이전트: Agent 01 (수학 자신감/스트레스), Agent 06 (교사피드백)
+#
+# 포괄형 질문 3: "이 학생이 장기적으로 학습 감정의 자기조절 능력을 키우기 위해 지금부터 어떤 루틴이 필요할까?"
+#   - 연계 룰: R11~R15 (감정 자기조절 능력 향상)
+#   - 데이터 소스: recovery_time_avg, fatigue_pattern, emotion_awareness, emotion_recovery_routine, self_control_routine, emotion_impact_prediction
+#   - 온톨로지: EmotionSelfRegulation, EmotionRecoveryRoutine, EmotionImpactPrediction
+#   - 연계 에이전트: Agent 18 (시그너처루틴)
+#
+# 자세한 데이터 기반 질문 정의는 data_based_questions.js의 agent05 섹션을 참조하세요.

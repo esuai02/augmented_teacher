@@ -1,8 +1,10 @@
 ﻿<?php
 include_once("/home/moodle/public_html/moodle/config.php");
-global $DB, $USER;
+global $DB, $USER, $CFG;
 
-$secret_key = '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';
+// OpenAI API 키 설정 (config.php의 $CFG->openai_api_key 사용)
+$secret_key = $CFG->openai_api_key;
+
 $userrole=$DB->get_record_sql("SELECT data FROM mdl_user_info_data where userid='$USER->id' AND fieldid='22' ORDER BY id DESC LIMIT 1 "); 
 $role=$userrole->data;
 require_login();

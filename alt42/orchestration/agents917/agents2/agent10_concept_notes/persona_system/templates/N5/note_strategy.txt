@@ -1,0 +1,52 @@
+[STRATEGY_INTRO]
+
+{{student_name}}님을 위한 맞춤 노트 전략을 준비했습니다.
+
+[CURRENT_ASSESSMENT]
+
+📋 현재 노트 습관 평가:
+{{current_habit_assessment}}
+
+[STRATEGY_1]
+
+✏️ 노트 작성 전략:
+{{writing_strategy}}
+
+[STRATEGY_2]
+
+🔗 개념 연결 전략:
+{{connection_strategy}}
+
+[STRATEGY_3]
+
+📚 복습 활용 전략:
+{{review_utilization_strategy}}
+
+[PERSONALIZED_TIP]
+
+🎯 {{student_name}}님만을 위한 팁:
+{{persona_specific_tip}}
+
+[ACTION_PLAN]
+
+📝 실천 계획:
+1. {{action_step_1}}
+2. {{action_step_2}}
+3. {{action_step_3}}
+
+[ENCOURAGEMENT]
+
+{{encouragement_message}}
+
+[CLOSING]
+
+전략 실천을 도와드릴까요?
+
+<!--
+파일: templates/N5/note_strategy.txt
+상황: N5 - 노트 활용 전략
+변수: student_name, current_habit_assessment, writing_strategy,
+      connection_strategy, review_utilization_strategy, persona_specific_tip,
+      action_step_1, action_step_2, action_step_3, encouragement_message
+용도: 효과적인 노트 작성 및 활용 전략 제안
+-->

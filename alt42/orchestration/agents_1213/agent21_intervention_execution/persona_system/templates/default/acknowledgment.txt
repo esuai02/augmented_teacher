@@ -1,0 +1,8 @@
+[ACKNOWLEDGMENT]
+
+말씀해 주신 내용을 잘 이해했습니다.
+{{student_name}}님의 상황에 맞게 도움을 드릴게요.
+
+[ENCOURAGEMENT]
+
+함께 하나씩 해결해 나가요.

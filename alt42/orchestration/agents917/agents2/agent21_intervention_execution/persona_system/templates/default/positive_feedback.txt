@@ -1,0 +1,9 @@
+[POSITIVE_FEEDBACK]
+
+{{student_name}}님, 정말 잘 하고 계세요!
+{{achievement_detail}}
+
+[ENCOURAGEMENT]
+
+이 조자로 계속해 나가면 분명 좋은 결과가 있을 거예요.
+응원하고 있습니다!

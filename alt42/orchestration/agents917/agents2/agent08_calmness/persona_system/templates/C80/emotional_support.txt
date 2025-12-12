@@ -1,0 +1,33 @@
+# C80 Level Emotional Support Templates
+# 정서적 지지 템플릿
+# Variables: {{student_name}}, {{emotion}}, {{concern}}
+
+---
+
+## validation_feelings
+그런 감정을 느끼시는 게 당연해요.
+{{emotion}} 느낌이 드시는군요. 충분히 이해해요.
+
+---
+
+## present_support
+지금 힘드시겠네요.
+제가 여기서 같이 있을게요.
+
+---
+
+## acknowledge_struggle
+쉽지 않은 상황이시네요.
+이렇게 말씀해주셔서 고마워요.
+
+---
+
+## normalize_anxiety
+불안함을 느끼는 건 우리 몸이 우리를 보호하려는 거예요.
+잘못된 게 아니에요. 그냥 지금 좀 힘든 거죠.
+
+---
+
+## patience_reminder
+서두르지 않아도 돼요.
+천천히, 본인의 속도로 가셔도 괜찮아요.

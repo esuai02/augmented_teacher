@@ -1,0 +1,245 @@
+# 단원별 침착도 특성 DB
+# File: agent08_calmness/rules/math_unit_calm_db.yaml
+# Purpose: 수학 단원별 침착도 특성 및 관리 전략 정의
+# 
+# 현직 수학선생님의 경험 기반 데이터
+# - 학생 설문: "이 단원을 공부할 때 어떤 느낌이 들었나요?"
+# - 선생님 체크리스트: "이 단원에서 침착도 관리 포인트"
+# - 텍스트 입력: 선생님의 관찰 기록
+
+version: "1.0"
+description: "수학 단원별 침착도 특성 및 관리 전략"
+
+units:
+  # 중학교 1학년
+  middle_1:
+    integers_rationals:
+      name: "정수와 유리수"
+      grade: 1
+      difficulty: "easy"
+      calm_characteristics:
+        baseline: 90
+        normal_range: [85, 95]
+        decline_tendency: "low"
+        stability: "high"
+      learning_focus:
+        - 개념 이해보다 계산 정확도
+        - 반복 연습 중요
+      calm_management:
+        low_calm_intervention: 80
+        strategy: "쉬운 계산 문제로 워밍업"
+      teacher_notes: |
+        "정수와 유리수 단원은 상대적으로 침착도가 안정적입니다.
+         계산 연습이 주가 되므로 침착도가 떨어지면 쉬운 계산 문제로
+         워밍업하는 것이 효과적입니다."
+
+    linear_equations:
+      name: "일차방정식"
+      grade: 1
+      difficulty: "medium"
+      calm_characteristics:
+        baseline: 85
+        normal_range: [80, 90]
+        decline_tendency: "medium"
+        stability: "medium"
+      learning_focus:
+        - 개념 이해와 계산 정확도 균형
+        - 문제 해결 과정 이해
+      calm_management:
+        low_calm_intervention: 75
+        strategy: "기본 방정식 문제로 복습"
+      teacher_notes: |
+        "일차방정식 단원은 개념 이해가 중요합니다.
+         침착도가 떨어지면 기본 방정식 문제로 개념을 다시 확인하는 것이 좋습니다."
+
+    functions_basic:
+      name: "함수"
+      grade: 1
+      difficulty: "hard"
+      calm_characteristics:
+        baseline: 80
+        normal_range: [75, 85]
+        decline_tendency: "high"
+        stability: "low"
+      learning_focus:
+        - 개념 이해가 핵심
+        - 그래프 이해 중요
+      calm_management:
+        low_calm_intervention: 70
+        strategy: "기본 그래프 그리기, 개념 복습"
+      teacher_notes: |
+        "함수 단원은 침착도가 떨어지기 쉬운 단원입니다.
+         개념 이해가 어려워 침착도가 낮아지면 기본 그래프를 그려보고
+         개념을 다시 확인하는 것이 중요합니다."
+
+  # 중학교 2학년
+  middle_2:
+    linear_functions:
+      name: "일차함수"
+      grade: 2
+      difficulty: "medium"
+      calm_characteristics:
+        baseline: 85
+        normal_range: [80, 90]
+        decline_tendency: "medium"
+        stability: "medium"
+      learning_focus:
+        - 그래프 이해와 응용
+        - 함수와 방정식의 연결
+      calm_management:
+        low_calm_intervention: 75
+        strategy: "기본 그래프 그리기, 연계 개념 복습"
+      teacher_notes: |
+        "일차함수 단원은 함수와 방정식의 연결이 중요합니다.
+         침착도가 떨어지면 기본 그래프를 그려보고 연계 개념을 확인하는 것이 좋습니다."
+
+    system_equations:
+      name: "연립방정식"
+      grade: 2
+      difficulty: "medium"
+      calm_characteristics:
+        baseline: 85
+        normal_range: [80, 90]
+        decline_tendency: "medium"
+        stability: "medium"
+      learning_focus:
+        - 계산 정확도와 논리적 사고
+        - 문제 해결 전략
+      calm_management:
+        low_calm_intervention: 75
+        strategy: "기본 연립방정식 문제로 복습"
+      teacher_notes: |
+        "연립방정식 단원은 계산 정확도가 중요합니다.
+         침착도가 떨어지면 기본 연립방정식 문제로 계산 연습을 하는 것이 효과적입니다."
+
+    geometry:
+      name: "도형"
+      grade: 2
+      difficulty: "hard"
+      calm_characteristics:
+        baseline: 80
+        normal_range: [75, 85]
+        decline_tendency: "high"
+        stability: "low"
+      learning_focus:
+        - 공간 지각 능력
+        - 도형의 성질 이해
+      calm_management:
+        low_calm_intervention: 70
+        strategy: "기본 도형 문제, 그림 그리기 연습"
+      teacher_notes: |
+        "도형 단원은 침착도가 떨어지기 쉬운 단원입니다.
+         공간 지각 능력이 필요해 침착도가 낮아지면 기본 도형 문제로
+         그림을 그려보며 도형의 성질을 확인하는 것이 중요합니다."
+
+  # 중학교 3학년
+  middle_3:
+    quadratic_functions:
+      name: "이차함수"
+      grade: 3
+      difficulty: "hard"
+      calm_characteristics:
+        baseline: 80
+        normal_range: [75, 85]
+        decline_tendency: "high"
+        stability: "low"
+      learning_focus:
+        - 개념 이해와 그래프 이해
+        - 이차함수와 이차방정식의 연결
+      calm_management:
+        low_calm_intervention: 70
+        strategy: "기본 이차함수 그래프 그리기, 개념 복습"
+      teacher_notes: |
+        "이차함수 단원은 침착도가 떨어지기 쉬운 단원입니다.
+         개념 이해가 어려워 침착도가 낮아지면 기본 이차함수 그래프를 그려보고
+         개념을 다시 확인하는 것이 중요합니다."
+
+    quadratic_equations:
+      name: "이차방정식"
+      grade: 3
+      difficulty: "medium"
+      calm_characteristics:
+        baseline: 85
+        normal_range: [80, 90]
+        decline_tendency: "medium"
+        stability: "medium"
+      learning_focus:
+        - 계산 정확도와 문제 해결 전략
+        - 이차함수와의 연결
+      calm_management:
+        low_calm_intervention: 75
+        strategy: "기본 이차방정식 문제로 복습"
+      teacher_notes: |
+        "이차방정식 단원은 계산 정확도가 중요합니다.
+         침착도가 떨어지면 기본 이차방정식 문제로 계산 연습을 하는 것이 효과적입니다."
+
+    statistics:
+      name: "통계"
+      grade: 3
+      difficulty: "easy"
+      calm_characteristics:
+        baseline: 90
+        normal_range: [85, 95]
+        decline_tendency: "low"
+        stability: "high"
+      learning_focus:
+        - 데이터 해석 능력
+        - 통계 개념 이해
+      calm_management:
+        low_calm_intervention: 80
+        strategy: "기본 통계 문제로 복습"
+      teacher_notes: |
+        "통계 단원은 상대적으로 침착도가 안정적입니다.
+         데이터 해석이 주가 되므로 침착도가 떨어지면 기본 통계 문제로
+         데이터 해석 연습을 하는 것이 효과적입니다."
+
+# 단원 간 연계성 고려
+unit_relations:
+  prerequisites:
+    - unit: "일차방정식"
+      required: ["정수와 유리수"]
+    - unit: "함수"
+      required: ["일차방정식"]
+    - unit: "일차함수"
+      required: ["함수", "일차방정식"]
+    - unit: "연립방정식"
+      required: ["일차방정식"]
+    - unit: "이차함수"
+      required: ["함수", "일차함수"]
+    - unit: "이차방정식"
+      required: ["이차함수", "일차방정식"]
+  
+  recommended_learning_order:
+    - ["정수와 유리수", "일차방정식", "함수"]
+    - ["일차함수", "연립방정식"]
+    - ["이차함수", "이차방정식"]
+  
+  calm_impact:
+    weak_prerequisite:
+      effect: "침착도 평균 5점 하락"
+      intervention: "선행 단원 복습 권장"
+    strong_prerequisite:
+      effect: "침착도 안정적 유지"
+      intervention: "정상 학습 진행"
+
+# 데이터 수집 방법
+data_collection:
+  student_survey:
+    question: "이 단원을 공부할 때 어떤 느낌이 들었나요?"
+    options:
+      - "자신 있게 공부할 수 있었어요"
+      - "약간 어려웠지만 공부할 수 있었어요"
+      - "많이 어려웠어요"
+      - "공부하기 전에 두려웠어요"
+  teacher_checklist:
+    items:
+      - "이 단원에서 침착도 관리 포인트는 무엇인가요?"
+      - "이 단원에서 주로 발생하는 침착도 저하 원인은 무엇인가요?"
+      - "이 단원에서 효과적인 침착도 관리 전략은 무엇인가요?"
+  text_input:
+    format: |
+      단원: [단원명]
+      관찰 내용: [선생님이 관찰한 침착도 패턴]
+      개입 전략: [효과적이었던 개입 방법]
+      효과: [개입 후 결과]
+

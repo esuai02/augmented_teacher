@@ -1,0 +1,22 @@
+[UNDERSTANDING]
+
+{{student_name}}님, 망설여지시는 마음 이해해요.
+
+[CONTEXT_SHARE]
+
+사실 이 활동을 제안드린 이유가 있어요.
+{{intervention_rationale}}
+
+[BENEFIT_HIGHLIGHT]
+
+이걸 통해 {{expected_benefit}}을(를) 얻으실 수 있어요.
+물론 결정은 {{student_name}}님의 몫이에요.
+
+[SMALL_STEP]
+
+부담이 되신다면, 아주 작은 것부터 시작해 볼까요?
+{{minimal_first_step}}만 해보시고 어떤지 느껴보시는 건 어떨까요?
+
+[NO_PRESSURE]
+
+물론 이것도 원치 않으시면 안 하셔도 돼요.

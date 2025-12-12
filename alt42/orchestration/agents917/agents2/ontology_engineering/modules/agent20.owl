@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent20">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 20 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 20 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 20: Intervention Preparation 관련 추가 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionTrigger">
+    <rdfs:label xml:lang="ko">InterventionTrigger</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 트리거 유형(데이터/인터페이스)과 타이밍 (Agent 20 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionTiming">
+    <rdfs:label xml:lang="ko">InterventionTiming</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 개입 타이밍과 강도(즉시/지연/완화)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningFlowState">
+    <rdfs:label xml:lang="ko">LearningFlowState</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 흐름 상태(정상/이탈/복귀)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MessageTone">
+    <rdfs:label xml:lang="ko">MessageTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">메시지 톤(격려형/코치형/공감형/경고형)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionDelivery">
+    <rdfs:label xml:lang="ko">InterventionDelivery</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 전달 시점, 강도, 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VisualExpression">
+    <rdfs:label xml:lang="ko">VisualExpression</rdfs:label>
+    <rdfs:comment xml:lang="ko">시각적 표현(이모지, 색상, 아이콘)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPurpose">
+    <rdfs:label xml:lang="ko">InterventionPurpose</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 목적(정서 회복/루틴 복귀/집중 강화)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionRisk">
+    <rdfs:label xml:lang="ko">InterventionRisk</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 리스크 예측과 관리</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionResource">
+    <rdfs:label xml:lang="ko">InterventionResource</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 사전 준비 리소스와 책임자 배치</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionScenario">
+    <rdfs:label xml:lang="ko">InterventionScenario</rdfs:label>
+    <rdfs:comment xml:lang="ko">상황별 개입 설계 시나리오</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InterventionHistory">
+    <rdfs:label xml:lang="ko">InterventionHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">개입 이력과 성공/실패 패턴을 온톨로지로 표현하여 학습에 활용</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 20: Intervention Preparation 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionTrigger"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionTiming"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionLocation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionMethod"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningFlowState"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MessageTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionDelivery"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionPurpose"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionRisk"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionResource"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionHistory"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPlan">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionLocation"/>
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionMethod"/>
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionTiming"/>
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionPurpose"/>
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionScenario"/>
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionHistory"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

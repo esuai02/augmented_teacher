@@ -1,0 +1,652 @@
+{
+  "@context": {
+    "@vocab": "https://hyperial.tech/ontology/persona#",
+    "cn": "https://hyperial.tech/ontology/conceptnotes#",
+    "ps": "https://hyperial.tech/ontology/persona#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+
+    "StudentPersona": "ps:StudentPersona",
+    "SituationContext": "ps:SituationContext",
+    "ResponseStrategy": "ps:ResponseStrategy",
+    "CommunicationTone": "ps:CommunicationTone",
+    "InterventionType": "ps:InterventionType",
+    "BehaviorPattern": "ps:BehaviorPattern",
+    "NotePattern": "cn:NotePattern",
+    "TypicalUtterance": "ps:TypicalUtterance",
+    "PersonaTransition": "ps:PersonaTransition",
+    "ResponseTemplate": "ps:ResponseTemplate",
+    "NoteMetric": "cn:NoteMetric",
+
+    "personaId": { "@id": "ps:personaId", "@type": "xsd:string" },
+    "personaName": { "@id": "ps:personaName", "@type": "xsd:string" },
+    "personaEmoji": { "@id": "ps:personaEmoji", "@type": "xsd:string" },
+    "situationCode": { "@id": "ps:situationCode", "@type": "xsd:string" },
+    "priority": { "@id": "ps:priority", "@type": "xsd:integer" },
+    "confidence": { "@id": "ps:confidence", "@type": "xsd:decimal" },
+
+    "hasNotePattern": { "@id": "cn:hasNotePattern" },
+    "hasBehaviorPattern": { "@id": "ps:hasBehaviorPattern" },
+    "hasTypicalUtterance": { "@id": "ps:hasTypicalUtterance" },
+    "requiresStrategy": { "@id": "ps:requiresStrategy", "@type": "@id" },
+    "prefersTone": { "@id": "ps:prefersTone", "@type": "@id" },
+    "needsIntervention": { "@id": "ps:needsIntervention", "@type": "@id" },
+
+    "inSituation": { "@id": "ps:inSituation", "@type": "@id" },
+    "triggeredBy": { "@id": "ps:triggeredBy" },
+    "transitionsTo": { "@id": "ps:transitionsTo", "@type": "@id" },
+    "conflictsWith": { "@id": "ps:conflictsWith", "@type": "@id" },
+    "similarTo": { "@id": "ps:similarTo", "@type": "@id" },
+
+    "noteStrokeThreshold": { "@id": "cn:noteStrokeThreshold", "@type": "xsd:integer" },
+    "noteRecencyDays": { "@id": "cn:noteRecencyDays", "@type": "xsd:integer" },
+    "noteUsedTimeThreshold": { "@id": "cn:noteUsedTimeThreshold", "@type": "xsd:integer" },
+
+    "responseOpeningPhrase": { "@id": "ps:responseOpeningPhrase", "@type": "xsd:string" },
+    "responseKeyPoints": { "@id": "ps:responseKeyPoints" },
+    "responseClosingPhrase": { "@id": "ps:responseClosingPhrase", "@type": "xsd:string" },
+
+    "emotionalPriority": { "@id": "ps:emotionalPriority", "@type": "xsd:integer" },
+    "informationDepth": { "@id": "ps:informationDepth", "@type": "xsd:string" },
+    "pacePreference": { "@id": "ps:pacePreference", "@type": "xsd:string" }
+  },
+  "@graph": [
+    {
+      "@id": "ps:StudentPersona",
+      "@type": "owl:Class",
+      "rdfs:label": "학생 페르소나",
+      "rdfs:comment": "개념 노트 학습자의 심리/행동 유형을 표현하는 핵심 클래스"
+    },
+    {
+      "@id": "ps:SituationContext",
+      "@type": "owl:Class",
+      "rdfs:label": "상황 컨텍스트",
+      "rdfs:comment": "개념 노트 분석 과정의 특정 상황 (N1-N5)"
+    },
+    {
+      "@id": "ps:ResponseStrategy",
+      "@type": "owl:Class",
+      "rdfs:label": "대응 전략",
+      "rdfs:comment": "페르소나별 최적 대응 방법"
+    },
+    {
+      "@id": "ps:CommunicationTone",
+      "@type": "owl:Class",
+      "rdfs:label": "소통 톤",
+      "rdfs:comment": "답변의 어조와 분위기"
+    },
+    {
+      "@id": "ps:InterventionType",
+      "@type": "owl:Class",
+      "rdfs:label": "개입 유형",
+      "rdfs:comment": "필요한 교육적 개입의 종류"
+    },
+    {
+      "@id": "cn:NoteMetric",
+      "@type": "owl:Class",
+      "rdfs:label": "노트 메트릭",
+      "rdfs:comment": "개념 노트의 정량적 지표 (nstroke, tlaststroke, usedtime)"
+    },
+    {
+      "@id": "ps:ResponseTemplate",
+      "@type": "owl:Class",
+      "rdfs:label": "응답 템플릿",
+      "rdfs:comment": "페르소나별 맞춤형 응답 구조"
+    },
+
+    {
+      "@id": "ps:Tone_Professional",
+      "@type": "ps:CommunicationTone",
+      "rdfs:label": "전문적 톤",
+      "rdfs:comment": "객관적이고 정확한 정보 전달"
+    },
+    {
+      "@id": "ps:Tone_Gentle",
+      "@type": "ps:CommunicationTone",
+      "rdfs:label": "부드러운 톤",
+      "rdfs:comment": "압박 없이 안전한 분위기 조성"
+    },
+    {
+      "@id": "ps:Tone_Encouraging",
+      "@type": "ps:CommunicationTone",
+      "rdfs:label": "격려하는 톤",
+      "rdfs:comment": "도전과 성장 촉진"
+    },
+    {
+      "@id": "ps:Tone_Analytical",
+      "@type": "ps:CommunicationTone",
+      "rdfs:label": "분석적 톤",
+      "rdfs:comment": "데이터 기반 객관적 분석"
+    },
+    {
+      "@id": "ps:Tone_Supportive",
+      "@type": "ps:CommunicationTone",
+      "rdfs:label": "지지적 톤",
+      "rdfs:comment": "정서적 지지와 이해 중심"
+    },
+
+    {
+      "@id": "cn:Intervention_InformationProvision",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "정보 제공",
+      "priority": 80,
+      "rdfs:comment": "개념 노트 현황과 분석 정보 전달"
+    },
+    {
+      "@id": "cn:Intervention_ReviewRecommendation",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "복습 권장",
+      "priority": 90,
+      "rdfs:comment": "오래된 노트나 취약 개념 복습 안내"
+    },
+    {
+      "@id": "cn:Intervention_StrategyGuidance",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "전략 안내",
+      "priority": 75,
+      "rdfs:comment": "효과적인 노트 작성 및 활용 전략 제안"
+    },
+    {
+      "@id": "cn:Intervention_MotivationBoost",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "동기 부여",
+      "priority": 85,
+      "rdfs:comment": "노트 작성 의욕 향상 및 격려"
+    },
+    {
+      "@id": "cn:Intervention_PatternAnalysis",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "패턴 분석",
+      "priority": 70,
+      "rdfs:comment": "학습 패턴과 노트 활용 습관 분석"
+    },
+    {
+      "@id": "cn:Intervention_ProgressFeedback",
+      "@type": "ps:InterventionType",
+      "rdfs:label": "진행 피드백",
+      "priority": 65,
+      "rdfs:comment": "학습 진행 상황에 대한 피드백 제공"
+    },
+
+    {
+      "@id": "cn:Situation_N1",
+      "@type": "ps:SituationContext",
+      "situationCode": "N1",
+      "rdfs:label": "노트 탐색 시작",
+      "rdfs:comment": "학생이 처음 개념 노트 시스템에 접근하거나 새로운 노트를 시작하는 단계"
+    },
+    {
+      "@id": "cn:Situation_N2",
+      "@type": "ps:SituationContext",
+      "situationCode": "N2",
+      "rdfs:label": "개념 이해도 분석",
+      "rdfs:comment": "기존 노트 데이터를 기반으로 개념 이해 수준을 분석하는 단계"
+    },
+    {
+      "@id": "cn:Situation_N3",
+      "@type": "ps:SituationContext",
+      "situationCode": "N3",
+      "rdfs:label": "학습 흐름 해석",
+      "rdfs:comment": "노트 작성 패턴과 시간 흐름을 분석하여 학습 흐름을 파악하는 단계"
+    },
+    {
+      "@id": "cn:Situation_N4",
+      "@type": "ps:SituationContext",
+      "situationCode": "N4",
+      "rdfs:label": "복습 권장 판단",
+      "rdfs:comment": "오래된 노트나 복습이 필요한 개념을 식별하고 권장하는 단계"
+    },
+    {
+      "@id": "cn:Situation_N5",
+      "@type": "ps:SituationContext",
+      "situationCode": "N5",
+      "rdfs:label": "노트 활용 전략",
+      "rdfs:comment": "효과적인 노트 작성 및 활용 전략을 제안하는 단계"
+    },
+
+    {
+      "@id": "cn:NoteMetric_Stroke",
+      "@type": "cn:NoteMetric",
+      "rdfs:label": "필기량 (nstroke)",
+      "rdfs:comment": "노트의 획 수를 나타내는 메트릭",
+      "cn:thresholdHigh": 100,
+      "cn:thresholdLow": 20
+    },
+    {
+      "@id": "cn:NoteMetric_Recency",
+      "@type": "cn:NoteMetric",
+      "rdfs:label": "최신성 (tlaststroke)",
+      "rdfs:comment": "마지막 수정 시간 기반 최신성 메트릭",
+      "cn:recentDays": 7,
+      "cn:oldDays": 30
+    },
+    {
+      "@id": "cn:NoteMetric_UsedTime",
+      "@type": "cn:NoteMetric",
+      "rdfs:label": "사용시간 (usedtime)",
+      "rdfs:comment": "노트 작성에 투자한 시간 메트릭",
+      "cn:thresholdShort": 300,
+      "cn:thresholdLong": 1800
+    },
+
+    {
+      "@id": "cn:N1_P1",
+      "@type": "ps:StudentPersona",
+      "personaId": "N1_P1",
+      "personaName": "호기심 많은 탐색자",
+      "personaEmoji": "🔍",
+      "inSituation": { "@id": "cn:Situation_N1" },
+      "hasNotePattern": ["첫 접근이지만 적극적 탐색", "여러 노트를 둘러보며 구조 파악", "질문을 통해 기능 이해 시도"],
+      "hasBehaviorPattern": ["노트 목록 전체 훑어보기", "기능에 대한 질문", "새 노트 생성 시도"],
+      "hasTypicalUtterance": ["이 노트는 어떻게 사용하나요?", "여기서 뭘 할 수 있어요?", "노트 정리하는 방법 알려주세요"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_InformationProvision" },
+      "emotionalPriority": 30,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N1_P2",
+      "@type": "ps:StudentPersona",
+      "personaId": "N1_P2",
+      "personaName": "막연한 시작자",
+      "personaEmoji": "😶",
+      "inSituation": { "@id": "cn:Situation_N1" },
+      "hasNotePattern": ["노트가 없거나 매우 적음", "어디서부터 시작할지 모르는 상태", "방향 안내 필요"],
+      "hasBehaviorPattern": ["빈 화면 응시", "뭘 해야 할지 모름 표현", "최소한의 입력"],
+      "hasTypicalUtterance": ["뭘 적어야 해요?", "어떻게 시작하죠?", "노트를 왜 써야 해요?"],
+      "prefersTone": { "@id": "ps:Tone_Gentle" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 60,
+      "informationDepth": "minimal",
+      "pacePreference": "slow"
+    },
+    {
+      "@id": "cn:N1_P3",
+      "@type": "ps:StudentPersona",
+      "personaId": "N1_P3",
+      "personaName": "자신감 있는 경험자",
+      "personaEmoji": "💪",
+      "inSituation": { "@id": "cn:Situation_N1" },
+      "hasNotePattern": ["기존 노트 활용 경험 있음", "자기만의 노트 방식 보유", "시스템 빠르게 파악"],
+      "hasBehaviorPattern": ["바로 노트 작성 시작", "기능 빠르게 탐색", "자신만의 구조 적용"],
+      "hasTypicalUtterance": ["아, 이거 알아요", "저는 이렇게 정리해요", "제 방식대로 해도 되죠?"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_InformationProvision" },
+      "emotionalPriority": 20,
+      "informationDepth": "detailed",
+      "pacePreference": "fast"
+    },
+    {
+      "@id": "cn:N1_P4",
+      "@type": "ps:StudentPersona",
+      "personaId": "N1_P4",
+      "personaName": "부담감 느끼는 초심자",
+      "personaEmoji": "😰",
+      "inSituation": { "@id": "cn:Situation_N1" },
+      "hasNotePattern": ["노트 작성 자체에 부담감", "완벽하게 해야 한다는 압박", "시작 주저"],
+      "hasBehaviorPattern": ["시작 지연", "잘못될까 걱정 표현", "확인 질문 반복"],
+      "hasTypicalUtterance": ["이렇게 하면 맞아요?", "잘못 적으면 어떡해요?", "처음부터 완벽하게 해야 하나요?"],
+      "prefersTone": { "@id": "ps:Tone_Supportive" },
+      "needsIntervention": { "@id": "cn:Intervention_MotivationBoost" },
+      "emotionalPriority": 80,
+      "informationDepth": "minimal",
+      "pacePreference": "slow"
+    },
+
+    {
+      "@id": "cn:N2_P1",
+      "@type": "ps:StudentPersona",
+      "personaId": "N2_P1",
+      "personaName": "깊이 있는 이해자",
+      "personaEmoji": "📚",
+      "inSituation": { "@id": "cn:Situation_N2" },
+      "hasNotePattern": ["상세하고 체계적인 노트", "높은 필기량(nstroke>100)", "개념 간 연결 표현"],
+      "hasBehaviorPattern": ["개념 연결 질문", "심화 내용 탐구", "추가 자료 요청"],
+      "hasTypicalUtterance": ["이 개념이랑 저 개념은 어떻게 연결돼요?", "더 깊이 알고 싶어요", "심화 문제도 보여주세요"],
+      "prefersTone": { "@id": "ps:Tone_Analytical" },
+      "needsIntervention": { "@id": "cn:Intervention_InformationProvision" },
+      "emotionalPriority": 25,
+      "informationDepth": "comprehensive",
+      "pacePreference": "thorough"
+    },
+    {
+      "@id": "cn:N2_P2",
+      "@type": "ps:StudentPersona",
+      "personaId": "N2_P2",
+      "personaName": "표면적 기록자",
+      "personaEmoji": "📝",
+      "inSituation": { "@id": "cn:Situation_N2" },
+      "hasNotePattern": ["간단하고 표면적인 노트", "낮은 필기량(nstroke<20)", "핵심만 최소한 기록"],
+      "hasBehaviorPattern": ["간략한 메모만", "깊이 있는 정리 피함", "빠르게 넘어가려 함"],
+      "hasTypicalUtterance": ["대충 알겠어요", "이 정도면 되죠?", "다 적을 필요 있어요?"],
+      "prefersTone": { "@id": "ps:Tone_Encouraging" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 45,
+      "informationDepth": "balanced",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N2_P3",
+      "@type": "ps:StudentPersona",
+      "personaId": "N2_P3",
+      "personaName": "혼란스러운 학습자",
+      "personaEmoji": "😵",
+      "inSituation": { "@id": "cn:Situation_N2" },
+      "hasNotePattern": ["비체계적이고 혼란스러운 노트", "개념 혼동 흔적", "불완전한 이해 표현"],
+      "hasBehaviorPattern": ["같은 질문 반복", "헷갈린다 표현", "개념 구분 어려워함"],
+      "hasTypicalUtterance": ["이게 저거랑 같은 건가요?", "헷갈려요", "모르겠어요"],
+      "prefersTone": { "@id": "ps:Tone_Supportive" },
+      "needsIntervention": { "@id": "cn:Intervention_ReviewRecommendation" },
+      "emotionalPriority": 70,
+      "informationDepth": "essential",
+      "pacePreference": "slow"
+    },
+    {
+      "@id": "cn:N2_P4",
+      "@type": "ps:StudentPersona",
+      "personaId": "N2_P4",
+      "personaName": "성장하는 정리자",
+      "personaEmoji": "🌱",
+      "inSituation": { "@id": "cn:Situation_N2" },
+      "hasNotePattern": ["점진적으로 개선되는 노트", "시간 흐름에 따른 발전", "피드백 반영 흔적"],
+      "hasBehaviorPattern": ["이전 노트 참조", "개선점 질문", "피드백 요청"],
+      "hasTypicalUtterance": ["전보다 나아진 것 같아요", "어떻게 더 잘 정리할 수 있어요?", "이 부분 맞게 했나요?"],
+      "prefersTone": { "@id": "ps:Tone_Encouraging" },
+      "needsIntervention": { "@id": "cn:Intervention_ProgressFeedback" },
+      "emotionalPriority": 40,
+      "informationDepth": "balanced",
+      "pacePreference": "normal"
+    },
+
+    {
+      "@id": "cn:N3_P1",
+      "@type": "ps:StudentPersona",
+      "personaId": "N3_P1",
+      "personaName": "꾸준한 학습자",
+      "personaEmoji": "📈",
+      "inSituation": { "@id": "cn:Situation_N3" },
+      "hasNotePattern": ["규칙적인 노트 작성 패턴", "일관된 학습 흐름", "최근 활동 활발(tlaststroke 최근)"],
+      "hasBehaviorPattern": ["정기적 접속", "계획적 학습", "루틴 유지"],
+      "hasTypicalUtterance": ["매일 조금씩 하고 있어요", "오늘도 노트 정리하러 왔어요", "꾸준히 하는 게 중요하죠?"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_ProgressFeedback" },
+      "emotionalPriority": 20,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N3_P2",
+      "@type": "ps:StudentPersona",
+      "personaId": "N3_P2",
+      "personaName": "벼락치기형 학습자",
+      "personaEmoji": "⚡",
+      "inSituation": { "@id": "cn:Situation_N3" },
+      "hasNotePattern": ["불규칙하고 집중적인 패턴", "시험 전 급증", "평소 비활성"],
+      "hasBehaviorPattern": ["긴 공백 후 집중 학습", "빠른 진행 요구", "시간 압박 표현"],
+      "hasTypicalUtterance": ["시험이 얼마 안 남았어요", "빨리 정리해야 해요", "중요한 것만 알려주세요"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 55,
+      "informationDepth": "essential",
+      "pacePreference": "fast"
+    },
+    {
+      "@id": "cn:N3_P3",
+      "@type": "ps:StudentPersona",
+      "personaId": "N3_P3",
+      "personaName": "장기 방치 복귀자",
+      "personaEmoji": "🔙",
+      "inSituation": { "@id": "cn:Situation_N3" },
+      "hasNotePattern": ["오랜 기간 미사용(tlaststroke>30일)", "복귀 후 적응 필요", "이전 내용 기억 희미"],
+      "hasBehaviorPattern": ["예전 노트 확인", "내용 상기 필요", "다시 시작하려는 의지"],
+      "hasTypicalUtterance": ["오랜만이에요", "예전에 뭘 했더라?", "다시 시작해볼게요"],
+      "prefersTone": { "@id": "ps:Tone_Gentle" },
+      "needsIntervention": { "@id": "cn:Intervention_ReviewRecommendation" },
+      "emotionalPriority": 50,
+      "informationDepth": "balanced",
+      "pacePreference": "slow"
+    },
+    {
+      "@id": "cn:N3_P4",
+      "@type": "ps:StudentPersona",
+      "personaId": "N3_P4",
+      "personaName": "집중적 몰입자",
+      "personaEmoji": "🎯",
+      "inSituation": { "@id": "cn:Situation_N3" },
+      "hasNotePattern": ["긴 세션 시간(usedtime>30분)", "깊은 몰입 흔적", "한 주제 집중 탐구"],
+      "hasBehaviorPattern": ["오래 머무르며 학습", "세부사항 파고들기", "완벽 이해 추구"],
+      "hasTypicalUtterance": ["좀 더 보고 싶어요", "이 부분 완전히 이해하고 싶어요", "시간 가는 줄 몰랐어요"],
+      "prefersTone": { "@id": "ps:Tone_Analytical" },
+      "needsIntervention": { "@id": "cn:Intervention_InformationProvision" },
+      "emotionalPriority": 30,
+      "informationDepth": "comprehensive",
+      "pacePreference": "thorough"
+    },
+
+    {
+      "@id": "cn:N4_P1",
+      "@type": "ps:StudentPersona",
+      "personaId": "N4_P1",
+      "personaName": "복습 필요 인지자",
+      "personaEmoji": "📖",
+      "inSituation": { "@id": "cn:Situation_N4" },
+      "hasNotePattern": ["오래된 노트 존재 인식", "복습 필요성 자각", "스스로 복습 계획"],
+      "hasBehaviorPattern": ["예전 노트 자발적 열람", "복습 관련 질문", "계획 수립 시도"],
+      "hasTypicalUtterance": ["이 개념 다시 봐야 할 것 같아요", "복습 어떻게 하면 좋을까요?", "잊어버린 것 같아요"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_ReviewRecommendation" },
+      "emotionalPriority": 35,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N4_P2",
+      "@type": "ps:StudentPersona",
+      "personaId": "N4_P2",
+      "personaName": "복습 회피자",
+      "personaEmoji": "🙈",
+      "inSituation": { "@id": "cn:Situation_N4" },
+      "hasNotePattern": ["오래된 노트 무시", "새 내용만 관심", "복습 거부감"],
+      "hasBehaviorPattern": ["복습 제안 거부", "새 노트만 작성", "과거 내용 외면"],
+      "hasTypicalUtterance": ["그건 옛날 거예요", "새로운 거 해요", "복습은 지루해요"],
+      "prefersTone": { "@id": "ps:Tone_Encouraging" },
+      "needsIntervention": { "@id": "cn:Intervention_MotivationBoost" },
+      "emotionalPriority": 55,
+      "informationDepth": "essential",
+      "pacePreference": "fast"
+    },
+    {
+      "@id": "cn:N4_P3",
+      "@type": "ps:StudentPersona",
+      "personaId": "N4_P3",
+      "personaName": "체계적 복습자",
+      "personaEmoji": "🗂️",
+      "inSituation": { "@id": "cn:Situation_N4" },
+      "hasNotePattern": ["정기적 복습 기록", "체계적 리뷰 흔적", "복습 주기 유지"],
+      "hasBehaviorPattern": ["계획적 복습 수행", "복습 기록 관리", "효과 확인"],
+      "hasTypicalUtterance": ["일주일마다 복습해요", "복습 스케줄이 있어요", "효과적인 복습법이 뭐예요?"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_PatternAnalysis" },
+      "emotionalPriority": 25,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N4_P4",
+      "@type": "ps:StudentPersona",
+      "personaId": "N4_P4",
+      "personaName": "복습 방법 모르는 자",
+      "personaEmoji": "❓",
+      "inSituation": { "@id": "cn:Situation_N4" },
+      "hasNotePattern": ["복습 시도했으나 비효율적", "방법을 모르는 상태", "가이드 필요"],
+      "hasBehaviorPattern": ["복습 방법 질문", "효과 없음 표현", "지침 요청"],
+      "hasTypicalUtterance": ["복습을 해도 기억이 안 나요", "어떻게 복습해야 해요?", "효과적인 방법이 있나요?"],
+      "prefersTone": { "@id": "ps:Tone_Supportive" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 50,
+      "informationDepth": "balanced",
+      "pacePreference": "slow"
+    },
+
+    {
+      "@id": "cn:N5_P1",
+      "@type": "ps:StudentPersona",
+      "personaId": "N5_P1",
+      "personaName": "전략적 활용자",
+      "personaEmoji": "🎓",
+      "inSituation": { "@id": "cn:Situation_N5" },
+      "hasNotePattern": ["목표 기반 노트 활용", "전략적 정리 방식", "효율적 활용 패턴"],
+      "hasBehaviorPattern": ["목표 연계 질문", "활용 방안 탐색", "최적화 시도"],
+      "hasTypicalUtterance": ["이 노트를 시험에 어떻게 활용해요?", "더 효율적인 방법이 있을까요?", "제 목표에 맞게 정리하고 싶어요"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 30,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+    {
+      "@id": "cn:N5_P2",
+      "@type": "ps:StudentPersona",
+      "personaId": "N5_P2",
+      "personaName": "노트 활용 막막자",
+      "personaEmoji": "😕",
+      "inSituation": { "@id": "cn:Situation_N5" },
+      "hasNotePattern": ["노트는 있으나 활용 못함", "적어놓고 방치", "활용법 모름"],
+      "hasBehaviorPattern": ["노트 있는데 안 봄", "활용 방법 질문", "의미 못 찾음"],
+      "hasTypicalUtterance": ["노트를 적긴 했는데 어떻게 써요?", "정리만 하고 안 보게 돼요", "노트가 도움이 안 되는 것 같아요"],
+      "prefersTone": { "@id": "ps:Tone_Encouraging" },
+      "needsIntervention": { "@id": "cn:Intervention_StrategyGuidance" },
+      "emotionalPriority": 55,
+      "informationDepth": "balanced",
+      "pacePreference": "slow"
+    },
+    {
+      "@id": "cn:N5_P3",
+      "@type": "ps:StudentPersona",
+      "personaId": "N5_P3",
+      "personaName": "창의적 활용자",
+      "personaEmoji": "🎨",
+      "inSituation": { "@id": "cn:Situation_N5" },
+      "hasNotePattern": ["독창적인 노트 활용", "자기만의 방식 개발", "다양한 시도"],
+      "hasBehaviorPattern": ["새로운 활용법 제안", "실험적 접근", "피드백 요청"],
+      "hasTypicalUtterance": ["이렇게 활용해봤는데 어때요?", "제 방식이 맞나요?", "더 좋은 아이디어 있어요?"],
+      "prefersTone": { "@id": "ps:Tone_Encouraging" },
+      "needsIntervention": { "@id": "cn:Intervention_ProgressFeedback" },
+      "emotionalPriority": 35,
+      "informationDepth": "balanced",
+      "pacePreference": "flexible"
+    },
+    {
+      "@id": "cn:N5_P4",
+      "@type": "ps:StudentPersona",
+      "personaId": "N5_P4",
+      "personaName": "개선 추구자",
+      "personaEmoji": "🔄",
+      "inSituation": { "@id": "cn:Situation_N5" },
+      "hasNotePattern": ["현재 방식에 불만족", "더 나은 방법 탐색", "개선 의지 강함"],
+      "hasBehaviorPattern": ["현재 방식 평가 요청", "개선점 질문", "새 방법 시도"],
+      "hasTypicalUtterance": ["제 노트 방식이 괜찮은가요?", "어떻게 개선할 수 있을까요?", "더 좋은 방법을 알려주세요"],
+      "prefersTone": { "@id": "ps:Tone_Professional" },
+      "needsIntervention": { "@id": "cn:Intervention_PatternAnalysis" },
+      "emotionalPriority": 40,
+      "informationDepth": "detailed",
+      "pacePreference": "normal"
+    },
+
+    {
+      "@id": "cn:ResponseTemplate_AnalyticalNote",
+      "@type": "ps:ResponseTemplate",
+      "rdfs:label": "분석적 노트 응답 템플릿",
+      "rdfs:comment": "개념 이해도 분석이 필요한 학생용",
+      "emotionalPriority": 30,
+      "responseOpeningPhrase": "학생의 노트를 분석해보면,",
+      "responseKeyPoints": [
+        "노트 작성 패턴 분석",
+        "개념 이해도 수준 제시",
+        "구체적 개선점 제안"
+      ],
+      "responseClosingPhrase": "이 부분을 보완하면 더 효과적인 학습이 될 거예요."
+    },
+    {
+      "@id": "cn:ResponseTemplate_MotivationalNote",
+      "@type": "ps:ResponseTemplate",
+      "rdfs:label": "격려 중심 노트 응답 템플릿",
+      "rdfs:comment": "동기 부여가 필요한 학생용",
+      "emotionalPriority": 70,
+      "responseOpeningPhrase": "지금까지 노트를 정리해온 노력이 대단해요.",
+      "responseKeyPoints": [
+        "현재까지의 성과 인정",
+        "작은 진전 칭찬",
+        "다음 단계 부드럽게 제안"
+      ],
+      "responseClosingPhrase": "조금씩 꾸준히 하다 보면 분명 더 좋아질 거예요!"
+    },
+    {
+      "@id": "cn:ResponseTemplate_GuidanceNote",
+      "@type": "ps:ResponseTemplate",
+      "rdfs:label": "전략 안내 노트 응답 템플릿",
+      "rdfs:comment": "노트 활용 전략이 필요한 학생용",
+      "emotionalPriority": 40,
+      "responseOpeningPhrase": "효과적인 노트 활용을 위해 몇 가지 전략을 제안할게요.",
+      "responseKeyPoints": [
+        "현재 노트 상태 간단히 언급",
+        "단계별 활용 전략 제시",
+        "실행 가능한 첫 단계 제안"
+      ],
+      "responseClosingPhrase": "이 방법을 한번 시도해보고, 어땠는지 알려주세요."
+    },
+    {
+      "@id": "cn:ResponseTemplate_ReviewNote",
+      "@type": "ps:ResponseTemplate",
+      "rdfs:label": "복습 권장 노트 응답 템플릿",
+      "rdfs:comment": "복습이 필요한 학생용",
+      "emotionalPriority": 50,
+      "responseOpeningPhrase": "학생의 노트 중 복습이 필요한 부분이 있어요.",
+      "responseKeyPoints": [
+        "오래된 노트 현황 안내",
+        "복습 우선순위 제안",
+        "효과적인 복습 방법 설명"
+      ],
+      "responseClosingPhrase": "복습 계획을 같이 세워볼까요?"
+    },
+
+    {
+      "@id": "cn:MetricDefinition",
+      "@type": "owl:Class",
+      "rdfs:label": "노트 메트릭 기준 정의",
+      "rdfs:comment": "개념 노트 분석용 정량적 속성들의 측정 기준",
+      "cn:strokeScale": {
+        "0-20": "최소 필기 - 표면적 기록",
+        "21-50": "기본 필기 - 핵심 내용 기록",
+        "51-100": "상세 필기 - 체계적 정리",
+        "101+": "심층 필기 - 깊은 이해 반영"
+      },
+      "cn:recencyScale": {
+        "0-7일": "최근 활동 - 활발한 학습",
+        "8-14일": "보통 활동 - 지속적 학습",
+        "15-30일": "저조한 활동 - 관심 필요",
+        "30일+": "장기 미사용 - 복귀 유도 필요"
+      },
+      "cn:usedTimeScale": {
+        "0-300초": "짧은 세션 - 빠른 확인",
+        "301-900초": "보통 세션 - 일반적 학습",
+        "901-1800초": "긴 세션 - 집중 학습",
+        "1800초+": "깊은 몰입 - 심층 학습"
+      },
+      "ps:emotionalPriorityScale": {
+        "0-30": "정보/분석 중심 - 낮은 정서적 개입 필요",
+        "31-50": "균형형 - 적절한 정서적 배려",
+        "51-70": "정서적 지원 중요",
+        "71-85": "높은 정서적 지원 필요",
+        "86-100": "위기 수준 - 즉시 정서적 개입 필요"
+      },
+      "ps:confidenceScale": {
+        "0.70-0.79": "약한 확신 - 추가 데이터 필요",
+        "0.80-0.89": "중간 확신",
+        "0.90-1.00": "높은 확신"
+      }
+    }
+  ]
+}

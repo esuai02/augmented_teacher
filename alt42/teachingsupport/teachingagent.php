@@ -2779,21 +2779,47 @@ $isStudentMode = ($role === 'student');
         }
 
         // 풀이 스타일 선택 처리
-        function selectSolutionStyle(style) {
+        async function selectSolutionStyle(style) {
             console.log('[selectSolutionStyle] 선택된 스타일:', style);
             
             closeSolutionStyleModal();
             
             // 편집된 이미지가 있으면 사용, 없으면 원본 이미지 사용
-            const imageToUse = solutionStyleData.editedImage || solutionStyleData.problemImage;
+            let imageToUse = solutionStyleData.editedImage || solutionStyleData.problemImage;
             const hasEditedImage = !!solutionStyleData.editedImage;
             
             console.log('[selectSolutionStyle] 편집된 이미지 사용:', hasEditedImage);
+
+            // 편집된 이미지가 Base64(data URL)인 경우: 서버에 파일로 저장 후 URL로 교체 (학생 화이트보드에서 경로 깨짐 방지)
+            if (hasEditedImage && typeof imageToUse === 'string' && imageToUse.startsWith('data:')) {
+                try {
+                    const persistRes = await fetch('save_interaction.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'update_problem_image',
+                            interactionId: solutionStyleData.interactionId,
+                            problemImage: imageToUse
+                        })
+                    });
+                    const persistData = await persistRes.json();
+                    if (persistData.success && persistData.imageUrl) {
+                        console.log('[selectSolutionStyle] 편집 이미지 저장 완료, imageUrl:', persistData.imageUrl);
+                        imageToUse = persistData.imageUrl; // 이후 과정은 URL 기반으로 진행
+                    } else {
+                        console.warn('[selectSolutionStyle] 편집 이미지 저장 실패(무시 가능):', persistData.error);
+                    }
+                } catch (e) {
+                    console.warn('[selectSolutionStyle] 편집 이미지 저장 중 오류(무시 가능):', e);
+                }
+            }
+
+            const isEditedImage = (typeof imageToUse === 'string' && imageToUse.startsWith('data:'));
             
             if (style === 'default') {
-                acceptNewRequest(solutionStyleData.interactionId, imageToUse, solutionStyleData.isReRequest, hasEditedImage);
+                acceptNewRequest(solutionStyleData.interactionId, imageToUse, solutionStyleData.isReRequest, isEditedImage);
             } else {
-                acceptNewRequestWithStyle(solutionStyleData.interactionId, imageToUse, solutionStyleData.isReRequest, style, hasEditedImage);
+                acceptNewRequestWithStyle(solutionStyleData.interactionId, imageToUse, solutionStyleData.isReRequest, style, isEditedImage);
             }
             
             // 사용 후 편집된 이미지 데이터 초기화
@@ -2801,10 +2827,32 @@ $isStudentMode = ($role === 'student');
         }
 
         // 스타일 모달에서 다른 풀이 입력으로 전환
-        function openCustomSolutionFromStyleModal() {
+        async function openCustomSolutionFromStyleModal() {
             closeSolutionStyleModal();
             // 편집된 이미지가 있으면 사용
-            const imageToUse = solutionStyleData.editedImage || solutionStyleData.problemImage;
+            let imageToUse = solutionStyleData.editedImage || solutionStyleData.problemImage;
+
+            // 편집된 이미지가 Base64(data URL)인 경우 서버에 저장 후 URL로 교체
+            if (typeof imageToUse === 'string' && imageToUse.startsWith('data:')) {
+                try {
+                    const persistRes = await fetch('save_interaction.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'update_problem_image',
+                            interactionId: solutionStyleData.interactionId,
+                            problemImage: imageToUse
+                        })
+                    });
+                    const persistData = await persistRes.json();
+                    if (persistData.success && persistData.imageUrl) {
+                        imageToUse = persistData.imageUrl;
+                    }
+                } catch (e) {
+                    // 실패해도 기존 data URL로 계속 진행
+                }
+            }
+
             openCustomSolutionModal(solutionStyleData.interactionId, imageToUse, solutionStyleData.isReRequest);
             solutionStyleData.editedImage = null;
         }

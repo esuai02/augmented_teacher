@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>온톨로지 시각화 도구 - Ontology Reasoning System</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="styles/dashboard.css"/>
+    <script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+    <style>
+        .header-nav {
+            background: #2c3e50;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .header-nav h1 {
+            color: white;
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+        }
+        .header-nav .breadcrumb {
+            color: #ecf0f1;
+            font-size: 0.9rem;
+        }
+        .header-nav .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .header-nav .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .load-ontology-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .load-ontology-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .ontology-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .ontology-info {
+            background: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .ontology-info.show {
+            display: block;
+        }
+        .info-item {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: #ecf0f1;
+            border-radius: 3px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+<div class="header-nav">
+    <h1>🧠 온톨로지 시각화 도구</h1>
+    <div class="breadcrumb">
+        <a href="../inference_lab_v3.php">← 추론 실험실로 돌아가기</a>
+    </div>
+</div>
+
+<div class="app-container">
+    <div class="app-content">
+        <div class="input-section">
+            <!-- Ontology Loading Section -->
+            <div class="load-ontology-section">
+                <h3>📂 온톨로지 파일 로드</h3>
+                <div class="ontology-buttons">
+                    <button id="load-ontology-btn" class="example">Phase 1 온톨로지 로드</button>
+                    <button id="load-backup-btn" class="example">백업 온톨로지 로드</button>
+                </div>
+                <div id="ontology-info" class="ontology-info">
+                    <div class="dashboard-container">
+                        <div class="dashboard-card">
+                            <h3>📄 <span class="card-icon">파일명</span></h3>
+                            <div class="widget-content">
+                                <strong id="info-filename">-</strong>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">규칙 수</div>
+                            <div class="stat-value" id="info-rules">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">감정 수</div>
+                            <div class="stat-value" id="info-emotions">-</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">클래스 수</div>
+                            <div class="stat-value" id="info-classes">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <label class="section-heading" for="jsonld-input">
+                JSON‑LD 문서를 붙여넣거나 위의 버튼으로 온톨로지를 로드하세요.
+            </label>
+            <div class="textarea-container">
+                <textarea id="jsonld-input" placeholder="JSON-LD 문서를 여기에 붙여넣으세요..."></textarea>
+            </div>
+
+            <div class="button-container">
+                <div class="init-buttons">
+                    <button id="visualize-btn">시각화</button>
+                    <button id="example-btn" class="example">예제 로드</button>
+                    <button id="clear-btn" class="clear">지우기</button>
+                </div>
+            </div>
+
+            <div id="message-box" class="message"></div>
+
+            <hr class="divider">
+
+            <div class="legend">
+                <div class="interact-buttons">
+                    <button id="recenter-btn" class="secondary">중앙 정렬</button>
+                    <button id="expand-level-btn" class="secondary">레벨 확장</button>
+                    <button id="collapse-level-btn" class="secondary">레벨 축소</button>
+                </div>
+
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3498db;"></div>
+                        <span>RDF 주체/객체 (IRIs)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9b59b6;"></div>
+                        <span>RDF 술어 (IRIs)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #f39c12;"></div>
+                        <span>RDF 주체/객체 (리터럴, 블랭크 노드)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 2px dashed #3498db; background-color: white;"></div>
+                        <span>확장 가능한 노드</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter Section -->
+        <div class="search-filter-section">
+            <h3>🔍 검색 및 필터</h3>
+
+            <!-- Search Controls -->
+            <div class="search-controls">
+                <div class="search-input-group">
+                    <input type="text" id="search-input" placeholder="검색어 입력..." />
+                    <button id="search-btn" class="primary">검색</button>
+                    <button id="clear-search-btn" class="secondary">지우기</button>
+                </div>
+
+                <div class="search-options">
+                    <label>
+                        <input type="checkbox" id="case-sensitive-check" /> 대소문자 구분
+                    </label>
+                    <label>
+                        <input type="checkbox" id="exact-match-check" /> 정확히 일치
+                    </label>
+                </div>
+
+                <div class="search-scope">
+                    <span>검색 범위:</span>
+                    <label><input type="checkbox" id="search-keys" checked /> 키</label>
+                    <label><input type="checkbox" id="search-values" checked /> 값</label>
+                    <label><input type="checkbox" id="search-types" checked /> 타입</label>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="type-filter">타입 필터:</label>
+                    <select id="type-filter" multiple size="4"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="property-filter">속성 필터:</label>
+                    <select id="property-filter" multiple size="4"></select>
+                </div>
+                <div class="filter-buttons">
+                    <button id="apply-filter-btn" class="primary">필터 적용</button>
+                    <button id="clear-filter-btn" class="secondary">필터 지우기</button>
+                </div>
+            </div>
+
+            <!-- Search Results Panel -->
+            <div id="search-results-panel" class="search-results-panel" style="display: none;">
+                <div class="results-header">
+                    <h4 id="search-results-title">검색 결과</h4>
+                    <div class="results-navigation">
+                        <button id="prev-result-btn" class="secondary" disabled>이전</button>
+                        <span id="result-counter">0 / 0</span>
+                        <button id="next-result-btn" class="secondary" disabled>다음</button>
+                    </div>
+                    <button id="close-results-btn" class="secondary">닫기</button>
+                </div>
+
+                <div id="search-results-stats" class="search-results-stats"></div>
+
+                <div id="search-results-list" class="search-results-list"></div>
+            </div>
+        </div>
+
+        <!-- Tabbed View Container -->
+        <div class="view-tabs-container">
+            <div class="view-tabs">
+                <button class="view-tab active" data-view="graph">
+                    <span class="tab-icon">📊</span> Graph View
+                </button>
+                <button class="view-tab" data-view="tree">
+                    <span class="tab-icon">🌳</span> Tree View
+                </button>
+                <button class="view-tab" data-view="raw">
+                    <span class="tab-icon">📄</span> Raw JSON
+                </button>
+                <button class="view-tab" data-view="tools">
+                    <span class="tab-icon">🛠️</span> Tools
+                </button>
+            </div>
+
+            <div class="view-panels">
+                <!-- Graph View Panel (existing visualization) -->
+                <div id="graph-panel" class="view-panel active">
+                    <div id="graph-container" class="graph-container"></div>
+                </div>
+
+                <!-- Tree View Panel -->
+                <div id="tree-panel" class="view-panel">
+                    <div class="tree-view-header">
+                        <div id="tree-breadcrumb" class="breadcrumb-trail"></div>
+                    </div>
+                    <div id="tree-view-container" class="tree-view-container"></div>
+                </div>
+
+                <!-- Raw JSON View Panel -->
+                <div id="raw-panel" class="view-panel">
+                    <div class="raw-view-header">
+                        <button id="copy-json-btn" class="secondary">
+                            <span class="btn-icon">📋</span> Copy to Clipboard
+                        </button>
+                    </div>
+                    <div id="raw-json-container" class="raw-json-container">
+                        <pre id="raw-json-display"><code class="language-json"></code></pre>
+                    </div>
+                </div>
+
+                <!-- Tools Panel -->
+                <div id="tools-panel" class="view-panel">
+                    <div class="tools-panel-container">
+                        <div class="tools-section">
+                            <h3>🛠️ JSON-LD Processing Tools</h3>
+                            <p class="tools-description">
+                                Transform and validate your JSON-LD data using standard JSON-LD operations.
+                            </p>
+
+                            <div class="tools-buttons">
+                                <button id="expand-btn" class="tool-btn">
+                                    <span class="btn-icon">🔍</span> Expand Context
+                                </button>
+                                <button id="compact-btn" class="tool-btn">
+                                    <span class="btn-icon">📦</span> Compact Context
+                                </button>
+                                <button id="flatten-btn" class="tool-btn">
+                                    <span class="btn-icon">🗂️</span> Flatten Document
+                                </button>
+                                <button id="validate-btn" class="tool-btn">
+                                    <span class="btn-icon">✅</span> Validate Structure
+                                </button>
+                            </div>
+
+                            <!-- Loading Indicator -->
+                            <div id="tools-loading" class="tools-loading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                <p>Processing JSON-LD...</p>
+                            </div>
+                        </div>
+
+                        <!-- Results Display Panel -->
+                        <div class="tools-results" id="tools-results" style="display: none;">
+                            <div class="results-header">
+                                <h4 id="results-title">Processing Result</h4>
+                                <button id="clear-results-btn" class="secondary">Clear</button>
+                            </div>
+
+                            <div class="results-stats" id="results-stats"></div>
+
+                            <div class="results-content" id="results-content">
+                                <pre><code class="language-json" id="results-code"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" src="ontology_app.js"></script>
+</body>
+</html>

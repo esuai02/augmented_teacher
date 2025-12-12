@@ -1,0 +1,21 @@
+[ACKNOWLEDGMENT]
+
+{{student_name}}님, 바쁘신 것 같아요.
+시간 조절이 필요하신 거 이해해요.
+
+[FLEXIBLE_OPTIONS]
+
+{{student_name}}님의 페이스에 맞게 조정해 드릴게요.
+
+- 기한 연장: {{extended_deadline}}까지로 늘릴 수 있어요
+- 분량 축소: {{reduced_content}}만 해보시는 것도 괜찮아요
+- 방식 변경: {{alternative_method}}로 하셔도 돼요
+
+[CHOICE_INVITATION]
+
+어떤 게 {{student_name}}님에게 맞을까요?
+아니면 다른 제안이 있으시면 말씀해 주세요.
+
+[REASSURANCE]
+
+목표는 완성하는 게 아니라, 조금씩 나아가는 거예요.

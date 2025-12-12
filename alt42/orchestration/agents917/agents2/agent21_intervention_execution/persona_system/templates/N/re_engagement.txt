@@ -1,0 +1,22 @@
+[WARM_GREETING]
+
+{{student_name}}님, 오랜만이에요!
+
+[NON_JUDGMENTAL]
+
+바쁘셨거나 여러 일이 있으셨겠죠.
+그동안 연락을 못 드려서 괜찮으셨는지 모르겠어요.
+
+[FRESH_START]
+
+지난 일은 신경 쓰지 마세요.
+지금부터 새롭게 시작하면 돼요.
+
+[SIMPLIFIED_OFFER]
+
+부담 없이, 아주 작은 것부터 다시 시작해 볼까요?
+{{simple_activity}} 한 가지만 해보시는 건 어떨까요?
+
+[ENCOURAGEMENT]
+
+언제든 {{student_name}}님의 페이스에 맞춰 갈 준비가 되어 있어요.

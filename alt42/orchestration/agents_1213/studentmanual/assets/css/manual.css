@@ -1,0 +1,480 @@
+/**
+ * Student Manual System - Stylesheet
+ * File: alt42/orchestration/agents/studentmanual/assets/css/manual.css
+ *
+ * 학생 친화적인 디자인, 반응형 레이아웃
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #1e293b;
+}
+
+.manual-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 헤더 */
+.manual-header {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.manual-header h1 {
+    color: #1e293b;
+    font-size: 36px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.manual-header .subtitle {
+    color: #64748b;
+    font-size: 18px;
+}
+
+/* 검색 및 필터 영역 */
+.search-filter-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.search-bar button {
+    padding: 15px 25px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-bar button:hover {
+    background: #5568d3;
+}
+
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filter-section label {
+    font-weight: 600;
+    color: #475569;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 20px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+.filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* 메뉴얼 그리드 */
+.manual-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+
+.manual-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.manual-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    margin-bottom: 15px;
+}
+
+.agent-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    background: #667eea;
+    color: white;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-title {
+    color: #1e293b;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.card-body {
+    flex: 1;
+    margin-bottom: 15px;
+}
+
+.card-description {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.card-contents-preview {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.content-type-badge {
+    padding: 5px 10px;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.card-footer {
+    margin-top: auto;
+}
+
+.view-detail-btn {
+    width: 100%;
+    padding: 12px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.view-detail-btn:hover {
+    background: #5568d3;
+}
+
+/* 빈 상태 */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 15px;
+    color: #64748b;
+}
+
+.empty-state p {
+    font-size: 18px;
+}
+
+/* 검색 결과 없음 */
+.no-results {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 15px;
+    color: #64748b;
+    font-size: 18px;
+}
+
+.no-results.hidden {
+    display: none;
+}
+
+/* 모달 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    overflow-y: auto;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal:not(.hidden) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.3s;
+}
+
+.modal-close:hover {
+    color: #1e293b;
+}
+
+#modal-body h2 {
+    color: #1e293b;
+    font-size: 28px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+#modal-body .agent-badge {
+    margin-bottom: 20px;
+}
+
+#modal-body .description {
+    color: #475569;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+#modal-body .contents-section {
+    margin-top: 30px;
+}
+
+#modal-body .content-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+#modal-body .content-item img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+#modal-body .content-item img:hover {
+    transform: scale(1.02);
+}
+
+#modal-body .content-item video,
+#modal-body .content-item audio {
+    width: 100%;
+    border-radius: 8px;
+}
+
+#modal-body .content-item .external-link {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+#modal-body .content-item .external-link:hover {
+    background: #5568d3;
+}
+
+/* 이미지 확대 모달 */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.image-modal.hidden {
+    display: none;
+}
+
+.image-modal:not(.hidden) {
+    display: flex;
+}
+
+.image-modal-close {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 2001;
+}
+
+.image-modal-close:hover {
+    color: #cbd5e1;
+}
+
+#modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .manual-header h1 {
+        font-size: 28px;
+    }
+
+    .manual-header .subtitle {
+        font-size: 16px;
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .manual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        padding: 30px 20px;
+        margin: 10px;
+    }
+
+    #modal-body h2 {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .manual-header {
+        padding: 25px 20px;
+    }
+
+    .manual-header h1 {
+        font-size: 24px;
+    }
+
+    .search-filter-section {
+        padding: 20px;
+    }
+
+    .manual-card {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 18px;
+    }
+}
+
+/* 숨김 클래스 */
+.hidden {
+    display: none !important;
+}
+

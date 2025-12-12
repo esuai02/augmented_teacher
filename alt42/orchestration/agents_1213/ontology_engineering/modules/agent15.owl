@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent15">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 15 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 15 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 15: Problem Redefinition 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathUnitVulnerability">
+    <rdfs:label xml:lang="ko">MathUnitVulnerability</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 단원별 취약점(단원명, 취약 유형, 빈도, 심각도)을 온톨로지로 표현하여 단원별 문제 재정의에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathErrorTypeClassification">
+    <rdfs:label xml:lang="ko">MathErrorTypeClassification</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 오류 유형 분류(계산 실수/개념 오류/응용 실패)를 온톨로지로 표현하여 오류 유형별 맞춤형 대응 전략 수립에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StudentLevelDifferentiation">
+    <rdfs:label xml:lang="ko">StudentLevelDifferentiation</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생 수준별 차별화(하위권/중위권/상위권)를 온톨로지로 표현하여 수준별 문제 재정의에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineCollapseRecovery">
+    <rdfs:label xml:lang="ko">RoutineCollapseRecovery</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 붕괴 원인 진단 및 회복을 온톨로지로 표현 (Agent 15 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathStudyTimeAllocation">
+    <rdfs:label xml:lang="ko">MathStudyTimeAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 학습 시간 배분(단원별 학습 시간)을 온톨로지로 표현하여 시간 배분 문제 재정의에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathLearningStyleMismatch">
+    <rdfs:label xml:lang="ko">MathLearningStyleMismatch</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 학습 스타일 불일치(설정 스타일 vs 실제 행동)를 온톨로지로 표현하여 전략 정렬에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StandardCodeClassification">
+    <rdfs:label xml:lang="ko">StandardCodeClassification</rdfs:label>
+    <rdfs:comment xml:lang="ko">표준코드 분류(전략 불일치/시간관리/정서 리듬)를 온톨로지로 표현하여 루틴 회복 전략 수립에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StructuralProblemDiagnosis">
+    <rdfs:label xml:lang="ko">StructuralProblemDiagnosis</rdfs:label>
+    <rdfs:comment xml:lang="ko">구조적 문제 진단을 온톨로지로 표현 (Agent 15 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ComprehensiveMathRedefinition">
+    <rdfs:label xml:lang="ko">ComprehensiveMathRedefinition</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 특화 종합 문제 재정의(모든 데이터 통합)를 온톨로지로 표현하여 현직 선생님 수준의 통합 분석에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CollaborativeProblemSolving">
+    <rdfs:label xml:lang="ko">CollaborativeProblemSolving</rdfs:label>
+    <rdfs:comment xml:lang="ko">AI·교사·학생 협력 문제 해결(핵심 진단코드 3개)을 온톨로지로 표현하여 협력 해결 방안 수립에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PrerequisiteUnitAnalysis">
+    <rdfs:label xml:lang="ko">PrerequisiteUnitAnalysis</rdfs:label>
+    <rdfs:comment xml:lang="ko">선행 단원 분석(단원 선후관계 확인)을 온톨로지로 표현하여 개념 이해 부진 문제 재정의에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathAnxietyRedefinition">
+    <rdfs:label xml:lang="ko">MathAnxietyRedefinition</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 불안 재정의(불안 완화 전략)를 온톨로지로 표현하여 정서 문제 재정의에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MathRecoveryFailure">
+    <rdfs:label xml:lang="ko">MathRecoveryFailure</rdfs:label>
+    <rdfs:comment xml:lang="ko">수학 학습 회복 실패(회복 루틴 재설계)를 온톨로지로 표현하여 회복 전략 수립에 활용</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecentPerformance">
+    <rdfs:label xml:lang="ko">RecentPerformance</rdfs:label>
+    <rdfs:comment xml:lang="ko">최근 성과 데이터(2주간 점수, 목표 달성률, 몰입지표)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ScoreDecline">
+    <rdfs:label xml:lang="ko">ScoreDecline</rdfs:label>
+    <rdfs:comment xml:lang="ko">점수 하락 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#GoalCompletionRate">
+    <rdfs:label xml:lang="ko">GoalCompletionRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 달성률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImmersionIndicator">
+    <rdfs:label xml:lang="ko">ImmersionIndicator</rdfs:label>
+    <rdfs:comment xml:lang="ko">몰입지표</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RepeatedErrorPattern">
+    <rdfs:label xml:lang="ko">RepeatedErrorPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">반복 오답 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ProgressDelayPattern">
+    <rdfs:label xml:lang="ko">ProgressDelayPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">진도 지연 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DiagnosticCode">
+    <rdfs:label xml:lang="ko">DiagnosticCode</rdfs:label>
+    <rdfs:comment xml:lang="ko">표준 진단코드(C01~C09)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImprovementScenario">
+    <rdfs:label xml:lang="ko">ImprovementScenario</rdfs:label>
+    <rdfs:comment xml:lang="ko">개선 시나리오</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Priority3">
+    <rdfs:label xml:lang="ko">Priority3</rdfs:label>
+    <rdfs:comment xml:lang="ko">우선순위 3개 선정</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConceptRoutineOptimization">
+    <rdfs:label xml:lang="ko">ConceptRoutineOptimization</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 학습 루틴 최적화를 온톨로지로 표현 (Agent 10 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConceptLearningSustainability">
+    <rdfs:label xml:lang="ko">ConceptLearningSustainability</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 학습 지속성을 온톨로지로 표현 (Agent 10 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NoteTakingAmount">
+    <rdfs:label xml:lang="ko">NoteTakingAmount</rdfs:label>
+    <rdfs:comment xml:lang="ko">필기량</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StayTime">
+    <rdfs:label xml:lang="ko">StayTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">체류시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RevisitPattern">
+    <rdfs:label xml:lang="ko">RevisitPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">재방문 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StepByStepUnderstanding">
+    <rdfs:label xml:lang="ko">StepByStepUnderstanding</rdfs:label>
+    <rdfs:comment xml:lang="ko">단계별 이해도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConceptUnderstandingStyle">
+    <rdfs:label xml:lang="ko">ConceptUnderstandingStyle</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념 이해 방식 (시각형/청각형/요약형)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TextbookComposition">
+    <rdfs:label xml:lang="ko">TextbookComposition</rdfs:label>
+    <rdfs:comment xml:lang="ko">교재 구성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NoteTakingHabit">
+    <rdfs:label xml:lang="ko">NoteTakingHabit</rdfs:label>
+    <rdfs:comment xml:lang="ko">필기 습관</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NoteTakingPreference">
+    <rdfs:label xml:lang="ko">NoteTakingPreference</rdfs:label>
+    <rdfs:comment xml:lang="ko">필기 선호도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NoteTakingTool">
+    <rdfs:label xml:lang="ko">NoteTakingTool</rdfs:label>
+    <rdfs:comment xml:lang="ko">필기 도구</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TTSLog">
+    <rdfs:label xml:lang="ko">TTSLog</rdfs:label>
+    <rdfs:comment xml:lang="ko">TTS 로그</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NoteTakingLog">
+    <rdfs:label xml:lang="ko">NoteTakingLog</rdfs:label>
+    <rdfs:comment xml:lang="ko">필기 로그</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StayLog">
+    <rdfs:label xml:lang="ko">StayLog</rdfs:label>
+    <rdfs:comment xml:lang="ko">체류 로그</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ErrorOccurrenceSection">
+    <rdfs:label xml:lang="ko">ErrorOccurrenceSection</rdfs:label>
+    <rdfs:comment xml:lang="ko">오답 발생 구간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalSequence">
+    <rdfs:label xml:lang="ko">OptimalSequence</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 순서</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeAllocation">
+    <rdfs:label xml:lang="ko">TimeAllocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간 배분</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ActivityForm">
+    <rdfs:label xml:lang="ko">ActivityForm</rdfs:label>
+    <rdfs:comment xml:lang="ko">활동 형태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusBlockStructure">
+    <rdfs:label xml:lang="ko">FocusBlockStructure</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 블록 구조</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ErrorCause">
+    <rdfs:label xml:lang="ko">ErrorCause</rdfs:label>
+    <rdfs:comment xml:lang="ko">오답 원인 (이해 부족/주의력 저하/필기누락)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnderstandingDeviation">
+    <rdfs:label xml:lang="ko">UnderstandingDeviation</rdfs:label>
+    <rdfs:comment xml:lang="ko">이해도 편차</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RevisitReason">
+    <rdfs:label xml:lang="ko">RevisitReason</rdfs:label>
+    <rdfs:comment xml:lang="ko">재방문 이유</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnderstandingStability">
+    <rdfs:label xml:lang="ko">UnderstandingStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">개념이해 안정성 지표</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#InputDependency">
+    <rdfs:label xml:lang="ko">InputDependency</rdfs:label>
+    <rdfs:comment xml:lang="ko">청각/시각 입력 의존도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineSustainabilityRisk">
+    <rdfs:label xml:lang="ko">RoutineSustainabilityRisk</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 지속 리스크 요인</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SustainabilityImprovementStrategy">
+    <rdfs:label xml:lang="ko">SustainabilityImprovementStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">지속성 향상 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ToolUsage">
+    <rdfs:label xml:lang="ko">ToolUsage</rdfs:label>
+    <rdfs:comment xml:lang="ko">도구 사용</rdfs:comment>
+  </owl:Class>
+
+
+</rdf:RDF>

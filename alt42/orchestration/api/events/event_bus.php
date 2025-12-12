@@ -13,6 +13,9 @@ namespace ALT42\Events;
  * Event Bus for managing event publication and subscription
  */
 class EventBus {
+    /** @var EventBus|null */
+    private static $instance = null;
+
     /** @var array */
     private $subscribers = [];
     /** @var array */
@@ -23,6 +26,17 @@ class EventBus {
     private $responseCache = [];
     /** @var bool */
     private $asyncEnabled = true;
+
+    /**
+     * Singleton instance (요청 내 공유)
+     * @return EventBus
+     */
+    public static function getInstance(): EventBus {
+        if (self::$instance === null) {
+            self::$instance = new EventBus();
+        }
+        return self::$instance;
+    }
     
     /**
      * Publish an event to all subscribers

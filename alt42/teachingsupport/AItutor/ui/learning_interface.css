@@ -928,6 +928,162 @@ body {
     gap: 0.5rem;
 }
 
+/* ========== Presentation (발표하기) ========== */
+.presentation-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 0.6rem;
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    color: #e5e7eb;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.presentation-btn:hover {
+    background: rgba(59, 130, 246, 0.22);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.presentation-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.6rem;
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+.presentation-timer {
+    font-variant-numeric: tabular-nums;
+    color: #93c5fd;
+    font-weight: 700;
+    min-width: 3.5rem;
+    text-align: center;
+}
+.presentation-control-btn {
+    padding: 0.35rem 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(255, 255, 255, 0.06);
+    color: #e5e7eb;
+    cursor: pointer;
+}
+.presentation-control-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.presentation-control-btn.finish {
+    border-color: rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.14);
+}
+.presentation-control-btn.finish:hover {
+    background: rgba(16, 185, 129, 0.22);
+}
+
+/* 발표 분석 결과 모달 */
+.presentation-persona-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+}
+.presentation-persona-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(520px, 92vw);
+    max-height: 78vh;
+    overflow: hidden;
+    background: #0b1220;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    z-index: 2001;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+.presentation-persona-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.presentation-persona-header h3 {
+    font-size: 1rem;
+    color: #e5e7eb;
+}
+.presentation-persona-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+.presentation-persona-body {
+    padding: 1rem;
+    overflow: auto;
+}
+.presentation-persona-summary {
+    color: #cbd5e1;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+}
+.presentation-persona-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.presentation-persona-item {
+    text-align: left;
+    padding: 0.8rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    color: #e5e7eb;
+}
+.presentation-persona-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+.presentation-persona-item .p-name {
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+.presentation-persona-item .p-reason {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+.presentation-persona-empty {
+    color: #94a3b8;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 0.8rem;
+}
+.presentation-persona-footer {
+    padding: 0.9rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: flex-end;
+}
+.presentation-persona-next {
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    background: rgba(59, 130, 246, 0.18);
+    color: #e5e7eb;
+    cursor: pointer;
+}
+.presentation-persona-next:hover {
+    background: rgba(59, 130, 246, 0.25);
+}
+
 /* ========== Steps Sidebar (우측 배치) ========== */
 .steps-sidebar {
     width: 24rem;

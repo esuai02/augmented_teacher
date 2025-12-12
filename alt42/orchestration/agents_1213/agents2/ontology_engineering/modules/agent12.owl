@@ -1,0 +1,2861 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent12">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 12 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 12 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 12: Rest Routine 관련 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestPatternRecoveryRhythm">
+    <rdfs:label xml:lang="ko">RestPatternRecoveryRhythm</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 패턴과 회복 리듬을 온톨로지로 표현하여 학습 지속력 영향 분석에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeBasedRestPattern">
+    <rdfs:label xml:lang="ko">TimeBasedRestPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간대별 휴식 패턴(요일별, 시간대별)을 온톨로지로 표현하여 개인 최적 학습 시간대 추론에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningVolumeRestCorrelation">
+    <rdfs:label xml:lang="ko">LearningVolumeRestCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습량(문제 수, 학습 시간)과 휴식 필요성 관계를 온톨로지로 표현하여 적절한 학습 청크 크기 추천에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestDurationEffectiveness">
+    <rdfs:label xml:lang="ko">RestDurationEffectiveness</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 지속 시간과 회복 효과 관계를 온톨로지로 표현하여 최적 휴식 시간 추천에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyFatigueAccumulation">
+    <rdfs:label xml:lang="ko">WeeklyFatigueAccumulation</rdfs:label>
+    <rdfs:comment xml:lang="ko">주간 피로 누적 패턴을 온톨로지로 표현하여 장기 슬럼프 신호 감지에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryResilience">
+    <rdfs:label xml:lang="ko">RecoveryResilience</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 탄력성(회복 시간, 회복 정도)을 온톨로지로 표현하여 개인화 전략 수립에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueMinimizationStrategy">
+    <rdfs:label xml:lang="ko">FatigueMinimizationStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 최소화 전략(주간 패턴, 조기 감지, 자동 조정)을 온톨로지로 표현하여 몰입 회복에 활용 (Agent 12 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestButtonClicked">
+    <rdfs:label xml:lang="ko">RestButtonClicked</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 버튼 클릭</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestCount">
+    <rdfs:label xml:lang="ko">RestCount</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 횟수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#HourlyRestFrequency">
+    <rdfs:label xml:lang="ko">HourlyRestFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간대별 휴식 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DailyRestFrequency">
+    <rdfs:label xml:lang="ko">DailyRestFrequency</rdfs:label>
+    <rdfs:comment xml:lang="ko">일일 휴식 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyRestTrend">
+    <rdfs:label xml:lang="ko">WeeklyRestTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">주간 휴식 추이</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestPatterns">
+    <rdfs:label xml:lang="ko">RestPatterns</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusLevelBeforeRest">
+    <rdfs:label xml:lang="ko">FocusLevelBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 집중도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusLevelAfterRest">
+    <rdfs:label xml:lang="ko">FocusLevelAfterRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 후 집중도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusLevelHistory">
+    <rdfs:label xml:lang="ko">FocusLevelHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중도 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiencyBeforeRest">
+    <rdfs:label xml:lang="ko">LearningEfficiencyBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 학습 효율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiencyAfterRest">
+    <rdfs:label xml:lang="ko">LearningEfficiencyAfterRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 후 학습 효율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessIndex">
+    <rdfs:label xml:lang="ko">RecoveryEffectivenessIndex</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 효과성 지수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusDurationHistory">
+    <rdfs:label xml:lang="ko">FocusDurationHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 시간 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusDurationChangeRate">
+    <rdfs:label xml:lang="ko">FocusDurationChangeRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 시간 감소율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestFrequencyChangeRate">
+    <rdfs:label xml:lang="ko">RestFrequencyChangeRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 빈도 증가율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiencyHistory">
+    <rdfs:label xml:lang="ko">LearningEfficiencyHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 효율 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiencyChangeRate">
+    <rdfs:label xml:lang="ko">LearningEfficiencyChangeRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 효율 감소율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStateBeforeRest">
+    <rdfs:label xml:lang="ko">EmotionalStateBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 감정 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStateAfterRest">
+    <rdfs:label xml:lang="ko">EmotionalStateAfterRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 후 감정 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryIndex">
+    <rdfs:label xml:lang="ko">EmotionalRecoveryIndex</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 회복 지수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestActivityType">
+    <rdfs:label xml:lang="ko">RestActivityType</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 활동 유형</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestTimingPattern">
+    <rdfs:label xml:lang="ko">RestTimingPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 타이밍 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestPlanningLevel">
+    <rdfs:label xml:lang="ko">RestPlanningLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 계획 수준 (즉흥적·계획적·보상형)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRewardType">
+    <rdfs:label xml:lang="ko">RestRewardType</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 보상 유형</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineQuality">
+    <rdfs:label xml:lang="ko">RestRoutineQuality</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 루틴의 질적 수준</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestDuringClass">
+    <rdfs:label xml:lang="ko">RestDuringClass</rdfs:label>
+    <rdfs:comment xml:lang="ko">수업 중 휴식</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningTransition">
+    <rdfs:label xml:lang="ko">LearningTransition</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 전환</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RhythmIntervention">
+    <rdfs:label xml:lang="ko">RhythmIntervention</rdfs:label>
+    <rdfs:comment xml:lang="ko">리듬형 개입</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusTimeRestAlignment">
+    <rdfs:label xml:lang="ko">FocusTimeRestAlignment</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 시간-휴식 정렬</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalRestTimeSlots">
+    <rdfs:label xml:lang="ko">OptimalRestTimeSlots</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 휴식 시간대</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 12: Rest Routine 추가 클래스들 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusLevelByTimeSlot">
+    <rdfs:label xml:lang="ko">FocusLevelByTimeSlot</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간대별 집중도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningActivityBeforeRest">
+    <rdfs:label xml:lang="ko">LearningActivityBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 학습 활동</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitDifficultyBeforeRest">
+    <rdfs:label xml:lang="ko">UnitDifficultyBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 단원 난이도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestFrequencyByUnitDifficulty">
+    <rdfs:label xml:lang="ko">RestFrequencyByUnitDifficulty</rdfs:label>
+    <rdfs:comment xml:lang="ko">단원 난이도별 휴식 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DifficultUnitRestPattern">
+    <rdfs:label xml:lang="ko">DifficultUnitRestPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">어려운 단원 휴식 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ProblemCountBeforeRest">
+    <rdfs:label xml:lang="ko">ProblemCountBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 문제 수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StudyDurationBeforeRest">
+    <rdfs:label xml:lang="ko">StudyDurationBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 전 학습 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestFrequencyByProblemCount">
+    <rdfs:label xml:lang="ko">RestFrequencyByProblemCount</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 수별 휴식 빈도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalProblemCountBeforeRest">
+    <rdfs:label xml:lang="ko">OptimalProblemCountBeforeRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 휴식 전 문제 수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalLearningChunkSize">
+    <rdfs:label xml:lang="ko">OptimalLearningChunkSize</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 학습 청크 크기</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestDurationRecoveryCurve">
+    <rdfs:label xml:lang="ko">RestDurationRecoveryCurve</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 시간별 회복 곡선</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalRestDurationByActivity">
+    <rdfs:label xml:lang="ko">OptimalRestDurationByActivity</rdfs:label>
+    <rdfs:comment xml:lang="ko">활동별 최적 휴식 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OverRestDetection">
+    <rdfs:label xml:lang="ko">OverRestDetection</rdfs:label>
+    <rdfs:comment xml:lang="ko">과도한 휴식 감지</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DayOfWeekRestPattern">
+    <rdfs:label xml:lang="ko">DayOfWeekRestPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">요일별 휴식 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryTimeHistory">
+    <rdfs:label xml:lang="ko">RecoveryTimeHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 시간 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessHistory">
+    <rdfs:label xml:lang="ko">RecoveryEffectivenessHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 효과성 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryResilienceScore">
+    <rdfs:label xml:lang="ko">RecoveryResilienceScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 탄력성 점수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AverageRecoveryTime">
+    <rdfs:label xml:lang="ko">AverageRecoveryTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">평균 회복 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AverageRecoveryEffectiveness">
+    <rdfs:label xml:lang="ko">AverageRecoveryEffectiveness</rdfs:label>
+    <rdfs:comment xml:lang="ko">평균 회복 효과성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueDuration">
+    <rdfs:label xml:lang="ko">FatigueDuration</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 지속 기간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueDurationPattern">
+    <rdfs:label xml:lang="ko">FatigueDurationPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 지속 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueType">
+    <rdfs:label xml:lang="ko">FatigueType</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 유형 (일시적/누적)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepHours">
+    <rdfs:label xml:lang="ko">SleepHours</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExternalScheduleInfo">
+    <rdfs:label xml:lang="ko">ExternalScheduleInfo</rdfs:label>
+    <rdfs:comment xml:lang="ko">외부 일정 정보</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 12: 포괄형 질문 2 추가 클래스들 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FocusDurationTrend">
+    <rdfs:label xml:lang="ko">FocusDurationTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 시간 추세</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiencyTrend">
+    <rdfs:label xml:lang="ko">LearningEfficiencyTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 효율 추세</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TrendDuration">
+    <rdfs:label xml:lang="ko">TrendDuration</rdfs:label>
+    <rdfs:comment xml:lang="ko">추세 지속 기간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueAccumulationRate">
+    <rdfs:label xml:lang="ko">FatigueAccumulationRate</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적률</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueAccumulationEarlyWarning">
+    <rdfs:label xml:lang="ko">FatigueAccumulationEarlyWarning</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 조기 경보</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryByActivity">
+    <rdfs:label xml:lang="ko">EmotionalRecoveryByActivity</rdfs:label>
+    <rdfs:comment xml:lang="ko">활동별 감정 회복</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SchoolEventSchedule">
+    <rdfs:label xml:lang="ko">SchoolEventSchedule</rdfs:label>
+    <rdfs:comment xml:lang="ko">학교 행사 일정</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AcademyClassSchedule">
+    <rdfs:label xml:lang="ko">AcademyClassSchedule</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 수업 일정</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SchoolScheduleFatigueCorrelation">
+    <rdfs:label xml:lang="ko">SchoolScheduleFatigueCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">학교 일정-피로 연관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AcademyScheduleFatigueCorrelation">
+    <rdfs:label xml:lang="ko">AcademyScheduleFatigueCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 일정-피로 연관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestEmotionTone">
+    <rdfs:label xml:lang="ko">RestEmotionTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 중 감정 톤</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EffectivenessByActivityType">
+    <rdfs:label xml:lang="ko">EffectivenessByActivityType</rdfs:label>
+    <rdfs:comment xml:lang="ko">활동 유형별 효과성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ActivityEffectivenessRanking">
+    <rdfs:label xml:lang="ko">ActivityEffectivenessRanking</rdfs:label>
+    <rdfs:comment xml:lang="ko">활동 효과성 순위</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalRestActivities">
+    <rdfs:label xml:lang="ko">OptimalRestActivities</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 휴식 활동</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalFocusTime">
+    <rdfs:label xml:lang="ko">OptimalFocusTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 집중 시간대</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningStyleRestNeeds">
+    <rdfs:label xml:lang="ko">LearningStyleRestNeeds</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 스타일별 휴식 필요성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningRestTransition">
+    <rdfs:label xml:lang="ko">LearningRestTransition</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습-휴식 전환</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RhythmAdjustmentAlgorithm">
+    <rdfs:label xml:lang="ko">RhythmAdjustmentAlgorithm</rdfs:label>
+    <rdfs:comment xml:lang="ko">리듬 조정 알고리즘</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CurrentLearningDuration">
+    <rdfs:label xml:lang="ko">CurrentLearningDuration</rdfs:label>
+    <rdfs:comment xml:lang="ko">현재 학습 지속 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ProblemCountSinceLastRest">
+    <rdfs:label xml:lang="ko">ProblemCountSinceLastRest</rdfs:label>
+    <rdfs:comment xml:lang="ko">마지막 휴식 이후 문제 수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalRestTiming">
+    <rdfs:label xml:lang="ko">OptimalRestTiming</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 휴식 타이밍</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestUrgencyScore">
+    <rdfs:label xml:lang="ko">RestUrgencyScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 긴급도 점수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PersonalizedRestActivity">
+    <rdfs:label xml:lang="ko">PersonalizedRestActivity</rdfs:label>
+    <rdfs:comment xml:lang="ko">개인화된 휴식 활동</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DifficultyBasedRestInterval">
+    <rdfs:label xml:lang="ko">DifficultyBasedRestInterval</rdfs:label>
+    <rdfs:comment xml:lang="ko">난이도 기반 휴식 간격</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DynamicRestInterval">
+    <rdfs:label xml:lang="ko">DynamicRestInterval</rdfs:label>
+    <rdfs:comment xml:lang="ko">동적 휴식 간격</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRewardEnabled">
+    <rdfs:label xml:lang="ko">RestRewardEnabled</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 보상 활성화</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExtendedRestDuration">
+    <rdfs:label xml:lang="ko">ExtendedRestDuration</rdfs:label>
+    <rdfs:comment xml:lang="ko">연장된 휴식 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueAccumulationEarlyDetection">
+    <rdfs:label xml:lang="ko">FatigueAccumulationEarlyDetection</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 조기 감지</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueTrendSeverity">
+    <rdfs:label xml:lang="ko">FatigueTrendSeverity</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 추세 심각도</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreventiveRestAdjustment">
+    <rdfs:label xml:lang="ko">PreventiveRestAdjustment</rdfs:label>
+    <rdfs:comment xml:lang="ko">예방적 휴식 조정</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestInterval">
+    <rdfs:label xml:lang="ko">RestInterval</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 간격</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AutomaticRestRoutineAdjustment">
+    <rdfs:label xml:lang="ko">AutomaticRestRoutineAdjustment</rdfs:label>
+    <rdfs:comment xml:lang="ko">자동 휴식 루틴 조정</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OverRestPattern">
+    <rdfs:label xml:lang="ko">OverRestPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">과도한 휴식 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalRestDurationAdjustment">
+    <rdfs:label xml:lang="ko">OptimalRestDurationAdjustment</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 휴식 시간 조정</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 12: 포괄형 질문 3 추가 클래스들 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermFatigueTrend">
+    <rdfs:label xml:lang="ko">LongTermFatigueTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 피로 추세</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryResilienceTrend">
+    <rdfs:label xml:lang="ko">RecoveryResilienceTrend</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 탄력성 추세</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionRoutineConsistency">
+    <rdfs:label xml:lang="ko">EmotionRoutineConsistency</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정루틴 일관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SlumpPredictionSignal">
+    <rdfs:label xml:lang="ko">SlumpPredictionSignal</rdfs:label>
+    <rdfs:comment xml:lang="ko">슬럼프 예측 신호</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryStrengthening">
+    <rdfs:label xml:lang="ko">EmotionalRecoveryStrengthening</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서 회복력 강화</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepPatternIntegration">
+    <rdfs:label xml:lang="ko">SleepPatternIntegration</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면 패턴 통합</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ComprehensiveRestRoutineAnalysis">
+    <rdfs:label xml:lang="ko">ComprehensiveRestRoutineAnalysis</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 루틴 종합 분석</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueAccumulationDetected">
+    <rdfs:label xml:lang="ko">FatigueAccumulationDetected</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 감지됨</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalVolatility">
+    <rdfs:label xml:lang="ko">EmotionalVolatility</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 변동성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermSlumpPrevention">
+    <rdfs:label xml:lang="ko">LongTermSlumpPrevention</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 슬럼프 예방</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SlumpRootCauses">
+    <rdfs:label xml:lang="ko">SlumpRootCauses</rdfs:label>
+    <rdfs:comment xml:lang="ko">슬럼프 근본 원인</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LearningEfficiency">
+    <rdfs:label xml:lang="ko">LearningEfficiency</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 효율</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfRegulationRoutine">
+    <rdfs:label xml:lang="ko">SelfRegulationRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기조절 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionRegulationAbility">
+    <rdfs:label xml:lang="ko">EmotionRegulationAbility</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 조절 능력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryRoutine">
+    <rdfs:label xml:lang="ko">EmotionalRecoveryRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서 회복 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExamPeriodFatigue">
+    <rdfs:label xml:lang="ko">ExamPeriodFatigue</rdfs:label>
+    <rdfs:comment xml:lang="ko">시험 기간 피로</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ExamWeeksRemaining">
+    <rdfs:label xml:lang="ko">ExamWeeksRemaining</rdfs:label>
+    <rdfs:comment xml:lang="ko">시험까지 남은 주수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepQuality">
+    <rdfs:label xml:lang="ko">SleepQuality</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면 질</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepFatigueCorrelation">
+    <rdfs:label xml:lang="ko">SleepFatigueCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면-피로 연관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepImpactOnFatigue">
+    <rdfs:label xml:lang="ko">SleepImpactOnFatigue</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면이 피로에 미치는 영향</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SleepImprovementStrategy">
+    <rdfs:label xml:lang="ko">SleepImprovementStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">수면 개선 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WakeTime">
+    <rdfs:label xml:lang="ko">WakeTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">기상 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WakeTimeFocusAlignment">
+    <rdfs:label xml:lang="ko">WakeTimeFocusAlignment</rdfs:label>
+    <rdfs:comment xml:lang="ko">기상 시간-집중도 정렬</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Chronotype">
+    <rdfs:label xml:lang="ko">Chronotype</rdfs:label>
+    <rdfs:comment xml:lang="ko">생체 리듬 유형 (아침형/올빼미형)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#OptimalLearningSchedule">
+    <rdfs:label xml:lang="ko">OptimalLearningSchedule</rdfs:label>
+    <rdfs:comment xml:lang="ko">최적 학습 스케줄</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AggressiveInterventionStrategy">
+    <rdfs:label xml:lang="ko">AggressiveInterventionStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">적극적 개입 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ComprehensiveRestPattern">
+    <rdfs:label xml:lang="ko">ComprehensiveRestPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">종합 휴식 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatigueAccumulationStatus">
+    <rdfs:label xml:lang="ko">FatigueAccumulationStatus</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestEffectivenessEvaluation">
+    <rdfs:label xml:lang="ko">RestEffectivenessEvaluation</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 효과성 평가</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PersonalizedOptimizationOpportunities">
+    <rdfs:label xml:lang="ko">PersonalizedOptimizationOpportunities</rdfs:label>
+    <rdfs:comment xml:lang="ko">개인화 최적화 기회</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineCoachingTemplate">
+    <rdfs:label xml:lang="ko">RestRoutineCoachingTemplate</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 루틴 코칭 템플릿</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestType">
+    <rdfs:label xml:lang="ko">RestType</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 유형</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PersonalizedCoachingMessage">
+    <rdfs:label xml:lang="ko">PersonalizedCoachingMessage</rdfs:label>
+    <rdfs:comment xml:lang="ko">개인화된 코칭 메시지</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CustomRestRoutine">
+    <rdfs:label xml:lang="ko">CustomRestRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">맞춤형 휴식 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestActivitySchedule">
+    <rdfs:label xml:lang="ko">RestActivitySchedule</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 활동 스케줄</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#LongTermRhythmStability">
+    <rdfs:label xml:lang="ko">LongTermRhythmStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">장기 리듬 안정성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConcentrationFlow">
+    <rdfs:label xml:lang="ko">ConcentrationFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 흐름 상태</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FlowInterruptionCause">
+    <rdfs:label xml:lang="ko">FlowInterruptionCause</rdfs:label>
+    <rdfs:comment xml:lang="ko">학습 흐름 단절 원인</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ShortTermRecoveryRoutine">
+    <rdfs:label xml:lang="ko">ShortTermRecoveryRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">단기 회복 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryRoutineStructure">
+    <rdfs:label xml:lang="ko">RecoveryRoutineStructure</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 루틴 구조 (예열-핵심-정리)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CognitiveLoad">
+    <rdfs:label xml:lang="ko">CognitiveLoad</rdfs:label>
+    <rdfs:comment xml:lang="ko">인지 부하</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeSlotReallocation">
+    <rdfs:label xml:lang="ko">TimeSlotReallocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">시간 슬롯 재배치</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#FatiguePreventionRoutine">
+    <rdfs:label xml:lang="ko">FatiguePreventionRoutine</rdfs:label>
+    <rdfs:comment xml:lang="ko">피로 누적 방지형 루틴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RemainingLearningTime">
+    <rdfs:label xml:lang="ko">RemainingLearningTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">남은 학습 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SustainableReallocation">
+    <rdfs:label xml:lang="ko">SustainableReallocation</rdfs:label>
+    <rdfs:comment xml:lang="ko">지속 가능한 활동 재배치</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalLoop">
+    <rdfs:label xml:lang="ko">EmotionalLoop</rdfs:label>
+    <rdfs:comment xml:lang="ko">정서 루프</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ConcentrationMaintenanceTime">
+    <rdfs:label xml:lang="ko">ConcentrationMaintenanceTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">집중 유지 시간</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineCollapseHistory">
+    <rdfs:label xml:lang="ko">RoutineCollapseHistory</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 붕괴 이력</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RoutineReturnPersistence">
+    <rdfs:label xml:lang="ko">RoutineReturnPersistence</rdfs:label>
+    <rdfs:comment xml:lang="ko">루틴 복귀 지속성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryPatternForToday">
+    <rdfs:label xml:lang="ko">RecoveryPatternForToday</rdfs:label>
+    <rdfs:comment xml:lang="ko">오늘의 회복 패턴</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TodayRecoveryPattern">
+    <rdfs:label xml:lang="ko">TodayRecoveryPattern</rdfs:label>
+    <rdfs:comment xml:lang="ko">오늘의 회복 패턴 (동의어)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestManagementPriority">
+    <rdfs:label xml:lang="ko">RestManagementPriority</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 관리 우선순위</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineOptimization">
+    <rdfs:label xml:lang="ko">RestRoutineOptimization</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 루틴 최적화</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AgentIntegrationSummary">
+    <rdfs:label xml:lang="ko">AgentIntegrationSummary</rdfs:label>
+    <rdfs:comment xml:lang="ko">에이전트 연동 요약</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestRoutineSummary">
+    <rdfs:label xml:lang="ko">RestRoutineSummary</rdfs:label>
+    <rdfs:comment xml:lang="ko">휴식 루틴 요약</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryScore">
+    <rdfs:label xml:lang="ko">RecoveryScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">회복 점수</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#DailySummaryRequested">
+    <rdfs:label xml:lang="ko">DailySummaryRequested</rdfs:label>
+    <rdfs:comment xml:lang="ko">일일 요약 요청</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStateRestNeedPrediction">
+    <rdfs:label xml:lang="ko">EmotionalStateRestNeedPrediction</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 상태 기반 휴식 필요성 예측</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StressIndexCalculation">
+    <rdfs:label xml:lang="ko">StressIndexCalculation</rdfs:label>
+    <rdfs:comment xml:lang="ko">스트레스 지수 계산</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StressRestCorrelation">
+    <rdfs:label xml:lang="ko">StressRestCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">스트레스-휴식 연관성</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#RestStrategyByStress">
+    <rdfs:label xml:lang="ko">RestStrategyByStress</rdfs:label>
+    <rdfs:comment xml:lang="ko">스트레스별 휴식 전략</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MotivationRestEffectivenessRelationship">
+    <rdfs:label xml:lang="ko">MotivationRestEffectivenessRelationship</rdfs:label>
+    <rdfs:comment xml:lang="ko">동기-휴식 효과 관계</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#MotivationRestEffectivenessCorrelation">
+    <rdfs:label xml:lang="ko">MotivationRestEffectivenessCorrelation</rdfs:label>
+    <rdfs:comment xml:lang="ko">동기-휴식 효과 상관관계</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TeachingApproach">
+    <rdfs:label xml:lang="ko">TeachingApproach</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TeachingMethod">
+    <rdfs:label xml:lang="ko">TeachingMethod</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Template">
+    <rdfs:label xml:lang="ko">Template</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TemplateCode">
+    <rdfs:label xml:lang="ko">TemplateCode</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TemplateLibrary">
+    <rdfs:label xml:lang="ko">TemplateLibrary</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TemporaryChange">
+    <rdfs:label xml:lang="ko">TemporaryChange</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TestCoverage">
+    <rdfs:label xml:lang="ko">TestCoverage</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TestStrategy">
+    <rdfs:label xml:lang="ko">TestStrategy</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TextDelivery">
+    <rdfs:label xml:lang="ko">TextDelivery</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Textbook">
+    <rdfs:label xml:lang="ko">Textbook</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TextbookInfo">
+    <rdfs:label xml:lang="ko">TextbookInfo</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Theme">
+    <rdfs:label xml:lang="ko">Theme</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ThreeFileSystemDocument">
+    <rdfs:label xml:lang="ko">ThreeFileSystemDocument</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeBasedAnalysis">
+    <rdfs:label xml:lang="ko">TimeBasedAnalysis</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeBudget">
+    <rdfs:label xml:lang="ko">TimeBudget</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeConstraint">
+    <rdfs:label xml:lang="ko">TimeConstraint</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeConstraintData">
+    <rdfs:label xml:lang="ko">TimeConstraintData</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeManagementFailure">
+    <rdfs:label xml:lang="ko">TimeManagementFailure</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeReflection">
+    <rdfs:label xml:lang="ko">TimeReflection</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeResource">
+    <rdfs:label xml:lang="ko">TimeResource</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeSeries">
+    <rdfs:label xml:lang="ko">TimeSeries</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeShifting">
+    <rdfs:label xml:lang="ko">TimeShifting</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeSlotPerformance">
+    <rdfs:label xml:lang="ko">TimeSlotPerformance</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeTrajectory">
+    <rdfs:label xml:lang="ko">TimeTrajectory</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeWarning">
+    <rdfs:label xml:lang="ko">TimeWarning</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeWeight">
+    <rdfs:label xml:lang="ko">TimeWeight</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimeWindow">
+    <rdfs:label xml:lang="ko">TimeWindow</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Timeline">
+    <rdfs:label xml:lang="ko">Timeline</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Timing">
+    <rdfs:label xml:lang="ko">Timing</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimingAnalysis">
+    <rdfs:label xml:lang="ko">TimingAnalysis</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimingPreparation">
+    <rdfs:label xml:lang="ko">TimingPreparation</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TimingRules">
+    <rdfs:label xml:lang="ko">TimingRules</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TodayActivity">
+    <rdfs:label xml:lang="ko">TodayActivity</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TodayActivityRisk">
+    <rdfs:label xml:lang="ko">TodayActivityRisk</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TodayCompletableActivities">
+    <rdfs:label xml:lang="ko">TodayCompletableActivities</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TodayGoal">
+    <rdfs:label xml:lang="ko">TodayGoal</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TopicContext">
+    <rdfs:label xml:lang="ko">TopicContext</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TopicTest">
+    <rdfs:label xml:lang="ko">TopicTest</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TotalStrokes">
+    <rdfs:label xml:lang="ko">TotalStrokes</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TotalStudyTime">
+    <rdfs:label xml:lang="ko">TotalStudyTime</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TotalTimeSpent">
+    <rdfs:label xml:lang="ko">TotalTimeSpent</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TrackingMetrics">
+    <rdfs:label xml:lang="ko">TrackingMetrics</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TypeEmotion">
+    <rdfs:label xml:lang="ko">TypeEmotion</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TypeLearning">
+    <rdfs:label xml:lang="ko">TypeLearning</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#TypePractice">
+    <rdfs:label xml:lang="ko">TypePractice</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnclearGoal">
+    <rdfs:label xml:lang="ko">UnclearGoal</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnestablishedRestRoutine">
+    <rdfs:label xml:lang="ko">UnestablishedRestRoutine</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnifiedPriorityList">
+    <rdfs:label xml:lang="ko">UnifiedPriorityList</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitContext">
+    <rdfs:label xml:lang="ko">UnitContext</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitDropoutFrequency">
+    <rdfs:label xml:lang="ko">UnitDropoutFrequency</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitDropoutPattern">
+    <rdfs:label xml:lang="ko">UnitDropoutPattern</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitIndex">
+    <rdfs:label xml:lang="ko">UnitIndex</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitIntervention">
+    <rdfs:label xml:lang="ko">UnitIntervention</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitRiskLevel">
+    <rdfs:label xml:lang="ko">UnitRiskLevel</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitStatus">
+    <rdfs:label xml:lang="ko">UnitStatus</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnitTest">
+    <rdfs:label xml:lang="ko">UnitTest</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UnsuitableLearningEnvironment">
+    <rdfs:label xml:lang="ko">UnsuitableLearningEnvironment</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UpdatedPreferenceInfo">
+    <rdfs:label xml:lang="ko">UpdatedPreferenceInfo</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UpgradeDocument">
+    <rdfs:label xml:lang="ko">UpgradeDocument</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UpperLevelIntervention">
+    <rdfs:label xml:lang="ko">UpperLevelIntervention</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UpperLevelStudent">
+    <rdfs:label xml:lang="ko">UpperLevelStudent</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Urgency">
+    <rdfs:label xml:lang="ko">Urgency</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UsedTime">
+    <rdfs:label xml:lang="ko">UsedTime</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Usefulness">
+    <rdfs:label xml:lang="ko">Usefulness</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UserCharacteristics">
+    <rdfs:label xml:lang="ko">UserCharacteristics</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#UserProfile">
+    <rdfs:label xml:lang="ko">UserProfile</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ValidationIndicator">
+    <rdfs:label xml:lang="ko">ValidationIndicator</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ValidationPlan">
+    <rdfs:label xml:lang="ko">ValidationPlan</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VariantProblem">
+    <rdfs:label xml:lang="ko">VariantProblem</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VerificationChecklist">
+    <rdfs:label xml:lang="ko">VerificationChecklist</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VerificationMethod">
+    <rdfs:label xml:lang="ko">VerificationMethod</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VisualFeedback">
+    <rdfs:label xml:lang="ko">VisualFeedback</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VisualMaterial">
+    <rdfs:label xml:lang="ko">VisualMaterial</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VisualizationResource">
+    <rdfs:label xml:lang="ko">VisualizationResource</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VoiceConverter">
+    <rdfs:label xml:lang="ko">VoiceConverter</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Volume">
+    <rdfs:label xml:lang="ko">Volume</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Vulnerability">
+    <rdfs:label xml:lang="ko">Vulnerability</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VulnerabilityAnalysis">
+    <rdfs:label xml:lang="ko">VulnerabilityAnalysis</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VulnerabilityAnalysisResult">
+    <rdfs:label xml:lang="ko">VulnerabilityAnalysisResult</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#VulnerabilityDefinition">
+    <rdfs:label xml:lang="ko">VulnerabilityDefinition</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Waiting">
+    <rdfs:label xml:lang="ko">Waiting</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WaitingInterventions">
+    <rdfs:label xml:lang="ko">WaitingInterventions</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WarmFocusLoop">
+    <rdfs:label xml:lang="ko">WarmFocusLoop</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WarmUpActivity">
+    <rdfs:label xml:lang="ko">WarmUpActivity</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WaterIntake">
+    <rdfs:label xml:lang="ko">WaterIntake</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeakAreaIdentification">
+    <rdfs:label xml:lang="ko">WeakAreaIdentification</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeakFoundation">
+    <rdfs:label xml:lang="ko">WeakFoundation</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Weekly">
+    <rdfs:label xml:lang="ko">Weekly</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyFatigue">
+    <rdfs:label xml:lang="ko">WeeklyFatigue</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyGoal">
+    <rdfs:label xml:lang="ko">WeeklyGoal</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyGoalAchievement">
+    <rdfs:label xml:lang="ko">WeeklyGoalAchievement</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyGoalAdjustment">
+    <rdfs:label xml:lang="ko">WeeklyGoalAdjustment</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyGoalItems">
+    <rdfs:label xml:lang="ko">WeeklyGoalItems</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyPattern">
+    <rdfs:label xml:lang="ko">WeeklyPattern</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyPerformanceTrend">
+    <rdfs:label xml:lang="ko">WeeklyPerformanceTrend</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WeeklySchedule">
+    <rdfs:label xml:lang="ko">WeeklySchedule</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WhiteboardData">
+    <rdfs:label xml:lang="ko">WhiteboardData</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WhiteboardWriting">
+    <rdfs:label xml:lang="ko">WhiteboardWriting</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorkflowExecution">
+    <rdfs:label xml:lang="ko">WorkflowExecution</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#Worldview">
+    <rdfs:label xml:lang="ko">Worldview</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewData">
+    <rdfs:label xml:lang="ko">WorldviewData</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WritingAmount">
+    <rdfs:label xml:lang="ko">WritingAmount</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WritingDelay">
+    <rdfs:label xml:lang="ko">WritingDelay</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WritingObservation">
+    <rdfs:label xml:lang="ko">WritingObservation</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WritingPattern">
+    <rdfs:label xml:lang="ko">WritingPattern</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#alert">
+    <rdfs:label xml:lang="ko">alert</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#analyze">
+    <rdfs:label xml:lang="ko">analyze</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#display_message">
+    <rdfs:label xml:lang="ko">display_message</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#generate_description">
+    <rdfs:label xml:lang="ko">generate_description</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#initialize_support_mode">
+    <rdfs:label xml:lang="ko">initialize_support_mode</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#recommend_path">
+    <rdfs:label xml:lang="ko">recommend_path</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념_정리_위주">
+    <rdfs:label xml:lang="ko">개념 정리 위주</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념강의우선">
+    <rdfs:label xml:lang="ko">개념강의우선</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념원리">
+    <rdfs:label xml:lang="ko">개념원리</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념이해중심">
+    <rdfs:label xml:lang="ko">개념이해중심</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념정리위주">
+    <rdfs:label xml:lang="ko">개념정리위주</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#개념형">
+    <rdfs:label xml:lang="ko">개념형</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#경시대회_준비해_보기">
+    <rdfs:label xml:lang="ko">경시대회 준비해 보기</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#경시대회준비">
+    <rdfs:label xml:lang="ko">경시대회준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#계산형">
+    <rdfs:label xml:lang="ko">계산형</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#귀가검사">
+    <rdfs:label xml:lang="ko">귀가검사</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#귀가검사준비">
+    <rdfs:label xml:lang="ko">귀가검사준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#균형잡힌">
+    <rdfs:label xml:lang="ko">균형잡힌</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#균형접근">
+    <rdfs:label xml:lang="ko">균형접근</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#꾸준한_준비">
+    <rdfs:label xml:lang="ko">꾸준한 준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#꾸준한준비">
+    <rdfs:label xml:lang="ko">꾸준한준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#단기집중">
+    <rdfs:label xml:lang="ko">단기집중</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#문제집">
+    <rdfs:label xml:lang="ko">문제집</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#문제풀이_위주">
+    <rdfs:label xml:lang="ko">문제풀이 위주</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#문제풀이우선">
+    <rdfs:label xml:lang="ko">문제풀이우선</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#문제풀이위주">
+    <rdfs:label xml:lang="ko">문제풀이위주</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#문제풀이중심">
+    <rdfs:label xml:lang="ko">문제풀이중심</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#미완료">
+    <rdfs:label xml:lang="ko">미완료</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#벼락치기">
+    <rdfs:label xml:lang="ko">벼락치기</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#부분_지원">
+    <rdfs:label xml:lang="ko">부분 지원</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#분기목표">
+    <rdfs:label xml:lang="ko">분기목표</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#블랙라벨">
+    <rdfs:label xml:lang="ko">블랙라벨</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#상위권">
+    <rdfs:label xml:lang="ko">상위권</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#상위권_이상">
+    <rdfs:label xml:lang="ko">상위권 이상</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#수업준비">
+    <rdfs:label xml:lang="ko">수업준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#수학을_잘해서_원하는_학교_가기">
+    <rdfs:label xml:lang="ko">수학을 잘해서 원하는 학교 가기</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#수학이_어려워요">
+    <rdfs:label xml:lang="ko">수학이 어려워요</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#시험대비">
+    <rdfs:label xml:lang="ko">시험대비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#실시간고민">
+    <rdfs:label xml:lang="ko">실시간고민</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#심화_문제도_풀_수_있는_실력_쌓기">
+    <rdfs:label xml:lang="ko">심화 문제도 풀 수 있는 실력 쌓기</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#쎈">
+    <rdfs:label xml:lang="ko">쎈</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#오늘목표">
+    <rdfs:label xml:lang="ko">오늘목표</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#완료">
+    <rdfs:label xml:lang="ko">완료</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#응용형">
+    <rdfs:label xml:lang="ko">응용형</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#일품">
+    <rdfs:label xml:lang="ko">일품</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#입시준비">
+    <rdfs:label xml:lang="ko">입시준비</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#자율_존중">
+    <rdfs:label xml:lang="ko">자율 존중</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#자율존중">
+    <rdfs:label xml:lang="ko">자율존중</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#장기지속">
+    <rdfs:label xml:lang="ko">장기지속</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#적극_개입">
+    <rdfs:label xml:lang="ko">적극 개입</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#적극개입">
+    <rdfs:label xml:lang="ko">적극개입</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#전략적_집중">
+    <rdfs:label xml:lang="ko">전략적 집중</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#주간목표">
+    <rdfs:label xml:lang="ko">주간목표</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#중위권">
+    <rdfs:label xml:lang="ko">중위권</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#진행중">
+    <rdfs:label xml:lang="ko">진행중</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#커리큘럼설계">
+    <rdfs:label xml:lang="ko">커리큘럼설계</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#포모도르">
+    <rdfs:label xml:lang="ko">포모도르</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#학교교과서">
+    <rdfs:label xml:lang="ko">학교교과서</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#학교시험">
+    <rdfs:label xml:lang="ko">학교시험</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#학원교재">
+    <rdfs:label xml:lang="ko">학원교재</rdfs:label>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#학원모의고사">
+    <rdfs:label xml:lang="ko">학원모의고사</rdfs:label>
+  </owl:Class>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#addedTo">
+    <rdfs:label xml:lang="ko">addedTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#adds">
+    <rdfs:label xml:lang="ko">adds</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#addsTo">
+    <rdfs:label xml:lang="ko">addsTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#affectedBy">
+    <rdfs:label xml:lang="ko">affectedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#affects">
+    <rdfs:label xml:lang="ko">affects</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#analyzedBy">
+    <rdfs:label xml:lang="ko">analyzedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#analyzedFor">
+    <rdfs:label xml:lang="ko">analyzedFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#analyzes">
+    <rdfs:label xml:lang="ko">analyzes</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#approves">
+    <rdfs:label xml:lang="ko">approves</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#assigns">
+    <rdfs:label xml:lang="ko">assigns</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#attends">
+    <rdfs:label xml:lang="ko">attends</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#avoids">
+    <rdfs:label xml:lang="ko">avoids</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#calculatedBy">
+    <rdfs:label xml:lang="ko">calculatedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#calculatedFrom">
+    <rdfs:label xml:lang="ko">calculatedFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#calculates">
+    <rdfs:label xml:lang="ko">calculates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#categorizes">
+    <rdfs:label xml:lang="ko">categorizes</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#causes">
+    <rdfs:label xml:lang="ko">causes</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#checks">
+    <rdfs:label xml:lang="ko">checks</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#classifiedAs">
+    <rdfs:label xml:lang="ko">classifiedAs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#coOccursWith">
+    <rdfs:label xml:lang="ko">coOccursWith</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#collectedFrom">
+    <rdfs:label xml:lang="ko">collectedFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#collects">
+    <rdfs:label xml:lang="ko">collects</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#combinedWith">
+    <rdfs:label xml:lang="ko">combinedWith</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#comparedWith">
+    <rdfs:label xml:lang="ko">comparedWith</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#compares">
+    <rdfs:label xml:lang="ko">compares</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#connectedTo">
+    <rdfs:label xml:lang="ko">connectedTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#connectsTo">
+    <rdfs:label xml:lang="ko">connectsTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#considers">
+    <rdfs:label xml:lang="ko">considers</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#contradicts">
+    <rdfs:label xml:lang="ko">contradicts</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#convertsTo">
+    <rdfs:label xml:lang="ko">convertsTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#createdAfter">
+    <rdfs:label xml:lang="ko">createdAfter</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#createdDuring">
+    <rdfs:label xml:lang="ko">createdDuring</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#createdIf">
+    <rdfs:label xml:lang="ko">createdIf</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#creates">
+    <rdfs:label xml:lang="ko">creates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#defines">
+    <rdfs:label xml:lang="ko">defines</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#deliveredTo">
+    <rdfs:label xml:lang="ko">deliveredTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#delivers">
+    <rdfs:label xml:lang="ko">delivers</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#deploys">
+    <rdfs:label xml:lang="ko">deploys</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#derives">
+    <rdfs:label xml:lang="ko">derives</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#designs">
+    <rdfs:label xml:lang="ko">designs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#detects">
+    <rdfs:label xml:lang="ko">detects</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#discoveredBy">
+    <rdfs:label xml:lang="ko">discoveredBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#displays">
+    <rdfs:label xml:lang="ko">displays</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#dividesInto">
+    <rdfs:label xml:lang="ko">dividesInto</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#endsWith">
+    <rdfs:label xml:lang="ko">endsWith</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#enhances">
+    <rdfs:label xml:lang="ko">enhances</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#evaluatedBy">
+    <rdfs:label xml:lang="ko">evaluatedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#evaluates">
+    <rdfs:label xml:lang="ko">evaluates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#example">
+    <rdfs:label xml:lang="ko">example</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#excessiveWhen">
+    <rdfs:label xml:lang="ko">excessiveWhen</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executedAfter">
+    <rdfs:label xml:lang="ko">executedAfter</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executedAt">
+    <rdfs:label xml:lang="ko">executedAt</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executedMonthly">
+    <rdfs:label xml:lang="ko">executedMonthly</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executedOnDemand">
+    <rdfs:label xml:lang="ko">executedOnDemand</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executedWeekly">
+    <rdfs:label xml:lang="ko">executedWeekly</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executes">
+    <rdfs:label xml:lang="ko">executes</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#executesAt">
+    <rdfs:label xml:lang="ko">executesAt</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#explains">
+    <rdfs:label xml:lang="ko">explains</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#finds">
+    <rdfs:label xml:lang="ko">finds</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#focusesOn">
+    <rdfs:label xml:lang="ko">focusesOn</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#follows">
+    <rdfs:label xml:lang="ko">follows</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#generatedAs">
+    <rdfs:label xml:lang="ko">generatedAs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#generatedBy">
+    <rdfs:label xml:lang="ko">generatedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#generates">
+    <rdfs:label xml:lang="ko">generates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#greaterThanOrEqual">
+    <rdfs:label xml:lang="ko">greaterThanOrEqual</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasAction">
+    <rdfs:label xml:lang="ko">hasAction</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasActivities">
+    <rdfs:label xml:lang="ko">hasActivities</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasAssignment">
+    <rdfs:label xml:lang="ko">hasAssignment</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasAttribute">
+    <rdfs:label xml:lang="ko">hasAttribute</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasAverageTime">
+    <rdfs:label xml:lang="ko">hasAverageTime</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasConfidence">
+    <rdfs:label xml:lang="ko">hasConfidence</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasContent">
+    <rdfs:label xml:lang="ko">hasContent</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasDuration">
+    <rdfs:label xml:lang="ko">hasDuration</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasEmotion">
+    <rdfs:label xml:lang="ko">hasEmotion</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasExam">
+    <rdfs:label xml:lang="ko">hasExam</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasFeedbackRoutine">
+    <rdfs:label xml:lang="ko">hasFeedbackRoutine</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasFile">
+    <rdfs:label xml:lang="ko">hasFile</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasGoal">
+    <rdfs:label xml:lang="ko">hasGoal</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasIntention">
+    <rdfs:label xml:lang="ko">hasIntention</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasInteraction">
+    <rdfs:label xml:lang="ko">hasInteraction</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasKnowledge">
+    <rdfs:label xml:lang="ko">hasKnowledge</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasLevel">
+    <rdfs:label xml:lang="ko">hasLevel</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasManagement">
+    <rdfs:label xml:lang="ko">hasManagement</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasMastery">
+    <rdfs:label xml:lang="ko">hasMastery</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasModule">
+    <rdfs:label xml:lang="ko">hasModule</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasOption">
+    <rdfs:label xml:lang="ko">hasOption</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasParent">
+    <rdfs:label xml:lang="ko">hasParent</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPart">
+    <rdfs:label xml:lang="ko">hasPart</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPattern">
+    <rdfs:label xml:lang="ko">hasPattern</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPersona">
+    <rdfs:label xml:lang="ko">hasPersona</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPlan">
+    <rdfs:label xml:lang="ko">hasPlan</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPosition">
+    <rdfs:label xml:lang="ko">hasPosition</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasPriority">
+    <rdfs:label xml:lang="ko">hasPriority</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasProfile">
+    <rdfs:label xml:lang="ko">hasProfile</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasProgress">
+    <rdfs:label xml:lang="ko">hasProgress</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasRisk">
+    <rdfs:label xml:lang="ko">hasRisk</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasRiskLevel">
+    <rdfs:label xml:lang="ko">hasRiskLevel</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasRoutine">
+    <rdfs:label xml:lang="ko">hasRoutine</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasStep">
+    <rdfs:label xml:lang="ko">hasStep</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasStructure">
+    <rdfs:label xml:lang="ko">hasStructure</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasType">
+    <rdfs:label xml:lang="ko">hasType</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#hasValue">
+    <rdfs:label xml:lang="ko">hasValue</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#identifiedBy">
+    <rdfs:label xml:lang="ko">identifiedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#identifies">
+    <rdfs:label xml:lang="ko">identifies</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#improvedBy">
+    <rdfs:label xml:lang="ko">improvedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#includes">
+    <rdfs:label xml:lang="ko">includes</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#indicates">
+    <rdfs:label xml:lang="ko">indicates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#integrates">
+    <rdfs:label xml:lang="ko">integrates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#isPrerequisiteOf">
+    <rdfs:label xml:lang="ko">isPrerequisiteOf</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#isSubtypeOf">
+    <rdfs:label xml:lang="ko">isSubtypeOf</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#leadsTo">
+    <rdfs:label xml:lang="ko">leadsTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#lessThan">
+    <rdfs:label xml:lang="ko">lessThan</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#limitedBy">
+    <rdfs:label xml:lang="ko">limitedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#linksTo">
+    <rdfs:label xml:lang="ko">linksTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#maintains">
+    <rdfs:label xml:lang="ko">maintains</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#manages">
+    <rdfs:label xml:lang="ko">manages</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#matches">
+    <rdfs:label xml:lang="ko">matches</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#measuredBy">
+    <rdfs:label xml:lang="ko">measuredBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#measures">
+    <rdfs:label xml:lang="ko">measures</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#modifies">
+    <rdfs:label xml:lang="ko">modifies</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#monitoredFor">
+    <rdfs:label xml:lang="ko">monitoredFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#monitoredIn">
+    <rdfs:label xml:lang="ko">monitoredIn</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#monitors">
+    <rdfs:label xml:lang="ko">monitors</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#optimizedFor">
+    <rdfs:label xml:lang="ko">optimizedFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#outputs">
+    <rdfs:label xml:lang="ko">outputs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#overlapsWith">
+    <rdfs:label xml:lang="ko">overlapsWith</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#packagedAs">
+    <rdfs:label xml:lang="ko">packagedAs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#performs">
+    <rdfs:label xml:lang="ko">performs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#personalizedBy">
+    <rdfs:label xml:lang="ko">personalizedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#plans">
+    <rdfs:label xml:lang="ko">plans</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#preparedFor">
+    <rdfs:label xml:lang="ko">preparedFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#prioritizedAs">
+    <rdfs:label xml:lang="ko">prioritizedAs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#prioritizedBy">
+    <rdfs:label xml:lang="ko">prioritizedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#prohibitedBy">
+    <rdfs:label xml:lang="ko">prohibitedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#prohibits">
+    <rdfs:label xml:lang="ko">prohibits</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#proposedAs">
+    <rdfs:label xml:lang="ko">proposedAs</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#provides">
+    <rdfs:label xml:lang="ko">provides</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#recalculates">
+    <rdfs:label xml:lang="ko">recalculates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#receivedFrom">
+    <rdfs:label xml:lang="ko">receivedFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#receives">
+    <rdfs:label xml:lang="ko">receives</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#receivesFrom">
+    <rdfs:label xml:lang="ko">receivesFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#records">
+    <rdfs:label xml:lang="ko">records</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#redefines">
+    <rdfs:label xml:lang="ko">redefines</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#reduces">
+    <rdfs:label xml:lang="ko">reduces</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#references">
+    <rdfs:label xml:lang="ko">references</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#reflects">
+    <rdfs:label xml:lang="ko">reflects</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#requires">
+    <rdfs:label xml:lang="ko">requires</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#respondsTo">
+    <rdfs:label xml:lang="ko">respondsTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#resultsIn">
+    <rdfs:label xml:lang="ko">resultsIn</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#retrievedFrom">
+    <rdfs:label xml:lang="ko">retrievedFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#reusedIf">
+    <rdfs:label xml:lang="ko">reusedIf</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#reviewedBy">
+    <rdfs:label xml:lang="ko">reviewedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#reviews">
+    <rdfs:label xml:lang="ko">reviews</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#searchedFrom">
+    <rdfs:label xml:lang="ko">searchedFrom</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#searches">
+    <rdfs:label xml:lang="ko">searches</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#selectedBy">
+    <rdfs:label xml:lang="ko">selectedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#selects">
+    <rdfs:label xml:lang="ko">selects</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#selectsType">
+    <rdfs:label xml:lang="ko">selectsType</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#sets">
+    <rdfs:label xml:lang="ko">sets</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#setsStatus">
+    <rdfs:label xml:lang="ko">setsStatus</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#specifies">
+    <rdfs:label xml:lang="ko">specifies</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#storedIn">
+    <rdfs:label xml:lang="ko">storedIn</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#structures">
+    <rdfs:label xml:lang="ko">structures</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#studiesAt">
+    <rdfs:label xml:lang="ko">studiesAt</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#submittedTo">
+    <rdfs:label xml:lang="ko">submittedTo</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#suggests">
+    <rdfs:label xml:lang="ko">suggests</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#supports">
+    <rdfs:label xml:lang="ko">supports</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#targets">
+    <rdfs:label xml:lang="ko">targets</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#tests">
+    <rdfs:label xml:lang="ko">tests</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#tracks">
+    <rdfs:label xml:lang="ko">tracks</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#triggers">
+    <rdfs:label xml:lang="ko">triggers</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#usedFor">
+    <rdfs:label xml:lang="ko">usedFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#uses">
+    <rdfs:label xml:lang="ko">uses</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#usesFramework">
+    <rdfs:label xml:lang="ko">usesFramework</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#usesHeuristic">
+    <rdfs:label xml:lang="ko">usesHeuristic</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#usesStrategy">
+    <rdfs:label xml:lang="ko">usesStrategy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#usesWindow">
+    <rdfs:label xml:lang="ko">usesWindow</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#validatedFor">
+    <rdfs:label xml:lang="ko">validatedFor</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#validates">
+    <rdfs:label xml:lang="ko">validates</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#verifies">
+    <rdfs:label xml:lang="ko">verifies</rdfs:label>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/alphatutor#weightedBy">
+    <rdfs:label xml:lang="ko">weightedBy</rdfs:label>
+  </owl:ObjectProperty>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionContinuity">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Theme"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RootCauseHypothesis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RootCauseInference"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPlan">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionLocation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LowConfidence">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AdditionalValidation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Priority">
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#CustomizedImprovementIdea"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Student">
+    <at:performs rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemSolving"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Student">
+    <at:hasGoal rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermGoal"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Student">
+    <at:hasMastery rdf:resource="http://mathking.kr/ontology/alphatutor#MathUnit"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RiskScore">
+    <at:weightedBy rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0.4</at:weightedBy>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#HighPotentialStudent">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Student"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AvailableTime">
+    <at:hasType rdf:resource="http://mathking.kr/ontology/alphatutor#Weekly"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SignatureRoutine">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UpdatedPreferenceInfo"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PackagedTemplate">
+    <at:optimizedFor rdf:resource="http://mathking.kr/ontology/alphatutor#SelectedType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackReport">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#OtherAgents"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#OptimalExecutionTime">
+    <at:considers rdf:resource="http://mathking.kr/ontology/alphatutor#StudentState"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PreparationNote">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Explanation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RepeatedPattern">
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#SignatureRoutine"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ObservedPattern">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#SatisfactionDecreasePattern"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TeacherFeedback">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Feedback"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SchoolProgress">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#HomeProgress"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RiskIndex">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AbsenceTime"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#CurrentPositionEvaluation">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#CoreCauseSummary"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DataTrigger">
+    <at:hasOption rdf:resource="http://mathking.kr/ontology/alphatutor#CalmnessDrop"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionMapping">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BehaviorLog"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Routine">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MathLevel"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Calmness">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemSolving"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PackagedTemplate">
+    <at:generatedAs rdf:resource="http://mathking.kr/ontology/alphatutor#Code"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InterventionPreparation">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionEffectiveness"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RiskLevel">
+    <at:hasValue rdf:resource="http://mathking.kr/ontology/alphatutor#High"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExamPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeBudget"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionContent">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Content"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExecutionHistory">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#PastExecutionRecords"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#QnA">
+    <at:hasEmotion rdf:resource="http://mathking.kr/ontology/alphatutor#QnAEmotion"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionPreparation">
+    <at:designs rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionContinuity"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionBasedUnderstanding">
+    <at:identifies rdf:resource="http://mathking.kr/ontology/alphatutor#ConcentrationBreakage"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActivityTypeData">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityCompletionStatus"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RootCauseHypothesis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MultiLayerCauseAnalysis"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningDropout">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Intervention"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LowGoalAchievement">
+    <at:coOccursWith rdf:resource="http://mathking.kr/ontology/alphatutor#LongDuration"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionContent">
+    <at:provides rdf:resource="http://mathking.kr/ontology/alphatutor#ContentLinks"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RiskLevel">
+    <at:hasValue rdf:resource="http://mathking.kr/ontology/alphatutor#Medium"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionPattern">
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#Achievement"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExecutionData">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorContent"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionTemplateGeneration">
+    <at:personalizedBy rdf:resource="http://mathking.kr/ontology/alphatutor#Preference"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AssignmentAction">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#AssignResponsiblePerson"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PatternDiscovery">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OnboardingInfo"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ProblemNoteAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TotalStrokes"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AI">
+    <at:reviews rdf:resource="http://mathking.kr/ontology/alphatutor#TestCoverage"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#GoalAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AchievementRate"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RecentLastStroke">
+    <at:suggests rdf:resource="http://mathking.kr/ontology/alphatutor#Reinforcement"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DropoutDetection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DifficultyDropoutFrequency"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExecutionData">
+    <at:validatedFor rdf:resource="http://mathking.kr/ontology/alphatutor#Consistency"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ContextPreparation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PackagedTemplate">
+    <at:references rdf:resource="http://mathking.kr/ontology/alphatutor#RulesFile"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActivityDisruption">
+    <at:measuredBy rdf:resource="http://mathking.kr/ontology/alphatutor#_20MinutesOrMore"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DropoutDetection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DelayedViewing"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RegularRestType">
+    <at:suggests rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityInterruptionHabit"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Developer">
+    <at:approves rdf:resource="http://mathking.kr/ontology/alphatutor#Execution"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Plan">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeasibilityCheck"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#OnboardingProfile">
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#InitialClassPreparation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#HighRisk">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HighInactiveEvents"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExamPreparation">
+    <at:leadsTo rdf:resource="http://mathking.kr/ontology/alphatutor#StudyPlan"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RoutineCorrection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SessionLengthReduction"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AnalysisQuality">
+    <at:evaluates rdf:resource="http://mathking.kr/ontology/alphatutor#Usefulness"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DataTrigger">
+    <at:hasOption rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorNoteMissing"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionTargeting">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RuleEvaluation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ExamPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PrioritySetting"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningManagement">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AttendanceAnalysis"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionPattern">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#Persona"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RoutineProposal">
+    <at:example rdf:resource="http://mathking.kr/ontology/alphatutor#WarmFocusLoop"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryBasedReadjustment">
+    <at:example rdf:resource="http://mathking.kr/ontology/alphatutor#_5MinuteReflection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningManagement">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PomodoroAnalysis"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PersonalOptimalLearningRoutine">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SubjectSuitability"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RedefinedProblem">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#RedefinedProblemDescription"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AllAgents">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#Agent11"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#StudyHoursPerWeek">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#TimeResource"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Priority">
+    <at:hasValue rdf:resource="http://mathking.kr/ontology/alphatutor#Priority3"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TypeLearning">
+    <at:hasPart rdf:resource="http://mathking.kr/ontology/alphatutor#IntermediateType"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RuleVulnerability">
+    <at:analyzedBy rdf:resource="http://mathking.kr/ontology/alphatutor#RuleExecutionRecordAnalysis"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InterventionExecution">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Adjustment"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LinkageStrategy">
+    <at:connectsTo rdf:resource="http://mathking.kr/ontology/alphatutor#StrategyReadjustment"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RemainingActivities">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Activities"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#StudyPlan">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AssignmentPriority"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FeedbackCommand">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#AgentCommand"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RhythmAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BlockCompletionTime"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AcademyTextbook">
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Textbook"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalStateAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StatusDistribution"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ErrorNote">
+    <at:hasEmotion rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorEmotion"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#StudyHoursPerWeek">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineFeasibility"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#OptimalExecutionTime">
+    <at:considers rdf:resource="http://mathking.kr/ontology/alphatutor#TimingRules"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AnalysisAccuracyVerification">
+    <at:analyzes rdf:resource="http://mathking.kr/ontology/alphatutor#Bias"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#Outcome">
+    <at:affects rdf:resource="http://mathking.kr/ontology/alphatutor#StudentState"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AttendanceAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeWeight"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#OnboardingProfile">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TextbookInfo"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActivityTypeData">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityCategory"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#StrugglingStudent">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ConceptLectureFirst"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#AssignmentAction">
+    <at:includes rdf:resource="http://mathking.kr/ontology/alphatutor#ScheduleIntervention"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ProblemRedefinition">
+    <at:generates rdf:resource="http://mathking.kr/ontology/alphatutor#RedefinedProblem"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ContentPreparation"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ActionPlan">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PrioritySetting"/>
+  </rdf:Description>
+
+  <!-- Agent 12: Rest Routine 관련 Triples -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RestPatternRecoveryRhythm">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestButtonClicked"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HourlyRestFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DailyRestFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WeeklyRestTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestPatterns"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusLevelBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusLevelAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusLevelHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusDurationHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusDurationChangeRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestFrequencyChangeRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyChangeRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestActivityType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestTimingPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestPlanningLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestRewardType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestRoutineQuality"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestDuringClass"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningTransition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RhythmIntervention"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusTimeRestAlignment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalRestTimeSlots"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#TimeBasedRestPattern">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#HourlyRestFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DailyRestFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusLevelHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusLevelByTimeSlot"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningVolumeRestCorrelation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudyDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemCountBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudyDurationBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalLearningChunkSize"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RestDurationEffectiveness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestDurationRecoveryCurve"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalRestDurationByActivity"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OverRestDetection"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#WeeklyFatigueAccumulation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DailyRestFrequency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WeeklyRestTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DayOfWeekRestPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationRate"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryResilience">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryTimeHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryResilienceScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AverageRecoveryTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AverageRecoveryEffectiveness"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#FatigueMinimizationStrategy">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WeeklyFatigueAccumulation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestActivityType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestCount"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusDurationTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiencyTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationEarlyWarning"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationEarlyDetection"/>
+  </rdf:Description>
+
+  <!-- Agent 12: 포괄형 질문 2 추가 온톨로지 관계 -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PersonalizedRecoveryRoutine">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningStyle"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalFocusTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningStyleRestNeeds"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FocusTimeRestAlignment"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RestActivityEffectiveness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestActivityType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EffectivenessByActivityType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActivityEffectivenessRanking"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalRestActivities"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionBasedRestActivity">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestActivityType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PersonalizedRestActivity"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DynamicRestAdjustment">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnitDifficulty"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnitDifficultyBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DifficultyBasedRestInterval"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DynamicRestInterval"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#PreventiveRestStrategy">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationEarlyDetection"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueTrendSeverity"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreventiveRestAdjustment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AutomaticRestRoutineAdjustment"/>
+  </rdf:Description>
+
+  <!-- Agent 12: 포괄형 질문 3 추가 온톨로지 관계 -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LongTermFatigueTrend">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WeeklyFatigueAccumulation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationDetected"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#RecoveryResilienceTrend">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryResilienceScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryTimeHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryEffectivenessHistory"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AverageRecoveryTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AverageRecoveryEffectiveness"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionRoutineConsistency">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateBeforeRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalStateAfterRest"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalVolatility"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SlumpPredictionSignal">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermSlumpPrevention"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SlumpRootCauses"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueDuration"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEfficiency"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryStrengthening">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfRegulationRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionRegulationAbility"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RecoveryResilienceScore"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SleepPatternIntegration">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SleepHours"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SleepQuality"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SleepFatigueCorrelation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SleepImpactOnFatigue"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SleepImprovementStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WakeTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WakeTimeFocusAlignment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#Chronotype"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#OptimalLearningSchedule"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ComprehensiveRestRoutineAnalysis">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ComprehensiveRestPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationStatus"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RestEffectivenessEvaluation"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PersonalizedOptimizationOpportunities"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#DropoutEarlyDetection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PomodoroPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionChangeRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NoteTakingTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#GoalInputDelay"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineCollapsePoint"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DropoutPrediction"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionTiming"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionMessage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ActionRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionBreakPoint"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DropoutCause"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#ConcentrationRecovery">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReturnSuccessRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReturnDelayAfterDropout"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionRecoverySpeed"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueAccumulationIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReturnLoopStrategy"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineAdjustment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeIntensityReward"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EnvironmentVariables"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#SelfRegulationRoutine">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WeeklyDropoutTrend"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionRestData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TeacherInterventionEffect"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackTolerance"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ReturnLoopCompletionRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalRecoveryRoutine"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LongTermDropoutReduction"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SelfRegulationEstablishment"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FeedbackSystem"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#CurrentLearningPosition">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MathDiaryRecord"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DelayPattern"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionCurve"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PomodoroRhythm"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CurrentPosition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BreakPoint"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SpeedInterruption"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnderstandingInterruption"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ComprehensiveDiagnosis"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CurrentStatus"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#LearningStageStrengthWeakness">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnitByUnitData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DifficultyLevelData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StageByStageData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#UnderstandingRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#TimeSpent"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ErrorType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#BottleneckIdentification"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#SmoothSectionIdentification"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StrengthWeaknessAnalysis"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StructuralSummary"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#NextClassInterventionDesign">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProgressRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionCurve"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RhythmScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RiskIndex"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#DecisionLogic"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NextClassDirection"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CurrentPositionBasedDesign"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InterventionDirection"/>
+  </rdf:Description>
+
+
+</rdf:RDF>

@@ -1,0 +1,27 @@
+# C85 Level Breathing Introduction Templates
+# 호흡 운동 소개 템플릿
+# Variables: {{student_name}}, {{exercise_type}}
+
+---
+
+## breathing_suggestion
+잠깐 함께 호흡을 해볼까요?
+간단한 호흡만으로도 마음이 편안해질 수 있어요.
+
+---
+
+## breathing_invite
+원하시면 짧은 호흡 연습을 같이 해볼 수 있어요.
+편하실 때 말씀해주세요.
+
+---
+
+## breathing_preview
+나중에 긴장될 때 도움이 되는 호흡법을 알려드릴까요?
+지금 배워두면 필요할 때 쓸 수 있어요.
+
+---
+
+## breathing_optional
+호흡 연습이 도움이 되실 것 같은데,
+시도해보시겠어요? 강요는 아니에요.

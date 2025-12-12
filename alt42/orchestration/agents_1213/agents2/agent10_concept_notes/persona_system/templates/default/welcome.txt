@@ -1,0 +1,19 @@
+[GREETING]
+
+{{student_name}}님, 개념노트 코칭에 오신 것을 환영합니다!
+
+저는 여러분의 노트를 분석하고 효과적인 학습 방법을 제안해 드리는 AI 코치입니다.
+
+[ACKNOWLEDGMENT]
+
+지금까지 {{total_notes}}개의 노트를 작성하셨네요. 대단합니다!
+
+[CLOSING]
+
+어떤 부분을 도와드릴까요?
+
+<!--
+파일: templates/default/welcome.txt
+변수: student_name, total_notes
+용도: 개념노트 시스템 첫 접근 시 환영 메시지
+-->

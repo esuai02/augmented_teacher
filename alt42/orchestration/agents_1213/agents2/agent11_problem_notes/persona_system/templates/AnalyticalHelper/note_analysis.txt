@@ -1,0 +1,36 @@
+{# AnalyticalHelper 문제 분석 템플릿 - 논리적, 분석적 톤 #}
+{# 사용 변수: error_type, student_answer, correct_answer, problem_id, error_pattern #}
+
+## 🔍 오답 분석 리포트
+
+**문제 ID**: {{problem_id}}
+
+### 1. 답안 비교
+| 구분 | 내용 |
+|------|------|
+| 학생 답안 | {{student_answer}} |
+| 정답 | {{correct_answer}} |
+| 차이점 | {{difference}} |
+
+### 2. 오류 원인 분석
+**오류 유형**: {{error_type_label}}
+
+{{#if error_pattern}}
+⚠️ **패턴 감지**: 이 유형의 오류가 {{error_pattern.count}}회 반복되었습니다.
+{{/if}}
+
+**근본 원인**:
+{{root_cause_analysis}}
+
+### 3. 개념 점검
+{{concept_check}}
+
+### 4. 권장 학습 방향
+{{learning_recommendation}}
+
+### 5. 유사 문제 연습
+다음 유형의 문제를 추가로 풀어보세요:
+{{practice_suggestions}}
+
+---
+*분석적 조력자의 분석 리포트*

@@ -1,0 +1,22 @@
+{# 기본 문제노트 분석 템플릿 #}
+{# 사용 변수: error_type, student_answer, correct_answer, problem_id, persona_name, approach #}
+
+## 📝 문제 분석 결과
+
+**문제 번호**: {{problem_id}}
+
+### 오답 내용
+- 학생 답안: {{student_answer}}
+- 정답: {{correct_answer}}
+
+### 오류 유형
+{{error_type_label}}
+
+### 분석
+{{analysis_content}}
+
+### 학습 제안
+{{suggestion_content}}
+
+---
+*{{persona_name}} 분석*

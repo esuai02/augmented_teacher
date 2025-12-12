@@ -1,0 +1,361 @@
+# Agent04 Persona System Rules
+# 학습 상황별 페르소나 시스템 규칙 정의
+# Version: 2.0
+# Last Updated: 2025-12-03
+
+# ==============================================================================
+# 시스템 메타데이터
+# ==============================================================================
+metadata:
+  name: "Agent04 Persona System"
+  version: "2.0.0"
+  description: "학습 상황별 인지관성 패턴 분석 및 개선 전략 제공"
+  author: "Augmented Teacher Team"
+  last_updated: "2025-12-03"
+
+# ==============================================================================
+# 상황별 페르소나 파일 매핑
+# ==============================================================================
+situation_files:
+  1:
+    id: "concept_understanding"
+    name: "개념이해"
+    file: "1_concept_understanding.php"
+    description: "개념 학습 시 발생하는 인지관성 패턴"
+    icon: "📖"
+    color: "#3b82f6"
+
+  2:
+    id: "type_learning"
+    name: "유형학습"
+    file: "2_type_learning.php"
+    description: "유형별 문제 학습 시 발생하는 인지관성 패턴"
+    icon: "📝"
+    color: "#8b5cf6"
+
+  3:
+    id: "problem_solving"
+    name: "문제풀이"
+    file: "4_problem_solving.php"
+    description: "문제 풀이 시 발생하는 인지관성 패턴"
+    icon: "🧮"
+    color: "#ef4444"
+    note: "기존 config.php에서 이전"
+
+  4:
+    id: "wrong_answer_note"
+    name: "오답노트"
+    file: "5_wrong_answer_note.php"
+    description: "오답 정리 및 복습 시 발생하는 인지관성 패턴"
+    icon: "📋"
+    color: "#f59e0b"
+
+  5:
+    id: "qa_session"
+    name: "질의응답"
+    file: "6_qa_session.php"
+    description: "질문 및 답변 과정에서 발생하는 인지관성 패턴"
+    icon: "💬"
+    color: "#10b981"
+
+  6:
+    id: "review_activity"
+    name: "복습활동"
+    file: "7_review_activity.php"
+    description: "복습 활동 시 발생하는 인지관성 패턴"
+    icon: "🔄"
+    color: "#06b6d4"
+
+  7:
+    id: "pomodoro"
+    name: "포모도로"
+    file: "8_pomodoro.php"
+    description: "포모도로 학습법 적용 시 발생하는 인지관성 패턴"
+    icon: "🍅"
+    color: "#ec4899"
+
+# ==============================================================================
+# 카테고리 정의 (모든 상황에 공통 적용)
+# ==============================================================================
+categories:
+  cognitive_overload:
+    name: "인지 과부하"
+    description: "작업기억 용량 초과로 인한 정보 처리 장애"
+    icon: "🧠"
+    color: "#ef4444"
+    priority_weight: 1.0
+
+  confidence_distortion:
+    name: "자신감 왜곡"
+    description: "과신 또는 과소 자신감으로 인한 판단 오류"
+    icon: "😰"
+    color: "#f59e0b"
+    priority_weight: 0.9
+
+  habit_pattern:
+    name: "습관 패턴"
+    description: "비효율적인 학습 습관 및 반복 패턴"
+    icon: "🔁"
+    color: "#8b5cf6"
+    priority_weight: 0.85
+
+  approach_error:
+    name: "접근 전략 오류"
+    description: "문제 해결 전략 선택 및 적용 오류"
+    icon: "🎯"
+    color: "#06b6d4"
+    priority_weight: 0.8
+
+  attention_deficit:
+    name: "주의력 결핍"
+    description: "집중력 저하 및 주의 분산"
+    icon: "👁️"
+    color: "#10b981"
+    priority_weight: 0.85
+
+  time_pressure:
+    name: "시간/압박 관리"
+    description: "시간 압박 및 스트레스 관리 실패"
+    icon: "⏰"
+    color: "#ec4899"
+    priority_weight: 0.85
+
+  verification_absence:
+    name: "검증/확인 부재"
+    description: "검산 및 조건 확인 생략"
+    icon: "🔍"
+    color: "#6366f1"
+    priority_weight: 0.9
+
+  emotional_block:
+    name: "감정적 장벽"
+    description: "불안, 좌절, 회피 등 감정적 요인"
+    icon: "💭"
+    color: "#78716c"
+    priority_weight: 0.75
+
+# ==============================================================================
+# 우선순위 레벨 정의
+# ==============================================================================
+priority_levels:
+  critical:
+    name: "긴급"
+    color: "#dc2626"
+    weight: 1.0
+    intervention_urgency: "immediate"
+    description: "즉각적인 개입이 필요한 심각한 패턴"
+
+  high:
+    name: "높음"
+    color: "#ef4444"
+    weight: 0.85
+    intervention_urgency: "priority"
+    description: "빠른 개입이 권장되는 중요 패턴"
+
+  medium:
+    name: "보통"
+    color: "#f59e0b"
+    weight: 0.6
+    intervention_urgency: "scheduled"
+    description: "계획된 시점에 개입하는 일반 패턴"
+
+  low:
+    name: "낮음"
+    color: "#10b981"
+    weight: 0.35
+    intervention_urgency: "optional"
+    description: "선택적 개입이 가능한 경미한 패턴"
+
+# ==============================================================================
+# 톤(Tone) 정의
+# ==============================================================================
+tones:
+  supportive:
+    name: "지지적"
+    description: "격려와 지지를 통한 긍정적 접근"
+    keywords: ["잘하고 있어요", "함께 해봐요", "천천히"]
+
+  directive:
+    name: "지시적"
+    description: "명확한 지침과 방향 제시"
+    keywords: ["~해야 해요", "~하세요", "중요해요"]
+
+  analytical:
+    name: "분석적"
+    description: "논리적 분석과 설명 중심"
+    keywords: ["왜냐하면", "분석해보면", "패턴을 보면"]
+
+  motivational:
+    name: "동기부여"
+    description: "동기 유발과 자신감 강화"
+    keywords: ["할 수 있어요", "성장했어요", "대단해요"]
+
+  reflective:
+    name: "성찰적"
+    description: "자기 성찰을 유도하는 질문 중심"
+    keywords: ["어떻게 생각해요?", "무엇을 느꼈나요?", "다음엔?"]
+
+# ==============================================================================
+# 페르소나 구조 스키마
+# ==============================================================================
+persona_schema:
+  required_fields:
+    - id              # 고유 ID (숫자)
+    - name            # 페르소나 이름
+    - desc            # 상세 설명
+    - category        # 카테고리 키
+    - priority        # 우선순위 (critical/high/medium/low)
+
+  optional_fields:
+    - icon            # 아이콘 이모지
+    - audio_time      # 오디오 안내 시간
+    - related_topics  # 관련 학습 주제 배열
+    - trigger_signals # 탐지 신호 배열
+
+  solution_fields:
+    - action          # 실행 전략
+    - check           # 확인 포인트
+    - teacher_dialog  # 선생님 대화 템플릿
+
+  optional_solution_fields:
+    - alternative_actions  # 대안 전략 배열
+    - success_criteria     # 성공 기준
+    - follow_up           # 후속 조치
+
+# ==============================================================================
+# 엔진 기본 설정
+# ==============================================================================
+engine_defaults:
+  default_tone: "supportive"
+  confidence_threshold: 0.6
+  max_active_patterns: 5
+  enable_audio_feedback: true
+  audio_base_url: "https://mathking.kr/Contents/personas/"
+  audio_format: "wav"
+  cache_duration: 3600  # 1시간
+
+# ==============================================================================
+# 세부 항목 매핑 (상황별 하위 항목)
+# ==============================================================================
+sub_items:
+  concept_understanding:
+    - concept_study_method_efficacy   # 개념공부법 효능감 인식
+    - concept_reading                 # 개념정독
+    - concept_understanding           # 개념이해
+    - concept_check                   # 개념체크
+    - example_quiz                    # 예제퀴즈
+    - representative_type             # 대표유형
+    - topic_test                      # 주제별테스트
+    - unit_test                       # 단원별테스트
+    - listen_explanation              # 설명듣기
+
+  type_learning:
+    - type_efficacy                   # 대표유형 효능감 인식
+    - weekly_goal                     # 주간목표
+    - daily_goal                      # 오늘목표
+    - pomodoro_selection              # 포모도르
+    - method_selection                # 방법선택
+    - order_selection                 # 순서선택
+    - interval_selection              # 시간간격 선택
+    - supplementary_learning          # 보충학습
+    - hint_setting                    # 힌트설정
+    - qa_interaction                  # 질의응답
+
+  wrong_answer_note:
+    - note_efficacy                   # 오답노트 효능감 인식
+    - solution_note                   # 풀이노트
+    - exam_preparation                # 평가준비
+    - essay_evaluation                # 서술평가
+    - return_note_response            # 반송 오답노트 대응
+
+  qa_session:
+    - qa_efficacy                     # 질의응답 효능감 인식
+    - doubt_occurrence                # 의문발생
+    - question_generation             # 질문생성
+    - focused_resolution              # 집중해결
+    - question_decision               # 질문결정
+    - self_directed_qa                # 질의응답 스스로 주도하기
+    - intervention_method             # 질문 듣는 중 개입방법
+    - closing                         # 마무리
+    - tracking_followup               # 추적 및 후속 학습
+    - close_session                   # 닫기
+
+  review_activity:
+    - review_efficacy                 # 복습루틴 효능감 인식
+    - review_time_setting             # 복습시간 정하기
+    - need_analysis                   # 필요영역 분석
+    - review_curriculum               # 복습 커리큘럼 정하기
+    - review_execution                # 복습실행
+    - review_closing                  # 복습 마무리
+    - closing_feedback                # 마무리 피드백
+
+  pomodoro:
+    - pomodoro_efficacy               # 포모도르 효능감 인식
+    - scope_setting                   # 작성내용의 범위 정하기
+    - input_method                    # 내용입력 방법 확인
+    - return_check_prep               # 귀가검사 준비
+    - session_reflection              # 세션별 성찰활동
+    - input_reflection                # 입력과정에 대한 성찰
+    - emotion_expression              # 감정표현 활용
+    - best_practice_subscription      # 모범사례 구독
+    - memo_usage                      # 메모장 활용
+
+# ==============================================================================
+# API 엔드포인트 규칙
+# ==============================================================================
+api_rules:
+  base_path: "/api/agent04/persona"
+
+  endpoints:
+    get_situations:
+      path: "/situations"
+      method: "GET"
+      description: "모든 상황 목록 조회"
+
+    get_personas:
+      path: "/situations/{situation_id}/personas"
+      method: "GET"
+      description: "특정 상황의 페르소나 목록 조회"
+
+    get_persona:
+      path: "/personas/{persona_id}"
+      method: "GET"
+      description: "특정 페르소나 상세 조회"
+
+    detect_pattern:
+      path: "/detect"
+      method: "POST"
+      description: "인지관성 패턴 탐지"
+
+    get_solution:
+      path: "/personas/{persona_id}/solution"
+      method: "GET"
+      description: "해결 전략 조회"
+
+# ==============================================================================
+# 로깅 및 모니터링 규칙
+# ==============================================================================
+logging:
+  enabled: true
+  level: "info"  # debug, info, warning, error
+
+  events:
+    - pattern_detected
+    - solution_provided
+    - feedback_received
+    - session_started
+    - session_ended
+
+  retention_days: 90
+
+# ==============================================================================
+# 버전 히스토리
+# ==============================================================================
+version_history:
+  - version: "1.0.0"
+    date: "2025-11-01"
+    changes: "초기 버전 - 문제풀이 상황 60개 패턴"
+
+  - version: "2.0.0"
+    date: "2025-12-03"
+    changes: "상황별 분리 - 7개 학습 상황으로 확장"

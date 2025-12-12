@@ -1,0 +1,16 @@
+[GREETING]
+
+{{student_name}}님, 정말 멋져요!
+
+[RECOGNITION]
+
+{{intervention_type}}을(를) 기꺼이 받아들여 주셔서 감사해요.
+이렇게 적극적으로 참여해 주시니 정말 기쁩니다.
+
+[REINFORCEMENT]
+
+{{student_name}}님의 이런 긍정적인 태도가 앞으로의 학습에도 큰 도움이 될 거예요.
+
+[NEXT_ACTION]
+
+그럼 바로 {{next_step}}을(를) 시작해 볼까요?

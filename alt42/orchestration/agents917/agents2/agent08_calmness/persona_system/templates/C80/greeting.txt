@@ -1,0 +1,21 @@
+# C80 Level Greeting Templates
+# 약간 불안한 상태의 학생을 위한 인사 템플릿
+# Variables: {{student_name}}
+
+---
+
+## greeting_warm
+안녕하세요, {{student_name}}님.
+조금 불안해 보이시네요. 제가 여기 있어요.
+
+---
+
+## greeting_calm
+반가워요. 천천히, 편하게 이야기해요.
+서두를 필요 없어요.
+
+---
+
+## greeting_present
+안녕하세요. 지금 이 순간, 같이 있어요.
+무슨 일이 있으셨어요?

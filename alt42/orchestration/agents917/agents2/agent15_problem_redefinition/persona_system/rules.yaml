@@ -1,0 +1,969 @@
+# Agent15 Problem Redefinition - Rules Definition
+# Version: 1.0
+# Created: 2025-12-02
+#
+# 이 파일은 문제 재정의 시스템의 페르소나 선택 및 전환 규칙을 정의합니다.
+# RuleParser.php와 ConditionEvaluator.php에 의해 파싱되고 실행됩니다.
+
+---
+
+# ============================================================================
+# 메타데이터
+# ============================================================================
+metadata:
+  agent_id: 15
+  agent_name: "problem_redefinition"
+  version: "1.0"
+  description: "문제 재정의 에이전트 규칙 정의"
+  author: "system"
+  created_at: "2025-12-02"
+
+# ============================================================================
+# 전역 설정
+# ============================================================================
+settings:
+  default_persona: "R1"
+  transition_cooldown: 300  # 초 단위
+  min_confidence: 0.6
+  max_transitions_per_session: 10
+  fallback_persona: "E1"
+
+# ============================================================================
+# 트리거 시나리오 정의 (S1-S10)
+# ============================================================================
+triggers:
+  S1_performance_decline:
+    name: "학습 성과 하락"
+    description: "최근 성과가 이전 대비 15% 이상 하락"
+    conditions:
+      - field: "performance.change_rate"
+        operator: "lt"
+        value: -15
+    severity_levels:
+      mild:
+        condition: "performance.change_rate BETWEEN -25 AND -15"
+        primary_persona: "R1"
+      moderate:
+        condition: "performance.change_rate BETWEEN -40 AND -25"
+        primary_persona: "A1"
+      severe:
+        condition: "performance.change_rate < -40"
+        primary_persona: "A2"
+    primary_cause_layer: "cognitive"
+    priority: 90
+
+  S2_dropout_warning:
+    name: "학습 이탈 경고"
+    description: "이탈 위험 점수 또는 비활성 일수 기준 초과"
+    conditions:
+      - field: "dropout.risk_score"
+        operator: "gt"
+        value: 0.6
+      - field: "dropout.inactive_days"
+        operator: "gt"
+        value: 5
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "dropout.risk_score BETWEEN 0.6 AND 0.7 OR dropout.inactive_days BETWEEN 5 AND 7"
+        primary_persona: "R2"
+      moderate:
+        condition: "dropout.risk_score BETWEEN 0.7 AND 0.85 OR dropout.inactive_days BETWEEN 8 AND 14"
+        primary_persona: "A3"
+      severe:
+        condition: "dropout.risk_score > 0.85 OR dropout.inactive_days > 14"
+        primary_persona: "E1"
+    primary_cause_layer: "motivational"
+    priority: 95
+
+  S3_repeated_errors:
+    name: "동일 오답 반복"
+    description: "동일 유형 오답 3회 이상 반복"
+    conditions:
+      - field: "errors.repeat_ratio"
+        operator: "gt"
+        value: 0.3
+    severity_levels:
+      mild:
+        condition: "errors.repeat_ratio BETWEEN 0.3 AND 0.4"
+        primary_persona: "R3"
+      moderate:
+        condition: "errors.repeat_ratio BETWEEN 0.4 AND 0.5"
+        primary_persona: "A1"
+      severe:
+        condition: "errors.repeat_ratio > 0.5"
+        primary_persona: "V1"
+    primary_cause_layer: "cognitive"
+    priority: 85
+
+  S4_routine_instability:
+    name: "루틴 불안정"
+    description: "학습 루틴 일관성 저하"
+    conditions:
+      - field: "routine.consistency_score"
+        operator: "lt"
+        value: 0.5
+      - field: "routine.stability"
+        operator: "eq"
+        value: "erratic"
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "routine.consistency_score BETWEEN 0.4 AND 0.5"
+        primary_persona: "R1"
+      moderate:
+        condition: "routine.consistency_score BETWEEN 0.25 AND 0.4"
+        primary_persona: "A2"
+      severe:
+        condition: "routine.consistency_score < 0.25"
+        primary_persona: "S2"
+    primary_cause_layer: "behavioral"
+    priority: 75
+
+  S5_time_management_failure:
+    name: "시간관리 실패"
+    description: "계획 대비 실제 학습 시간 효율 저하"
+    conditions:
+      - field: "time.efficiency_ratio"
+        operator: "lt"
+        value: 0.6
+      - field: "time.deadline_miss_count"
+        operator: "gt"
+        value: 3
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "time.efficiency_ratio BETWEEN 0.5 AND 0.6"
+        primary_persona: "A2"
+      moderate:
+        condition: "time.efficiency_ratio BETWEEN 0.35 AND 0.5"
+        primary_persona: "V2"
+      severe:
+        condition: "time.efficiency_ratio < 0.35"
+        primary_persona: "S3"
+    primary_cause_layer: "behavioral"
+    priority: 70
+
+  S6_emotional_motivation_decline:
+    name: "정서/동기 저하"
+    description: "동기 수준 저하 또는 부정적 감정 감지"
+    conditions:
+      - field: "motivation.level"
+        operator: "lt"
+        value: 0.4
+      - field: "emotion.current"
+        operator: "in"
+        value: ["frustration", "hopelessness", "anxiety"]
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "motivation.level BETWEEN 0.35 AND 0.4"
+        primary_persona: "E1"
+      moderate:
+        condition: "motivation.level BETWEEN 0.2 AND 0.35"
+        primary_persona: "E2"
+      severe:
+        condition: "motivation.level < 0.2 OR emotion.current = 'hopelessness'"
+        primary_persona: "E1"
+    primary_cause_layer: "motivational"
+    priority: 92
+
+  S7_concept_understanding_deficit:
+    name: "개념 이해 부진"
+    description: "전체 개념 이해도 저하 또는 취약 영역 다수"
+    conditions:
+      - field: "concept.overall_understanding"
+        operator: "lt"
+        value: 0.5
+      - field: "concept.weak_areas"
+        operator: "count_gt"
+        value: 3
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "concept.overall_understanding BETWEEN 0.4 AND 0.5"
+        primary_persona: "A1"
+      moderate:
+        condition: "concept.overall_understanding BETWEEN 0.3 AND 0.4"
+        primary_persona: "V3"
+      severe:
+        condition: "concept.overall_understanding < 0.3"
+        primary_persona: "S1"
+    primary_cause_layer: "cognitive"
+    priority: 88
+
+  S8_teacher_feedback_warning:
+    name: "교사 피드백 경고"
+    description: "교사로부터 경고성 피드백 수신"
+    conditions:
+      - field: "feedback.warning_count"
+        operator: "gt"
+        value: 2
+      - field: "feedback.type"
+        operator: "eq"
+        value: "intervention_request"
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "feedback.warning_count BETWEEN 2 AND 3"
+        primary_persona: "R2"
+      moderate:
+        condition: "feedback.warning_count BETWEEN 4 AND 5"
+        primary_persona: "A4"
+      severe:
+        condition: "feedback.type = 'intervention_request' OR feedback.warning_count > 5"
+        primary_persona: "S4"
+    primary_cause_layer: "environmental"
+    priority: 85
+
+  S9_strategy_mismatch:
+    name: "전략 불일치"
+    description: "현재 학습 전략의 효과성 저하"
+    conditions:
+      - field: "strategy.effectiveness"
+        operator: "lt"
+        value: 0.4
+      - field: "strategy.alignment_score"
+        operator: "lt"
+        value: 0.5
+        logical_operator: "OR"
+    severity_levels:
+      mild:
+        condition: "strategy.effectiveness BETWEEN 0.35 AND 0.4"
+        primary_persona: "A3"
+      moderate:
+        condition: "strategy.effectiveness BETWEEN 0.25 AND 0.35"
+        primary_persona: "V4"
+      severe:
+        condition: "strategy.effectiveness < 0.25"
+        primary_persona: "S2"
+    primary_cause_layer: "cognitive"
+    priority: 78
+
+  S10_recovery_failure:
+    name: "회복 실패"
+    description: "이전 개입 시도 후 회복 실패"
+    conditions:
+      - field: "recovery.success_rate"
+        operator: "lt"
+        value: 0.3
+      - field: "recovery.attempt_count"
+        operator: "gt"
+        value: 3
+        logical_operator: "AND"
+    severity_levels:
+      mild:
+        condition: "recovery.success_rate BETWEEN 0.25 AND 0.3 AND recovery.attempt_count <= 4"
+        primary_persona: "A4"
+      moderate:
+        condition: "recovery.success_rate BETWEEN 0.15 AND 0.25"
+        primary_persona: "V4"
+      severe:
+        condition: "recovery.success_rate < 0.15 OR recovery.attempt_count > 5"
+        primary_persona: "S4"
+    primary_cause_layer: "environmental"
+    priority: 80
+
+# ============================================================================
+# 페르소나 선택 규칙
+# ============================================================================
+persona_selection_rules:
+  # R-Series (인식형) 선택 규칙
+  R1_rules:
+    - name: "R1_initial_recognition"
+      description: "초기 문제 인식 상황"
+      conditions:
+        - field: "trigger.severity"
+          operator: "eq"
+          value: "mild"
+        - field: "session.message_count"
+          operator: "lt"
+          value: 3
+      priority: 80
+      confidence_boost: 0.1
+
+    - name: "R1_gentle_approach_needed"
+      description: "부드러운 접근 필요 (회피형 학생)"
+      conditions:
+        - field: "student.characteristic"
+          operator: "eq"
+          value: "avoidant"
+        - field: "emotion.current"
+          operator: "in"
+          value: ["anxiety", "frustration"]
+      priority: 85
+      confidence_boost: 0.15
+
+  R2_rules:
+    - name: "R2_deeper_exploration"
+      description: "심층 탐색 필요"
+      conditions:
+        - field: "trigger.active"
+          operator: "in"
+          value: ["S2", "S8"]
+        - field: "trigger.severity"
+          operator: "in"
+          value: ["mild", "moderate"]
+      priority: 75
+      confidence_boost: 0.1
+
+  R3_rules:
+    - name: "R3_proactive_identification"
+      description: "사전적 문제 식별"
+      conditions:
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S3"
+        - field: "errors.repeat_ratio"
+          operator: "lt"
+          value: 0.4
+      priority: 70
+      confidence_boost: 0.1
+
+  # A-Series (귀인형) 선택 규칙
+  A1_rules:
+    - name: "A1_logical_cause_analysis"
+      description: "논리적 원인 분석 필요"
+      conditions:
+        - field: "cause.primary"
+          operator: "is_null"
+          value: true
+        - field: "trigger.active"
+          operator: "in"
+          value: ["S1", "S3", "S7"]
+      priority: 85
+      confidence_boost: 0.15
+
+  A2_rules:
+    - name: "A2_patient_explanation"
+      description: "인내심 있는 설명 필요"
+      conditions:
+        - field: "student.characteristic"
+          operator: "in"
+          value: ["defensive", "anxious"]
+        - field: "cause.confidence"
+          operator: "lt"
+          value: 0.7
+      priority: 80
+      confidence_boost: 0.1
+
+  A3_rules:
+    - name: "A3_investigative_approach"
+      description: "탐정적 접근 필요"
+      conditions:
+        - field: "trigger.active"
+          operator: "in"
+          value: ["S2", "S9"]
+        - field: "cause.secondary"
+          operator: "count_gt"
+          value: 2
+      priority: 78
+      confidence_boost: 0.1
+
+  A4_rules:
+    - name: "A4_holistic_view"
+      description: "전체적 관점 필요"
+      conditions:
+        - field: "trigger.history"
+          operator: "count_gt"
+          value: 3
+        - field: "recovery.attempt_count"
+          operator: "gt"
+          value: 2
+      priority: 82
+      confidence_boost: 0.12
+
+  # V-Series (검증형) 선택 규칙
+  V1_rules:
+    - name: "V1_methodical_verification"
+      description: "체계적 검증 필요"
+      conditions:
+        - field: "cause.confidence"
+          operator: "gte"
+          value: 0.6
+        - field: "cause.primary"
+          operator: "is_not_null"
+          value: true
+      priority: 75
+      confidence_boost: 0.1
+
+  V2_rules:
+    - name: "V2_critical_questioning"
+      description: "비판적 질문 필요"
+      conditions:
+        - field: "student.characteristic"
+          operator: "eq"
+          value: "confident"
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S5"
+      priority: 72
+      confidence_boost: 0.1
+
+  V3_rules:
+    - name: "V3_experimental_testing"
+      description: "실험적 검증 필요"
+      conditions:
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S7"
+        - field: "concept.stuck_count"
+          operator: "gt"
+          value: 2
+      priority: 70
+      confidence_boost: 0.1
+
+  V4_rules:
+    - name: "V4_comprehensive_validation"
+      description: "종합 검증 필요"
+      conditions:
+        - field: "cause.cognitive.confidence"
+          operator: "gte"
+          value: 0.7
+        - field: "cause.behavioral.confidence"
+          operator: "gte"
+          value: 0.7
+      priority: 78
+      confidence_boost: 0.15
+
+  # S-Series (솔루션형) 선택 규칙
+  S1_rules:
+    - name: "S1_practical_solution"
+      description: "실용적 해결책 제시"
+      conditions:
+        - field: "cause.redefined_problem"
+          operator: "is_not_null"
+          value: true
+        - field: "trigger.severity"
+          operator: "eq"
+          value: "severe"
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S7"
+      priority: 88
+      confidence_boost: 0.15
+
+  S2_rules:
+    - name: "S2_creative_alternatives"
+      description: "창의적 대안 필요"
+      conditions:
+        - field: "recovery.failed_approaches"
+          operator: "count_gt"
+          value: 2
+        - field: "trigger.active"
+          operator: "in"
+          value: ["S4", "S9"]
+      priority: 85
+      confidence_boost: 0.12
+
+  S3_rules:
+    - name: "S3_structured_plan"
+      description: "구조화된 계획 필요"
+      conditions:
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S5"
+        - field: "trigger.severity"
+          operator: "eq"
+          value: "severe"
+      priority: 82
+      confidence_boost: 0.1
+
+  S4_rules:
+    - name: "S4_supportive_execution"
+      description: "지지적 실행 지원"
+      conditions:
+        - field: "student.characteristic"
+          operator: "in"
+          value: ["avoidant", "anxious"]
+        - field: "action.pending_follow_ups"
+          operator: "count_gt"
+          value: 0
+      priority: 80
+      confidence_boost: 0.1
+
+  # E-Series (정서형) 선택 규칙
+  E1_rules:
+    - name: "E1_emotional_support"
+      description: "정서적 지원 필요"
+      conditions:
+        - field: "emotion.current"
+          operator: "in"
+          value: ["frustration", "hopelessness", "anxiety"]
+        - field: "emotion.intensity"
+          operator: "gte"
+          value: 0.6
+      priority: 95
+      confidence_boost: 0.2
+
+    - name: "E1_crisis_intervention"
+      description: "위기 개입 필요"
+      conditions:
+        - field: "trigger.active"
+          operator: "eq"
+          value: "S2"
+        - field: "trigger.severity"
+          operator: "eq"
+          value: "severe"
+      priority: 98
+      confidence_boost: 0.25
+
+  E2_rules:
+    - name: "E2_motivation_boost"
+      description: "동기 부여 필요"
+      conditions:
+        - field: "motivation.level"
+          operator: "lt"
+          value: 0.4
+        - field: "emotion.current"
+          operator: "not_in"
+          value: ["hopelessness"]
+      priority: 88
+      confidence_boost: 0.15
+
+# ============================================================================
+# 페르소나 전환 규칙
+# ============================================================================
+transition_rules:
+  # R-Series 전환 규칙
+  from_R1:
+    allowed_targets: ["A1", "A2", "V1", "E1"]
+    rules:
+      - target: "A1"
+        conditions:
+          - field: "session.message_count"
+            operator: "gte"
+            value: 3
+          - field: "cause.primary"
+            operator: "is_null"
+            value: true
+        priority: 80
+      - target: "E1"
+        conditions:
+          - field: "emotion.intensity"
+            operator: "gte"
+            value: 0.7
+        priority: 95
+
+  from_R2:
+    allowed_targets: ["A2", "A3", "V2", "E1"]
+    rules:
+      - target: "A3"
+        conditions:
+          - field: "trigger.recurring"
+            operator: "count_gt"
+            value: 1
+        priority: 75
+
+  from_R3:
+    allowed_targets: ["A1", "V1", "S1", "E2"]
+    rules:
+      - target: "V1"
+        conditions:
+          - field: "cause.primary"
+            operator: "is_not_null"
+            value: true
+        priority: 78
+
+  # A-Series 전환 규칙
+  from_A1:
+    allowed_targets: ["V1", "V2", "S1", "E1"]
+    rules:
+      - target: "V1"
+        conditions:
+          - field: "cause.confidence"
+            operator: "gte"
+            value: 0.7
+        priority: 82
+      - target: "S1"
+        conditions:
+          - field: "cause.redefined_problem"
+            operator: "is_not_null"
+            value: true
+          - field: "cause.confidence"
+            operator: "gte"
+            value: 0.8
+        priority: 85
+
+  from_A2:
+    allowed_targets: ["V2", "V3", "S2", "E1"]
+    rules:
+      - target: "S2"
+        conditions:
+          - field: "cause.behavioral.confidence"
+            operator: "gte"
+            value: 0.75
+        priority: 80
+
+  from_A3:
+    allowed_targets: ["V3", "V4", "S3", "E2"]
+    rules:
+      - target: "V4"
+        conditions:
+          - field: "cause.secondary"
+            operator: "count_gt"
+            value: 2
+        priority: 78
+
+  from_A4:
+    allowed_targets: ["V4", "S4", "E1", "E2"]
+    rules:
+      - target: "S4"
+        conditions:
+          - field: "recovery.attempt_count"
+            operator: "gt"
+            value: 3
+        priority: 82
+
+  # V-Series 전환 규칙
+  from_V1:
+    allowed_targets: ["S1", "S2", "A2", "E1"]
+    rules:
+      - target: "S1"
+        conditions:
+          - field: "cause.confidence"
+            operator: "gte"
+            value: 0.85
+        priority: 88
+
+  from_V2:
+    allowed_targets: ["S2", "S3", "A3", "E2"]
+    rules:
+      - target: "S3"
+        conditions:
+          - field: "time.efficiency_ratio"
+            operator: "lt"
+            value: 0.4
+        priority: 82
+
+  from_V3:
+    allowed_targets: ["S1", "S4", "A4", "E1"]
+    rules:
+      - target: "S1"
+        conditions:
+          - field: "concept.weak_areas"
+            operator: "count_gt"
+            value: 0
+          - field: "cause.cognitive.confidence"
+            operator: "gte"
+            value: 0.8
+        priority: 85
+
+  from_V4:
+    allowed_targets: ["S3", "S4", "E1", "E2"]
+    rules:
+      - target: "S4"
+        conditions:
+          - field: "student.characteristic"
+            operator: "in"
+            value: ["avoidant", "anxious"]
+        priority: 80
+
+  # S-Series 전환 규칙
+  from_S1:
+    allowed_targets: ["S4", "V3", "E2", "R1"]
+    rules:
+      - target: "E2"
+        conditions:
+          - field: "action.status"
+            operator: "eq"
+            value: "completed"
+        priority: 75
+      - target: "R1"
+        conditions:
+          - field: "trigger.active"
+            operator: "is_null"
+            value: true
+        priority: 70
+
+  from_S2:
+    allowed_targets: ["S4", "V4", "E2", "R2"]
+    rules:
+      - target: "V4"
+        conditions:
+          - field: "action.progress"
+            operator: "lt"
+            value: 0.5
+          - field: "action.status"
+            operator: "eq"
+            value: "active"
+        priority: 78
+
+  from_S3:
+    allowed_targets: ["S4", "V2", "E1", "R1"]
+    rules:
+      - target: "E1"
+        conditions:
+          - field: "motivation.level"
+            operator: "lt"
+            value: 0.3
+        priority: 90
+
+  from_S4:
+    allowed_targets: ["E1", "E2", "R1", "R2"]
+    rules:
+      - target: "E2"
+        conditions:
+          - field: "action.status"
+            operator: "eq"
+            value: "completed"
+          - field: "motivation.level"
+            operator: "lt"
+            value: 0.5
+        priority: 80
+
+  # E-Series 전환 규칙
+  from_E1:
+    allowed_targets: ["R1", "R2", "A1", "S4"]
+    rules:
+      - target: "R1"
+        conditions:
+          - field: "emotion.intensity"
+            operator: "lt"
+            value: 0.4
+        priority: 75
+      - target: "A1"
+        conditions:
+          - field: "emotion.current"
+            operator: "eq"
+            value: "neutral"
+          - field: "cause.primary"
+            operator: "is_null"
+            value: true
+        priority: 78
+
+  from_E2:
+    allowed_targets: ["R1", "S1", "S2", "A1"]
+    rules:
+      - target: "S1"
+        conditions:
+          - field: "motivation.level"
+            operator: "gte"
+            value: 0.5
+          - field: "cause.redefined_problem"
+            operator: "is_not_null"
+            value: true
+        priority: 82
+
+# ============================================================================
+# 학생 특성별 톤 조정 규칙
+# ============================================================================
+tone_adjustment_rules:
+  avoidant:
+    modifiers:
+      - type: "soften_language"
+        intensity: 0.8
+      - type: "offer_choices"
+        intensity: 0.9
+      - type: "reduce_pressure"
+        intensity: 0.85
+    avoid_phrases:
+      - "반드시"
+      - "해야 합니다"
+      - "당장"
+    preferred_phrases:
+      - "천천히"
+      - "원하신다면"
+      - "괜찮아요"
+
+  defensive:
+    modifiers:
+      - type: "collaborative_framing"
+        intensity: 0.9
+      - type: "acknowledge_perspective"
+        intensity: 0.85
+      - type: "offer_choices"
+        intensity: 0.8
+    avoid_phrases:
+      - "틀렸어요"
+      - "문제가 있어요"
+      - "잘못"
+    preferred_phrases:
+      - "함께"
+      - "관점을 들려주세요"
+      - "이해해요"
+
+  anxious:
+    modifiers:
+      - type: "reassurance"
+        intensity: 0.9
+      - type: "specific_steps"
+        intensity: 0.85
+      - type: "normalizing"
+        intensity: 0.8
+    avoid_phrases:
+      - "걱정"
+      - "어려울 수 있어요"
+      - "실패"
+    preferred_phrases:
+      - "괜찮아요"
+      - "한 단계씩"
+      - "충분히 할 수 있어요"
+
+  confident:
+    modifiers:
+      - type: "direct_communication"
+        intensity: 0.9
+      - type: "challenge_appropriately"
+        intensity: 0.7
+      - type: "growth_focus"
+        intensity: 0.85
+    avoid_phrases:
+      - "쉬워요"
+      - "걱정하지 마세요"
+    preferred_phrases:
+      - "도전해볼까요"
+      - "더 나아갈 수 있어요"
+      - "분석해보면"
+
+# ============================================================================
+# 응답 생성 규칙
+# ============================================================================
+response_rules:
+  structure:
+    default_components:
+      - acknowledgment      # 인정/공감
+      - cause_explanation   # 원인 설명
+      - action_suggestion   # 조치 제안
+      - encouragement       # 격려
+
+    component_order:
+      emotional_priority:
+        - acknowledgment
+        - encouragement
+        - cause_explanation
+        - action_suggestion
+      analytical_priority:
+        - acknowledgment
+        - cause_explanation
+        - action_suggestion
+        - encouragement
+      solution_priority:
+        - acknowledgment
+        - action_suggestion
+        - cause_explanation
+        - encouragement
+
+  length_limits:
+    short: 100    # 간단한 확인
+    medium: 300   # 일반 응답
+    long: 500     # 상세 설명
+    detailed: 800 # 종합 분석
+
+  persona_response_style:
+    R_series:
+      component_order: "emotional_priority"
+      length: "medium"
+      tone: "warm"
+    A_series:
+      component_order: "analytical_priority"
+      length: "long"
+      tone: "professional"
+    V_series:
+      component_order: "analytical_priority"
+      length: "medium"
+      tone: "precise"
+    S_series:
+      component_order: "solution_priority"
+      length: "detailed"
+      tone: "action_oriented"
+    E_series:
+      component_order: "emotional_priority"
+      length: "medium"
+      tone: "supportive"
+
+# ============================================================================
+# 의도 분석 규칙
+# ============================================================================
+intent_rules:
+  patterns:
+    help_request:
+      keywords: ["도와주세요", "어떻게", "모르겠어요", "힘들어요", "막혔어요"]
+      weight: 0.9
+
+    problem_report:
+      keywords: ["안돼요", "오류", "실패", "틀렸어요", "이상해요"]
+      weight: 0.85
+
+    clarification:
+      keywords: ["무슨 말이에요", "설명해주세요", "이해가 안 돼요", "다시"]
+      weight: 0.8
+
+    confirmation:
+      keywords: ["네", "맞아요", "알겠어요", "이해했어요", "좋아요"]
+      weight: 0.9
+
+    rejection:
+      keywords: ["아니요", "싫어요", "안 할래요", "필요 없어요"]
+      weight: 0.85
+
+    emotional_expression:
+      keywords: ["화나요", "슬퍼요", "무서워요", "불안해요", "지쳐요"]
+      weight: 0.95
+
+    progress_update:
+      keywords: ["했어요", "끝냈어요", "완료", "진행중", "시작했어요"]
+      weight: 0.8
+
+    question:
+      keywords: ["왜", "언제", "어디서", "뭐", "무엇", "어떤"]
+      weight: 0.75
+
+# ============================================================================
+# 에이전트 간 통신 규칙
+# ============================================================================
+inter_agent_rules:
+  message_types:
+    context_share:
+      description: "컨텍스트 정보 공유"
+      required_fields: ["student_id", "context_data", "timestamp"]
+
+    action_request:
+      description: "다른 에이전트에 조치 요청"
+      required_fields: ["student_id", "action_type", "urgency", "details"]
+
+    status_update:
+      description: "상태 업데이트 전달"
+      required_fields: ["student_id", "status_type", "status_value"]
+
+    escalation:
+      description: "에스컬레이션 요청"
+      required_fields: ["student_id", "reason", "current_state", "recommended_agent"]
+
+  routing_rules:
+    # 학습 진도 관련 → Agent03
+    learning_progress:
+      target_agent: 3
+      conditions:
+        - field: "cause.primary_layer"
+          operator: "eq"
+          value: "cognitive"
+
+    # 동기 부여 관련 → Agent05
+    motivation_issue:
+      target_agent: 5
+      conditions:
+        - field: "cause.primary_layer"
+          operator: "eq"
+          value: "motivational"
+
+    # 학습 계획 관련 → Agent08
+    study_plan_needed:
+      target_agent: 8
+      conditions:
+        - field: "action.type"
+          operator: "eq"
+          value: "create_study_plan"
+
+# ============================================================================
+# 버전 및 변경 이력
+# ============================================================================
+changelog:
+  - version: "1.0"
+    date: "2025-12-02"
+    changes:
+      - "초기 버전 생성"
+      - "10개 트리거 시나리오 정의"
+      - "15개 페르소나 규칙 정의"
+      - "전환 규칙 정의"
+      - "톤 조정 규칙 추가"

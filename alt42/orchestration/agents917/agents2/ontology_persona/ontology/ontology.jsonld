@@ -1,0 +1,628 @@
+{
+  "@context": {
+    "mk": "https://mathking.kr/ontology#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  "@graph": [
+    {
+      "@id": "mk:Ontology",
+      "@type": "owl:Ontology",
+      "rdfs:label": "Mathking Decision Ontology",
+      "owl:versionInfo": "1.0.0",
+      "rdfs:comment": "온톨로지 기반 AI 튜터 의사결정 체계 (Phase 1 완료 + 6레이어 구조)"
+    },
+
+    {
+      "@id": "mk:Layer1",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 1: 핵심 엔터티",
+      "rdfs:comment": "Student, Agent, Task, Persona, Content, Activity 등 기본 클래스"
+    },
+
+    {
+      "@id": "mk:Context",
+      "@type": "owl:Class",
+      "rdfs:label": "진단 컨텍스트",
+      "rdfs:comment": "9개 표준진단 카테고리"
+    },
+
+    {
+      "@id": "mk:Context/curriculum",
+      "@type": "mk:Context",
+      "rdfs:label": "커리큘럼",
+      "mk:description": "진도 관리 및 학습 경로"
+    },
+
+    {
+      "@id": "mk:Context/exam_prep",
+      "@type": "mk:Context",
+      "rdfs:label": "시험대비",
+      "mk:description": "시험 준비 전략"
+    },
+
+    {
+      "@id": "mk:Context/adaptive",
+      "@type": "mk:Context",
+      "rdfs:label": "맞춤학습",
+      "mk:description": "개인별 난이도 조절"
+    },
+
+    {
+      "@id": "mk:Context/micro_mission",
+      "@type": "mk:Context",
+      "rdfs:label": "마이크로미션",
+      "mk:description": "소단위 목표 달성"
+    },
+
+    {
+      "@id": "mk:Context/self_reflection",
+      "@type": "mk:Context",
+      "rdfs:label": "자기성찰",
+      "mk:description": "학습 과정 돌아보기"
+    },
+
+    {
+      "@id": "mk:Context/self_directed",
+      "@type": "mk:Context",
+      "rdfs:label": "자기주도학습",
+      "mk:description": "자율적 학습 계획"
+    },
+
+    {
+      "@id": "mk:Context/apprenticeship",
+      "@type": "mk:Context",
+      "rdfs:label": "도제학습",
+      "mk:description": "멘토링 및 모방 학습"
+    },
+
+    {
+      "@id": "mk:Context/time_reflection",
+      "@type": "mk:Context",
+      "rdfs:label": "시간성찰",
+      "mk:description": "학습 시간 패턴 분석"
+    },
+
+    {
+      "@id": "mk:Context/inquiry",
+      "@type": "mk:Context",
+      "rdfs:label": "탐구학습",
+      "mk:description": "질문 기반 능동적 학습"
+    },
+
+    {
+      "@id": "mk:Agent",
+      "@type": "owl:Class",
+      "rdfs:label": "에이전트",
+      "rdfs:comment": "의사결정 에이전트"
+    },
+
+    {
+      "@id": "mk:Agent/agent_curriculum",
+      "@type": "mk:Agent",
+      "rdfs:label": "커리큘럼 에이전트",
+      "mk:context": "mk:Context/curriculum",
+      "mk:hasTask": [
+        "mk:Task/task_lagging",
+        "mk:Task/task_overfocus",
+        "mk:Task/task_balanced_progress"
+      ],
+      "mk:priority": 1,
+      "mk:heartbeat_min": 30
+    },
+
+    {
+      "@id": "mk:Agent/agent_exam_prep",
+      "@type": "mk:Agent",
+      "rdfs:label": "시험대비 에이전트",
+      "mk:context": "mk:Context/exam_prep",
+      "mk:hasTask": [
+        "mk:Task/task_exam_strategy",
+        "mk:Task/task_weak_area"
+      ],
+      "mk:priority": 2,
+      "mk:heartbeat_min": 60
+    },
+
+    {
+      "@id": "mk:Agent/agent_adaptive",
+      "@type": "mk:Agent",
+      "rdfs:label": "맞춤학습 에이전트",
+      "mk:context": "mk:Context/adaptive",
+      "mk:hasTask": [
+        "mk:Task/task_difficulty_adjust",
+        "mk:Task/task_learning_pace"
+      ],
+      "mk:priority": 1,
+      "mk:heartbeat_min": 30
+    },
+
+    {
+      "@id": "mk:Task",
+      "@type": "owl:Class",
+      "rdfs:label": "태스크",
+      "rdfs:comment": "에이전트가 수행하는 작업"
+    },
+
+    {
+      "@id": "mk:Task/task_lagging",
+      "@type": "mk:Task",
+      "rdfs:label": "진도 미달 대응",
+      "mk:triggers": [
+        "cond.progress.below_avg15",
+        "cond.progress.declining_trend"
+      ],
+      "mk:prefer": [
+        "mk:Directive/report_lagging",
+        "mk:Directive/directive_focus"
+      ],
+      "mk:kpi": [
+        "progress_rate",
+        "time_on_task",
+        "gap_from_avg"
+      ]
+    },
+
+    {
+      "@id": "mk:Task/task_overfocus",
+      "@type": "mk:Task",
+      "rdfs:label": "과몰입 방지",
+      "mk:triggers": [
+        "cond.time.single_topic_high"
+      ],
+      "mk:prefer": [
+        "mk:Directive/directive_break",
+        "mk:Directive/directive_variety"
+      ],
+      "mk:kpi": [
+        "topic_diversity",
+        "rest_frequency"
+      ]
+    },
+
+    {
+      "@id": "mk:Persona",
+      "@type": "owl:Class",
+      "rdfs:label": "페르소나",
+      "rdfs:comment": "학생 유형 및 특성"
+    },
+
+    {
+      "@id": "mk:Persona/P_avoidant",
+      "@type": "mk:Persona",
+      "rdfs:label": "회피형",
+      "mk:traits": ["회피", "낮은자신감", "완벽주의"],
+      "mk:relatedTask": [
+        "mk:Task/task_lagging",
+        "mk:Task/task_difficulty_adjust"
+      ],
+      "mk:directiveStrengthModifier": 0.3
+    },
+
+    {
+      "@id": "mk:Persona/P_struggling",
+      "@type": "mk:Persona",
+      "rdfs:label": "학습부진형",
+      "mk:traits": ["기초부족", "낮은성취", "동기부족"],
+      "mk:relatedTask": [
+        "mk:Task/task_lagging",
+        "mk:Task/task_difficulty_adjust"
+      ],
+      "mk:directiveStrengthModifier": 0.4
+    },
+
+    {
+      "@id": "mk:Persona/P_advanced",
+      "@type": "mk:Persona",
+      "rdfs:label": "우수형",
+      "mk:traits": ["높은성취", "자기주도", "빠른진도"],
+      "mk:relatedTask": [
+        "mk:Task/task_advanced_challenge"
+      ],
+      "mk:directiveStrengthModifier": -0.2
+    },
+
+    {
+      "@id": "mk:Directive",
+      "@type": "owl:Class",
+      "rdfs:label": "지시문/리포트",
+      "rdfs:comment": "학생에게 제공되는 리포트 및 지시문"
+    },
+
+    {
+      "@id": "mk:Directive/report_lagging",
+      "@type": "mk:Directive",
+      "mk:directiveType": "report",
+      "rdfs:label": "진도 미달 리포트",
+      "mk:template": "report_lagging.md",
+      "mk:basePriority": 1.0
+    },
+
+    {
+      "@id": "mk:Directive/directive_focus",
+      "@type": "mk:Directive",
+      "mk:directiveType": "directive",
+      "rdfs:label": "집중 학습 지시",
+      "mk:template": "directive_focus.md",
+      "mk:basePriority": 0.9
+    },
+
+    {
+      "@id": "mk:Condition",
+      "@type": "owl:Class",
+      "rdfs:label": "조건",
+      "rdfs:comment": "규칙 조건 정의"
+    },
+
+    {
+      "@id": "mk:Condition/cond.progress.below_avg15",
+      "@type": "mk:Condition",
+      "rdfs:label": "평균 대비 15% 미달",
+      "mk:expression": "evidence.metrics.progress_delta <= -0.15"
+    },
+
+    {
+      "@id": "mk:Condition/cond.progress.declining_trend",
+      "@type": "mk:Condition",
+      "rdfs:label": "진도 하락 추세",
+      "mk:expression": "evidence.metrics.progress_trend_7d < -0.05"
+    },
+
+    {
+      "@id": "mk:Student",
+      "@type": "rdfs:Class",
+      "rdfs:label": "학생",
+      "rdfs:comment": "학습하는 사람"
+    },
+
+    {
+      "@id": "mk:Emotion",
+      "@type": "rdfs:Class",
+      "rdfs:label": "감정",
+      "rdfs:comment": "학습 중 느끼는 감정 상태 (Phase 1 완료: 5개 감정)"
+    },
+
+    {
+      "@id": "mk:hasEmotion",
+      "@type": "rdf:Property",
+      "rdfs:label": "감정을 가진다",
+      "rdfs:domain": "mk:Student",
+      "rdfs:range": "mk:Emotion"
+    },
+
+    {
+      "@id": "Frustrated",
+      "@type": "Emotion",
+      "rdfs:label": "좌절",
+      "rdfs:comment": "문제를 해결하지 못해 느끼는 감정"
+    },
+
+    {
+      "@id": "Focused",
+      "@type": "Emotion",
+      "rdfs:label": "집중",
+      "rdfs:comment": "학습에 몰입한 상태"
+    },
+
+    {
+      "@id": "Tired",
+      "@type": "Emotion",
+      "rdfs:label": "피로",
+      "rdfs:comment": "학습으로 인한 정신적 피로"
+    },
+
+    {
+      "@id": "Anxious",
+      "@type": "Emotion",
+      "rdfs:label": "불안",
+      "rdfs:comment": "성취에 대한 걱정과 두려움"
+    },
+
+    {
+      "@id": "Happy",
+      "@type": "Emotion",
+      "rdfs:label": "기쁨",
+      "rdfs:comment": "문제를 해결했을 때의 성취감"
+    },
+
+    {
+      "@id": "mk:InferenceRule",
+      "@type": "rdfs:Class",
+      "rdfs:label": "추론 규칙",
+      "rdfs:comment": "조건과 결론으로 구성된 IF-THEN 규칙 (Phase 1 완료: 10개 규칙)"
+    },
+
+    {
+      "@id": "mk:EmotionCondition",
+      "@type": "rdfs:Class",
+      "rdfs:label": "감정 조건",
+      "rdfs:comment": "규칙의 조건 부분"
+    },
+
+    {
+      "@id": "rule_frustrated",
+      "@type": "InferenceRule",
+      "ruleName": "좌절 → 격려",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Frustrated"
+      },
+      "conclusion": "격려 필요",
+      "priority": 1.0
+    },
+
+    {
+      "@id": "rule_focused",
+      "@type": "InferenceRule",
+      "ruleName": "집중 → 학습",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Focused"
+      },
+      "conclusion": "학습 진행",
+      "priority": 1.0
+    },
+
+    {
+      "@id": "rule_tired",
+      "@type": "InferenceRule",
+      "ruleName": "피로 → 휴식",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Tired"
+      },
+      "conclusion": "휴식 필요",
+      "priority": 1.0
+    },
+
+    {
+      "@id": "rule_anxious",
+      "@type": "InferenceRule",
+      "ruleName": "불안 → 안정화",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Anxious"
+      },
+      "conclusion": "마음 안정화 필요",
+      "priority": 0.9
+    },
+
+    {
+      "@id": "rule_happy",
+      "@type": "InferenceRule",
+      "ruleName": "기쁨 → 칭찬",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Happy"
+      },
+      "conclusion": "칭찬 및 격려",
+      "priority": 0.8
+    },
+
+    {
+      "@id": "rule_frustrated_repeat",
+      "@type": "InferenceRule",
+      "ruleName": "반복 좌절 → 난이도 조정",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Frustrated"
+      },
+      "conclusion": "학습 난이도 조정 권장",
+      "priority": 0.7
+    },
+
+    {
+      "@id": "rule_focused_encourage",
+      "@type": "InferenceRule",
+      "ruleName": "지속 집중 → 심화 학습",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Focused"
+      },
+      "conclusion": "심화 학습 제공 권장",
+      "priority": 0.6
+    },
+
+    {
+      "@id": "rule_tired_break",
+      "@type": "InferenceRule",
+      "ruleName": "과도 피로 → 긴 휴식",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Tired"
+      },
+      "conclusion": "10분 이상 휴식 권장",
+      "priority": 0.5
+    },
+
+    {
+      "@id": "rule_anxious_support",
+      "@type": "InferenceRule",
+      "ruleName": "불안 → 학습 지원",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Anxious"
+      },
+      "conclusion": "추가 학습 자료 제공",
+      "priority": 0.4
+    },
+
+    {
+      "@id": "rule_happy_challenge",
+      "@type": "InferenceRule",
+      "ruleName": "기쁨 → 도전 과제",
+      "condition": {
+        "@type": "Condition",
+        "emotionEquals": "Happy"
+      },
+      "conclusion": "도전적인 문제 제공",
+      "priority": 0.3
+    },
+
+    {
+      "@id": "mk:Rule",
+      "@type": "owl:Class",
+      "rdfs:label": "규칙",
+      "rdfs:comment": "의사결정 규칙"
+    },
+
+    {
+      "@id": "mk:Rule/rule.curriculum.lagging_report",
+      "@type": "mk:Rule",
+      "rdfs:label": "진도미달 리포트 규칙",
+      "mk:when": "mk:Condition/cond.progress.below_avg15",
+      "mk:then": [
+        {
+          "suggest": "mk:Directive/report_lagging",
+          "params": {
+            "chart": "progress_vs_avg",
+            "lookback_days": 7
+          }
+        },
+        {
+          "suggest": "mk:Directive/directive_focus",
+          "params": {
+            "mode": "now_or_next",
+            "minutes": 20
+          }
+        }
+      ],
+      "mk:else": [
+        {
+          "suggest": "mk:Directive/report_neutral"
+        }
+      ]
+    },
+
+    {
+      "@id": "mk:Layer2",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 2: 핵심 관계",
+      "rdfs:comment": "엔터티 간 관계 속성 (hasTask, hasPersona, triggeredBy 등)"
+    },
+
+    {
+      "@id": "mk:hasTask",
+      "@type": "rdf:Property",
+      "rdfs:label": "태스크를 가진다",
+      "rdfs:domain": "mk:Agent",
+      "rdfs:range": "mk:Task"
+    },
+
+    {
+      "@id": "mk:hasPersona",
+      "@type": "rdf:Property",
+      "rdfs:label": "페르소나를 가진다",
+      "rdfs:domain": "mk:Student",
+      "rdfs:range": "mk:Persona"
+    },
+
+    {
+      "@id": "mk:triggeredBy",
+      "@type": "rdf:Property",
+      "rdfs:label": "트리거 조건",
+      "rdfs:domain": "mk:Task",
+      "rdfs:range": "mk:Condition"
+    },
+
+    {
+      "@id": "mk:Layer3.1",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.1: Agent/Task 협업",
+      "rdfs:comment": "22개 에이전트의 태스크 협업 패턴 (Phase 2 구현 예정)"
+    },
+
+    {
+      "@id": "mk:CollaborationPattern",
+      "@type": "owl:Class",
+      "rdfs:label": "협업 패턴",
+      "rdfs:comment": "에이전트 간 협업 방식 정의"
+    },
+
+    {
+      "@id": "mk:Layer3.2",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.2: LMS Activities/Features 매핑",
+      "rdfs:comment": "Moodle LMS 활동과 기능 매핑 (Phase 3 구현 예정)"
+    },
+
+    {
+      "@id": "mk:LMSActivity",
+      "@type": "owl:Class",
+      "rdfs:label": "LMS 활동",
+      "rdfs:comment": "Moodle 활동 타입 (quiz, assignment, forum 등)"
+    },
+
+    {
+      "@id": "mk:LMSFeature",
+      "@type": "owl:Class",
+      "rdfs:label": "LMS 기능",
+      "rdfs:comment": "Moodle 기능 (grading, messaging, analytics 등)"
+    },
+
+    {
+      "@id": "mk:Layer3.3",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.3: Heartbeat 기반 동적 상호작용",
+      "rdfs:comment": "30분 간격 하트비트 스케줄링 (Phase 3 구현 예정)"
+    },
+
+    {
+      "@id": "mk:HeartbeatSchedule",
+      "@type": "owl:Class",
+      "rdfs:label": "하트비트 스케줄",
+      "rdfs:comment": "에이전트 실행 주기 및 우선순위"
+    },
+
+    {
+      "@id": "mk:Layer3.4",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.4: Persona 상관관계",
+      "rdfs:comment": "페르소나 유형과 학습 패턴 연관 (Phase 4 구현 예정)"
+    },
+
+    {
+      "@id": "mk:PersonaType",
+      "@type": "owl:Class",
+      "rdfs:label": "페르소나 타입",
+      "rdfs:comment": "학생 성향 분류 (회피형, 우수형, 학습부진형 등)"
+    },
+
+    {
+      "@id": "mk:Layer3.5",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.5: Persona 응답 시나리오",
+      "rdfs:comment": "페르소나별 맞춤 응답 전략 (Phase 4 구현 예정)"
+    },
+
+    {
+      "@id": "mk:ResponseScenario",
+      "@type": "owl:Class",
+      "rdfs:label": "응답 시나리오",
+      "rdfs:comment": "상황별 응답 템플릿 및 전략"
+    },
+
+    {
+      "@id": "mk:Layer3.6",
+      "@type": "owl:Class",
+      "rdfs:label": "레이어 3.6: Content 시스템 상관관계",
+      "rdfs:comment": "학습 콘텐츠와 시스템 연계 (Phase 5 구현 예정)"
+    },
+
+    {
+      "@id": "mk:ContentType",
+      "@type": "owl:Class",
+      "rdfs:label": "콘텐츠 타입",
+      "rdfs:comment": "학습 자료 유형 (강의, 연습문제, 평가 등)"
+    },
+
+    {
+      "@id": "mk:ContentMetadata",
+      "@type": "owl:Class",
+      "rdfs:label": "콘텐츠 메타데이터",
+      "rdfs:comment": "난이도, 학습 목표, 소요 시간 등"
+    }
+  ]
+}

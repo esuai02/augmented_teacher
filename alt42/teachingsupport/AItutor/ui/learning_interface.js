@@ -3335,20 +3335,33 @@ async function loadTtsSectionsAndShowPlayer(interactionId) {
     
     try {
         const config = window.TTS_CONFIG || {};
-        // contentsid와 contentstype을 사용하여 조회 (우선순위: contentsid+contentstype > id)
+
+        // ✅ 새로고침/초기 로드에서도 interactionId가 있으면 id 우선 조회
+        // (contentsid+contentstype 조회는 audio_url 조건 때문에 "텍스트만 있고 오디오가 아직 없는" 상태에서 실패할 수 있음)
+        let result = null;
+        if (interactionId) {
+            const apiUrlById = `${config.sectionDataUrl}?format=section&id=${interactionId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] id로 조회(우선):', interactionId);
+            const responseById = await fetch(apiUrlById);
+            result = await responseById.json();
+        }
+
+        // fallback: contentsid(+contentstype)로 조회
+        if (!result || !result.success) {
         let apiUrl = `${config.sectionDataUrl}?format=section`;
         if (config.contentId && config.contentsType !== null && config.contentsType !== undefined) {
             apiUrl += `&contentsid=${config.contentId}&contentstype=${config.contentsType}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid+contentstype으로 조회:', config.contentId, config.contentsType);
+                console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid+contentstype으로 조회(fallback):', config.contentId, config.contentsType);
         } else if (config.contentId) {
             apiUrl += `&contentsid=${config.contentId}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid로만 조회:', config.contentId);
-        } else {
+                console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] contentsid로만 조회(fallback):', config.contentId);
+            } else if (interactionId) {
             apiUrl += `&id=${interactionId}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] interactionId로 조회:', interactionId);
+                console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] id로 조회(fallback2):', interactionId);
         }
         const response = await fetch(apiUrl);
-        const result = await response.json();
+            result = await response.json();
+        }
         
         console.log('[learning_interface.js:loadTtsSectionsAndShowPlayer] API 응답:', result);
         
@@ -3861,7 +3874,7 @@ async function startTtsGeneration(forceRegenerate = false) {
         if (textEl) textEl.textContent = 'TTS 생성';
         if (spinner) spinner.classList.add('hidden');
         
-        showFeedback('TTS 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+        showFeedback('TTS 생성 중 오류가 발생했습니다: ' + (error && error.message ? error.message : '알 수 없는 오류'));
     } finally {
         state.tts.isGenerating = false;
     }
@@ -3880,20 +3893,33 @@ async function loadTtsSectionsAndShow(interactionId) {
     
     try {
         const config = window.TTS_CONFIG || {};
-        // contentsid와 contentstype을 사용하여 조회 (우선순위: contentsid+contentstype > id)
+
+        // ✅ 생성 직후에는 interactionId로 id 조회를 최우선
+        // (contentsid+contentstype 조회는 audio_url 조건 때문에 아직 오디오가 없으면 실패 가능)
+        let result = null;
+        if (interactionId) {
+            const apiUrlById = `${config.sectionDataUrl}?format=section&id=${interactionId}`;
+            console.log('[learning_interface.js:loadTtsSectionsAndShow] id로 조회(우선):', interactionId);
+            const responseById = await fetch(apiUrlById);
+            result = await responseById.json();
+        }
+
+        // fallback: contentsid(+contentstype)
+        if (!result || !result.success) {
         let apiUrl = `${config.sectionDataUrl}?format=section`;
         if (config.contentId && config.contentsType !== null && config.contentsType !== undefined) {
             apiUrl += `&contentsid=${config.contentId}&contentstype=${config.contentsType}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid+contentstype으로 조회:', config.contentId, config.contentsType);
+                console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid+contentstype으로 조회(fallback):', config.contentId, config.contentsType);
         } else if (config.contentId) {
             apiUrl += `&contentsid=${config.contentId}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid로만 조회:', config.contentId);
-        } else {
+                console.log('[learning_interface.js:loadTtsSectionsAndShow] contentsid로만 조회(fallback):', config.contentId);
+            } else if (interactionId) {
             apiUrl += `&id=${interactionId}`;
-            console.log('[learning_interface.js:loadTtsSectionsAndShow] interactionId로 조회:', interactionId);
+                console.log('[learning_interface.js:loadTtsSectionsAndShow] id로 조회(fallback2):', interactionId);
         }
         const response = await fetch(apiUrl);
-        const result = await response.json();
+            result = await response.json();
+        }
         
         console.log('[learning_interface.js:loadTtsSectionsAndShow] API 응답:', result);
         
@@ -3929,12 +3955,19 @@ async function loadTtsSectionsAndShow(interactionId) {
                 console.log('[learning_interface.js:loadTtsSectionsAndShow] 헤더 플레이어 표시됨');
             }
             
-            // teachingagent.php와 동일하게 StepPlayer 모달 자동 열기
-            if (typeof StepPlayer !== 'undefined' && StepPlayer.open) {
+            // StepPlayer 모달은 "오디오 URL이 있는 경우"에만 자동으로 열기
+            // (오디오 생성 실패/지연인 경우 StepPlayer는 audio-first라 오류가 날 수 있음)
+            const hasAnyAudioUrl = Array.isArray(sections) && sections.some(s => {
+                if (typeof s === 'string') return !!String(s).trim();
+                if (s && typeof s === 'object') return !!(s.audio_url || s.url || s.src || s.path);
+                return false;
+            });
+
+            if (hasAnyAudioUrl && typeof StepPlayer !== 'undefined' && StepPlayer.open) {
                 StepPlayer.open(interactionId);
                 console.log('[learning_interface.js:loadTtsSectionsAndShow] StepPlayer 모달 열림');
             } else {
-                console.warn('[learning_interface.js:loadTtsSectionsAndShow] StepPlayer가 로드되지 않음, 헤더 플레이어 사용');
+                console.warn('[learning_interface.js:loadTtsSectionsAndShow] StepPlayer 자동 열기 스킵 (오디오 없음/미로딩) - 헤더 플레이어 사용');
                 // StepPlayer가 없으면 헤더 플레이어로 자동재생
                 if (state.tts.autoPlay && state.tts.sections.length > 0) {
                     playTtsSection(0);

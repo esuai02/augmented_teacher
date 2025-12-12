@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#"
+         xmlns:orch="http://mathking.kr/ontology/orchestration/"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/orchestration/">
+    <rdfs:label xml:lang="ko">Orchestration Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">에이전트 간 통신 및 오케스트레이션을 위한 온톨로지</rdfs:comment>
+    <owl:imports rdf:resource="modules/core.owl"/>
+  </owl:Ontology>
+
+  <!-- ============================================ -->
+  <!-- 에이전트 간 통신 인터페이스 -->
+  <!-- ============================================ -->
+
+  <!-- AgentRequest: 에이전트 간 요청 구조 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/AgentRequest">
+    <rdfs:label xml:lang="ko">AgentRequest</rdfs:label>
+    <rdfs:comment xml:lang="ko">에이전트 간 통신을 위한 요청 구조</rdfs:comment>
+  </owl:Class>
+
+  <!-- AgentResponse: 에이전트 간 응답 구조 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/AgentResponse">
+    <rdfs:label xml:lang="ko">AgentResponse</rdfs:label>
+    <rdfs:comment xml:lang="ko">에이전트 간 통신을 위한 응답 구조</rdfs:comment>
+  </owl:Class>
+
+  <!-- TaskCoreQuery: Task Core 레벨 쿼리 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/TaskCoreQuery">
+    <rdfs:label xml:lang="ko">TaskCoreQuery</rdfs:label>
+    <rdfs:comment xml:lang="ko">Task Core 레벨에서의 쿼리 구조</rdfs:comment>
+  </owl:Class>
+
+  <!-- AgentCoreQuery: Agent Core 레벨 쿼리 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/AgentCoreQuery">
+    <rdfs:label xml:lang="ko">AgentCoreQuery</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent Core 레벨에서의 쿼리 구조</rdfs:comment>
+  </owl:Class>
+
+  <!-- GatewayProtocol: Gateway 통신 프로토콜 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/GatewayProtocol">
+    <rdfs:label xml:lang="ko">GatewayProtocol</rdfs:label>
+    <rdfs:comment xml:lang="ko">Gateway를 통한 에이전트 간 통신 프로토콜 정의</rdfs:comment>
+  </owl:Class>
+
+  <!-- ============================================ -->
+  <!-- 통신 속성 정의 -->
+  <!-- ============================================ -->
+
+  <!-- requestType: 요청 타입 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/requestType">
+    <rdfs:label xml:lang="ko">requestType</rdfs:label>
+    <rdfs:comment xml:lang="ko">요청 타입 (예: ontology_query, task_execution 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentRequest"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- sourceAgent: 요청을 보내는 에이전트 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/sourceAgent">
+    <rdfs:label xml:lang="ko">sourceAgent</rdfs:label>
+    <rdfs:comment xml:lang="ko">요청을 보내는 에이전트 ID</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentRequest"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- targetAgent: 요청을 받는 에이전트 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/targetAgent">
+    <rdfs:label xml:lang="ko">targetAgent</rdfs:label>
+    <rdfs:comment xml:lang="ko">요청을 받는 에이전트 ID</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentRequest"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- responseType: 응답 타입 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/responseType">
+    <rdfs:label xml:lang="ko">responseType</rdfs:label>
+    <rdfs:comment xml:lang="ko">응답 타입 (예: ontology_response, task_result 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentResponse"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- operation: 쿼리 작업 타입 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/operation">
+    <rdfs:label xml:lang="ko">operation</rdfs:label>
+    <rdfs:comment xml:lang="ko">쿼리 작업 타입 (예: get_task_core, get_context 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/TaskCoreQuery"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- taskType: Task 타입 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/taskType">
+    <rdfs:label xml:lang="ko">taskType</rdfs:label>
+    <rdfs:comment xml:lang="ko">Task 타입 (예: onboarding, mastery 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/TaskCoreQuery"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- coreClass: Core 클래스명 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/coreClass">
+    <rdfs:label xml:lang="ko">coreClass</rdfs:label>
+    <rdfs:comment xml:lang="ko">Core 클래스명 (예: OnboardingContextBase, MasterySnapshotBase 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/TaskCoreQuery"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- studentId: 학생 ID -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/studentId">
+    <rdfs:label xml:lang="ko">studentId</rdfs:label>
+    <rdfs:comment xml:lang="ko">학생 ID</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/TaskCoreQuery"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- data: 응답 데이터 -->
+  <owl:ObjectProperty rdf:about="http://mathking.kr/ontology/orchestration/data">
+    <rdfs:label xml:lang="ko">data</rdfs:label>
+    <rdfs:comment xml:lang="ko">응답 데이터 (온톨로지 인스턴스 참조)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentResponse"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  </owl:ObjectProperty>
+
+  <!-- metadata: 응답 메타데이터 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/metadata">
+    <rdfs:label xml:lang="ko">metadata</rdfs:label>
+    <rdfs:comment xml:lang="ko">응답 메타데이터 (버전, 타임스탬프, core_level 등)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentResponse"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+
+  <!-- coreLevel: Core 레벨 여부 -->
+  <owl:DatatypeProperty rdf:about="http://mathking.kr/ontology/orchestration/coreLevel">
+    <rdfs:label xml:lang="ko">coreLevel</rdfs:label>
+    <rdfs:comment xml:lang="ko">Core 레벨 데이터인지 여부 (true/false)</rdfs:comment>
+    <rdfs:domain rdf:resource="http://mathking.kr/ontology/orchestration/AgentResponse"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+  </owl:DatatypeProperty>
+
+  <!-- ============================================ -->
+  <!-- 통신 규칙 정의 -->
+  <!-- ============================================ -->
+
+  <!-- AgentRequest는 반드시 requestType, sourceAgent, targetAgent를 가져야 함 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/AgentRequest">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/requestType"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/sourceAgent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/targetAgent"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- AgentResponse는 반드시 responseType을 가져야 함 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/AgentResponse">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/responseType"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+  <!-- TaskCoreQuery는 반드시 operation, taskType, coreClass를 가져야 함 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/orchestration/TaskCoreQuery">
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/operation"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/taskType"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://mathking.kr/ontology/orchestration/coreClass"/>
+        <owl:minCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+
+</rdf:RDF>
+

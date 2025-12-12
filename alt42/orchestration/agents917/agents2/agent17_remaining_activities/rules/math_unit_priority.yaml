@@ -1,0 +1,161 @@
+# 수학 단원별 우선순위 데이터베이스
+# 현직 수학선생님 수준 도달을 위한 핵심 DB
+# 선생님 체크리스트 및 텍스트 입력을 통한 데이터 수집 가정
+
+version: "1.0"
+description: "중학교 수학 단원별 우선순위 판단 기준 (난이도, 출제 비중, 학습 시간)"
+
+units:
+  # 중학교 1학년
+  - unit_id: "middle1_integer"
+    unit_name: "정수와 유리수"
+    grade: 1
+    difficulty: 4  # 1-10 척도
+    exam_weight: 0.15  # 출제 비중 (0-1)
+    avg_study_time: 5  # 평균 학습 시간(시간)
+    priority_factor: 0.7  # 우선순위 계수 (높을수록 우선순위 높음)
+    completion_ease: 0.8  # 완료 용이성 (0-1)
+    bottleneck_risk: 0.3  # 병목 위험도 (0-1)
+    note: "기초 단원, 쉬워서 시간 부족 시 후순위 가능"
+    
+  - unit_id: "middle1_equation"
+    unit_name: "일차방정식"
+    grade: 1
+    difficulty: 6
+    exam_weight: 0.25
+    avg_study_time: 7
+    priority_factor: 0.8
+    completion_ease: 0.7
+    bottleneck_risk: 0.4
+    note: "함수 학습의 기초, 후속 단원을 위해 중요"
+    
+  - unit_id: "middle1_function"
+    unit_name: "함수"
+    grade: 1
+    difficulty: 8
+    exam_weight: 0.30
+    avg_study_time: 9
+    priority_factor: 0.95  # 높은 우선순위
+    completion_ease: 0.5
+    bottleneck_risk: 0.7
+    note: "출제 비중 높고 어려움, 우선순위 높음"
+    
+  - unit_id: "middle1_graph"
+    unit_name: "함수와 그래프"
+    grade: 1
+    difficulty: 7
+    exam_weight: 0.20
+    avg_study_time: 8
+    priority_factor: 0.75
+    completion_ease: 0.6
+    bottleneck_risk: 0.5
+    note: "함수와 연계 학습 권장"
+    
+  # 중학교 2학년
+  - unit_id: "middle2_linear_function"
+    unit_name: "일차함수"
+    grade: 2
+    difficulty: 7
+    exam_weight: 0.28
+    avg_study_time: 9
+    priority_factor: 0.85
+    completion_ease: 0.6
+    bottleneck_risk: 0.6
+    note: "연립방정식과 연계 학습 권장"
+    
+  - unit_id: "middle2_system_equation"
+    unit_name: "연립방정식"
+    grade: 2
+    difficulty: 7
+    exam_weight: 0.25
+    avg_study_time: 8
+    priority_factor: 0.8
+    completion_ease: 0.65
+    bottleneck_risk: 0.5
+    note: "일차함수와 함께 학습하면 효과적"
+    
+  - unit_id: "middle2_geometry"
+    unit_name: "도형의 성질"
+    grade: 2
+    difficulty: 8
+    exam_weight: 0.25
+    avg_study_time: 11
+    priority_factor: 0.75
+    completion_ease: 0.5
+    bottleneck_risk: 0.7
+    note: "증명 부분이 어려워 병목 위험 높음"
+    
+  # 중학교 3학년
+  - unit_id: "middle3_quadratic_function"
+    unit_name: "이차함수"
+    grade: 3
+    difficulty: 9
+    exam_weight: 0.30
+    avg_study_time: 12
+    priority_factor: 0.95  # 높은 우선순위
+    completion_ease: 0.4
+    bottleneck_risk: 0.8
+    note: "가장 어려운 단원 중 하나, 출제 비중 높음"
+    
+  - unit_id: "middle3_quadratic_equation"
+    unit_name: "이차방정식"
+    grade: 3
+    difficulty: 8
+    exam_weight: 0.28
+    avg_study_time: 9.5
+    priority_factor: 0.85
+    completion_ease: 0.55
+    bottleneck_risk: 0.6
+    note: "이차함수와 연계 학습 필수"
+    
+  - unit_id: "middle3_statistics"
+    unit_name: "통계"
+    grade: 3
+    difficulty: 4
+    exam_weight: 0.15
+    avg_study_time: 5.5
+    priority_factor: 0.6  # 낮은 우선순위
+    completion_ease: 0.85
+    bottleneck_risk: 0.2
+    note: "상대적으로 쉬워 시간 부족 시 후순위 가능"
+
+# 우선순위 계산 공식
+priority_formula: |
+  priority_score = (
+    exam_weight × 0.4 +      # 출제 비중 40%
+    (1 - difficulty/10) × 0.2 +  # 난이도 역수 20% (쉬울수록 높음)
+    completion_ease × 0.2 +  # 완료 용이성 20%
+    (1 - bottleneck_risk) × 0.2  # 병목 위험도 역수 20%
+  )
+
+# 시간 제약별 우선순위 조정 전략
+time_constraint_strategies:
+  - constraint: "time_abundant"  # 시간 충분
+    strategy: "우선순위 높은 단원(함수, 이차함수) 집중"
+    priority_boost: 0.1  # 우선순위 높은 단원에 추가 가중치
+    
+  - constraint: "time_moderate"  # 시간 적당
+    strategy: "출제 비중 높은 단원 우선, 쉬운 단원 후순위"
+    priority_boost: 0.0
+    
+  - constraint: "time_limited"  # 시간 부족
+    strategy: "완료 용이성 높은 단원(통계 등) 우선, 어려운 단원 연기"
+    priority_boost: -0.1  # 어려운 단원에 페널티
+
+# 데이터 수집 방법 참고
+data_collection_methods:
+  student_survey:
+    - "어떤 단원이 시험에서 많이 나오나요?"
+    - "어떤 단원이 가장 어렵나요?"
+    - "어떤 단원을 완료하는 데 시간이 많이 걸리나요?"
+    
+  teacher_checklist:
+    - "단원별 출제 비중 정의"
+    - "단원별 난이도 평가"
+    - "단원별 평균 학습 시간 산정"
+    
+  teacher_text_input:
+    - "함수 단원: 출제 비중 30%, 난이도 8/10, 평균 학습 시간 6시간 → 우선순위 높음"
+    - "통계 단원: 출제 비중 15%, 난이도 4/10, 평균 학습 시간 3시간 → 우선순위 낮음"
+    - "도형 단원: 출제 비중 25%, 난이도 7/10, 평균 학습 시간 5시간 → 우선순위 중간"
+

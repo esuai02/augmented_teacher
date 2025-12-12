@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:at="http://mathking.kr/ontology/alphatutor#">
+
+  <owl:Ontology rdf:about="http://mathking.kr/ontology/alphatutor#agent16">
+    <rdfs:label xml:lang="ko">AlphaTutor Agent 16 Ontology</rdfs:label>
+    <rdfs:comment xml:lang="ko">Agent 16 관련 온톨로지 모듈</rdfs:comment>
+    <owl:imports rdf:resource="core.owl"/>
+  </owl:Ontology>
+
+  <!-- Agent 16: Interaction Preparation 관련 추가 온톨로지 클래스 -->
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionStability">
+    <rdfs:label xml:lang="ko">EmotionStability</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 안정도 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#GoalMode">
+    <rdfs:label xml:lang="ko">GoalMode</rdfs:label>
+    <rdfs:comment xml:lang="ko">목표 모드 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImmersionScore">
+    <rdfs:label xml:lang="ko">ImmersionScore</rdfs:label>
+    <rdfs:comment xml:lang="ko">몰입도 점수 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewCompatibility">
+    <rdfs:label xml:lang="ko">WorldviewCompatibility</rdfs:label>
+    <rdfs:comment xml:lang="ko">세계관 호환성 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewSelection">
+    <rdfs:label xml:lang="ko">WorldviewSelection</rdfs:label>
+    <rdfs:comment xml:lang="ko">세계관 선택 (Agent 16 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewSituationMapping">
+    <rdfs:label xml:lang="ko">WorldviewSituationMapping</rdfs:label>
+    <rdfs:comment xml:lang="ko">세계관별 상황 매핑 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewEffectivenessData">
+    <rdfs:label xml:lang="ko">WorldviewEffectivenessData</rdfs:label>
+    <rdfs:comment xml:lang="ko">세계관 효과성 데이터 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#StoryThemeSelection">
+    <rdfs:label xml:lang="ko">StoryThemeSelection</rdfs:label>
+    <rdfs:comment xml:lang="ko">스토리 테마 선택 (Agent 16 핵심 온톨로지)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NarrativeStructure">
+    <rdfs:label xml:lang="ko">NarrativeStructure</rdfs:label>
+    <rdfs:comment xml:lang="ko">서사 구조 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#EmotionalFlowDesign">
+    <rdfs:label xml:lang="ko">EmotionalFlowDesign</rdfs:label>
+    <rdfs:comment xml:lang="ko">감정 흐름 설계 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#NarrativeContinuity">
+    <rdfs:label xml:lang="ko">NarrativeContinuity</rdfs:label>
+    <rdfs:comment xml:lang="ko">서사 연속성 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#CharacterConsistency">
+    <rdfs:label xml:lang="ko">CharacterConsistency</rdfs:label>
+    <rdfs:comment xml:lang="ko">캐릭터 일관성 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PersonalizationStrategy">
+    <rdfs:label xml:lang="ko">PersonalizationStrategy</rdfs:label>
+    <rdfs:comment xml:lang="ko">개인화 전략 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreferredDialogueTone">
+    <rdfs:label xml:lang="ko">PreferredDialogueTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">선호 대화 톤 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ToneEffectivenessData">
+    <rdfs:label xml:lang="ko">ToneEffectivenessData</rdfs:label>
+    <rdfs:comment xml:lang="ko">톤 효과성 데이터 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AcademyClassTime">
+    <rdfs:label xml:lang="ko">AcademyClassTime</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 수업 시간 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#AcademyClassCompleted">
+    <rdfs:label xml:lang="ko">AcademyClassCompleted</rdfs:label>
+    <rdfs:comment xml:lang="ko">학원 수업 완료 여부 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreClassInteractionNeeded">
+    <rdfs:label xml:lang="ko">PreClassInteractionNeeded</rdfs:label>
+    <rdfs:comment xml:lang="ko">수업 전 상호작용 필요 여부 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PostClassInteractionNeeded">
+    <rdfs:label xml:lang="ko">PostClassInteractionNeeded</rdfs:label>
+    <rdfs:comment xml:lang="ko">수업 후 상호작용 필요 여부 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ProblemSolvingStatus">
+    <rdfs:label xml:lang="ko">ProblemSolvingStatus</rdfs:label>
+    <rdfs:comment xml:lang="ko">문제 풀이 상태 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousWorldview">
+    <rdfs:label xml:lang="ko">PreviousWorldview</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 세계관 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousEmotionalTone">
+    <rdfs:label xml:lang="ko">PreviousEmotionalTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 감정 톤 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousDialogueTone">
+    <rdfs:label xml:lang="ko">PreviousDialogueTone</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 대화 톤 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousDialogueFlow">
+    <rdfs:label xml:lang="ko">PreviousDialogueFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 대화 흐름 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousCharacterRole">
+    <rdfs:label xml:lang="ko">PreviousCharacterRole</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 캐릭터 역할 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#PreviousEmotionalFlow">
+    <rdfs:label xml:lang="ko">PreviousEmotionalFlow</rdfs:label>
+    <rdfs:comment xml:lang="ko">이전 감정 흐름 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#ImmersionScoreByStage">
+    <rdfs:label xml:lang="ko">ImmersionScoreByStage</rdfs:label>
+    <rdfs:comment xml:lang="ko">단계별 몰입도 점수 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="http://mathking.kr/ontology/alphatutor#SelfDirectedLearningCapability">
+    <rdfs:label xml:lang="ko">SelfDirectedLearningCapability</rdfs:label>
+    <rdfs:comment xml:lang="ko">자기주도 학습 능력 (Agent 16 데이터 기반 질문용)</rdfs:comment>
+  </owl:Class>
+
+  <!-- Agent 16: Interaction Preparation 관련 Triples 추가 -->
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionPreparation">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#GoalMode"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MathLearningStage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudentLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousWorldview"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewCompatibility"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewEffectivenessData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AcademyClassTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemSolvingStatus"/>
+    <at:selects rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewSelection"/>
+    <at:sets rdf:resource="http://mathking.kr/ontology/alphatutor#StoryThemeSelection"/>
+    <at:designs rdf:resource="http://mathking.kr/ontology/alphatutor#NarrativeStructure"/>
+    <at:designs rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionalFlowDesign"/>
+    <at:maintains rdf:resource="http://mathking.kr/ontology/alphatutor#CharacterConsistency"/>
+    <at:maintains rdf:resource="http://mathking.kr/ontology/alphatutor#NarrativeContinuity"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#WorldviewSelection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionStability"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#RoutineMaintenanceRate"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#GoalMode"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ImmersionScore"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#MathLearningStage"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#StudentLevel"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousWorldview"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewCompatibility"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewEffectivenessData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#AcademyClassTime"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemSolvingStatus"/>
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#Worldview"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#StoryThemeSelection">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ProblemRedefinition"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PersonaType"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#EmotionTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#LearningEmotion"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#FatigueLevel"/>
+    <at:isSubtypeOf rdf:resource="http://mathking.kr/ontology/alphatutor#StorytellingTheme"/>
+  </rdf:Description>
+
+  <rdf:Description rdf:about="http://mathking.kr/ontology/alphatutor#InteractionContinuity">
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousWorldview"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousEmotionalTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousDialogueTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousDialogueFlow"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreviousCharacterRole"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#WorldviewCompatibility"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#NarrativeContinuity"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#CharacterConsistency"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#PreferredDialogueTone"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#ToneEffectivenessData"/>
+    <at:requires rdf:resource="http://mathking.kr/ontology/alphatutor#InteractionHistory"/>
+  </rdf:Description>
+
+
+</rdf:RDF>
