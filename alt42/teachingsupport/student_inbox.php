@@ -1,9 +1,10 @@
 <?php
 include_once("/home/moodle/public_html/moodle/config.php");
+require_once(__DIR__ . '/config.php');
 global $DB, $USER;
 //require_login();
 
-$secret_key = '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';
+$secret_key = $CFG->openai_api_key;
 
 $studentid = $_GET['studentid'] ?? $USER->id;
 $page = optional_param('page', 0, PARAM_INT);
@@ -525,6 +526,49 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
 
         .message-item.closed-message .action-btn-compact {
             opacity: 0.7;
+        }
+
+        /* 요청 타입 배지 스타일 */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .type-badge.type-capture {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+
+        .type-badge.type-textbook {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 1px solid #60a5fa;
+        }
+
+        .type-badge.type-whiteboard {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #4ade80;
+        }
+
+        .type-badge.type-hint {
+            background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+            color: #854d0e;
+            border: 1px solid #facc15;
+        }
+
+        .type-badge.type-default {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            color: #4b5563;
+            border: 1px solid #9ca3af;
         }
 
         /* 읽은 메시지 토글 효과 */
@@ -2492,6 +2536,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
         // 읽은 보낸 메시지 카드 생성
         function createClosedSentMessageCard(request) {
             const imageUrl = request.problemImage ? getProblemImageUrl(request.problemImage) : '';
+            const typeLabel = getTypeLabel(request.type);
             
             return `
                 <div class="message-item closed-message" id="closed-request-${request.id}">
@@ -2506,6 +2551,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                     ` : `
                         <div class="problem-thumbnail" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 18px;">📄</div>
                     `}
+                    
+                    <!-- 요청 타입 배지 -->
+                    <div class="type-badge ${typeLabel.className}" title="${typeLabel.description}">
+                        ${typeLabel.icon} ${typeLabel.text}
+                    </div>
                     
                     <!-- 메시지 내용 -->
                     <div class="message-content-compact">
@@ -2544,6 +2594,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
 
         // 받은 메시지 카드 생성
         function createReceivedMessageCard(message) {
+            const typeLabel = getTypeLabel(message.type);
             return `
                 <div class="message-item received-message unread" id="message-${message.id}">
                     <!-- 문제 이미지 썸네일 (tooltip용, 클릭 시 화이트보드 링크 열기) -->
@@ -2560,6 +2611,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                     ` : `
                         <div class="problem-thumbnail" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 18px;">📄</div>
                     `}
+                    
+                    <!-- 요청 타입 배지 -->
+                    <div class="type-badge ${typeLabel.className}" title="${typeLabel.description}">
+                        ${typeLabel.icon} ${typeLabel.text}
+                    </div>
                     
                     <!-- 메시지 내용 -->
                     <div class="message-content-compact">
@@ -2604,6 +2660,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
             const imageUrl = request.problemImage ? getProblemImageUrl(request.problemImage) : '';
             const statusIcon = getStatusIcon(request.status);
             const isCompleted = request.status === 'completed' || request.status === 'complete' || request.status === 'sent' || request.hasSolution;
+            const typeLabel = getTypeLabel(request.type);
             
             return `
                 <div class="message-item sent-message" id="request-${request.id}">
@@ -2621,6 +2678,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                     ` : `
                         <div class="problem-thumbnail" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 18px;">📄</div>
                     `}
+                    
+                    <!-- 요청 타입 배지 -->
+                    <div class="type-badge ${typeLabel.className}" title="${typeLabel.description}">
+                        ${typeLabel.icon} ${typeLabel.text}
+                    </div>
                     
                     <!-- 메시지 내용 -->
                     <div class="message-content-compact" style="flex: 1; min-width: 0;">
@@ -3254,6 +3316,22 @@ if (isset($_POST['action']) && $_POST['action'] === 'increase_aiuse') {
                 case 'sent':
                 case 'completed': return '✅';
                 default: return '📝';
+            }
+        }
+
+        // 요청 타입 라벨 반환 함수
+        function getTypeLabel(type) {
+            switch(type) {
+                case 'capture':
+                    return { text: '캡처', icon: '📷', className: 'type-capture', description: '직접 캡처한 문제' };
+                case 'textbook':
+                    return { text: '교과서', icon: '📚', className: 'type-textbook', description: '교과서 문제' };
+                case 'whiteboard_question':
+                    return { text: '화이트보드', icon: '📝', className: 'type-whiteboard', description: '화이트보드 질문' };
+                case 'askhint':
+                    return { text: '힌트', icon: '💡', className: 'type-hint', description: '힌트 요청' };
+                default:
+                    return { text: type || '일반', icon: '📄', className: 'type-default', description: type || '일반 요청' };
             }
         }
 

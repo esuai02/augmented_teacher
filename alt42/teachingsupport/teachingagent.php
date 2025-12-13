@@ -1,5 +1,6 @@
 <?php 
 include_once("/home/moodle/public_html/moodle/config.php"); 
+require_once(__DIR__ . '/config.php');
 global $DB, $USER;
 require_login();
 $userid = $_GET["userid"] ?? $USER->id;  // 선생님 ID
@@ -7,7 +8,7 @@ $studentid = $_GET["studentid"] ?? 0;   // 학생 ID
 $role = $_GET["role"] ?? '';  // 역할 파라미터 추가
 $contentsid = $_GET["contentsid"] ?? 0;  // 컨텐츠 ID
 $contentstype = $_GET["contentstype"] ?? 0;  // 컨텐츠 타입
-
+$secret_key = $CFG->openai_api_key;
 // 학생 정보 가져오기
 $student = null;
 if ($studentid) {
@@ -2444,27 +2445,32 @@ $isStudentMode = ($role === 'student');
                     console.error('[acceptNewRequest] teacherid 업데이트 중 오류:', updateError);
                 }
                 
-                // type을 'asksolution'으로 업데이트 (askhint 타입에서 풀이 스타일 선택 시 힌트가 생성되는 문제 해결)
-                try {
-                    const updateTypeResponse = await fetch('save_interaction.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            action: 'update_type',
-                            interactionId: interactionId,
-                            type: 'asksolution'
-                        })
-                    });
-                    const updateTypeData = await updateTypeResponse.json();
-                    if (updateTypeData.success) {
-                        console.log('[acceptNewRequest] type을 asksolution으로 업데이트 완료 (이전:', updateTypeData.old_type + ')');
-                    } else {
-                        console.error('[acceptNewRequest] type 업데이트 실패:', updateTypeData.error);
+                // type이 'askhint'인 경우에만 'asksolution'으로 업데이트 (capture 등 다른 타입은 유지)
+                const currentType = solutionStyleData.type || '';
+                if (currentType === 'askhint') {
+                    try {
+                        const updateTypeResponse = await fetch('save_interaction.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                action: 'update_type',
+                                interactionId: interactionId,
+                                type: 'asksolution'
+                            })
+                        });
+                        const updateTypeData = await updateTypeResponse.json();
+                        if (updateTypeData.success) {
+                            console.log('[acceptNewRequest] type을 asksolution으로 업데이트 완료 (이전:', updateTypeData.old_type + ')');
+                        } else {
+                            console.error('[acceptNewRequest] type 업데이트 실패:', updateTypeData.error);
+                        }
+                    } catch (typeError) {
+                        console.error('[acceptNewRequest] type 업데이트 중 오류:', typeError);
                     }
-                } catch (typeError) {
-                    console.error('[acceptNewRequest] type 업데이트 중 오류:', typeError);
+                } else {
+                    console.log('[acceptNewRequest] type 유지:', currentType, '(askhint가 아니므로 변경하지 않음)');
                 }
                 
                 // interaction 정보 가져오기
@@ -2595,27 +2601,32 @@ $isStudentMode = ($role === 'student');
                     console.error('[acceptNewRequestWithStyle] teacherid 업데이트 중 오류:', updateError);
                 }
 
-                // type을 'asksolution'으로 업데이트 (askhint 타입에서 풀이 스타일 선택 시 힌트가 생성되는 문제 해결)
-                try {
-                    const updateTypeResponse = await fetch('save_interaction.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            action: 'update_type',
-                            interactionId: interactionId,
-                            type: 'asksolution'
-                        })
-                    });
-                    const updateTypeData = await updateTypeResponse.json();
-                    if (updateTypeData.success) {
-                        console.log('[acceptNewRequestWithStyle] type을 asksolution으로 업데이트 완료 (이전:', updateTypeData.old_type + ')');
-                    } else {
-                        console.error('[acceptNewRequestWithStyle] type 업데이트 실패:', updateTypeData.error);
+                // type이 'askhint'인 경우에만 'asksolution'으로 업데이트 (capture 등 다른 타입은 유지)
+                const currentType = solutionStyleData.type || '';
+                if (currentType === 'askhint') {
+                    try {
+                        const updateTypeResponse = await fetch('save_interaction.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                action: 'update_type',
+                                interactionId: interactionId,
+                                type: 'asksolution'
+                            })
+                        });
+                        const updateTypeData = await updateTypeResponse.json();
+                        if (updateTypeData.success) {
+                            console.log('[acceptNewRequestWithStyle] type을 asksolution으로 업데이트 완료 (이전:', updateTypeData.old_type + ')');
+                        } else {
+                            console.error('[acceptNewRequestWithStyle] type 업데이트 실패:', updateTypeData.error);
+                        }
+                    } catch (typeError) {
+                        console.error('[acceptNewRequestWithStyle] type 업데이트 중 오류:', typeError);
                     }
-                } catch (typeError) {
-                    console.error('[acceptNewRequestWithStyle] type 업데이트 중 오류:', typeError);
+                } else {
+                    console.log('[acceptNewRequestWithStyle] type 유지:', currentType, '(askhint가 아니므로 변경하지 않음)');
                 }
 
                 // interaction 정보 가져오기

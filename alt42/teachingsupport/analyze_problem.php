@@ -176,34 +176,33 @@ try {
     
     $problemTypeDesc = $typeDescriptions[$problemType] ?? '일반 문제';
 
-    // JSON 파일에서 풀이 스타일 프롬프트 로드 (optimize_prompt.php와 동기화)
+    // JSON 파일에서 해설지 생성 프롬프트 로드 (optimize_prompt.php의 solutionGenerationPrompt 사용)
     $promptsFile = __DIR__ . '/prompts/hint_prompts.json';
-    $stylePrompts = [];
+    $solutionGenerationPrompt = null;
     $promptsLoaded = false;
     
     if (file_exists($promptsFile)) {
         $promptsData = json_decode(file_get_contents($promptsFile), true);
-        if (json_last_error() === JSON_ERROR_NONE && isset($promptsData['solutionStyles'])) {
-            // JSON에서 solutionStyles 프롬프트 로드
-            foreach ($promptsData['solutionStyles'] as $key => $style) {
-                if (!empty($style['systemPrompt'])) {
-                    $stylePrompts[$key] = $style['systemPrompt'];
-                }
+        if (json_last_error() === JSON_ERROR_NONE) {
+            // 해설지 생성 프롬프트 (solutionGenerationPrompt) 사용 - TTS가 아닌 실제 해설지 형식
+            if (isset($promptsData['solutionGenerationPrompt']['systemPrompt'])) {
+                $solutionGenerationPrompt = $promptsData['solutionGenerationPrompt']['systemPrompt'];
+                $promptsLoaded = true;
+                error_log("analyze_problem.php - solutionGenerationPrompt 로드 성공 [Line: " . __LINE__ . "]");
+            } else {
+                error_log("analyze_problem.php - solutionGenerationPrompt 없음, fallback 사용 [Line: " . __LINE__ . "]");
             }
-            $promptsLoaded = true;
-            error_log("analyze_problem.php - JSON 프롬프트 로드 성공 (스타일 수: " . count($stylePrompts) . ") [Line: " . __LINE__ . "]");
         } else {
-            error_log("analyze_problem.php - JSON 파싱 실패 또는 solutionStyles 없음 [Line: " . __LINE__ . "]");
+            error_log("analyze_problem.php - JSON 파싱 실패 [Line: " . __LINE__ . "]");
         }
     } else {
         error_log("analyze_problem.php - 프롬프트 파일 없음: $promptsFile [Line: " . __LINE__ . "]");
     }
     
-    // JSON 로드 실패시 기본 프롬프트 사용 (fallback)
-    if (!$promptsLoaded || empty($stylePrompts)) {
-        error_log("analyze_problem.php - 기본 프롬프트 사용 (fallback) [Line: " . __LINE__ . "]");
-        $stylePrompts = [
-            'default' => '당신은 한국의 우수한 수학 교사입니다. 학생들이 이해하기 쉽도록 단계별로 문제를 해설해주세요.
+    // JSON 로드 실패시 기본 해설지 프롬프트 사용 (fallback - LaTeX 수식 포함 해설지 형식)
+    if (!$promptsLoaded || empty($solutionGenerationPrompt)) {
+        error_log("analyze_problem.php - 기본 해설지 프롬프트 사용 (fallback) [Line: " . __LINE__ . "]");
+        $solutionGenerationPrompt = '당신은 한국의 우수한 수학 교사입니다. 학생들이 이해하기 쉽도록 단계별로 문제를 해설해주세요.
 
 중요: 모든 수식은 반드시 LaTeX 형식으로 작성해주세요.
 - 인라인 수식: $수식$ (예: $x^2 + 2x + 1 = 0$)
@@ -230,13 +229,12 @@ try {
 - 이 문제를 풀기 위해 알아야 할 핵심 개념들
 
 [유사 문제]
-- 비슷한 유형의 문제 예시나 연습 방법'
-        ];
+- 비슷한 유형의 문제 예시나 연습 방법';
     }
 
-    // 선택된 스타일의 프롬프트 사용
-    $systemPrompt = $stylePrompts[$solutionStyle] ?? $stylePrompts['default'] ?? $stylePrompts[array_key_first($stylePrompts)];
-    error_log("analyze_problem.php - Using solution style: $solutionStyle (from " . ($promptsLoaded ? 'JSON' : 'fallback') . ") [Line: " . __LINE__ . "]");
+    // 해설지 생성 프롬프트 사용 (TTS 형식이 아닌 실제 해설지)
+    $systemPrompt = $solutionGenerationPrompt;
+    error_log("analyze_problem.php - Using solutionGenerationPrompt for solution_text (from " . ($promptsLoaded ? 'JSON' : 'fallback') . ") [Line: " . __LINE__ . "]");
 
     // solution_image가 있는 경우 프롬프트 수정
     if ($solutionImageBase64) {

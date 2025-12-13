@@ -9,7 +9,9 @@
  */ 
   
 // OpenAI API 설정
-define('OPENAI_API_KEY', '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'); // 실제 API 키로 교체 필요
+// 보안: 운영에서는 반드시 환경변수 OPENAI_API_KEY로 주입하세요.
+// (예: Apache/Nginx/PHP-FPM 환경변수, 또는 OS 환경변수)
+define('OPENAI_API_KEY', getenv('OPENAI_API_KEY') ?: '');
 define('OPENAI_MODEL', 'gpt-4o'); // 또는 'gpt-4', 'gpt-4-turbo-preview' 등
    
 // OpenAI API 엔드포인트
@@ -22,6 +24,8 @@ define('OPENAI_TIMEOUT', 30); // 초 단위
 
 // 데이터베이스 설정 (기존 설정과 통합)
 $CFG = new stdClass();
+$CFG->openai_api_key = OPENAI_API_KEY;
+$CFG->openai_model = OPENAI_MODEL;
 $CFG->dbhost = '58.180.27.46';
 $CFG->dbname = 'mathking';
 $CFG->dbuser = 'moodle';

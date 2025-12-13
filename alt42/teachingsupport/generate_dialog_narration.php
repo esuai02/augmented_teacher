@@ -1,4 +1,6 @@
 <?php
+include_once("/home/moodle/public_html/moodle/config.php");
+global $CFG;
 /////////////////////////////// 대화형 나레이션 자동 생성 및 TTS 생성 (ktm_teaching_interactions용) ///////////////////////////////
 
 // 출력 버퍼링 시작 (에러가 JSON 응답을 방해하지 않도록)
@@ -93,20 +95,21 @@ try {
     }
 
     /**
-     * 해설지 생성 기본 프롬프트 가져오기 (일반 모드용)
+     * TTS 대본 생성 기본 프롬프트 가져오기 (일반 모드용)
+     * solution_text(해설지)를 TTS 나레이션(narration_text)으로 변환할 때 사용
      * @param array|null $promptConfig 프롬프트 설정 데이터
      * @return array|null [systemPrompt, example] 또는 null
      */
     function getSolutionBasePrompt($promptConfig = null) {
-        // 프롬프트 설정이 있으면 JSON에서 가져오기
-        if ($promptConfig && isset($promptConfig['solutionBasePrompt'])) {
-            $solution = $promptConfig['solutionBasePrompt'];
+        // 프롬프트 설정이 있으면 JSON에서 ttsBasePrompt 가져오기
+        if ($promptConfig && isset($promptConfig['ttsBasePrompt'])) {
+            $tts = $promptConfig['ttsBasePrompt'];
 
             return [
-                'systemPrompt' => $solution['systemPrompt'] ?? '',
-                'example' => $solution['example'] ?? '',
-                'name' => $solution['name'] ?? '해설지 생성 기본 프롬프트',
-                'description' => $solution['description'] ?? ''
+                'systemPrompt' => $tts['systemPrompt'] ?? '',
+                'example' => $tts['example'] ?? '',
+                'name' => $tts['name'] ?? 'TTS 대본 생성 기본 프롬프트',
+                'description' => $tts['description'] ?? ''
             ];
         }
 
@@ -1130,7 +1133,7 @@ Output examples:
     debug_log("OpenAI API 호출 준비");
 
     // API 키 설정 (TTS 생성 함수에서도 사용 가능하도록 전역 변수로 설정)
-    $apiKey = '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';
+    $apiKey = $CFG->openai_api_key;
     
     // 환경 변수가 있으면 우선 사용
     $envApiKey = getenv('OPENAI_API_KEY');

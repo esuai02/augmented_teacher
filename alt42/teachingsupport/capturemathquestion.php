@@ -1,10 +1,9 @@
 <?php
 include_once("/home/moodle/public_html/moodle/config.php");
+require_once(__DIR__ . '/config.php');
 global $DB, $USER;
 //require_login();
-
-$secret_key = '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';
-
+$secret_key = $CFG->openai_api_key;
 $userid = $_GET['userid'] ;
 $studentid = $userid; // userid를 studentid로 사용
  

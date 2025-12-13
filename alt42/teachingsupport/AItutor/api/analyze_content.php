@@ -16,7 +16,7 @@ include_once("/home/moodle/public_html/moodle/config.php");
 if (file_exists(__DIR__ . '/../../config.php')) {
     require_once(__DIR__ . '/../../config.php');
 }
-global $DB, $USER;
+global $DB, $USER, $CFG;
 require_login();
 
 /**
@@ -42,7 +42,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // OpenAI API 키 설정 (teachingagent.php 방식)
-$apiKey = defined('OPENAI_API_KEY') ? OPENAI_API_KEY : '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';
+$apiKey = $CFG->openai_api_key;
 $model = defined('OPENAI_MODEL') ? OPENAI_MODEL : 'gpt-4o';
 
 // POST 요청만 허용
